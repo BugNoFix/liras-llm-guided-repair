@@ -1,0 +1,9 @@
+– Task 1: Navigate from current location to service start location (room 7002). 
+– Task 2: Wait for human to put the object to be transported in basket, and get confirmation. 
+– Task 3: Navigate from room 7002 to the 7th floor elevator. 
+– Task 4: Ask for human assistance to take the elevator to the 3rd floor. 
+– Task 5: Navigate inside the elevator. 
+– Task 6: Ask for human assistance to know when correct floor is reached. 
+– Task 7: Navigate out of the elevator. 
+– Task 8: Navigate from the 3rd floor elevator to service goal location (room 3201). 
+– Task 9: Wait for human to collect object and get service completion confirmation.

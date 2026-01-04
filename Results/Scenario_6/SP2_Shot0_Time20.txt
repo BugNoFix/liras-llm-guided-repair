@@ -1,0 +1,40 @@
+```liras
+name: Hotel Butler
+
+agent(HotelButler) {
+  # Define sub-sequences for the hotel butler's behavior
+  sub-sequence(deliverItem)(guestRoom) {
+    # Check if item is in storage box
+    if (storageBox.contains(item)) {
+      # Navigate to guest room
+      moveTo(guestRoom);
+      # Open storage box for delivery
+      openStorageBox();
+      # Wait for guest to enter PIN code
+      wait(PINCode());
+      # Close storage box and deliver item
+      closeStorageBox();
+      deliverItem;
+    } else {
+      # If item is not in storage box, move to next action
+      moveTo(nextAction);
+    }
+  }
+
+  sub-sequence(navigate)(hotelFloor) {
+    # Move to next floor
+    moveTo(hotelFloor + 1);
+  }
+
+  sub-sequence(operateLift)(lift) {
+    # Operate lift
+    moveTo(lift);
+    executeAction(liftOperation);
+  }
+
+  sub-sequence(executeAction)(action) {
+    # Execute action
+    executeAction(action);
+  }
+}
+```

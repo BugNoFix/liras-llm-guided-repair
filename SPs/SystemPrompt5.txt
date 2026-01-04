@@ -1,0 +1,17 @@
+Considering the following pseudo-code for LIrAs generate the patter when a specification is provided with this DSL language:
+
+< pattern name >
+< inputs >
+
+< agent1 >:
+	<l1 >: < action1 > < parameter >
+	<l2 >: < conditional action2 > <condition>
+		< action3 >
+	...
+< agent2 >:
+	<l1 >: < conditional action1 > < parameter > <condition>
+	<l2 >: < conditional action2 > <condition>
+	...
+...
+<success> <condition>
+<failure> <condition>

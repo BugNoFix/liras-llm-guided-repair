@@ -1,0 +1,1 @@
+A robot operates within a supermarket and continuously monitors the availability of items at specific locations: l1, l2, l3, and l4. Suppose in location l4, where water supplies are present, a human is detected. In that case, the robot has to perform a collaborative grasping action assisting the human in placing new water supplies.

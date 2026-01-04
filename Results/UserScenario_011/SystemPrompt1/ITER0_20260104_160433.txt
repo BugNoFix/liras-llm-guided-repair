@@ -1,0 +1,100 @@
+```liras
+pattern SampleTransport
+  agents: Nurse, RobotArm, LabPersonnel, TransportRobot
+  locations: PatientFloor, Lab, TransportStation, Drawer
+  resources: Sample, Barcode, LockedDrawer, AnalysisMachineEntryModule, TrackSystem
+
+  // Predefined actions and predicates
+  action moveTo(agent, location)
+  action insertData(agent, sample, trackSystem)
+  action requestDelivery(Nurse, TransportRobot, Drawer, Lab)
+  action loadSample(TransportRobot, Drawer, TransportStation)
+  action unloadSample(TransportRobot, Drawer, Lab)
+  action openDrawer(agent, Drawer)
+  action closeDrawer(agent, Drawer)
+  action pickSample(agent, Sample, Drawer)
+  action scanBarcode(agent, Sample, Barcode)
+  action sortSample(RobotArm, Sample)
+  action loadIntoModule(RobotArm, Sample, AnalysisMachineEntryModule)
+  action logSamplePickup(RobotArm, Sample, location)
+  action trackDeliveryTime(Sample)
+  action makeReadyForCollection(Nurse, Sample)
+
+  predicate isSampleCollected(Sample)
+  predicate isDrawerLocked(Drawer)
+  predicate isDrawerAtLocation(Drawer, location)
+  predicate isTransportRobotAvailable(TransportRobot)
+  predicate isRobotArmAtLocation(RobotArm, Lab)
+  predicate isSampleInDrawer(Sample, Drawer)
+  predicate isSampleSorted(Sample)
+
+  // Nurse Sequence
+  sequence Nurse
+    defaultAction: wait(1) // Wait 1 time unit if no sub-sequence is specified
+    1: // Collect Sample
+      makeReadyForCollection(Nurse, Sample)
+      wait(2) // Simulate collection time
+      insertData(Nurse, Sample, TrackSystem)
+      if isSampleCollected(Sample)
+        requestDelivery(Nurse, TransportRobot, Drawer, Lab)
+      endIf
+    2: // Wait for Transport
+      wait(5) // Wait for the delivery
+      // if sample is at Lab
+        //  log success
+      // endIf
+  endSequence
+
+  // TransportRobot Sequence
+  sequence TransportRobot
+    defaultAction: moveTo(TransportRobot, TransportStation)
+    1: // Respond to Delivery Request
+      if isTransportRobotAvailable(TransportRobot)
+        moveTo(TransportRobot, PatientFloor)
+      endIf
+    2: // Load and Transport
+      loadSample(TransportRobot, Drawer, TransportStation)
+      moveTo(TransportRobot, Lab)
+      unloadSample(TransportRobot, Drawer, Lab)
+    3: // Return to Transport Station
+      moveTo(TransportRobot, TransportStation)
+  endSequence
+
+  // RobotArm Sequence
+  sequence RobotArm
+    defaultAction: moveTo(RobotArm, Lab)
+    1: // Check if samples are available
+      if isDrawerAtLocation(Drawer, Lab) AND isDrawerLocked(Drawer)
+        openDrawer(RobotArm, Drawer)
+      endIf
+    2: // Pick, Scan, and Sort
+      if isSampleInDrawer(Sample, Drawer)
+        pickSample(RobotArm, Sample, Drawer)
+        scanBarcode(RobotArm, Sample, Barcode)
+        logSamplePickup(RobotArm, Sample, Lab)
+        sortSample(RobotArm, Sample)
+      endIf
+    3: // Load into Analysis Machine
+      if isSampleSorted(Sample)
+        loadIntoModule(RobotArm, Sample, AnalysisMachineEntryModule)
+      endIf
+      closeDrawer(RobotArm, Drawer)
+      trackDeliveryTime(Sample)
+  endSequence
+
+  // LabPersonnel Sequence (Alternative to RobotArm)
+  sequence LabPersonnel
+    defaultAction: moveTo(LabPersonnel, Lab)
+    1: // Check if samples are available
+      if isDrawerAtLocation(Drawer, Lab) AND isDrawerLocked(Drawer)
+        openDrawer(LabPersonnel, Drawer)
+      endIf
+    2: // Pick and Handle Sample (simplified)
+      if isSampleInDrawer(Sample, Drawer)
+        pickSample(LabPersonnel, Sample, Drawer)
+        trackDeliveryTime(Sample)
+      endIf
+      closeDrawer(LabPersonnel, Drawer)
+  endSequence
+endPattern
+```

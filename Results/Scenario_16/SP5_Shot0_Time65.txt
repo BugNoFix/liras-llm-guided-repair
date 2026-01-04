@@ -1,0 +1,117 @@
+Here is the pseudo-code for the LIrAs system based on the given specification:
+```scss
+<pattern name="Service Navigation">
+  <inputs>
+    <input name="current location" type="location">
+    <input name="service start location" type="location">
+    <input name="object to be transported" type="object">
+  </inputs>
+  
+  <agent1>
+    <action name="Navigate" parameter="currentLocation">
+      <conditions>
+        <condition name="Current Location is Same as Service Start Location">
+          <action name="NAVIGATE_TO" parameter="serviceStartLocation">
+            <success>NAVIGATED</success>
+          </action>
+        </condition>
+      </conditions>
+    </action>
+  </agent1>
+  
+  <agent2>
+    <action name="Wait for Object Placement" parameter="object">
+      <conditions>
+        <condition name="Object is Placed in Basket">
+          <action name="GET_CONFIRMATION" parameter="object">
+            <success>OBJECT_IS_IN_BASKET</success>
+          </action>
+        </condition>
+      </conditions>
+    </action>
+  </agent2>
+  
+  <agent3>
+    <action name="Navigate to Elevator" parameter="currentLocation">
+      <conditions>
+        <condition name="Current Location is Same as Elevator Location">
+          <action name="NAVIGATE_TO" parameter="elevatorLocation">
+            <success>NAVIGATED</success>
+          </action>
+        </condition>
+      </conditions>
+    </action>
+  </agent3>
+  
+  <agent4>
+    <action name="Ask for Human Assistance" parameter="currentLocation">
+      <conditions>
+        <condition name="Current Location is Same as Floor Location">
+          <action name="ASK_FOR_HUMAN_ASSISTANCE" parameter="floorLocation">
+            <success>ASKED</success>
+          </action>
+        </condition>
+      </conditions>
+    </action>
+  </agent4>
+  
+  <agent5>
+    <action name="Navigate Inside Elevator" parameter="currentLocation">
+      <conditions>
+        <condition name="Current Location is Same as Elevator Location">
+          <action name="NAVIGATE_INSIDE" parameter="elevatorLocation">
+            <success>NAVIGATED</success>
+          </action>
+        </condition>
+      </conditions>
+    </action>
+  </agent5>
+  
+  <agent6>
+    <action name="Ask for Human Assistance to Know Correct Floor" parameter="currentLocation">
+      <conditions>
+        <condition name="Current Location is Same as Floor Location">
+          <action name="ASK_FOR_HUMAN_ASSISTANCE" parameter="floorLocation">
+            <success>ASKED</success>
+          </action>
+        </condition>
+      </conditions>
+    </action>
+  </agent6>
+  
+  <agent7>
+    <action name="Navigate Out of Elevator" parameter="currentLocation">
+      <conditions>
+        <condition name="Current Location is Same as Floor Location">
+          <action name="NAVIGATE_OUT" parameter="floorLocation">
+            <success>NAVIGATED</success>
+          </action>
+        </condition>
+      </conditions>
+    </action>
+  </agent7>
+  
+  <agent8>
+    <action name="Navigate to Service Goal Location" parameter="currentLocation">
+      <conditions>
+        <condition name="Current Location is Same as Service Goal Location">
+          <action name="NAVIGATE_TO" parameter="serviceGoalLocation">
+            <success>NAVIGATED</success>
+          </action>
+        </condition>
+      </conditions>
+    </action>
+  </agent8>
+  
+  <action name="WAIT_FOR_SERVICE_COMPLETION" parameter="currentLocation">
+    <conditions>
+      <condition name="Object is Collected and Service is Completed">
+        <action name="GET_SERVICE_COMPLETION_CONFIRMATION" parameter="object">
+          <success>SERVICE_IS_COMPLETED</success>
+        </action>
+      </condition>
+    </conditions>
+  </action>
+</pattern>
+```
+This pseudo-code defines eight agents, each with a set of actions and conditions that determine when to execute those actions. The agents are triggered by different events, such as the current location being the same as the service start location or the object being placed in a basket. Once an agent is triggered, it executes its actions based on the current conditions. The system waits for the service completion confirmation before moving on to the next task.

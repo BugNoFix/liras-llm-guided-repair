@@ -1,0 +1,124 @@
+
+grammar it.polimi.LIRAs with org.eclipse.xtext.common.Terminals
+
+generate lIRAs "http://www.polimi.it/LIRAs"
+
+Model:
+	NL*
+    pattern=Pattern
+    sequence+=Sequence*
+    conclusion=Conclusion?
+;
+
+// A pattern is initially defined with the name of the pattern itself and then taking as input the agents involved in the pattern divided by them type (the same type of agents share the same set of basic actions), the location and the resources needed in the pattern execution.
+Pattern:
+    name=ID NL+
+	(('agents:'  NL+
+	('humans:' (human+=Human (',' human+=Human)*)? NL+)?
+	('robots:' (robot+=Robot (',' robot+=Robot)*)? NL+)? )
+    | 'locations:' (location+=Location (',' location+=Location)*)? NL+
+    | 'resources:' (resources+=Resource (',' resources+=Resource)*)? NL+)*
+;
+// A sequence for each agent is created by combining multiple SubSequences, the default action if not specified is free-to-move in case of missing or empty SubSequence
+Sequence:
+	agent=Agent ('default' action=Action)? ':' NL+ 
+	(subSequence+=SubSequence)*
+;
+
+// In each subsequence we can have several conditioned actions to be executed sequentially of loop elements
+SubSequence:
+    i=INT ('-' j=INT)? ':' ( ( ( loop+=Loop) | ((actionC+=ActionC) ) )? NL )+
+;
+
+// The conclusion provides the possible success and failure condition for a pattern
+Conclusion:
+	'success:' condition+=Condition NL*
+	'failure:' condition+=Condition NL*
+;
+
+// the skip keyword avoid the execution of the current SubSequence, and the restart makes the SubSequence executing from the beginning. The all keyword extend this to all the subsequence that are executed in that moment from all the agents
+Loop:
+	('skip' ('all')? 'if' condition=Condition) | ('restart' ('all')?  'if' condition=Condition)
+;
+
+// when the until condition is true then the correspondent conditioned action ends
+// when the if/else condition is false the alternative action is executed
+// wait is followed by the minimum amount of time before the action can end
+ConditionalStatement:
+	{ConditionalStatement} cs1 = 'until' condition+=Condition
+	| cs2 = 'if' condition+=Condition 'else' action=Action
+	| cs3 = 'if' condition+=Condition 'else' action=Action 'until' condition+=Condition
+	| cs4 = 'wait' n=INT
+;
+
+// Unconditionable actions this set depends on the set of basic action of each agent
+Action:
+	({Action} actionType = 'stop' 
+    | actionType = 'moveTo' target=Target 
+    | ((actionType = 'fetch'| actionType = 'deliver' | actionType = 'leave') & resource=Resource) 
+    | actionType = 'follow' agent=Agent ('(' target=Target ')')?
+    | actionType = 'receiveFrom' agent=Agent) 
+;
+
+// Conditionable actions this set depends on the set of basic action of each agent
+ActionC:
+	({Action} actionType = 'stop' 
+    | actionType = 'moveTo' target=Target 
+    | ((actionType = 'fetch'| actionType = 'deliver' | actionType = 'leave') & resource=Resource) 
+    | actionType = 'follow' agent=Agent ('(' target=Target ')')?
+    | actionType = 'receiveFrom' agent=Agent) (conditionalStatement+=ConditionalStatement)?
+;
+
+// A condition is the combination of different atomic predicate with boolean operators
+Condition:
+	( atomicPredicate+=AtomicPredicate | (not += '!' atomicPredicate+=AtomicPredicate) )
+	( (and += '&&' | or += '||') ( atomicPredicate+=AtomicPredicate | (not += '!' atomicPredicate+=AtomicPredicate) ) )*
+;
+
+// Atomic Predicate: set that depends on the domain
+AtomicPredicate:
+	{AtomicPredicate} ap = 'tired' 
+	| ap = 'time' '(' n=INT ')' 
+	| ap = 'position' '(' agent=Agent',' location=Location')'
+	| ap = 'possess' '(' agent=Agent',' resource=Resource')'
+	| ap = 'busy' '(' agent=Agent')'
+	| ap = 'still' '(' agent=Agent')'
+	| relation=Relation
+;
+
+// comperison for the non boolean atomic predicates
+Relation:
+    ('dist' '(' agent+=Agent ',' agent+=Agent ')' ('>' | '<' | '>=' | '<=' | '==' | '!=') th=INT)
+    | 'soc' '(' agent+=Agent ')' ('>' | '<' | '>=' | '<=' | '==' | '!=') th=INT
+;
+
+Target: 
+	name=ID
+;
+
+Agent:
+	name=ID
+;
+
+Human:
+	name=ID
+;
+
+Robot:
+	name=ID
+;
+
+Location:
+	name=ID
+;
+
+Resource:
+	name=ID
+;
+
+terminal NL:
+	(' '* '\r'? '\n' '\t'*)+
+;
+
+
+
