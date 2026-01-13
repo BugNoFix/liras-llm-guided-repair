@@ -1,0 +1,9 @@
+{
+  "system_prompt": "SystemPrompt1.txt",
+  "shots": [],
+  "scenario": "UserScenario_011.txt",
+  "timestamp": "2026-01-13T12:39:41.307211",
+  "iteration": 0,
+  "success": false,
+  "saved_at": "2026-01-13T12:41:27.819139"
+}

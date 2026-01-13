@@ -1,0 +1,18 @@
+{
+  "system_prompt": "SystemPrompt3.txt",
+  "shots": [
+    {
+      "user": "UserScenario_1.txt",
+      "assistant": "AssistantScenario_1.txt"
+    },
+    {
+      "user": "UserScenario_2.txt",
+      "assistant": "AssistantScenario_2.txt"
+    }
+  ],
+  "scenario": "UserScenario_011.txt",
+  "timestamp": "2026-01-13T12:56:10.607001",
+  "iteration": 0,
+  "success": false,
+  "saved_at": "2026-01-13T12:56:16.716381"
+}

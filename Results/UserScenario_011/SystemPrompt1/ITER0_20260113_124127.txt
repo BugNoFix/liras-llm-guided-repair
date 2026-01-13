@@ -1,0 +1,74 @@
+```liras
+pattern SampleDelivery(
+  agents: [Nurse, RobotArm, LabPersonnel],
+  locations: [PatientFloor, Laboratory, EntryModule, StorageArea],
+  resources: [Sample, Drawer, Barcode, TrackSystem, AnalysisMachine]
+) {
+
+  // Default actions and initialization
+  Nurse.defaultAction:  "wait";
+  RobotArm.defaultAction: "idle";
+  LabPersonnel.defaultAction: "wait";
+
+  // Sequence for the Nurse
+  Nurse: {
+    1: { // Sample Collection and Tracking
+      "requestSample(PatientFloor,Sample)";
+      "trackSample(TrackSystem,Sample,Barcode)";
+    }
+    2: { // Wait for Drawer Delivery
+      "wait"; // Waiting for the drawer to be delivered
+      "moveTo(StorageArea)"; // Nurse goes to storage area to get the drawer
+      "openDrawer(Drawer)";
+      "takeSample(Sample)"; // The Nurse takes the sample from the drawer
+    }
+    3: { // Return to Patient Floor (or other duties)
+      "moveTo(PatientFloor)";
+      "wait"; // Nurse can perform other duties
+    }
+  }
+
+  // Sequence for the Robot Arm
+  RobotArm: {
+    1: { // Wait for Drawer arrival
+      "wait"; // Waiting for the drawer delivery
+    }
+    2: { // Pick up samples
+      "moveTo(StorageArea)";
+      "openDrawer(Drawer)";
+      "pickSample(Sample)";
+      "moveTo(Laboratory)";
+    }
+    3: { // Sample Analysis and Logging
+      "scanBarcode(Barcode)";
+      "sortSample(Sample)";
+      "loadSample(AnalysisMachine, EntryModule)";
+      "logSample(Sample, Barcode, Time, Location)";
+    }
+  }
+
+  // Sequence for Lab Personnel
+  LabPersonnel: {
+    1: { // Wait for the drawer delivery
+      "wait";
+    }
+    2: { // Pick up samples
+      "moveTo(StorageArea)";
+      "openDrawer(Drawer)";
+      "takeSample(Sample)"; // Alternative way to handle samples
+      "moveTo(Laboratory)";
+    }
+    3: { // Sample Analysis
+        "wait"; // Lab personnel can be engaged in other activities
+    }
+  }
+
+  // Success Condition:
+  // All samples are analyzed and logged. This needs to be checked through a separate predicate.
+  success:  "allSamplesAnalyzed()";
+
+  // Failure Condition:
+  // Delivery time exceeds protocol. This needs to be checked through a separate predicate.
+  failure: "deliveryTimeExceedsProtocol()";
+}
+```

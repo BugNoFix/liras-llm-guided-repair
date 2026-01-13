@@ -1,29 +1,9 @@
-
 import os
 import vertexai
-from vertexai.generative_models import GenerativeModel, ChatSession
+from vertexai.generative_models import GenerativeModel, ChatSession, Content, Part
 from pathlib import Path
 from datetime import datetime
 import json
-
-# ============================================================
-# CONFIGURATION - Edit these parameters for your workflow
-# ============================================================
-CONFIG = {
-    "system_prompt": "SystemPrompt1.txt",  # System prompt file from SPs/
-    "shots": [                              # List of shot pairs (User scenario + Assistant DSL code)
-        # {
-        #     "user": "UserScenario_1.txt",      # User scenario example
-        #     "assistant": "AssistantScenario_1.txt"  # Expected DSL code for that scenario
-        # },
-        # {
-        #     "user": "UserScenario_2.txt",
-        #     "assistant": "AssistantScenario_2.txt"
-        # },
-    ],
-    "scenario": "UserScenario_011.txt"     # Scenario file from Scenarios/
-}
-# ============================================================
 
 
 class DSLGenerator:
@@ -78,16 +58,28 @@ class DSLGenerator:
         for i, f in enumerate(scenario_files, 1):
             print(f"{i}. {f.name}")
     
-    def start_conversation(self, system_prompt_file: str, shot_pairs: list, scenario_file: str):
+    def start_conversation(self, system_prompt_file: str, shots, scenario_file: str):
         """
         Start a new conversation with configured system prompt, shot pairs, and scenario
         
         Args:
             system_prompt_file: Name of the system prompt file (e.g., "SystemPrompt1.txt")
-            shot_pairs: List of dicts with 'user' and 'assistant' shot file names
-                       e.g., [{"user": "UserScenario_1.txt", "assistant": "AssistantScenario_1.txt"}]
+            shots: Integer (number of shots, e.g., 2 loads UserScenario_1.txt + AssistantScenario_1.txt,
+                          UserScenario_2.txt + AssistantScenario_2.txt) OR
+                   List of dicts with 'user' and 'assistant' shot file names for backwards compatibility
             scenario_file: Name of the scenario file to process (e.g., "UserScenario_011.txt")
         """
+        # Convert integer shots to list of shot pairs
+        if isinstance(shots, int):
+            shot_pairs = []
+            for i in range(1, shots + 1):
+                shot_pairs.append({
+                    "user": f"UserScenario_{i}.txt",
+                    "assistant": f"AssistantScenario_{i}.txt"
+                })
+        else:
+            shot_pairs = shots if shots else []
+        
         # Store configuration
         self.current_config = {
             "system_prompt": system_prompt_file,
@@ -105,7 +97,7 @@ class DSLGenerator:
             system_instruction=system_prompt
         )
         
-        # Build chat history from few-shot examples
+        # Build chat history from few-shot examples using Content objects
         history = []
         if shot_pairs:
             for pair in shot_pairs:
@@ -114,15 +106,9 @@ class DSLGenerator:
                 # Load assistant DSL code example
                 assistant_content = self.load_file(self.shots_path / pair["assistant"])
                 
-                # Add as user/model message pair
-                history.append({
-                    "role": "user",
-                    "parts": [user_content]
-                })
-                history.append({
-                    "role": "model",
-                    "parts": [assistant_content]
-                })
+                # Add as Content objects
+                history.append(Content(role="user", parts=[Part.from_text(user_content)]))
+                history.append(Content(role="model", parts=[Part.from_text(assistant_content)]))
         
         # Start chat with manufactured history
         self.chat = self.model.start_chat(history=history)
@@ -157,11 +143,11 @@ class DSLGenerator:
         
         if history:
             print("\n[CHAT HISTORY - Few-Shot Examples]")
-            for i, msg in enumerate(history):
-                role = msg["role"].upper()
-                content = msg["parts"][0]
+            for i, content in enumerate(history):
+                role = content.role.upper()
+                text = content.parts[0].text
                 print(f"\n{role} Message {i//2 + 1}:")
-                print(content)
+                print(text)
                 print("-"*80)
         
         print("\n[CURRENT USER PROMPT]")
@@ -255,12 +241,24 @@ Please analyze the error and generate a corrected version of the DSL code that f
         print("DSL Generator - Automated Mode")
         print("="*60)
         
+        # Convert integer shots to list of shot pairs if needed
+        shots = config['shots']
+        if isinstance(shots, int):
+            shot_pairs = []
+            for i in range(1, shots + 1):
+                shot_pairs.append({
+                    "user": f"UserScenario_{i}.txt",
+                    "assistant": f"AssistantScenario_{i}.txt"
+                })
+        else:
+            shot_pairs = shots if shots else []
+        
         # Display configuration
         print("\n=== CURRENT CONFIGURATION ===")
         print(f"System Prompt: {config['system_prompt']}")
-        if config['shots']:
-            print(f"Shot Pairs: {len(config['shots'])} example(s)")
-            for i, pair in enumerate(config['shots'], 1):
+        if shot_pairs:
+            print(f"Shot Pairs: {len(shot_pairs)} example(s)")
+            for i, pair in enumerate(shot_pairs, 1):
                 print(f"  Example {i}: {pair['user']} → {pair['assistant']}")
         else:
             print("Shot Pairs: None (zero-shot learning)")
@@ -336,13 +334,59 @@ def main():
     print("DSL Generator with Gemini API")
     print("="*60)
     
+    # Load configuration from config.json
+    config_file = Path(__file__).parent / "config.json"
+    if not config_file.exists():
+        print("\n❌ Error: config.json file not found!")
+        print("Please create a config.json file with the following structure:")
+        print("""
+{
+  "system_prompt": "SystemPrompt1.txt",
+  "shots": 2,
+  "scenario": "UserScenario_011.txt"
+}
+
+Or for custom shot pairs:
+{
+  "system_prompt": "SystemPrompt1.txt",
+  "shots": [
+    {
+      "user": "UserScenario_1.txt",
+      "assistant": "AssistantScenario_1.txt"
+    }
+  ],
+  "scenario": "UserScenario_011.txt"
+}
+""")
+        return
+    
+    try:
+        with open(config_file, 'r') as f:
+            config = json.load(f)
+        print(f"\n✓ Loaded configuration from config.json")
+    except Exception as e:
+        print(f"\n❌ Error reading config.json: {e}")
+        return
+    
+    # Validate configuration
+    required_keys = ["system_prompt", "shots", "scenario"]
+    for key in required_keys:
+        if key not in config:
+            print(f"\n❌ Error: Missing required key '{key}' in config.json")
+            return
+    
+    # Validate shots type
+    if not isinstance(config["shots"], (int, list)):
+        print(f"\n❌ Error: 'shots' must be an integer or a list in config.json")
+        return
+    
     # Check for key.json in current directory
     key_file = Path(__file__).parent / "key.json"
     service_account_key = None
     project_id = None
     
     if key_file.exists():
-        print("\n✓ Found key.json file")
+        print("✓ Found key.json file")
         try:
             with open(key_file, 'r') as f:
                 key_data = json.load(f)
@@ -384,8 +428,8 @@ def main():
     # Initialize generator
     generator = DSLGenerator(project_id, service_account_key=service_account_key)
     
-    # Run automated session with hardcoded configuration
-    generator.run_automated_session(CONFIG)
+    # Run automated session with configuration from config.json
+    generator.run_automated_session(config)
 
 
 if __name__ == "__main__":

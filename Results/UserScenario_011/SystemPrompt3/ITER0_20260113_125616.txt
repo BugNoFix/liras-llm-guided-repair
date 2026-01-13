@@ -1,0 +1,31 @@
+SampleDelivery
+
+agents:
+	humans: Nurse, LaboratoryPersonnel
+	robots: RobotArm
+locations: patientFloor1, patientFloor2, laboratory, entryModule, storage
+resources: sample, lockedDrawer
+
+Nurse:
+	1: collect(sample)
+	2: insertDataInTrackSystem(sample)
+	3: requestDelivery(sample)
+	4: deliverTo(lockedDrawer)
+
+RobotArm:
+	1:  moveTo laboratory
+		open(lockedDrawer)
+	2: 	scanBarcode(sample)
+		sort(sample)
+		loadTo(entryModule)
+	3: log(samplePicked)
+	4: trackSampleCollectionDeliveryTime(sample)
+
+LaboratoryPersonnel:
+	1: moveTo laboratory
+		open(lockedDrawer)
+	2:  	scanBarcode(sample)
+		sort(sample)
+		loadTo(entryModule)
+	3: log(samplePicked)
+	4: trackSampleCollectionDeliveryTime(sample)
