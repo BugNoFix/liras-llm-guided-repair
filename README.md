@@ -128,9 +128,19 @@ Edit the `config.json` file to specify your configuration:
 {
   "system_prompt": "SystemPrompt1.txt",
   "shots": 2,
-  "scenario": "UserScenario_011.txt"
+  "scenario": "UserScenario_011.txt",
+  "repair_prompt": "RepairPrompt.txt"
 }
 ```
+
+Optional:
+
+- **`repair_prompt`**: Repair-stage prompt template used only during refinement (when you paste compiler output). Defaults to `SPs/RepairPrompt.txt`. You can provide either a filename under `SPs/`, a relative path from the project root, or an absolute path.
+
+Included templates:
+
+- `SPs/RepairPrompt.txt`: Full repair guidance (fixes based on compiler output + pragmatic DSL repair heuristics).
+- `SPs/RepairPrompt_FormatOnly.txt`: Format/syntax focused (minimizes changes; derives fixes strictly from compiler output, avoids “logic/design” changes).
 
 This will automatically load:
 

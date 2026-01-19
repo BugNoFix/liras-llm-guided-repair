@@ -31,10 +31,12 @@ class DSLGenerator:
         self.shots_path = self.base_path / "Shots"
         self.scenarios_path = self.base_path / "Scenarios"
         self.results_path = self.base_path / "Results"
+        self.repair_prompt_template_path = self.base_path / "SPs" / "RepairPrompt.txt"
         
         self.model = None
         self.chat = None
         self.current_config = {}
+        self.last_dsl_code = None
         
     def load_file(self, filepath: Path) -> str:
         """Load and return content from a text file"""
@@ -85,6 +87,7 @@ class DSLGenerator:
             "system_prompt": system_prompt_file,
             "shots": shot_pairs,
             "scenario": scenario_file,
+            "repair_prompt": str(self.repair_prompt_template_path),
             "timestamp": datetime.now().isoformat()
         }
         
@@ -166,7 +169,10 @@ class DSLGenerator:
     
     def _extract_dsl_code(self, response_text: str) -> str:
         """
-        Extract clean DSL code from AI response, removing markdown formatting and explanations
+        Return the model output as-is.
+
+        Note: Output formatting/constraints are enforced via editable prompt files (system prompt
+        and repair prompt), not by in-code sanitization.
         
         Args:
             response_text: Raw response from the AI
@@ -174,49 +180,33 @@ class DSLGenerator:
         Returns:
             Clean DSL code without markdown or explanations
         """
-        # Remove markdown code blocks (```xtext ... ``` or ```plaintext ... ```)
-        import re
-        
-        # Try to find code within markdown code blocks
-        code_block_pattern = r'```(?:xtext|plaintext|dsl)?\s*\n(.*?)\n```'
-        matches = re.findall(code_block_pattern, response_text, re.DOTALL)
-        
-        if matches:
-            # Use the first code block found
-            code = matches[0]
-        else:
-            # No markdown blocks found, use the entire response
-            code = response_text
-        
-        # Remove any leading/trailing whitespace from each line
-        lines = code.split('\n')
-        
-        # Find the minimum indentation (excluding empty lines)
-        min_indent = float('inf')
-        for line in lines:
-            if line.strip():  # Skip empty lines
-                indent = len(line) - len(line.lstrip())
-                min_indent = min(min_indent, indent)
-        
-        # Remove the minimum indentation from all lines
-        if min_indent != float('inf'):
-            dedented_lines = []
-            for line in lines:
-                if line.strip():  # Non-empty line
-                    dedented_lines.append(line[min_indent:])
-                else:  # Empty line
-                    dedented_lines.append('')
-            code = '\n'.join(dedented_lines)
-        
-        # Remove common reasoning/explanation sections that might appear after code
-        # Look for patterns like "**Reasoning", "Reasoning:", "Explanation:", etc.
-        reasoning_pattern = r'\n\s*\*?\*?[Rr]easoning.*$'
-        code = re.split(reasoning_pattern, code, flags=re.DOTALL)[0]
-        
-        explanation_pattern = r'\n\s*\*?\*?[Ee]xplanation.*$'
-        code = re.split(explanation_pattern, code, flags=re.DOTALL)[0]
-        
-        return code.strip()
+        return response_text
+
+    def configure_repair_prompt(self, repair_prompt: str | None):
+        """Configure which repair prompt template to use.
+
+        If `repair_prompt` is:
+        - None/empty: defaults to SPs/RepairPrompt.txt
+        - a filename: resolved under SPs/
+        - a relative path: resolved relative to project root
+        - an absolute path: used as-is
+        """
+        if not repair_prompt:
+            self.repair_prompt_template_path = self.base_path / "SPs" / "RepairPrompt.txt"
+            return
+
+        candidate = Path(repair_prompt)
+        if candidate.is_absolute() and candidate.exists():
+            self.repair_prompt_template_path = candidate
+            return
+
+        rel_to_root = self.base_path / repair_prompt
+        if rel_to_root.exists():
+            self.repair_prompt_template_path = rel_to_root
+            return
+
+        rel_to_sps = self.sp_path / repair_prompt
+        self.repair_prompt_template_path = rel_to_sps
     
     def refine_with_error(self, error_message: str) -> str:
         """
@@ -230,8 +220,18 @@ class DSLGenerator:
         """
         if not self.chat:
             raise RuntimeError("No active conversation. Start a conversation first.")
-        
-        refinement_prompt = f"""The previous DSL code produced the following compilation error:
+
+        template = None
+        if self.repair_prompt_template_path.exists():
+            template = self.load_file(self.repair_prompt_template_path)
+
+        if template:
+            refinement_prompt = template.format(
+                previous_dsl=self.last_dsl_code or "",
+                compiler_output=error_message or "",
+            )
+        else:
+            refinement_prompt = f"""The previous DSL code produced the following compilation error:
 
 ERROR:
 {error_message}
@@ -245,7 +245,7 @@ Provide ONLY the corrected DSL code without any explanations or markdown formatt
         print("\n" + "="*50 + "\n")
         
         response = self.chat.send_message(refinement_prompt)
-        return self._extract_dsl_code(response.text)
+        return response.text
     
     def save_result(self, dsl_code: str, iteration: int = 0, success: bool = False):
         """
@@ -319,6 +319,9 @@ Provide ONLY the corrected DSL code without any explanations or markdown formatt
             print("Shot Pairs: None (zero-shot learning)")
         print(f"Scenario: {config['scenario']}")
         print("="*60 + "\n")
+
+        # Optional: configure which repair prompt to use for refinement iterations
+        self.configure_repair_prompt(config.get("repair_prompt"))
         
         # Start conversation and get initial DSL code
         try:
@@ -327,7 +330,8 @@ Provide ONLY the corrected DSL code without any explanations or markdown formatt
                 config['shots'],
                 config['scenario']
             )
-            dsl_code = self._extract_dsl_code(response_text)
+            dsl_code = response_text
+            self.last_dsl_code = dsl_code
             print("\n=== GENERATED DSL CODE ===")
             print(dsl_code)
             print("\n" + "="*60 + "\n")
@@ -372,6 +376,7 @@ Provide ONLY the corrected DSL code without any explanations or markdown formatt
                         continue
                     
                     dsl_code = self.refine_with_error(error_msg)
+                    self.last_dsl_code = dsl_code
                     print("\n=== REFINED DSL CODE ===")
                     print(dsl_code)
                     print("\n" + "="*60 + "\n")

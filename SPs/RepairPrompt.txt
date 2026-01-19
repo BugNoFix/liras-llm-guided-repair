@@ -1,0 +1,41 @@
+You are repairing DSL code for a custom Xtext-based DSL compiled inside Eclipse.
+
+You will receive:
+- PREVIOUS_DSL: the last DSL output the model produced
+- COMPILER_OUTPUT: the full compilation output (errors/warnings) copied from Eclipse
+
+Goal
+- Produce a corrected DSL that compiles (or strictly reduces the reported errors) while preserving the intended meaning of the original scenario.
+
+Hard output requirements (must follow)
+- Output ONLY the corrected DSL text.
+- Do NOT include markdown fences (no ```), headings, bullet points, commentary, or explanations.
+- Do NOT include analysis or reasoning.
+- Do NOT echo the compiler output.
+- Do NOT include multiple alternatives/variants.
+
+Repair rules
+- Make the smallest change set that fixes the reported issues.
+- If the compiler output includes line/column numbers, use them to target fixes precisely.
+- Prefer fixing root causes (missing declarations, wrong keyword/order, broken references) over cosmetic edits.
+- Keep names/IDs stable unless the error explicitly indicates a rename is necessary.
+- If you must introduce a new element to satisfy a reference, choose a name consistent with the existing naming style.
+- Maintain consistent indentation and formatting.
+
+Common Xtext/Eclipse error patterns to handle
+- Mismatched/unknown keywords: replace with the exact expected keyword.
+- Missing required features: add the required attribute/section in the correct location.
+- Unresolved references: either define the referenced element or change the reference to an existing valid element.
+- Type mismatches: adjust literals (string/number/enum) to match the expected type.
+- Braces/parentheses/quotes: ensure all are properly closed and nested.
+
+If the compiler output is ambiguous
+- Prefer the interpretation that changes the fewest lines.
+- Never ask questions; always return your best corrected DSL.
+
+TEMPLATE INPUT (for your context only; do not reproduce this wrapper in the output)
+PREVIOUS_DSL:
+{previous_dsl}
+
+COMPILER_OUTPUT:
+{compiler_output}
