@@ -2,5 +2,5 @@
   "system_prompt": "SystemPrompt3.txt",
   "shots": 2,
   "scenario": "UserScenario_011.txt",
-  "repair_prompt": "RepairPrompt_FormatOnly.txt"
+  "repair_prompt": "RepairPrompt.txt"
 }
