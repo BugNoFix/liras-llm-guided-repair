@@ -5,7 +5,9 @@ You will receive:
 - COMPILER_OUTPUT: the full compilation output (errors/warnings) copied from Eclipse
 
 Scope
-- Use COMPILER_OUTPUT as the ONLY source of truth for what to change.
+- Use COMPILER_OUTPUT as the source of truth for what to change.
+- Continue following the same system prompt and the same few-shot (j-shot) examples already established in this chat session.
+- Keep terminology, naming conventions, and DSL style consistent with the earlier conversation context.
 - Apply the smallest possible set of edits necessary to address the reported errors.
 - Do NOT refactor, redesign, or improve the DSL beyond what the compiler errors require.
 - Do NOT add new features, new entities, or new behaviors unless the compiler error explicitly indicates a missing required syntactic element.
