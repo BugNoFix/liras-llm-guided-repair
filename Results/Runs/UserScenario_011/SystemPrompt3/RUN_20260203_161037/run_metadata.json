@@ -46,22 +46,141 @@
         "jar_missing": false,
         "dsl_missing": false
       },
-      "compiler_feedback_chars": 1354
+      "compiler_feedback_chars": 1354,
+      "repair_prompt_included_previous_dsl": false,
+      "repair_prompt_mode": "compiler_only"
+    },
+    {
+      "iteration": 2,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_161037/dsl/ITER2_20260203_161553.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_161037/compiler/ITER2_20260203_161553.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1516,
+      "repair_prompt_included_previous_dsl": false,
+      "repair_prompt_mode": "compiler_only"
+    },
+    {
+      "iteration": 3,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_161037/dsl/ITER3_20260203_161739.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_161037/compiler/ITER3_20260203_161739.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1514,
+      "repair_prompt_included_previous_dsl": false,
+      "repair_prompt_mode": "compiler_only"
+    },
+    {
+      "iteration": 4,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_161037/dsl/ITER4_20260203_162006.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_161037/compiler/ITER4_20260203_162006.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1516,
+      "repair_prompt_included_previous_dsl": false,
+      "repair_prompt_mode": "compiler_only"
+    },
+    {
+      "iteration": 5,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_161037/dsl/ITER5_20260203_162144.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_161037/compiler/ITER5_20260203_162144.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1514,
+      "repair_prompt_included_previous_dsl": false,
+      "repair_prompt_mode": "compiler_only"
+    },
+    {
+      "iteration": 6,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_161037/dsl/ITER6_20260203_162352.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_161037/compiler/ITER6_20260203_162352.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1512,
+      "repair_prompt_included_previous_dsl": false,
+      "repair_prompt_mode": "compiler_only"
+    },
+    {
+      "iteration": 7,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_161037/dsl/ITER7_20260203_162545.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_161037/compiler/ITER7_20260203_162545.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1512,
+      "repair_prompt_included_previous_dsl": false,
+      "repair_prompt_mode": "compiler_only"
+    },
+    {
+      "iteration": 8,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_161037/dsl/ITER8_20260203_162722.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_161037/compiler/ITER8_20260203_162722.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1514
     }
   ],
   "telemetry": {
-    "llm_calls": 2,
-    "prompt_chars_total": 2983,
-    "response_chars_total": 1094,
-    "prompt_tokens_est_total": 746,
-    "response_tokens_est_total": 274,
+    "llm_calls": 9,
+    "prompt_chars_total": 13540,
+    "response_chars_total": 4903,
+    "prompt_tokens_est_total": 3385,
+    "response_tokens_est_total": 1227,
     "last_call": {
       "kind": "repair",
-      "timestamp": "2026-02-03T16:13:46.433056",
-      "prompt_chars": 2091,
-      "response_chars": 550,
-      "prompt_tokens_est": 523,
-      "response_tokens_est": 138
+      "timestamp": "2026-02-03T16:27:22.364886",
+      "prompt_chars": 1529,
+      "response_chars": 544,
+      "prompt_tokens_est": 382,
+      "response_tokens_est": 136
     }
   },
   "llm_call_history": [
@@ -80,24 +199,80 @@
       "response_chars": 550,
       "prompt_tokens_est": 523,
       "response_tokens_est": 138
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-03T16:15:53.412213",
+      "prompt_chars": 1371,
+      "response_chars": 548,
+      "prompt_tokens_est": 343,
+      "response_tokens_est": 137
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-03T16:17:39.643217",
+      "prompt_chars": 1533,
+      "response_chars": 544,
+      "prompt_tokens_est": 383,
+      "response_tokens_est": 136
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-03T16:20:06.960382",
+      "prompt_chars": 1531,
+      "response_chars": 545,
+      "prompt_tokens_est": 383,
+      "response_tokens_est": 136
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-03T16:21:44.240750",
+      "prompt_chars": 1533,
+      "response_chars": 544,
+      "prompt_tokens_est": 383,
+      "response_tokens_est": 136
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-03T16:23:52.229667",
+      "prompt_chars": 1531,
+      "response_chars": 542,
+      "prompt_tokens_est": 383,
+      "response_tokens_est": 136
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-03T16:25:45.298142",
+      "prompt_chars": 1529,
+      "response_chars": 542,
+      "prompt_tokens_est": 382,
+      "response_tokens_est": 136
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-03T16:27:22.364886",
+      "prompt_chars": 1529,
+      "response_chars": 544,
+      "prompt_tokens_est": 382,
+      "response_tokens_est": 136
     }
   ],
   "status": "running",
   "run_finished_at": null,
   "summary": {
-    "iterations_recorded": 2,
-    "validations_attempted": 2,
-    "compiler_failures": 2,
+    "iterations_recorded": 9,
+    "validations_attempted": 9,
+    "compiler_failures": 9,
     "compiler_successes": 0,
     "setup_errors": 0,
     "first_success_iteration": null,
     "final_success_dsl_path": null,
-    "total_compiler_feedback_chars": 2868,
-    "llm_calls": 2,
-    "prompt_tokens_est_total": 746,
-    "response_tokens_est_total": 274
+    "total_compiler_feedback_chars": 13466,
+    "llm_calls": 9,
+    "prompt_tokens_est_total": 3385,
+    "response_tokens_est_total": 1227
   },
-  "updated_at": "2026-02-03T16:13:48.520965",
+  "updated_at": "2026-02-03T16:27:24.211563",
   "repair": {
     "repair_chat_initialized_at": "2026-02-03T16:11:12.067863",
     "repair_prompt_template_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/SPs/SystemPromptRepair1.txt",
