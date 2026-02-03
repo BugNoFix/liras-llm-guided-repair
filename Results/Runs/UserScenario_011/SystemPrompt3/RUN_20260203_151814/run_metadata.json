@@ -1,0 +1,283 @@
+{
+  "run_id": "20260203_151814",
+  "run_started_at": "2026-02-03T15:18:14.956378",
+  "project_id": "aerobic-stream-483313-v6",
+  "location": "us-central1",
+  "system_prompt": "SystemPrompt3.txt",
+  "shots": 2,
+  "scenario": "UserScenario_011.txt",
+  "repair_prompt": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/SPs/SystemPromptRepair1.txt",
+  "generation_model": "gemini-2.5-pro",
+  "repair_model": "gemini-2.5-pro",
+  "repair_shots": 0,
+  "compiler_jar": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/liras_compiler.jar",
+  "max_iterations": 10,
+  "run_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814",
+  "dsl_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/dsl",
+  "compiler_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/compiler",
+  "iterations": [
+    {
+      "iteration": 0,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/dsl/ITER0_20260203_151852.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/compiler/ITER0_20260203_151852.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1515
+    },
+    {
+      "iteration": 1,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/dsl/ITER1_20260203_152137.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/compiler/ITER1_20260203_152137.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 871
+    },
+    {
+      "iteration": 2,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/dsl/ITER2_20260203_152153.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/compiler/ITER2_20260203_152153.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1515
+    },
+    {
+      "iteration": 3,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/dsl/ITER3_20260203_152432.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/compiler/ITER3_20260203_152432.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1515
+    },
+    {
+      "iteration": 4,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/dsl/ITER4_20260203_152538.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/compiler/ITER4_20260203_152538.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 871
+    },
+    {
+      "iteration": 5,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/dsl/ITER5_20260203_152552.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/compiler/ITER5_20260203_152552.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1515
+    },
+    {
+      "iteration": 6,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/dsl/ITER6_20260203_152716.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/compiler/ITER6_20260203_152716.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 871
+    },
+    {
+      "iteration": 7,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/dsl/ITER7_20260203_152734.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/compiler/ITER7_20260203_152734.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1515
+    },
+    {
+      "iteration": 8,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/dsl/ITER8_20260203_152927.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/compiler/ITER8_20260203_152927.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 3567
+    },
+    {
+      "iteration": 9,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/dsl/ITER9_20260203_153134.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_151814/compiler/ITER9_20260203_153134.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 3567
+    }
+  ],
+  "telemetry": {
+    "llm_calls": 10,
+    "prompt_chars_total": 53272,
+    "response_chars_total": 6794,
+    "prompt_tokens_est_total": 13318,
+    "response_tokens_est_total": 1696,
+    "last_call": {
+      "kind": "repair",
+      "timestamp": "2026-02-03T15:31:34.264244",
+      "prompt_chars": 7856,
+      "response_chars": 677,
+      "prompt_tokens_est": 1964,
+      "response_tokens_est": 169
+    }
+  },
+  "llm_call_history": [
+    {
+      "kind": "generate",
+      "timestamp": "2026-02-03T15:18:52.525199",
+      "prompt_chars": 892,
+      "response_chars": 677,
+      "prompt_tokens_est": 223,
+      "response_tokens_est": 169
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-03T15:21:37.359900",
+      "prompt_chars": 5804,
+      "response_chars": 685,
+      "prompt_tokens_est": 1451,
+      "response_tokens_est": 171
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-03T15:21:53.036111",
+      "prompt_chars": 5168,
+      "response_chars": 677,
+      "prompt_tokens_est": 1292,
+      "response_tokens_est": 169
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-03T15:24:32.570506",
+      "prompt_chars": 5804,
+      "response_chars": 677,
+      "prompt_tokens_est": 1451,
+      "response_tokens_est": 169
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-03T15:25:38.780712",
+      "prompt_chars": 5804,
+      "response_chars": 685,
+      "prompt_tokens_est": 1451,
+      "response_tokens_est": 171
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-03T15:25:52.205505",
+      "prompt_chars": 5168,
+      "response_chars": 677,
+      "prompt_tokens_est": 1292,
+      "response_tokens_est": 169
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-03T15:27:16.107321",
+      "prompt_chars": 5804,
+      "response_chars": 685,
+      "prompt_tokens_est": 1451,
+      "response_tokens_est": 171
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-03T15:27:34.231852",
+      "prompt_chars": 5168,
+      "response_chars": 677,
+      "prompt_tokens_est": 1292,
+      "response_tokens_est": 169
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-03T15:29:27.592739",
+      "prompt_chars": 5804,
+      "response_chars": 677,
+      "prompt_tokens_est": 1451,
+      "response_tokens_est": 169
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-03T15:31:34.264244",
+      "prompt_chars": 7856,
+      "response_chars": 677,
+      "prompt_tokens_est": 1964,
+      "response_tokens_est": 169
+    }
+  ],
+  "status": "max_iterations_reached",
+  "run_finished_at": "2026-02-03T15:31:39.538353",
+  "summary": {
+    "iterations_recorded": 10,
+    "validations_attempted": 10,
+    "compiler_failures": 10,
+    "compiler_successes": 0,
+    "setup_errors": 0,
+    "first_success_iteration": null,
+    "final_success_dsl_path": null,
+    "total_compiler_feedback_chars": 17322,
+    "llm_calls": 10,
+    "prompt_tokens_est_total": 13318,
+    "response_tokens_est_total": 1696
+  },
+  "updated_at": "2026-02-03T15:31:39.538443"
+}

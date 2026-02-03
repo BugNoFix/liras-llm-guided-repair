@@ -1,0 +1,26 @@
+flowchart LR
+    SP[("System Prompt")] --> GEN["Generation Component<br>Vertex AI (generation_model)"]
+    SC[("User Scenario")] --> GEN
+    SH[("J-Shots")] --> GEN
+    GEN --> SAVE1["DSL.LIRAs"]
+    SAVE1 --> COMP["Local Validation Component<br>java -jar compiler_jar"]
+    COMP --> OUT["Compiler output"]
+    OUT --> OK{"Valid?"}
+    OK -- Yes --> SUCCESS["STOP"]
+    OK -- No --> REPAIR["User Prompt"]
+    OUT -- compilation output --> REPAIR
+    REPAIR --> GEN
+    RP[("Repair System Prompt =<br>- Grammar Rules + Instructions<br>- Generative System Prompt<br>- Generative User Scenario")] --> GEN
+    SAVE1 -- PREVIOUS DSL --> REPAIR
+
+    style SP color:#000000,fill:#FFCDD2
+    style GEN fill:#BBDEFB
+    style SC fill:#FFCDD2
+    style SH fill:#FFCDD2
+    style SAVE1 fill:#FFE0B2,color:#000000
+    style COMP fill:#FFF9C4
+    style OUT fill:#FFE0B2
+    style OK fill:#E1BEE7
+    style SUCCESS fill:#C8E6C9
+    style REPAIR color:#000000,fill:#FFE0B2
+    style RP fill:#FFCDD2

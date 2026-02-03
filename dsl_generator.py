@@ -46,6 +46,11 @@ class DSLGenerator:
         # Generation context (captured once during generate phase; reused during repair prompts)
         self.generation_system_prompt_text: Optional[str] = None
         self.generation_scenario_text: Optional[str] = None
+        self.initial_dsl_from_generation: Optional[str] = None
+
+        # Repair chat state
+        self.repair_iteration_count = 0
+        self.last_repair_prompt_included_previous_dsl: Optional[bool] = None
 
         # Per-run state (initialized when starting an automated session)
         self.run_id: Optional[str] = None
@@ -327,27 +332,48 @@ class DSLGenerator:
 
         return response.text
 
-    def _build_repair_user_prompt(self, previous_dsl: str, compiler_output: str) -> str:
-        """Build the repair user prompt as a concatenation of:
+    def _build_repair_user_prompt(
+        self,
+        compiler_output: str,
+        previous_dsl: Optional[str] = None,
+        include_previous_dsl: bool = False,
+    ) -> str:
+        """Build a minimal repair user prompt.
 
-        - generation system prompt
-        - generation user scenario
-        - previous DSL output (raw)
-        - compiler output (raw)
+        - First repair turn: include PREVIOUS_DSL + COMPILER_OUTPUT.
+        - Subsequent turns: include COMPILER_OUTPUT only (model uses its previous assistant
+          output as PREVIOUS_DSL, per the repair system prompt).
         """
-        gen_sp = self.generation_system_prompt_text or ""
-        gen_scenario = self.generation_scenario_text or ""
+        if include_previous_dsl:
+            return (
+                "PREVIOUS_DSL:\n"
+                + (previous_dsl or "")
+                + "\n\nCOMPILER_OUTPUT:\n"
+                + (compiler_output or "")
+            )
+        return "COMPILER_OUTPUT:\n" + (compiler_output or "")
 
-        return (
-            "[GENERATION_SYSTEM_PROMPT]\n"
-            + gen_sp
-            + "\n\n[GENERATION_USER_SCENARIO]\n"
-            + gen_scenario
-            + "\n\n[PREVIOUS_DSL]\n"
-            + (previous_dsl or "")
-            + "\n\n[COMPILER_OUTPUT]\n"
-            + (compiler_output or "")
-        )
+    def _fill_repair_system_prompt_template(self, template_text: str) -> str:
+        """Fill the repair system prompt template with static generation artifacts.
+
+        We intentionally avoid str.format because the embedded DSL/system prompt/scenario
+        may contain curly braces.
+        """
+        if not self.generation_system_prompt_text or not self.generation_scenario_text:
+            raise RuntimeError("Generation context missing; cannot build filled repair system prompt")
+        if self.initial_dsl_from_generation is None:
+            raise RuntimeError("Initial DSL from generation missing; cannot build filled repair system prompt")
+
+        filled = template_text
+        replacements = {
+            "generation_system_prompt": self.generation_system_prompt_text,
+            "generation_user_scenario": self.generation_scenario_text,
+            "initial_dsl": self.initial_dsl_from_generation,
+        }
+
+        for key, value in replacements.items():
+            filled = filled.replace("{" + key + "}", value or "")
+        return filled
 
     def _ensure_repair_chat(self, repair_model_name: str, repair_shots) -> None:
         """Start a dedicated repair chat session if not already created.
@@ -361,7 +387,8 @@ class DSLGenerator:
         if not self.repair_prompt_template_path.exists():
             raise FileNotFoundError(f"Repair prompt not found: {self.repair_prompt_template_path}")
 
-        repair_system_prompt = self.load_file(self.repair_prompt_template_path)
+        repair_template = self.load_file(self.repair_prompt_template_path)
+        repair_system_prompt = self._fill_repair_system_prompt_template(repair_template)
         self.repair_model = GenerativeModel(
             repair_model_name,
             system_instruction=repair_system_prompt,
@@ -377,17 +404,35 @@ class DSLGenerator:
                 history.append(Content(role="model", parts=[Part.from_text(assistant_content)]))
 
         self.repair_chat = self.repair_model.start_chat(history=history)
+        self.repair_iteration_count = 0
+
+        if self.run_metadata is not None:
+            self.run_metadata.setdefault("repair", {})
+            self.run_metadata["repair"].setdefault("repair_chat_initialized_at", datetime.now().isoformat())
+            self.run_metadata["repair"]["repair_prompt_template_path"] = str(self.repair_prompt_template_path)
+            self.run_metadata["repair"]["repair_system_prompt_chars"] = len(repair_system_prompt or "")
+            self._persist_run_metadata()
 
     def repair_with_compiler_output(self, previous_dsl: str, compiler_output: str, repair_model_name: str, repair_shots) -> str:
         """Run one repair iteration using the dedicated repair chat."""
-        if not self.generation_system_prompt_text or not self.generation_scenario_text:
-            raise RuntimeError("Generation context missing; cannot construct repair prompt")
-
         self._ensure_repair_chat(repair_model_name=repair_model_name, repair_shots=repair_shots)
-        prompt = self._build_repair_user_prompt(previous_dsl=previous_dsl, compiler_output=compiler_output)
+
+        include_previous_dsl = self.repair_iteration_count == 0
+        # Reliability guardrail: if previous_dsl is empty/missing, include it.
+        if not include_previous_dsl and not (previous_dsl or "").strip():
+            include_previous_dsl = True
+
+        prompt = self._build_repair_user_prompt(
+            compiler_output=compiler_output,
+            previous_dsl=previous_dsl,
+            include_previous_dsl=include_previous_dsl,
+        )
+        self.last_repair_prompt_included_previous_dsl = include_previous_dsl
 
         print("\n=== Sending repair request to Gemini (repair chat) ===")
         response = self.repair_chat.send_message(prompt)
+
+        self.repair_iteration_count += 1
 
         # Telemetry: record repair prompt/response sizes (no sanitization)
         self._record_llm_call("repair", prompt, response.text)
@@ -562,20 +607,19 @@ class DSLGenerator:
         if self.repair_prompt_template_path.exists():
             template = self.load_file(self.repair_prompt_template_path)
 
-        if template:
+        if template and ("{previous_dsl}" in template) and ("{compiler_output}" in template):
             refinement_prompt = template.format(
                 previous_dsl=self.last_dsl_code or "",
                 compiler_output=error_message or "",
             )
         else:
-            refinement_prompt = f"""The previous DSL code produced the following compilation error:
-
-ERROR:
-{error_message}
-
-Please analyze the error and generate a corrected version of the DSL code that fixes this issue.
-Provide ONLY the corrected DSL code without any explanations or markdown formatting.
-"""
+            refinement_prompt = (
+                "PREVIOUS_DSL:\n"
+                + (self.last_dsl_code or "")
+                + "\n\nCOMPILER_OUTPUT:\n"
+                + (error_message or "")
+                + "\n\nReturn ONLY the corrected DSL text."
+            )
         
         print("\n=== Sending error feedback to Gemini ===")
         print(f"Error:\n{error_message}")
@@ -673,6 +717,7 @@ Provide ONLY the corrected DSL code without any explanations or markdown formatt
             # IMPORTANT: preserve raw model output exactly as received (no sanitization)
             dsl_code = response_text
             self.last_dsl_code = dsl_code
+            self.initial_dsl_from_generation = dsl_code
 
             print("\n=== GENERATED DSL CODE ===")
             print(dsl_code)
@@ -726,6 +771,13 @@ Provide ONLY the corrected DSL code without any explanations or markdown formatt
                         )
                         self._persist_run_metadata()
                     break
+
+                # Initialize repair chat as soon as compiler output is available.
+                # (This creates the chat + sets system prompt, but does not call the model.)
+                self._ensure_repair_chat(
+                    repair_model_name=config["repair_model"],
+                    repair_shots=config.get("repair_shots"),
+                )
 
                 if is_valid:
                     print("\n✓ Compiler reported SUCCESS")
@@ -825,6 +877,22 @@ Provide ONLY the corrected DSL code without any explanations or markdown formatt
                     repair_model_name=config['repair_model'],
                     repair_shots=config.get('repair_shots'),
                 )
+
+                # Annotate last iteration with repair prompt mode for research.
+                if self.run_metadata is not None:
+                    try:
+                        last_it = self.run_metadata.get("iterations", [])[-1]
+                        last_it["repair_prompt_included_previous_dsl"] = bool(
+                            self.last_repair_prompt_included_previous_dsl
+                        )
+                        last_it["repair_prompt_mode"] = (
+                            "dsl_plus_compiler"
+                            if self.last_repair_prompt_included_previous_dsl
+                            else "compiler_only"
+                        )
+                        self._persist_run_metadata()
+                    except Exception:
+                        pass
                 self.last_dsl_code = dsl_code
                 print("\n=== REFINED DSL CODE ===")
                 print(dsl_code)

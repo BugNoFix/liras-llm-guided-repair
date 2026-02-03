@@ -5,7 +5,7 @@
   "generation_model": "gemini-2.5-pro",
   "shots": 2,
   "repair_model": "gemini-2.5-pro",
-  "repair_prompt": "RepairPrompt.txt",
+  "repair_prompt": "SystemPromptRepair1.txt",
   "repair_shots": 0,
   "max_iterations": 10
 }
