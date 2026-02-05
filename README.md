@@ -63,8 +63,9 @@ Install options:
 
 4. **Save the Key**:
    - Rename the downloaded file to `key.json`
-   - Place it in the project root directory: `RESEARCH_PROJECT/key.json`
-   - **Important**: This file is already in `.gitignore` and won't be committed to version control
+   - **For shared projects**: Create a `keys/` directory and place it there: `RESEARCH_PROJECT/keys/key.json`
+   - **For personal use**: You can also place it in the project root: `RESEARCH_PROJECT/key.json`
+   - **Important**: Both `keys/` directory and `key.json` are in `.gitignore` and won't be committed to version control
 
 ### 3. Create Python Virtual Environment
 
@@ -101,7 +102,9 @@ pip install -r requirements.txt
 python dsl_generator.py
 ```
 
-The script will automatically detect and use the `key.json` file in the project directory.
+The script will automatically detect and use the `key.json` file from either:
+1. `keys/key.json` (recommended for shared projects)
+2. `key.json` (root directory, for backward compatibility)
 
 ## Alternative: Use gcloud CLI Authentication
 
@@ -109,7 +112,7 @@ Instead of a service account key, you can use gcloud CLI:
 
 1. Install [Google Cloud SDK](https://cloud.google.com/sdk/docs/install)
 2. Run: `gcloud auth application-default login`
-3. Remove or rename `key.json` from the project directory
+3. Remove or rename `key.json` from the `keys/` directory
 4. The script will use your gcloud credentials instead
 
 ## Project Structure
@@ -118,8 +121,10 @@ Instead of a service account key, you can use gcloud CLI:
 RESEARCH_PROJECT/
 ├── dsl_generator.py          # Main generator script
 ├── config.json               # Configuration file (edit this!)
-├── key.json                  # Google Cloud credentials (not in git)
 ├── requirements.txt          # Python dependencies
+├── keys/                     # API keys directory (gitignored)
+│   ├── key.json              # Your Google Cloud credentials
+│   └── README.md             # Key setup instructions
 ├── SPs/                      # System prompts
 │   ├── SystemPrompt1.txt
 │   ├── SystemPrompt2.txt
@@ -133,11 +138,11 @@ RESEARCH_PROJECT/
 │   ├── UserScenario_016.txt
 │   └── ...
 └── Results/                  # Generated DSL code outputs and metadata
-  └── Runs/                  # Organized per-run output folders
-    └── <Scenario>/<SystemPrompt>/RUN_<timestamp>/
-      ├── dsl/           # Generated DSL outputs (.LIRAs)
-      ├── compiler/      # Compiler outputs per attempt (*.compiler.txt)
-      └── run_metadata.json
+    └── Runs/                  # Organized per-run output folders
+        └── <Scenario>/<SystemPrompt>/RUN_<timestamp>/
+            ├── dsl/           # Generated DSL outputs (.LIRAs)
+            ├── compiler/      # Compiler outputs per attempt (*.compiler.txt)
+            └── run_metadata.json
 ```
 
 ## How to Use the Generator
@@ -215,6 +220,53 @@ This will automatically load:
 - **`repair_shots`**: Optional additional few-shots used only for the repair chat. Can be an integer (like `shots`) or an explicit list of `{user, assistant}` pairs. Use `0`/`[]` for none.
 - **`compiler_jar` (required)**: Path to the runnable compiler JAR used for validation (relative to project root or absolute path)
 - **`max_iterations` (required)**: Maximum number of generate→compile→repair attempts before stopping
+
+#### Available Gemini Models
+
+**Gemini 2.5 Models:**
+
+- **`gemini-2.5-pro`**: Most capable model for complex reasoning
+  - Input: 2M tokens | Output: 8,192 tokens
+  - Best for: Initial generation with complex DSL patterns
+  
+- **`gemini-2.5-flash`**: Fast responses with good quality
+  - Input: 1M tokens | Output: 8,192 tokens
+  - Best for: Repair iterations or when speed matters
+
+**Gemini 3 Models (Preview):**
+
+- **`gemini-3-pro-preview-0205`**: Latest preview with enhanced reasoning
+  - Input: 2M tokens | Output: 8,192 tokens
+  - Features: Thinking mode, better code generation
+  - Best for: Experimental runs with cutting-edge capabilities
+  
+- **`gemini-3-flash-preview`**: Fast generation with improved quality
+  - Input: 1M tokens | Output: 8,192 tokens
+  - Best for: High-volume experiments or rapid iteration
+
+**Recommended Configurations:**
+
+```json
+// Balanced: Quality generation + Fast repair
+{
+  "generation_model": "gemini-2.5-pro",
+  "repair_model": "gemini-2.5-flash"
+}
+
+// Latest: Test Gemini 3 capabilities
+{
+  "generation_model": "gemini-3-pro-preview-0205",
+  "repair_model": "gemini-3-pro-preview-0205"
+}
+```
+
+**Token Usage per Iteration:**
+- System Prompt: ~500-1,500 tokens
+- Few-shot Examples (2 shots): ~2,000-4,000 tokens
+- User Scenario: ~200-500 tokens
+- DSL Output: ~300-1,000 tokens
+- Compiler Feedback: ~100-500 tokens
+- **Total**: ~3,000-8,000 tokens (well within all model limits)
 
 ### 2. Run the Generator
 
