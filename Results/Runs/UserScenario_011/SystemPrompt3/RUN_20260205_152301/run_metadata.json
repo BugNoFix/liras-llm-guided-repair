@@ -1,0 +1,81 @@
+{
+  "run_id": "20260205_152301",
+  "run_started_at": "2026-02-05T15:23:01.828796",
+  "project_id": "project-e0e4a00a-984e-45ad-a47",
+  "location": "us-central1",
+  "system_prompt": "SystemPrompt3.txt",
+  "shots": 2,
+  "scenario": "UserScenario_011.txt",
+  "repair_prompt": "/home/yoursenpai/polimi/sem3/fucking_SE/rs/RESEARCH_PROJECT/SPs/SystemPromptRepair1.txt",
+  "generation_model": "gemini-2.5-pro",
+  "repair_model": "gemini-2.5-pro",
+  "repair_shots": 0,
+  "compiler_jar": "/home/yoursenpai/polimi/sem3/fucking_SE/rs/RESEARCH_PROJECT/liras_compiler.jar",
+  "max_iterations": 1,
+  "run_dir": "/home/yoursenpai/polimi/sem3/fucking_SE/rs/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260205_152301",
+  "dsl_dir": "/home/yoursenpai/polimi/sem3/fucking_SE/rs/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260205_152301/dsl",
+  "compiler_dir": "/home/yoursenpai/polimi/sem3/fucking_SE/rs/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260205_152301/compiler",
+  "iterations": [
+    {
+      "iteration": 0,
+      "dsl_path": "/home/yoursenpai/polimi/sem3/fucking_SE/rs/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260205_152301/dsl/ITER0_20260205_152701.LIRAs",
+      "compiler_output_path": "/home/yoursenpai/polimi/sem3/fucking_SE/rs/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260205_152301/compiler/ITER0_20260205_152701.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1518
+    }
+  ],
+  "telemetry": {
+    "llm_calls": 1,
+    "prompt_chars_total": 892,
+    "response_chars_total": 641,
+    "prompt_tokens_est_total": 223,
+    "response_tokens_est_total": 160,
+    "last_call": {
+      "kind": "generate",
+      "timestamp": "2026-02-05T15:27:01.782369",
+      "prompt_chars": 892,
+      "response_chars": 641,
+      "prompt_tokens_est": 223,
+      "response_tokens_est": 160
+    }
+  },
+  "llm_call_history": [
+    {
+      "kind": "generate",
+      "timestamp": "2026-02-05T15:27:01.782369",
+      "prompt_chars": 892,
+      "response_chars": 641,
+      "prompt_tokens_est": 223,
+      "response_tokens_est": 160
+    }
+  ],
+  "status": "max_iterations_reached",
+  "run_finished_at": "2026-02-05T15:27:03.607381",
+  "summary": {
+    "iterations_recorded": 1,
+    "validations_attempted": 1,
+    "compiler_failures": 1,
+    "compiler_successes": 0,
+    "setup_errors": 0,
+    "first_success_iteration": null,
+    "final_success_dsl_path": null,
+    "total_compiler_feedback_chars": 1518,
+    "llm_calls": 1,
+    "prompt_tokens_est_total": 223,
+    "response_tokens_est_total": 160
+  },
+  "updated_at": "2026-02-05T15:27:03.607415",
+  "repair": {
+    "repair_chat_initialized_at": "2026-02-05T15:27:03.607147",
+    "repair_prompt_template_path": "/home/yoursenpai/polimi/sem3/fucking_SE/rs/RESEARCH_PROJECT/SPs/SystemPromptRepair1.txt",
+    "repair_system_prompt_chars": 9604
+  }
+}

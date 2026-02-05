@@ -1,46 +1,22 @@
 import os
 import shlex
 import subprocess
-from google import genai
-from google.genai import types
+import vertexai
+from vertexai.generative_models import GenerativeModel, ChatSession, Content, Part
 from pathlib import Path
 from datetime import datetime
 import json
 from typing import Optional
 
-import os
-from pathlib import Path
-
-# 🔴 KEY PATH CONFIGURATION
-# For shared projects: place your personal key in keys/key.json
-# The keys/ directory is gitignored to prevent sharing credentials
-PROJECT_ROOT = Path(__file__).parent
-KEYS_DIR = PROJECT_ROOT / "keys"
-
-# Check for key in keys/ directory first (recommended for shared projects)
-KEY_PATH = KEYS_DIR / "key.json"
-if not KEY_PATH.exists():
-    # Fallback to root directory for backward compatibility
-    KEY_PATH = PROJECT_ROOT / "key.json"
-
-if KEY_PATH.exists():
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(KEY_PATH)
-    print(f"✅ SUCCESS: Auth key found at {KEY_PATH}")
-else:
-    print(f"❌ ERROR: Auth key NOT found")
-    print(f"Please place your key.json in one of these locations:")
-    print(f"  - {KEYS_DIR / 'key.json'} (recommended for shared projects)")
-    print(f"  - {PROJECT_ROOT / 'key.json'} (backward compatibility)")
-    print(f"\nCreate the keys/ directory if it doesn't exist.")
 
 class DSLGenerator:
-    def __init__(self, project_id: str, location: str = "global", service_account_key: str = None):
+    def __init__(self, project_id: str, location: str = "us-central1", service_account_key: str = None):
         """
         Initialize the DSL Generator with Vertex AI credentials
         
         Args:
             project_id: Google Cloud Project ID
-            location: Region for Vertex AI (default: global)
+            location: Region for Vertex AI (default: us-central1)
             service_account_key: Path to service account JSON key file (optional)
         """
         # Set credentials if service account key is provided
@@ -48,8 +24,7 @@ class DSLGenerator:
             os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = service_account_key
             print(f"✓ Using service account: {service_account_key}")
         
-        # Initialize Gemini 3 client
-        self.client = genai.Client(vertexai=True, project=project_id, location=location)
+        vertexai.init(project=project_id, location=location)
         self.project_id = project_id
         self.location = location
         
@@ -310,10 +285,13 @@ class DSLGenerator:
         # Capture generation context for the repair phase
         self.generation_system_prompt_text = system_prompt
         
-        # Store model name for chat
-        self.model_name = model_name
+        # Create model with system instruction
+        self.model = GenerativeModel(
+            model_name,
+            system_instruction=system_prompt
+        )
         
-        # Build chat history from few-shot examples
+        # Build chat history from few-shot examples using Content objects
         history = []
         if shot_pairs:
             for pair in shot_pairs:
@@ -322,13 +300,12 @@ class DSLGenerator:
                 # Load assistant DSL code example
                 assistant_content = self.load_file(self.shots_path / pair["assistant"])
                 
-                # Add to history
-                history.append(types.Content(role="user", parts=[types.Part(text=user_content)]))
-                history.append(types.Content(role="model", parts=[types.Part(text=assistant_content)]))
+                # Add as Content objects
+                history.append(Content(role="user", parts=[Part.from_text(user_content)]))
+                history.append(Content(role="model", parts=[Part.from_text(assistant_content)]))
         
-        # Store chat history and system prompt for subsequent messages
-        self.chat_history = history
-        self.system_prompt = system_prompt
+        # Start chat with manufactured history
+        self.chat = self.model.start_chat(history=history)
         
         # Load the actual scenario to process
         scenario_content = self.load_file(self.scenarios_path / scenario_file)
@@ -348,20 +325,7 @@ class DSLGenerator:
         self._display_full_prompt(system_prompt, history, scenario_content)
         
         # Send the actual scenario and get DSL code
-        current_history = self.chat_history + [types.Content(role="user", parts=[types.Part(text=scenario_content)])]
-        
-        response = self.client.models.generate_content(
-            model=model_name,
-            contents=current_history,
-            config=types.GenerateContentConfig(
-                system_instruction=system_prompt,
-                temperature=1.0
-            )
-        )
-        
-        # Update chat history with user message and response
-        self.chat_history.append(types.Content(role="user", parts=[types.Part(text=scenario_content)]))
-        self.chat_history.append(types.Content(role="model", parts=[types.Part(text=response.text)]))
+        response = self.chat.send_message(scenario_content)
 
         # Telemetry: record prompt/response sizes (no sanitization)
         self._record_llm_call("generate", scenario_content, response.text)
@@ -417,7 +381,7 @@ class DSLGenerator:
         The repair chat uses the configured repair prompt file content as system instruction.
         Optionally includes repair few-shot history if configured.
         """
-        if hasattr(self, 'repair_chat_history'):
+        if self.repair_chat is not None:
             return
 
         if not self.repair_prompt_template_path.exists():
@@ -425,8 +389,10 @@ class DSLGenerator:
 
         repair_template = self.load_file(self.repair_prompt_template_path)
         repair_system_prompt = self._fill_repair_system_prompt_template(repair_template)
-        self.repair_model_name = repair_model_name
-        self.repair_system_prompt = repair_system_prompt
+        self.repair_model = GenerativeModel(
+            repair_model_name,
+            system_instruction=repair_system_prompt,
+        )
 
         history = []
         shot_pairs = self._normalize_shots(repair_shots)
@@ -434,10 +400,10 @@ class DSLGenerator:
             for pair in shot_pairs:
                 user_content = self.load_file(self.shots_path / pair["user"])
                 assistant_content = self.load_file(self.shots_path / pair["assistant"])
-                history.append(types.Content(role="user", parts=[types.Part(text=user_content)]))
-                history.append(types.Content(role="model", parts=[types.Part(text=assistant_content)]))
+                history.append(Content(role="user", parts=[Part.from_text(user_content)]))
+                history.append(Content(role="model", parts=[Part.from_text(assistant_content)]))
 
-        self.repair_chat_history = history
+        self.repair_chat = self.repair_model.start_chat(history=history)
         self.repair_iteration_count = 0
 
         if self.run_metadata is not None:
@@ -464,22 +430,7 @@ class DSLGenerator:
         self.last_repair_prompt_included_previous_dsl = include_previous_dsl
 
         print("\n=== Sending repair request to Gemini (repair chat) ===")
-        
-        # Build current history with new user message
-        current_history = self.repair_chat_history + [types.Content(role="user", parts=[types.Part(text=prompt)])]
-        
-        response = self.client.models.generate_content(
-            model=self.repair_model_name,
-            contents=current_history,
-            config=types.GenerateContentConfig(
-                system_instruction=self.repair_system_prompt,
-                temperature=1.0
-            )
-        )
-        
-        # Update repair chat history
-        self.repair_chat_history.append(types.Content(role="user", parts=[types.Part(text=prompt)]))
-        self.repair_chat_history.append(types.Content(role="model", parts=[types.Part(text=response.text)]))
+        response = self.repair_chat.send_message(prompt)
 
         self.repair_iteration_count += 1
 
@@ -500,7 +451,7 @@ class DSLGenerator:
             print("\n[CHAT HISTORY - Few-Shot Examples]")
             for i, content in enumerate(history):
                 role = content.role.upper()
-                text = content.parts[0].text if content.parts else ""
+                text = content.parts[0].text
                 print(f"\n{role} Message {i//2 + 1}:")
                 print(text)
                 print("-"*80)
@@ -1045,24 +996,26 @@ Or for custom shot pairs:
             print(f"\n❌ Error: 'repair_shots' must be an integer or a list in config.json")
             return
     
-    # Use the KEY_PATH that was already detected at module level
+    # Check for key.json in current directory
+    key_file = Path(__file__).parent / "key.json"
     service_account_key = None
     project_id = None
     
-    if KEY_PATH.exists():
+    if key_file.exists():
         print("✓ Found key.json file")
         try:
-            with open(KEY_PATH, 'r') as f:
+            with open(key_file, 'r') as f:
                 key_data = json.load(f)
                 project_id = key_data.get("project_id")
-                service_account_key = str(KEY_PATH)
+                service_account_key = str(key_file)
                 print(f"✓ Using service account: {key_data.get('client_email')}")
                 print(f"✓ Project ID: {project_id}")
         except Exception as e:
             print(f"Warning: Could not read key.json: {e}")
+            key_file = None
     
     # If no key.json found, ask user for authentication method
-    if not KEY_PATH.exists() or not project_id:
+    if not key_file.exists() or not project_id:
         print("\n=== AUTHENTICATION OPTIONS ===")
         print("1. Use gcloud CLI authentication (recommended for local dev)")
         print("2. Use service account JSON key file")

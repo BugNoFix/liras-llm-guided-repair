@@ -1,4 +1,6 @@
+# API Keys (personal credentials)
 key.json
+keys/
 
 # Python virtual environment
 venv/

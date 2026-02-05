@@ -1,0 +1,23 @@
+LabSampleTransport
+
+agents:
+	humans: Nurse
+	robots: Transporter, Arm
+locations: PatientFloor, Lab, EntryModule
+resources: Sample
+
+Nurse:
+	1: moveTo PatientFloor
+	2: deliver Sample
+
+Transporter:
+	1: moveTo PatientFloor
+	2: receiveFrom Nurse
+	3: moveTo Lab
+	   stop
+
+Arm:
+	1-3: stop
+	4: fetch Sample
+	5: moveTo EntryModule
+	   leave Sample

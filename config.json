@@ -2,10 +2,10 @@
   "system_prompt": "SystemPrompt3.txt",
   "scenario": "UserScenario_011.txt",
   "compiler_jar": "liras_compiler.jar",
-  "generation_model": "gemini-2.5-pro",
+  "generation_model": "gemini-3-pro-preview",
   "shots": 2,
-  "repair_model": "gemini-2.5-pro",
+  "repair_model": "gemini-3-pro-preview",
   "repair_prompt": "SystemPromptRepair1.txt",
   "repair_shots": 0,
-  "max_iterations": 10
+  "max_iterations": 1
 }
