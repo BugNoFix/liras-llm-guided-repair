@@ -10,42 +10,33 @@ STATIC CONTEXT FROM GENERATION (Reference only; preserve intent and naming)
 [INITIAL_DSL_FROM_GENERATION]
 {initial_dsl}
 
-SCOPE AND CONSTRAINTS
-- Use COMPILER_OUTPUT as the absolute source of truth for required changes.
-- Apply the smallest set of edits necessary to resolve errors.
-- Do NOT refactor, redesign, or add new features unless explicitly required by a compiler error.
-- Do NOT include markdown fences (```), commentary, or analysis in the final output.
-- The first line of your response MUST be the DSL document identifier (e.g., LabSampleTransport).
+SCOPE
+- COMPILER_OUTPUT is the sole specification of what must change.
+- Apply the smallest edit that resolves the first error; later errors are likely cascading.
+- Do NOT add features, refactor, or restructure unless forced by a compiler error.
 
-EDIT RULES & HEURISTICS
+REPAIR HEURISTICS (apply in order)
 
 1. STRUCTURAL ORDERING (CRITICAL)
-- The DSL must follow a strict top-down flow: Pattern -> Sequence -> Conclusion.
-- All declarations (agents, locations, resources) MUST be finalized in the Pattern block before any Sequence (Agent:) block begins.
-- Never define 'locations:' or 'resources:' after a sequence header has been declared.
+   Pattern -> Sequence -> Conclusion. All declarations (agents, locations, resources) MUST be finalized inside Pattern BEFORE any Sequence header (AgentName:) appears.
 
-2. SEQUENCE & ACTION SYNTAX
-- Sequence Headers: Must follow the format 'AgentName:' followed immediately by a newline.
-- ActionC (Conditional Actions): Statements like 'until', 'if', or 'wait' must be placed on the same line as the action they modify.
-- Formatting: Do not place 'until' on a new line beneath a 'stop' or 'moveTo' action.
+2. ACTIONC SYNTAX
+   Conditional keywords (until, if, wait) must appear on the SAME LINE as the action they modify. Never place them on a new line.
 
-3. IDENTIFIER & REFERENCE MANAGEMENT
-- Aliasing over Creation: If an error indicates an 'unresolved reference,' first check for case-insensitive typos against already-declared names in the Pattern block.
-- Only add a new declaration to the Pattern block if the name is functionally unique and required by the scenario.
-- Ensure case-sensitive matching: If 'Resource: Sample' is declared, do not use 'sample' in sequences.
+3. NUMERIC LOGIC
+   Every sequence line requires a number or range (i: or i-j:).
+   - i >= 1, strictly increasing within a sequence.
+   - For ranges i-j: j > i. Next line's start > previous line's end.
 
-4. NUMERIC CONSISTENCY (SUB-SEQUENCES)
-- Every sequence line must have a number or range (i: or i-j:).
-- Mathematically verify that:
-    a) i >= 1.
-    b) Within a sequence, i must strictly increase (i_current > i_previous).
-    c) If a range is used (i-j), j must be greater than i.
-    d) The starting i of a new line must be greater than the j of the previous line.
+4. ALIASING OVER CREATION
+   On "unresolved reference": first check the Pattern block for case-insensitive typos. Only add a new declaration if the name is functionally unique and required.
 
-5. ERROR INTERPRETATION
-- Parsing/Syntax Errors: Fix "mismatched input," "missing ':'", or "required (...)+ loop" errors first, as these often cause cascading validation errors.
-- Agent Uniqueness: Each top-level sequence must belong to a unique declared agent.
-- Dist Relations: Ensure agents used in 'dist(A, B)' are distinct and declared.
+5. DELTA REASONING
+   You will receive INITIAL_GENERATION and PREVIOUS_FAILED_ATTEMPT.
+   - Identify which edit in PREVIOUS_FAILED_ATTEMPT failed to satisfy the compiler.
+   - Do NOT repeat that edit verbatim. Try an alternative structural fix.
+   - If stagnation persists, audit Pattern declarations and re-order blocks.
 
-OUTPUT REQUIREMENT
-Your response must contain ONLY the corrected DSL text. Do not provide multiple variants. Do not ask questions.
+OUTPUT REQUIREMENTS
+- First line of your response MUST be the DSL document identifier (e.g., LabSampleTransport).
+- Output ONLY the corrected DSL text. No markdown fences, commentary, or analysis.

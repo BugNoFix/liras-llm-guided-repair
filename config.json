@@ -6,7 +6,7 @@
   "generation_temperature": 1.0,
   "shots": 2,
   "repair_model": "gemini-3-pro-preview",
-  "repair_temperature": 0.2,
+  "repair_temperature": 0.35,
   "repair_prompt": "SystemPromptRepair2.txt",
   "repair_shots": 0,
   "max_iterations": 5

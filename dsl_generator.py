@@ -100,6 +100,11 @@ class DSLGenerator:
         # Approximate compiler error progress tracking (used as a light “monotonic improvement” signal)
         self.compiler_error_score_history: list[dict] = []
 
+        # Windowed context: track immediate history of attempts and errors
+        # to help the repair prompt contrast previous failures.
+        self.repair_history_window: list[dict] = []  # Stores {'dsl': str, 'error': str}
+        self.max_window_size: int = 1  # Only keep the most recent failure to prevent anchoring
+
         # Per-run state (initialized when starting an automated session)
         self.run_id: Optional[str] = None
         self.run_dir: Optional[Path] = None
@@ -394,7 +399,7 @@ class DSLGenerator:
             # Backward compat alias
             self.chat = self.generation_chat
 
-        print(f"📤 Sending scenario to generation model ({model_name})...")
+        print(f"[GENERATE] Sending scenario to generation model ({model_name})...")
         if self.generation_chat is not None:
             response = self.generation_chat.send_message(scenario_content)
         else:
@@ -411,7 +416,9 @@ class DSLGenerator:
             )
         
         response_text = response.text or ""
-        print(f"📥 Generation response received ({len(response_text)} chars)")
+        print(f"[GENERATE] Response received ({len(response_text)} chars)")
+        if not response_text.strip():
+            print("[WARNING] Generation model returned an empty response")
 
         # Update chat history with user message and response
         self.chat_history.append(types.Content(role="user", parts=[types.Part(text=scenario_content)]))
@@ -428,29 +435,45 @@ class DSLGenerator:
         previous_dsl: Optional[str] = None,
         include_previous_dsl: bool = False,
     ) -> str:
-        """Build a minimal repair user prompt.
+        """Build a repair user prompt with delta reasoning.
 
-        - First repair turn: include PREVIOUS_DSL + COMPILER_OUTPUT.
-        - Subsequent turns: include COMPILER_OUTPUT only (model uses its previous assistant
-          output as PREVIOUS_DSL, per the repair system prompt).
+        Anchors the model with the original generation while highlighting the
+        specific recent failure so the model can reason about what NOT to repeat.
         """
-        strategy = (
-            "FIX_STRATEGY:\n"
-            "1) Focus on the *first/root* compiler error; later errors may be cascading.\n"
-            "2) Make the smallest possible change to fix it (avoid rewrites).\n"
-            "3) Preserve unrelated structure and names; do not introduce new features.\n"
-            "4) Return ONLY the full corrected LIrAs DSL text (no markdown, no explanations).\n"
+        parts: list[str] = []
+
+        parts.append("### REPAIR TASK")
+        parts.append(
+            "Your previous attempt is provided below. Compare it to the "
+            "COMPILER_OUTPUT to identify why the fix failed.\n"
         )
 
-        if include_previous_dsl:
-            return (
-                strategy
-                + "\nPREVIOUS_DSL:\n"
-                + (previous_dsl or "")
-                + "\n\nCOMPILER_OUTPUT:\n"
-                + (compiler_output or "")
-            )
-        return strategy + "\nCOMPILER_OUTPUT:\n" + (compiler_output or "")
+        # Anchor: the original generation (read-only reference)
+        if self.initial_dsl_from_generation:
+            parts.append("### INITIAL_GENERATION (Reference Only)")
+            parts.append(self.initial_dsl_from_generation)
+            parts.append("")
+
+        # The most recent failed attempt
+        if include_previous_dsl and previous_dsl:
+            parts.append("### PREVIOUS_FAILED_ATTEMPT")
+            parts.append(previous_dsl)
+            parts.append("")
+
+        # Current compiler errors
+        parts.append("### CURRENT_COMPILER_OUTPUT")
+        parts.append(compiler_output or "")
+        parts.append("")
+
+        # Instruction block
+        parts.append(
+            "### INSTRUCTION\n"
+            "1. Fix the FIRST error reported. Do not repeat the same edit used in PREVIOUS_FAILED_ATTEMPT.\n"
+            "2. If the error is 'unresolved reference', check the Pattern block at the top.\n"
+            "3. Output ONLY the full corrected LIRAs text."
+        )
+
+        return "\n".join(parts)
 
     def _score_compiler_output(self, compiler_output: str) -> dict:
         """Compute a lightweight, approximate error severity score.
@@ -559,12 +582,15 @@ class DSLGenerator:
             self._persist_run_metadata()
 
     def repair_with_compiler_output(self, previous_dsl: str, compiler_output: str, repair_model_name: str, repair_shots) -> str:
-        """Run one repair iteration using the dedicated repair chat."""
+        """Run one repair iteration using the dedicated repair chat.
+
+        Includes stagnation detection: if the repair output is identical to the
+        previous DSL, the method retries once at temperature 0.7 to force a
+        different structural interpretation.
+        """
         self._ensure_repair_chat(repair_model_name=repair_model_name, repair_shots=repair_shots)
 
-        # Poisoning mitigation: always include the current DSL + current compiler output.
-        # This anchors each iteration to the latest attempt instead of relying on prior
-        # conversation state.
+        # Always include the current DSL + current compiler output.
         include_previous_dsl = True
 
         prompt = self._build_repair_user_prompt(
@@ -574,67 +600,96 @@ class DSLGenerator:
         )
         self.last_repair_prompt_included_previous_dsl = include_previous_dsl
 
-        print(f"📤 Sending repair request to {self.repair_model_name} (temp={self.repair_temperature})...")
-        if self.repair_stateless:
-            # Stateless repair: re-send only (repair shots + current prompt).
-            # Do NOT append prior failures to history.
-            current_contents = (self.repair_chat_history or []) + [
-                types.Content(role="user", parts=[types.Part(text=prompt)])
-            ]
-            response = self.client.models.generate_content(
-                model=self.repair_model_name,
-                contents=current_contents,
-                config=types.GenerateContentConfig(
-                    system_instruction=self.repair_system_prompt,
-                    temperature=self.repair_temperature,
-                    max_output_tokens=8192,
-                ),
-            )
-        else:
-            # Stateful repair (legacy / optional)
-            if self.repair_chat is not None:
-                response = self.repair_chat.send_message(prompt)
-            else:
-                current_history = (self.repair_chat_history or []) + [
+        # Use a local temperature variable to allow dynamic bumping on stagnation.
+        current_temp = self.repair_temperature
+        repair_text = ""
+
+        for attempt in range(2):  # Try twice if the first fix is a duplicate
+            print(f"[REPAIR] Sending repair request to {self.repair_model_name} (temp={current_temp}, attempt={attempt})...")
+
+            if self.repair_stateless:
+                current_contents = (self.repair_chat_history or []) + [
                     types.Content(role="user", parts=[types.Part(text=prompt)])
                 ]
                 response = self.client.models.generate_content(
                     model=self.repair_model_name,
-                    contents=current_history,
+                    contents=current_contents,
                     config=types.GenerateContentConfig(
                         system_instruction=self.repair_system_prompt,
-                        temperature=self.repair_temperature,
+                        temperature=current_temp,
                         max_output_tokens=8192,
                     ),
                 )
+            else:
+                if self.repair_chat is not None:
+                    response = self.repair_chat.send_message(prompt)
+                else:
+                    current_history = (self.repair_chat_history or []) + [
+                        types.Content(role="user", parts=[types.Part(text=prompt)])
+                    ]
+                    response = self.client.models.generate_content(
+                        model=self.repair_model_name,
+                        contents=current_history,
+                        config=types.GenerateContentConfig(
+                            system_instruction=self.repair_system_prompt,
+                            temperature=current_temp,
+                            max_output_tokens=8192,
+                        ),
+                    )
 
-            # Only in stateful mode do we accumulate the conversation history.
-            repair_text = response.text or ""
+            repair_text = (response.text or "").strip()
+
+            # Stagnation detection: if the output is identical to the input DSL,
+            # jump to a high temperature to break the deterministic loop.
+            if repair_text == (previous_dsl or "").strip() and attempt == 0:
+                print(f"[REPAIR] Stagnation detected -- output identical to input. Bumping temp {current_temp} -> 0.7")
+                current_temp = 0.7
+                continue
+            break
+
+        # Only in stateful mode do we accumulate the conversation history.
+        if not self.repair_stateless:
             self.repair_chat_history.append(types.Content(role="user", parts=[types.Part(text=prompt)]))
             self.repair_chat_history.append(types.Content(role="model", parts=[types.Part(text=repair_text)]))
 
-        repair_text = response.text or ""
         self.repair_iteration_count += 1
-        print(f"📥 Repair response received ({len(repair_text)} chars)")
+        print(f"[REPAIR] Response received ({len(repair_text)} chars)")
+        if not repair_text.strip():
+            print("[WARNING] Repair model returned an empty response")
+
+        # Update the windowed history for downstream analysis.
+        self.repair_history_window.append({"dsl": repair_text, "error": compiler_output or ""})
+        if len(self.repair_history_window) > self.max_window_size:
+            self.repair_history_window = self.repair_history_window[-self.max_window_size:]
 
         # Telemetry: record repair prompt/response sizes (no sanitization)
         self._record_llm_call("repair", prompt, repair_text)
         return repair_text
     
     def _extract_dsl_code(self, response_text: str) -> str:
-        """
-        Return the model output as-is.
+        """Clean model output by stripping markdown fences and conversational preamble.
 
-        Note: Output formatting/constraints are enforced via editable prompt files (system prompt
-        and repair prompt), not by in-code sanitization.
-        
         Args:
             response_text: Raw response from the AI
-            
+
         Returns:
             Clean DSL code without markdown or explanations
         """
-        return response_text
+        if not response_text:
+            return ""
+
+        # Strip markdown fences if the model hallucinated them
+        text = response_text.replace("```liras", "").replace("```dsl", "").replace("```xtext", "").replace("```", "").strip()
+
+        # Remove conversational preamble lines (e.g., "Here is the fixed DSL:")
+        preamble_words = ["here", "fixed", "repair", "corrected", "updated", "below"]
+        lines = text.splitlines()
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped and not any(word in stripped.lower() for word in preamble_words):
+                return "\n".join(lines[i:]).strip()
+
+        return text
 
     def validate_code(self, dsl_filepath: Path, compiler_jar_path: Path) -> tuple[bool, str]:
         """Validate DSL code by running the local Java-based compiler.
@@ -809,7 +864,7 @@ class DSLGenerator:
         self._init_run_metadata(config, compiler_jar_path, max_iterations)
 
         print(f"\n{'='*60}")
-        print(f"🚀 Starting automated session")
+        print(f"[START] Automated session")
         print(f"   Model (gen):    {config.get('generation_model')}")
         print(f"   Model (repair): {config.get('repair_model')}")
         print(f"   System prompt:  {config.get('system_prompt')}")
@@ -832,7 +887,7 @@ class DSLGenerator:
                 }
                 self.run_metadata["run_finished_at"] = datetime.now().isoformat()
                 self._persist_run_metadata()
-            print(f"\n❌ Error: compiler_jar path does not exist: {compiler_jar_path}")
+            print(f"\n[ERROR] compiler_jar path does not exist: {compiler_jar_path}")
             return
         
         # Start conversation and get initial DSL code
@@ -843,8 +898,8 @@ class DSLGenerator:
                 config['scenario'],
                 model_name=config['generation_model'],
             )
-            # IMPORTANT: preserve raw model output exactly as received (no sanitization)
-            dsl_code = response_text
+            # Clean model output: strip any markdown fences or conversational preamble
+            dsl_code = self._extract_dsl_code(response_text)
             self.last_dsl_code = dsl_code
             self.initial_dsl_from_generation = dsl_code
 
@@ -857,7 +912,7 @@ class DSLGenerator:
                 saved_dsl_path = self.save_result(dsl_code, iteration=iteration, success=False)
 
                 # Validate via local compiler
-                print("🔨 Compiling DSL...")
+                print("[COMPILE] Validating DSL...")
                 is_valid, feedback = self.validate_code(saved_dsl_path, compiler_jar_path)
 
                 # Track approximate “progress” signal from compiler output.
@@ -878,7 +933,7 @@ class DSLGenerator:
 
                 # If validation can't run (missing Java/JAR/timeout), stop rather than prompting LLM.
                 if feedback.startswith("[VALIDATION_SETUP_ERROR]"):
-                    print("\n❌ Validation setup error; stopping without attempting LLM repair.")
+                    print("\n[ERROR] Validation setup error; stopping without attempting LLM repair.")
                     print(feedback)
 
                     if self.run_metadata is not None:
@@ -916,7 +971,7 @@ class DSLGenerator:
                 )
 
                 if is_valid:
-                    print("✅ Compilation successful!")
+                    print("[OK] Compilation successful")
                     success_artifact = self.save_result(dsl_code, iteration=iteration, success=True)
                     if self.run_metadata is not None:
                         self.run_metadata["status"] = "success"
@@ -940,7 +995,7 @@ class DSLGenerator:
                 # This helps when the compiler signals success without a clean exit code.
                 no_error_output = not (feedback or "").strip()
                 if no_error_output:
-                    print("✅ No compiler errors (treating as success)")
+                    print("[OK] No compiler errors (treating as success)")
                     success_artifact = self.save_result(dsl_code, iteration=iteration, success=True)
 
                     if self.run_metadata is not None:
@@ -962,10 +1017,10 @@ class DSLGenerator:
                         self._persist_run_metadata()
                     break
 
-                print(f"❌ Compilation failed — {score.get('error_lines', '?')} error(s), {score.get('warning_lines', '?')} warning(s)")
+                print(f"[FAIL] Compilation failed -- {score.get('error_lines', '?')} error(s), {score.get('warning_lines', '?')} warning(s)")
 
                 if iteration + 1 >= max_iterations:
-                    print("⛔ Max iterations reached — stopping.")
+                    print("[STOP] Max iterations reached")
                     if self.run_metadata is not None:
                         self.run_metadata["status"] = "max_iterations_reached"
                         self.run_metadata["run_finished_at"] = datetime.now().isoformat()
@@ -1000,13 +1055,27 @@ class DSLGenerator:
                     self._persist_run_metadata()
 
                 # Repair with LLM using a dedicated repair chat (system prompt = repair prompt).
-                print(f"🔧 Requesting LLM repair (iteration {iteration} → {iteration + 1})...")
-                dsl_code = self.repair_with_compiler_output(
+                print(f"[REPAIR] Requesting LLM repair (iteration {iteration} -> {iteration + 1})...")
+                repair_result = self.repair_with_compiler_output(
                     previous_dsl=dsl_code,
                     compiler_output=feedback,
                     repair_model_name=config['repair_model'],
                     repair_shots=config.get('repair_shots'),
                 )
+
+                # Guard: do NOT overwrite dsl_code with an empty repair response.
+                # Keep the previous DSL so the next iteration can retry from a valid state.
+                if not repair_result or not repair_result.strip():
+                    print("[WARNING] Repair returned empty -- keeping previous DSL for next iteration")
+                    if self.run_metadata is not None:
+                        try:
+                            last_it = self.run_metadata.get("iterations", [])[-1]
+                            last_it["repair_returned_empty"] = True
+                            self._persist_run_metadata()
+                        except Exception:
+                            pass
+                else:
+                    dsl_code = self._extract_dsl_code(repair_result)
 
                 # Annotate last iteration with repair prompt mode for research.
                 if self.run_metadata is not None:
@@ -1028,7 +1097,7 @@ class DSLGenerator:
                 iteration += 1
         
         except Exception as e:
-            print(f"\n❌ Error during session: {e}")
+            print(f"\n[ERROR] Error during session: {e}")
             # Persist interruption details so downstream collectors can skip the run.
             if self.run_metadata is not None:
                 try:
@@ -1061,14 +1130,14 @@ def main():
     # Load configuration from config.json
     config_file = Path(__file__).parent / "config.json"
     if not config_file.exists():
-        print(f"\n❌ Error: config.json file not found: {config_file}")
+        print(f"\n[ERROR] config.json file not found: {config_file}")
         return
     
     try:
         with open(config_file, 'r') as f:
             config = json.load(f)
     except Exception as e:
-        print(f"\n❌ Error reading config.json: {e}")
+        print(f"\n[ERROR] Error reading config.json: {e}")
         return
     
     # Validate configuration
@@ -1083,20 +1152,20 @@ def main():
     ]
     for key in required_keys:
         if key not in config:
-            print(f"\n❌ Error: Missing required key '{key}' in config.json")
+            print(f"\n[ERROR] Missing required key '{key}' in config.json")
             return
 
     # Validate max_iterations type
     if not isinstance(config["max_iterations"], int):
-        print(f"\n❌ Error: 'max_iterations' must be an integer in config.json")
+        print(f"\n[ERROR] 'max_iterations' must be an integer in config.json")
         return
 
     # Validate model keys
     if not isinstance(config["generation_model"], str) or not config["generation_model"].strip():
-        print(f"\n❌ Error: 'generation_model' must be a non-empty string in config.json")
+        print(f"\n[ERROR] 'generation_model' must be a non-empty string in config.json")
         return
     if not isinstance(config["repair_model"], str) or not config["repair_model"].strip():
-        print(f"\n❌ Error: 'repair_model' must be a non-empty string in config.json")
+        print(f"\n[ERROR] 'repair_model' must be a non-empty string in config.json")
         return
 
     # Optional decoding parameters (experimental variables)
@@ -1104,28 +1173,28 @@ def main():
     repair_temperature = config.get("repair_temperature", 0.2)
     for name, value in [("generation_temperature", generation_temperature), ("repair_temperature", repair_temperature)]:
         if not isinstance(value, (int, float)):
-            print(f"\n❌ Error: '{name}' must be a number in config.json")
+            print(f"\n[ERROR] '{name}' must be a number in config.json")
             return
         if float(value) < 0.0:
-            print(f"\n❌ Error: '{name}' must be >= 0.0")
+            print(f"\n[ERROR] '{name}' must be >= 0.0")
             return
 
     # Optional: Vertex AI location/region (model availability can be region-dependent)
     location = config.get("location", "global")
     if not isinstance(location, str) or not location.strip():
-        print(f"\n❌ Error: 'location' must be a non-empty string when provided in config.json")
+        print(f"\n[ERROR] 'location' must be a non-empty string when provided in config.json")
         return
     location = location.strip()
     
     # Validate shots type
     if not isinstance(config["shots"], (int, list)):
-        print(f"\n❌ Error: 'shots' must be an integer or a list in config.json")
+        print(f"\n[ERROR] 'shots' must be an integer or a list in config.json")
         return
 
     # Validate optional repair_shots type
     if "repair_shots" in config and config["repair_shots"] is not None:
         if not isinstance(config["repair_shots"], (int, list)):
-            print(f"\n❌ Error: 'repair_shots' must be an integer or a list in config.json")
+            print(f"\n[ERROR] 'repair_shots' must be an integer or a list in config.json")
             return
     
     # Non-interactive authentication + project resolution.
@@ -1149,7 +1218,7 @@ def main():
         if not candidate.is_absolute():
             candidate = (Path(__file__).parent / candidate)
         if not candidate.exists():
-            print(f"\n❌ Error: service account key file not found: {candidate}")
+            print(f"\n[ERROR] Service account key file not found: {candidate}")
             return
         service_account_key = str(candidate)
 
@@ -1178,7 +1247,7 @@ def main():
 
     if not project_id:
         print(
-            "\n❌ Error: Google Cloud Project ID not found. "
+            "\n[ERROR] Google Cloud Project ID not found. "
             "Set 'project_id' in config.json or export GOOGLE_CLOUD_PROJECT (or include project_id in key.json)."
         )
         return
