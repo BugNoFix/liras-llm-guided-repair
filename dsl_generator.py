@@ -409,14 +409,16 @@ class DSLGenerator:
                 ),
             )
         
+        response_text = response.text or ""
+
         # Update chat history with user message and response
         self.chat_history.append(types.Content(role="user", parts=[types.Part(text=scenario_content)]))
-        self.chat_history.append(types.Content(role="model", parts=[types.Part(text=response.text)]))
+        self.chat_history.append(types.Content(role="model", parts=[types.Part(text=response_text)]))
 
         # Telemetry: record prompt/response sizes (no sanitization)
-        self._record_llm_call("generate", scenario_content, response.text)
+        self._record_llm_call("generate", scenario_content, response_text)
 
-        return response.text
+        return response_text
 
     def _build_repair_user_prompt(
         self,
@@ -604,14 +606,16 @@ class DSLGenerator:
                 )
 
             # Only in stateful mode do we accumulate the conversation history.
+            repair_text = response.text or ""
             self.repair_chat_history.append(types.Content(role="user", parts=[types.Part(text=prompt)]))
-            self.repair_chat_history.append(types.Content(role="model", parts=[types.Part(text=response.text)]))
+            self.repair_chat_history.append(types.Content(role="model", parts=[types.Part(text=repair_text)]))
 
+        repair_text = response.text or ""
         self.repair_iteration_count += 1
 
         # Telemetry: record repair prompt/response sizes (no sanitization)
-        self._record_llm_call("repair", prompt, response.text)
-        return response.text
+        self._record_llm_call("repair", prompt, repair_text)
+        return repair_text
     
     def _extract_dsl_code(self, response_text: str) -> str:
         """
@@ -777,7 +781,7 @@ class DSLGenerator:
         # Save DSL code
         filepath = self.run_dsl_dir / filename
         with open(filepath, 'w', encoding='utf-8') as f:
-            f.write(dsl_code)
+            f.write(dsl_code or "")
 
         return filepath
     
