@@ -1,0 +1,31 @@
+LabSampleDelivery
+
+agents:
+	humans: Nurse, LabPers
+	robots: Transporter, Arm
+locations: PatientFloor, Laboratory, AnalysisMachine
+resources: Sample
+
+Nurse:
+	1: moveTo PatientFloor
+	2: deliver Sample
+
+Transporter:
+	1: moveTo PatientFloor
+	2: receiveFrom Nurse
+	3: moveTo Laboratory
+	4: stop until dist(Transporter, Arm) < 1 || dist(Transporter, LabPers) < 1
+
+Arm:
+	1-3: wait 1
+	4: fetch Sample
+	   scanAndSort
+	5: moveTo AnalysisMachine
+	6: deliver Sample
+	   logData
+
+LabPers:
+	1-3: wait 1
+	4: fetch Sample
+
+failure: time(MaxProtocolTime)

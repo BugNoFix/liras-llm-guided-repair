@@ -128,6 +128,110 @@ class DSLGenerator:
             "last_call": None,
         }
 
+        # Optional "thinking" configuration (best-effort; model/endpoint dependent)
+        # Split for micro-control: generation vs repair.
+        self.generation_thinking_enabled: bool = False
+        self.generation_thinking_budget: Optional[int] = None
+        self.generation_thinking_level: Optional[str] = None
+
+        self.repair_thinking_enabled: bool = False
+        self.repair_thinking_budget: Optional[int] = None
+        self.repair_thinking_level: Optional[str] = None
+
+    def _thinking_config_or_none(self, scope: str):
+        """Return a types.ThinkingConfig for a given scope (generation|repair), else None.
+
+        Notes:
+        - We do NOT set include_thoughts=True to avoid exposing chain-of-thought.
+        - Not all models/endpoints accept thinking config; callers should retry without it.
+        """
+        if not getattr(types, "ThinkingConfig", None):
+            return None
+
+        if scope not in {"generation", "repair"}:
+            return None
+
+        enabled = bool(getattr(self, f"{scope}_thinking_enabled", False))
+        budget = getattr(self, f"{scope}_thinking_budget", None)
+        level = getattr(self, f"{scope}_thinking_level", None)
+
+        if not enabled and (budget is None) and (level is None):
+            return None
+
+        # If enabled explicitly but no budget/level provided, use a modest default.
+        if enabled and budget is None and level is None:
+            budget = 1024
+
+        thinking_level_enum = None
+        if isinstance(level, str) and level.strip():
+            try:
+                thinking_level_enum = getattr(types.ThinkingLevel, level.strip().upper())
+            except Exception:
+                thinking_level_enum = None
+
+        try:
+            return types.ThinkingConfig(
+                include_thoughts=False,
+                thinking_budget=int(budget) if budget is not None else None,
+                thinking_level=thinking_level_enum,
+            )
+        except Exception:
+            return None
+
+    def _build_gen_config(
+        self,
+        *,
+        system_instruction: str,
+        temperature: float,
+        max_output_tokens: Optional[int] = None,
+        scope: str,
+    ):
+        """Build GenerateContentConfig with optional thinking config."""
+        kwargs = {
+            "system_instruction": system_instruction,
+            "temperature": temperature,
+        }
+        if max_output_tokens is not None:
+            kwargs["max_output_tokens"] = int(max_output_tokens)
+
+        thinking_cfg = self._thinking_config_or_none(scope)
+        if thinking_cfg is not None:
+            kwargs["thinking_config"] = thinking_cfg
+
+        return types.GenerateContentConfig(**kwargs)
+
+    def _extract_response_text(self, response) -> str:
+        """Best-effort extraction of text from a GenAI response.
+
+        The Google GenAI SDK usually exposes `response.text`, but in some cases it can be None
+        (e.g., tool-only responses or unexpected payload shapes). This helper ensures we never
+        propagate None into file writes or chat history.
+        """
+        try:
+            text = getattr(response, "text", None)
+            if isinstance(text, str) and text.strip():
+                return text
+            if isinstance(text, str):
+                return text
+
+            candidates = getattr(response, "candidates", None)
+            if isinstance(candidates, list) and candidates:
+                parts_text: list[str] = []
+                for cand in candidates:
+                    content = getattr(cand, "content", None)
+                    parts = getattr(content, "parts", None) if content is not None else None
+                    if isinstance(parts, list):
+                        for part in parts:
+                            t = getattr(part, "text", None)
+                            if isinstance(t, str) and t:
+                                parts_text.append(t)
+                if parts_text:
+                    return "".join(parts_text)
+        except Exception:
+            pass
+
+        return ""
+
     def _maybe_create_server_chat(self, *, model_name: str, system_instruction: str, history: list[types.Content]):
         """Best-effort create a server-side chat session.
 
@@ -141,9 +245,10 @@ class DSLGenerator:
             return self.client.chats.create(
                 model=model_name,
                 history=history,
-                config=types.GenerateContentConfig(
+                config=self._build_gen_config(
                     system_instruction=system_instruction,
                     temperature=self.generation_temperature,
+                    scope="generation",
                 ),
             )
         except Exception as e:
@@ -400,23 +505,53 @@ class DSLGenerator:
             current_history = self.chat_history + [
                 types.Content(role="user", parts=[types.Part(text=scenario_content)])
             ]
-            response = self.client.models.generate_content(
-                model=model_name,
-                contents=current_history,
-                config=types.GenerateContentConfig(
-                    system_instruction=system_prompt,
-                    temperature=self.generation_temperature,
-                ),
-            )
+            try:
+                response = self.client.models.generate_content(
+                    model=model_name,
+                    contents=current_history,
+                    config=self._build_gen_config(
+                        system_instruction=system_prompt,
+                        temperature=self.generation_temperature,
+                        scope="generation",
+                    ),
+                )
+            except Exception as e:
+                # If thinking config is unsupported by the model/endpoint, retry once without it.
+                if self._thinking_config_or_none("generation") is not None:
+                    old_enabled = self.generation_thinking_enabled
+                    old_budget = self.generation_thinking_budget
+                    old_level = self.generation_thinking_level
+                    self.generation_thinking_enabled = False
+                    self.generation_thinking_budget = None
+                    self.generation_thinking_level = None
+                    response = self.client.models.generate_content(
+                        model=model_name,
+                        contents=current_history,
+                        config=self._build_gen_config(
+                            system_instruction=system_prompt,
+                            temperature=self.generation_temperature,
+                            scope="generation",
+                        ),
+                    )
+                    # Restore local config for metadata/logging (we just don't send it).
+                    self.generation_thinking_enabled = old_enabled
+                    self.generation_thinking_budget = old_budget
+                    self.generation_thinking_level = old_level
+                else:
+                    raise
+
+        response_text = self._extract_response_text(response)
+        if not isinstance(response_text, str) or response_text == "":
+            raise RuntimeError("Model returned an empty/non-text response during generation")
         
         # Update chat history with user message and response
         self.chat_history.append(types.Content(role="user", parts=[types.Part(text=scenario_content)]))
-        self.chat_history.append(types.Content(role="model", parts=[types.Part(text=response.text)]))
+        self.chat_history.append(types.Content(role="model", parts=[types.Part(text=response_text)]))
 
         # Telemetry: record prompt/response sizes (no sanitization)
-        self._record_llm_call("generate", scenario_content, response.text)
+        self._record_llm_call("generate", scenario_content, response_text)
 
-        return response.text
+        return response_text
 
     def _build_repair_user_prompt(
         self,
@@ -576,15 +711,41 @@ class DSLGenerator:
             current_contents = (self.repair_chat_history or []) + [
                 types.Content(role="user", parts=[types.Part(text=prompt)])
             ]
-            response = self.client.models.generate_content(
-                model=self.repair_model_name,
-                contents=current_contents,
-                config=types.GenerateContentConfig(
-                    system_instruction=self.repair_system_prompt,
-                    temperature=self.repair_temperature,
-                    max_output_tokens=8192,
-                ),
-            )
+            try:
+                response = self.client.models.generate_content(
+                    model=self.repair_model_name,
+                    contents=current_contents,
+                    config=self._build_gen_config(
+                        system_instruction=self.repair_system_prompt,
+                        temperature=self.repair_temperature,
+                        max_output_tokens=8192,
+                        scope="repair",
+                    ),
+                )
+            except Exception:
+                # Retry once without thinking config if unsupported.
+                if self._thinking_config_or_none("repair") is not None:
+                    old_enabled = self.repair_thinking_enabled
+                    old_budget = self.repair_thinking_budget
+                    old_level = self.repair_thinking_level
+                    self.repair_thinking_enabled = False
+                    self.repair_thinking_budget = None
+                    self.repair_thinking_level = None
+                    response = self.client.models.generate_content(
+                        model=self.repair_model_name,
+                        contents=current_contents,
+                        config=self._build_gen_config(
+                            system_instruction=self.repair_system_prompt,
+                            temperature=self.repair_temperature,
+                            max_output_tokens=8192,
+                            scope="repair",
+                        ),
+                    )
+                    self.repair_thinking_enabled = old_enabled
+                    self.repair_thinking_budget = old_budget
+                    self.repair_thinking_level = old_level
+                else:
+                    raise
         else:
             # Stateful repair (legacy / optional)
             if self.repair_chat is not None:
@@ -596,22 +757,36 @@ class DSLGenerator:
                 response = self.client.models.generate_content(
                     model=self.repair_model_name,
                     contents=current_history,
-                    config=types.GenerateContentConfig(
+                    config=self._build_gen_config(
                         system_instruction=self.repair_system_prompt,
                         temperature=self.repair_temperature,
                         max_output_tokens=8192,
+                        scope="repair",
                     ),
                 )
 
             # Only in stateful mode do we accumulate the conversation history.
             self.repair_chat_history.append(types.Content(role="user", parts=[types.Part(text=prompt)]))
-            self.repair_chat_history.append(types.Content(role="model", parts=[types.Part(text=response.text)]))
+            response_text = self._extract_response_text(response)
+            if not isinstance(response_text, str) or response_text == "":
+                raise RuntimeError("Model returned an empty/non-text response during repair")
+            self.repair_chat_history.append(types.Content(role="model", parts=[types.Part(text=response_text)]))
+
+            self.repair_iteration_count += 1
+
+            # Telemetry: record repair prompt/response sizes (no sanitization)
+            self._record_llm_call("repair", prompt, response_text)
+            return response_text
+
+        response_text = self._extract_response_text(response)
+        if not isinstance(response_text, str) or response_text == "":
+            raise RuntimeError("Model returned an empty/non-text response during repair")
 
         self.repair_iteration_count += 1
 
         # Telemetry: record repair prompt/response sizes (no sanitization)
-        self._record_llm_call("repair", prompt, response.text)
-        return response.text
+        self._record_llm_call("repair", prompt, response_text)
+        return response_text
     
     def _extract_dsl_code(self, response_text: str) -> str:
         """
@@ -799,6 +974,80 @@ class DSLGenerator:
 
         # Initialize per-run metadata and output directory
         self._init_run_metadata(config, compiler_jar_path, max_iterations)
+
+        # Thinking mode (best-effort): attach to requests when configured.
+        # New keys:
+        # - generation_thinking_enabled/budget/level
+        # - repair_thinking_enabled/budget/level
+        # Backward compat: legacy thinking_* applied to both scopes when scoped keys are absent.
+        legacy_enabled = bool(config.get("thinking_enabled", False))
+        legacy_budget = config.get("thinking_budget")
+        legacy_level = config.get("thinking_level")
+
+        self.generation_thinking_enabled = bool(
+            config.get("generation_thinking_enabled", legacy_enabled)
+        )
+        self.generation_thinking_budget = config.get(
+            "generation_thinking_budget", legacy_budget
+        )
+        self.generation_thinking_level = config.get(
+            "generation_thinking_level", legacy_level
+        )
+
+        self.repair_thinking_enabled = bool(
+            config.get("repair_thinking_enabled", legacy_enabled)
+        )
+        self.repair_thinking_budget = config.get(
+            "repair_thinking_budget", legacy_budget
+        )
+        self.repair_thinking_level = config.get(
+            "repair_thinking_level", legacy_level
+        )
+
+        if self.run_metadata is not None:
+            self.run_metadata["generation_thinking_enabled"] = bool(self.generation_thinking_enabled)
+            self.run_metadata["generation_thinking_budget"] = self.generation_thinking_budget
+            self.run_metadata["generation_thinking_level"] = self.generation_thinking_level
+            self.run_metadata["repair_thinking_enabled"] = bool(self.repair_thinking_enabled)
+            self.run_metadata["repair_thinking_budget"] = self.repair_thinking_budget
+            self.run_metadata["repair_thinking_level"] = self.repair_thinking_level
+            self._persist_run_metadata()
+
+        # Minimal run-start log for batch visibility (no prompt text).
+        try:
+            run_id = self.run_id or ""
+            system_prompt = str(config.get("system_prompt") or "")
+            scenario = str(config.get("scenario") or "")
+            gen_model = str(config.get("generation_model") or "")
+            rep_model = str(config.get("repair_model") or "")
+            gen_temp = float(config.get("generation_temperature", getattr(self, "generation_temperature", 1.0)))
+            rep_temp = float(config.get("repair_temperature", getattr(self, "repair_temperature", 0.2)))
+            shots_cfg = config.get("shots")
+            repair_shots_cfg = config.get("repair_shots")
+            repair_prompt = str(config.get("repair_prompt") or "")
+            loc = str(getattr(self, "location", "") or "")
+            gen_thinking_enabled = bool(getattr(self, "generation_thinking_enabled", False))
+            gen_thinking_budget = getattr(self, "generation_thinking_budget", None)
+            gen_thinking_level = getattr(self, "generation_thinking_level", None)
+            rep_thinking_enabled = bool(getattr(self, "repair_thinking_enabled", False))
+            rep_thinking_budget = getattr(self, "repair_thinking_budget", None)
+            rep_thinking_level = getattr(self, "repair_thinking_level", None)
+            print(
+                "RUN_START "
+                f"run_id={run_id} "
+                f"scenario={scenario} "
+                f"system_prompt={system_prompt} "
+                f"gen_model={gen_model} gen_temp={gen_temp:g} shots={shots_cfg} "
+                f"repair_model={rep_model} repair_temp={rep_temp:g} repair_shots={repair_shots_cfg} "
+                f"repair_prompt={repair_prompt} "
+                f"gen_thinking={gen_thinking_enabled}:{gen_thinking_budget}:{gen_thinking_level} "
+                f"repair_thinking={rep_thinking_enabled}:{rep_thinking_budget}:{rep_thinking_level} "
+                f"max_iterations={max_iterations} "
+                f"location={loc}"
+            )
+        except Exception:
+            # Never let logging break a batch run.
+            pass
 
         # Fail fast if the compiler JAR is missing, but still record the interruption.
         if not compiler_jar_path.exists():
@@ -1081,6 +1330,48 @@ def main():
         if float(value) < 0.0:
             print(f"\n❌ Error: '{name}' must be >= 0.0")
             return
+
+    # Optional thinking-mode parameters (best-effort; model/endpoint dependent)
+    def _validate_thinking_block(prefix: str) -> bool:
+        enabled_key = f"{prefix}thinking_enabled"
+        budget_key = f"{prefix}thinking_budget"
+        level_key = f"{prefix}thinking_level"
+
+        if enabled_key in config and config[enabled_key] is not None:
+            if not isinstance(config[enabled_key], bool):
+                print(f"\n❌ Error: '{enabled_key}' must be a boolean in config.json")
+                return False
+
+        if budget_key in config and config[budget_key] is not None:
+            if not isinstance(config[budget_key], int):
+                print(f"\n❌ Error: '{budget_key}' must be an integer in config.json")
+                return False
+            if int(config[budget_key]) < 0:
+                print(f"\n❌ Error: '{budget_key}' must be >= 0 in config.json")
+                return False
+
+        if level_key in config and config[level_key] is not None:
+            if not isinstance(config[level_key], str) or not config[level_key].strip():
+                print(f"\n❌ Error: '{level_key}' must be a non-empty string in config.json")
+                return False
+            allowed = {"MINIMAL", "LOW", "MEDIUM", "HIGH"}
+            if config[level_key].strip().upper() not in allowed:
+                print(
+                    f"\n❌ Error: '{level_key}' must be one of: MINIMAL, LOW, MEDIUM, HIGH"
+                )
+                return False
+
+        return True
+
+    # Legacy keys
+    if not _validate_thinking_block(prefix=""):
+        return
+
+    # Scoped keys
+    if not _validate_thinking_block(prefix="generation_"):
+        return
+    if not _validate_thinking_block(prefix="repair_"):
+        return
 
     # Optional: Vertex AI location/region (model availability can be region-dependent)
     location = config.get("location", "global")

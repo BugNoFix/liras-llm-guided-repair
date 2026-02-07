@@ -1,0 +1,31 @@
+LabSampleTransport
+
+agents:
+	humans: Nurse, LabPersonnel
+	robots: TransportRobot, RoboticArm
+locations: PatientFloor, Laboratory, AnalysisMachine
+resources: Sample
+
+Nurse:
+	1: fetch Sample
+	2: stop until position(TransportRobot, PatientFloor)
+	3: moveTo TransportRobot
+	   deliver Sample
+
+TransportRobot:
+	1: moveTo PatientFloor
+	2: receiveFrom Nurse
+	3: moveTo Laboratory
+	4: stop until possess(RoboticArm, Sample) || possess(LabPersonnel, Sample)
+
+RoboticArm:
+	1-3: stop
+	4: fetch Sample
+	5: moveTo AnalysisMachine
+	   deliver Sample
+
+LabPersonnel:
+	1-3: stop
+	4: fetch Sample
+	5: moveTo AnalysisMachine
+	   deliver Sample

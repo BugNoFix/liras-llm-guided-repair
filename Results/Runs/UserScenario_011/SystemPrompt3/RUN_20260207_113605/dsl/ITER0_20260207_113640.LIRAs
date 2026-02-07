@@ -1,0 +1,30 @@
+LabSamplesTransport
+
+agents:
+	humans: Nurse, LabPersonnel
+	robots: TransportRobot, RoboticArm
+locations: PatientFloor, Laboratory, AnalysisMachine
+resources: Sample
+
+Nurse:
+	1: insertData
+	2: leave(Sample)
+
+TransportRobot:
+	1: moveTo PatientFloor
+	2: receiveFrom Nurse
+	   lockDrawer
+	3: moveTo Laboratory
+	   trackTime
+	4: stop until position(RoboticArm, Laboratory) || position(LabPersonnel, Laboratory)
+
+RoboticArm:
+	1-4: stop
+	5: skip if !position(TransportRobot, Laboratory)
+	   unlockDrawer
+	6: fetch(Sample)
+	   scanBarcode
+	7: sort
+	   logInfo
+	8: moveTo AnalysisMachine
+	   deliver(Sample)
