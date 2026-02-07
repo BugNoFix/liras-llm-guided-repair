@@ -202,6 +202,10 @@ def _init_schema(conn: sqlite3.Connection) -> None:
             derived_run_duration_seconds REAL,
             derived_llm_span_seconds REAL,
 
+            -- Collector control flags
+            analysis_skipped INTEGER,
+            analysis_skip_reason TEXT,
+
             source_path TEXT,
             source_mtime REAL,
             source_size INTEGER,
@@ -299,6 +303,8 @@ def _init_schema(conn: sqlite3.Connection) -> None:
         ("derived_avg_delta_per_step", "REAL"),
         ("derived_run_duration_seconds", "REAL"),
         ("derived_llm_span_seconds", "REAL"),
+        ("analysis_skipped", "INTEGER"),
+        ("analysis_skip_reason", "TEXT"),
     ]:
         col, typ = col_def
         try:
@@ -375,6 +381,8 @@ def _init_schema(conn: sqlite3.Connection) -> None:
             derived_regression_steps,
             derived_run_duration_seconds,
             derived_llm_span_seconds,
+            analysis_skipped,
+            analysis_skip_reason,
             summary_llm_calls,
             summary_prompt_tokens_est_total,
             summary_response_tokens_est_total,
@@ -407,6 +415,26 @@ def _init_schema(conn: sqlite3.Connection) -> None:
     )
 
     conn.commit()
+
+
+def _skip_reason_for_run(metadata: Dict[str, Any]) -> Optional[str]:
+    """Return a reason to skip analysis for interrupted/broken runs."""
+    status = metadata.get("status")
+    if isinstance(status, str):
+        s = status.strip().lower()
+        if s in {"setup_error", "crashed", "error", "config_error"}:
+            return f"status={s}"
+
+    if metadata.get("interrupted") is True:
+        return "interrupted=true"
+
+    if isinstance(metadata.get("breaking_error"), dict):
+        be_type = metadata.get("breaking_error", {}).get("type")
+        if be_type:
+            return f"breaking_error={be_type}"
+        return "breaking_error"
+
+    return None
 
 
 def _should_skip(conn: sqlite3.Connection, *, source_path: str, mtime: float, size: int) -> bool:
@@ -875,6 +903,23 @@ def ingest(
                     mtime=st.st_mtime,
                     size=st.st_size,
                 )
+
+                skip_reason = _skip_reason_for_run(metadata)
+                if skip_reason:
+                    # Record run but skip iteration metrics/derived metrics so analysis data stays clean.
+                    run_row["analysis_skipped"] = 1
+                    run_row["analysis_skip_reason"] = skip_reason
+                    _upsert_run(conn, run_row)
+                    stats.upserted_runs += 1
+                    conn.commit()
+                    stats.parsed += 1
+                    if verbose:
+                        print(f"SKIP: interrupted run ({skip_reason}): {meta_path}")
+                    continue
+
+                run_row["analysis_skipped"] = 0
+                run_row["analysis_skip_reason"] = None
+
                 it_rows = _extract_iteration_rows(metadata, run_key=run_key)
                 for r in it_rows:
                     metrics = _compute_compiler_metrics(r.get("compiler_output_path"))

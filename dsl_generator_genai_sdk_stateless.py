@@ -8,9 +8,6 @@ from datetime import datetime
 import json
 from typing import Optional
 
-import os
-from pathlib import Path
-
 # 🔴 KEY PATH CONFIGURATION
 # For shared projects: place your personal key in keys/key.json
 # The keys/ directory is gitignored to prevent sharing credentials
@@ -25,13 +22,9 @@ if not KEY_PATH.exists():
 
 if KEY_PATH.exists():
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(KEY_PATH)
-    print(f"✅ SUCCESS: Auth key found at {KEY_PATH}")
 else:
-    print(f"❌ ERROR: Auth key NOT found")
-    print(f"Please place your key.json in one of these locations:")
-    print(f"  - {KEYS_DIR / 'key.json'} (recommended for shared projects)")
-    print(f"  - {PROJECT_ROOT / 'key.json'} (backward compatibility)")
-    print(f"\nCreate the keys/ directory if it doesn't exist.")
+    # Rely on Application Default Credentials (ADC) when available.
+    pass
 
 class DSLGenerator:
     def __init__(
@@ -54,7 +47,6 @@ class DSLGenerator:
         # Set credentials if service account key is provided
         if service_account_key:
             os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = service_account_key
-            print(f"✓ Using service account: {service_account_key}")
         
         # Initialize Gemini 3 client
         self.client = genai.Client(vertexai=True, project=project_id, location=location)
@@ -155,10 +147,7 @@ class DSLGenerator:
                 ),
             )
         except Exception as e:
-            print(
-                "Warning: server-side chat unavailable; falling back to stateless generate_content. "
-                f"Details: {e}"
-            )
+            # Batch-friendly: fall back silently when server-side chats are unavailable.
             self.supports_server_chat = False
             return None
 
@@ -337,22 +326,16 @@ class DSLGenerator:
         with open(filepath, 'r', encoding='utf-8') as f:
             return f.read()
     
-    def list_available_files(self):
-        """List all available system prompts, shots, and scenarios"""
-        print("\n=== Available System Prompts ===")
-        sp_files = sorted(self.sp_path.glob("*.txt"))
-        for i, f in enumerate(sp_files, 1):
-            print(f"{i}. {f.name}")
-        
-        print("\n=== Available Shots ===")
-        shot_files = sorted(self.shots_path.glob("*.txt"))
-        for i, f in enumerate(shot_files, 1):
-            print(f"{i}. {f.name}")
-        
-        print("\n=== Available Scenarios ===")
-        scenario_files = sorted(self.scenarios_path.glob("*.txt"))
-        for i, f in enumerate(scenario_files, 1):
-            print(f"{i}. {f.name}")
+    def list_available_files(self) -> dict:
+        """Return available system prompts, shots, and scenarios (no printing)."""
+        sp_files = [p.name for p in sorted(self.sp_path.glob("*.txt"))]
+        shot_files = [p.name for p in sorted(self.shots_path.glob("*.txt"))]
+        scenario_files = [p.name for p in sorted(self.scenarios_path.glob("*.txt"))]
+        return {
+            "system_prompts": sp_files,
+            "shots": shot_files,
+            "scenarios": scenario_files,
+        }
     
     def start_conversation(self, system_prompt_file: str, shots, scenario_file: str, model_name: str):
         """
@@ -397,17 +380,8 @@ class DSLGenerator:
 
         # Capture generation context for the repair phase
         self.generation_scenario_text = scenario_content
-        
-        print("\n=== Starting Conversation with Gemini ===")
-        print(f"System Prompt: {system_prompt_file}")
-        print(f"Chat History: {len(shot_pairs)} few-shot example(s)")
-        for i, pair in enumerate(shot_pairs, 1):
-            print(f"  Example {i}: {pair['user']} → {pair['assistant']}")
-        print(f"Scenario: {scenario_file}")
-        print("\n" + "="*50 + "\n")
-        
-        # Display the full context
-        self._display_full_prompt(system_prompt, history, scenario_content)
+
+        # Batch-friendly: avoid printing full prompts/configuration to stdout.
 
         # Send the actual scenario and get DSL code
         # Prefer server-side chat (stateful) if available, else fallback to stateless contents replay.
@@ -596,8 +570,6 @@ class DSLGenerator:
         )
         self.last_repair_prompt_included_previous_dsl = include_previous_dsl
 
-        print("\n=== Sending repair request to Gemini (repair chat) ===")
-
         if self.repair_stateless:
             # Stateless repair: re-send only (repair shots + current prompt).
             # Do NOT append prior failures to history.
@@ -640,38 +612,6 @@ class DSLGenerator:
         # Telemetry: record repair prompt/response sizes (no sanitization)
         self._record_llm_call("repair", prompt, response.text)
         return response.text
-    
-    def _display_full_prompt(self, system_prompt: str, history: list, scenario: str):
-        """Display the full context that will be sent to the AI"""
-        print("\n" + "="*80)
-        print("FULL CONTEXT BEING SENT TO AI:")
-        print("="*80)
-        print("\n[SYSTEM INSTRUCTION]")
-        print(system_prompt)
-        print("\n" + "-"*80)
-        
-        if history:
-            print("\n[CHAT HISTORY - Few-Shot Examples]")
-            for i, content in enumerate(history):
-                role = content.role.upper()
-                text = content.parts[0].text if content.parts else ""
-                print(f"\n{role} Message {i//2 + 1}:")
-                print(text)
-                print("-"*80)
-        
-        print("\n[CURRENT USER PROMPT]")
-        print(scenario)
-        print("="*80)
-        print(f"System instruction length: {len(system_prompt)} characters")
-        print(f"History messages: {len(history)}")
-        print(f"Current prompt length: {len(scenario)} characters")
-        print("="*80 + "\n")
-        
-        # Ask if user wants to continue
-        response = input("Continue with this configuration? (y/n): ").strip().lower()
-        if response != 'y':
-            print("Aborted by user.")
-            exit(0)
     
     def _extract_dsl_code(self, response_text: str) -> str:
         """
@@ -827,7 +767,6 @@ class DSLGenerator:
             success: Whether this version compiled successfully
         """
         if self.run_dsl_dir is None:
-            print("Warning: No active run directory; cannot save result")
             return Path()
         
         # Create filename
@@ -839,37 +778,12 @@ class DSLGenerator:
         filepath = self.run_dsl_dir / filename
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(dsl_code)
-        
-        print(f"\n✓ Saved result to: {filepath}")
 
         return filepath
     
     def run_automated_session(self, config: dict):
         """Run an automated session with hardcoded configuration"""
-        print("\n" + "="*60)
-        print("DSL Generator - Automated Mode")
-        print("="*60)
-        
         shot_pairs = self._normalize_shots(config.get('shots'))
-        
-        # Display configuration
-        print("\n=== CURRENT CONFIGURATION ===")
-        print(f"System Prompt: {config['system_prompt']}")
-        if shot_pairs:
-            print(f"Shot Pairs: {len(shot_pairs)} example(s)")
-            for i, pair in enumerate(shot_pairs, 1):
-                print(f"  Example {i}: {pair['user']} → {pair['assistant']}")
-        else:
-            print("Shot Pairs: None (zero-shot learning)")
-        print(f"Scenario: {config['scenario']}")
-        print(f"Generation Model: {config['generation_model']}")
-        print(f"Repair Model: {config['repair_model']}")
-        if config.get("repair_shots"):
-            repair_shot_pairs = self._normalize_shots(config.get("repair_shots"))
-            print(f"Repair Shot Pairs: {len(repair_shot_pairs)} example(s)")
-        else:
-            print("Repair Shot Pairs: None")
-        print("="*60 + "\n")
 
         # Optional: configure which repair prompt to use for refinement iterations
         self.configure_repair_prompt(config.get("repair_prompt"))
@@ -879,18 +793,28 @@ class DSLGenerator:
         if not compiler_jar_path.is_absolute():
             compiler_jar_path = (self.base_path / compiler_jar_path)
 
-        if not compiler_jar_path.exists():
-            print("\n❌ Error: compiler_jar path does not exist")
-            print(f"Path: {compiler_jar_path}")
-            print("Fix config.json to point at your compiler JAR.")
-            return
-
         max_iterations = int(config["max_iterations"])
         if max_iterations < 1:
             max_iterations = 1
 
         # Initialize per-run metadata and output directory
         self._init_run_metadata(config, compiler_jar_path, max_iterations)
+
+        # Fail fast if the compiler JAR is missing, but still record the interruption.
+        if not compiler_jar_path.exists():
+            if self.run_metadata is not None:
+                self.run_metadata["status"] = "setup_error"
+                self.run_metadata["interrupted"] = True
+                self.run_metadata["breaking_error"] = {
+                    "type": "compiler_jar_missing",
+                    "message": f"compiler_jar path does not exist: {compiler_jar_path}",
+                    "when": datetime.now().isoformat(),
+                    "where": "run_automated_session/preflight",
+                }
+                self.run_metadata["run_finished_at"] = datetime.now().isoformat()
+                self._persist_run_metadata()
+            print(f"\n❌ Error: compiler_jar path does not exist: {compiler_jar_path}")
+            return
         
         # Start conversation and get initial DSL code
         try:
@@ -905,18 +829,9 @@ class DSLGenerator:
             self.last_dsl_code = dsl_code
             self.initial_dsl_from_generation = dsl_code
 
-            print("\n=== GENERATED DSL CODE ===")
-            print(dsl_code)
-            print("\n" + "="*60 + "\n")
-
             # Automated compile/repair loop
             iteration = 0
             while iteration < max_iterations:
-                print("\n" + "="*60)
-                print(f"Validation iteration {iteration + 1}/{max_iterations}")
-                print(f"Compiler JAR: {compiler_jar_path}")
-                print("="*60)
-
                 # Save the raw DSL output immediately for debugging/repro
                 saved_dsl_path = self.save_result(dsl_code, iteration=iteration, success=False)
 
@@ -936,17 +851,25 @@ class DSLGenerator:
                     with open(compiler_output_path, "w", encoding="utf-8") as f:
                         f.write(feedback or "")
                 except Exception as e:
-                    print(f"Warning: Could not write compiler output file: {e}")
+                    # Avoid noisy stdout in batch mode.
+                    pass
 
                 # If validation can't run (missing Java/JAR/timeout), stop rather than prompting LLM.
                 if feedback.startswith("[VALIDATION_SETUP_ERROR]"):
-                    print("\n✗ Validation could not be performed")
-                    print("\n=== VALIDATION SETUP ERROR ===")
+                    print("\n❌ Validation setup error; stopping without attempting LLM repair.")
                     print(feedback)
-                    print("\nStopping without attempting LLM repair.")
 
                     if self.run_metadata is not None:
                         self.run_metadata["status"] = "setup_error"
+                        self.run_metadata["interrupted"] = True
+                        self.run_metadata["breaking_error"] = {
+                            "type": "validation_setup_error",
+                            "message": "Validation could not be performed (see compiler feedback)",
+                            "when": datetime.now().isoformat(),
+                            "where": "run_automated_session/validate_code",
+                            "iteration": int(iteration),
+                            "feedback_preview": (feedback or "")[:5000],
+                        }
                         self.run_metadata["run_finished_at"] = datetime.now().isoformat()
                         self.run_metadata.setdefault("iterations", []).append(
                             {
@@ -971,7 +894,6 @@ class DSLGenerator:
                 )
 
                 if is_valid:
-                    print("\n✓ Compiler reported SUCCESS")
                     success_artifact = self.save_result(dsl_code, iteration=iteration, success=True)
                     if self.run_metadata is not None:
                         self.run_metadata["status"] = "success"
@@ -989,15 +911,12 @@ class DSLGenerator:
                             }
                         )
                         self._persist_run_metadata()
-
-                    print("\n✓ Session completed successfully!")
                     break
 
                 # Guardrail: if the compiler produced no error output at all, treat as success.
                 # This helps when the compiler signals success without a clean exit code.
                 no_error_output = not (feedback or "").strip()
                 if no_error_output:
-                    print("\n✓ No compiler errors detected (empty output)")
                     success_artifact = self.save_result(dsl_code, iteration=iteration, success=True)
 
                     if self.run_metadata is not None:
@@ -1017,21 +936,9 @@ class DSLGenerator:
                             }
                         )
                         self._persist_run_metadata()
-
-                    print("\n✓ Session completed successfully!")
                     break
 
-                print("\n✗ Compiler reported FAILURE")
-                if feedback:
-                    print("\n=== COMPILER OUTPUT (stdout+stderr) ===")
-                    print(feedback)
-                    print("\n" + "="*60 + "\n")
-                else:
-                    print("\n(No compiler output captured.)\n")
-
                 if iteration + 1 >= max_iterations:
-                    print(f"\nReached max iterations ({max_iterations}). Stopping.")
-
                     if self.run_metadata is not None:
                         self.run_metadata["status"] = "max_iterations_reached"
                         self.run_metadata["run_finished_at"] = datetime.now().isoformat()
@@ -1089,65 +996,49 @@ class DSLGenerator:
                     except Exception:
                         pass
                 self.last_dsl_code = dsl_code
-                print("\n=== REFINED DSL CODE ===")
-                print(dsl_code)
-                print("\n" + "="*60 + "\n")
 
                 iteration += 1
         
         except Exception as e:
-            print(f"\nError during session: {e}")
-            import traceback
-            traceback.print_exc()
+            print(f"\n❌ Error during session: {e}")
+            # Persist interruption details so downstream collectors can skip the run.
+            if self.run_metadata is not None:
+                try:
+                    import traceback
+
+                    current_iteration = None
+                    try:
+                        current_iteration = int(locals().get("iteration"))
+                    except Exception:
+                        current_iteration = None
+
+                    self.run_metadata["status"] = "crashed"
+                    self.run_metadata["interrupted"] = True
+                    self.run_metadata["breaking_error"] = {
+                        "type": type(e).__name__,
+                        "message": str(e),
+                        "when": datetime.now().isoformat(),
+                        "where": "run_automated_session/exception",
+                        "iteration": current_iteration,
+                        "traceback": traceback.format_exc()[-20000:],
+                    }
+                    self.run_metadata["run_finished_at"] = datetime.now().isoformat()
+                    self._persist_run_metadata()
+                except Exception:
+                    pass
 
 
 def main():
     """Main entry point"""
-    print("DSL Generator with Gemini API")
-    print("="*60)
-    
     # Load configuration from config.json
     config_file = Path(__file__).parent / "config.json"
     if not config_file.exists():
-        print("\n❌ Error: config.json file not found!")
-        print("Please create a config.json file with the following structure:")
-        print("""
-{
-  "system_prompt": "SystemPrompt1.txt",
-    "generation_model": "gemini-2.0-flash-lite-001",
-    "repair_model": "gemini-2.0-flash-lite-001",
-  "shots": 2,
-    "scenario": "UserScenario_011.txt",
-        "repair_prompt": "RepairPrompt.txt",
-    "compiler_jar": "Compiler/liras-compiler.jar",
-        "max_iterations": 10,
-        "repair_shots": 0
-}
-
-Or for custom shot pairs:
-{
-  "system_prompt": "SystemPrompt1.txt",
-    "generation_model": "gemini-2.0-flash-lite-001",
-    "repair_model": "gemini-2.0-flash-lite-001",
-  "shots": [
-    {
-      "user": "UserScenario_1.txt",
-      "assistant": "AssistantScenario_1.txt"
-    }
-  ],
-    "scenario": "UserScenario_011.txt",
-        "repair_prompt": "RepairPrompt.txt",
-    "compiler_jar": "Compiler/liras-compiler.jar",
-        "max_iterations": 10,
-        "repair_shots": []
-}
-""")
+        print(f"\n❌ Error: config.json file not found: {config_file}")
         return
     
     try:
         with open(config_file, 'r') as f:
             config = json.load(f)
-        print(f"\n✓ Loaded configuration from config.json")
     except Exception as e:
         print(f"\n❌ Error reading config.json: {e}")
         return
@@ -1209,48 +1100,64 @@ Or for custom shot pairs:
             print(f"\n❌ Error: 'repair_shots' must be an integer or a list in config.json")
             return
     
-    # Use the KEY_PATH that was already detected at module level
+    # Non-interactive authentication + project resolution.
+    # Priority order:
+    # - project_id: config.json -> key.json -> env
+    # - credentials: config.json -> key.json -> ADC
     service_account_key = None
     project_id = None
-    
-    if KEY_PATH.exists():
-        print("✓ Found key.json file")
+
+    cfg_project_id = config.get("project_id")
+    if isinstance(cfg_project_id, str) and cfg_project_id.strip():
+        project_id = cfg_project_id.strip()
+
+    cfg_key_path = (
+        config.get("service_account_key_path")
+        or config.get("service_account_key")
+        or config.get("credentials_path")
+    )
+    if isinstance(cfg_key_path, str) and cfg_key_path.strip():
+        candidate = Path(cfg_key_path).expanduser()
+        if not candidate.is_absolute():
+            candidate = (Path(__file__).parent / candidate)
+        if not candidate.exists():
+            print(f"\n❌ Error: service account key file not found: {candidate}")
+            return
+        service_account_key = str(candidate)
+
+    # If no explicit key path provided, use detected key.json if present
+    if service_account_key is None and KEY_PATH.exists():
+        service_account_key = str(KEY_PATH)
+
+    # If we have a key file, attempt to pull project_id from it (unless already set)
+    if service_account_key is not None:
         try:
-            with open(KEY_PATH, 'r') as f:
+            with open(service_account_key, "r") as f:
                 key_data = json.load(f)
+            if not project_id:
                 project_id = key_data.get("project_id")
-                service_account_key = str(KEY_PATH)
-                print(f"✓ Using service account: {key_data.get('client_email')}")
-                print(f"✓ Project ID: {project_id}")
         except Exception as e:
-            print(f"Warning: Could not read key.json: {e}")
-    
-    # If no key.json found, ask user for authentication method
-    if not KEY_PATH.exists() or not project_id:
-        print("\n=== AUTHENTICATION OPTIONS ===")
-        print("1. Use gcloud CLI authentication (recommended for local dev)")
-        print("2. Use service account JSON key file")
-        
-        auth_choice = input("\nChoice (1/2): ").strip()
-        
-        if auth_choice == "2":
-            service_account_key = input("Enter path to service account JSON key file: ").strip()
-            if not os.path.exists(service_account_key):
-                print(f"Error: File not found: {service_account_key}")
-                return
-        elif auth_choice == "1":
-            print("\n✓ Using gcloud CLI authentication")
-            print("Make sure you've run: gcloud auth application-default login")
-        else:
-            print("Invalid choice. Exiting.")
-            return
-        
-        # Get project ID
-        project_id = input("\nEnter your Google Cloud Project ID: ").strip()
-        
-        if not project_id:
-            print("Error: Project ID is required")
-            return
+            # Keep going; project_id might be provided via config/env, and ADC may still work.
+            pass
+
+    # If still no project_id, fall back to environment variables
+    if not project_id:
+        for env_key in ("GOOGLE_CLOUD_PROJECT", "GCLOUD_PROJECT", "GOOGLE_PROJECT_ID"):
+            env_val = os.environ.get(env_key)
+            if env_val and env_val.strip():
+                project_id = env_val.strip()
+                break
+
+    if not project_id:
+        print(
+            "\n❌ Error: Google Cloud Project ID not found. "
+            "Set 'project_id' in config.json or export GOOGLE_CLOUD_PROJECT (or include project_id in key.json)."
+        )
+        return
+
+    if service_account_key is None:
+        # Using ADC (gcloud / workload identity).
+        pass
     
     # Initialize generator
     generator = DSLGenerator(
