@@ -165,21 +165,38 @@
         "jar_missing": false,
         "dsl_missing": false
       },
-      "compiler_feedback_chars": 1514
+      "compiler_feedback_chars": 1514,
+      "repair_prompt_included_previous_dsl": false,
+      "repair_prompt_mode": "compiler_only"
+    },
+    {
+      "iteration": 9,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_161037/dsl/ITER9_20260203_162907.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260203_161037/compiler/ITER9_20260203_162907.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1512
     }
   ],
   "telemetry": {
-    "llm_calls": 9,
-    "prompt_chars_total": 13540,
-    "response_chars_total": 4903,
-    "prompt_tokens_est_total": 3385,
-    "response_tokens_est_total": 1227,
+    "llm_calls": 10,
+    "prompt_chars_total": 15071,
+    "response_chars_total": 5445,
+    "prompt_tokens_est_total": 3768,
+    "response_tokens_est_total": 1363,
     "last_call": {
       "kind": "repair",
-      "timestamp": "2026-02-03T16:27:22.364886",
-      "prompt_chars": 1529,
-      "response_chars": 544,
-      "prompt_tokens_est": 382,
+      "timestamp": "2026-02-03T16:29:07.534496",
+      "prompt_chars": 1531,
+      "response_chars": 542,
+      "prompt_tokens_est": 383,
       "response_tokens_est": 136
     }
   },
@@ -255,24 +272,32 @@
       "response_chars": 544,
       "prompt_tokens_est": 382,
       "response_tokens_est": 136
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-03T16:29:07.534496",
+      "prompt_chars": 1531,
+      "response_chars": 542,
+      "prompt_tokens_est": 383,
+      "response_tokens_est": 136
     }
   ],
-  "status": "running",
-  "run_finished_at": null,
+  "status": "max_iterations_reached",
+  "run_finished_at": "2026-02-03T16:29:09.473093",
   "summary": {
-    "iterations_recorded": 9,
-    "validations_attempted": 9,
-    "compiler_failures": 9,
+    "iterations_recorded": 10,
+    "validations_attempted": 10,
+    "compiler_failures": 10,
     "compiler_successes": 0,
     "setup_errors": 0,
     "first_success_iteration": null,
     "final_success_dsl_path": null,
-    "total_compiler_feedback_chars": 13466,
-    "llm_calls": 9,
-    "prompt_tokens_est_total": 3385,
-    "response_tokens_est_total": 1227
+    "total_compiler_feedback_chars": 14978,
+    "llm_calls": 10,
+    "prompt_tokens_est_total": 3768,
+    "response_tokens_est_total": 1363
   },
-  "updated_at": "2026-02-03T16:27:24.211563",
+  "updated_at": "2026-02-03T16:29:09.473188",
   "repair": {
     "repair_chat_initialized_at": "2026-02-03T16:11:12.067863",
     "repair_prompt_template_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/SPs/SystemPromptRepair1.txt",
