@@ -394,6 +394,7 @@ class DSLGenerator:
             # Backward compat alias
             self.chat = self.generation_chat
 
+        print(f"📤 Sending scenario to generation model ({model_name})...")
         if self.generation_chat is not None:
             response = self.generation_chat.send_message(scenario_content)
         else:
@@ -410,6 +411,7 @@ class DSLGenerator:
             )
         
         response_text = response.text or ""
+        print(f"📥 Generation response received ({len(response_text)} chars)")
 
         # Update chat history with user message and response
         self.chat_history.append(types.Content(role="user", parts=[types.Part(text=scenario_content)]))
@@ -572,6 +574,7 @@ class DSLGenerator:
         )
         self.last_repair_prompt_included_previous_dsl = include_previous_dsl
 
+        print(f"📤 Sending repair request to {self.repair_model_name} (temp={self.repair_temperature})...")
         if self.repair_stateless:
             # Stateless repair: re-send only (repair shots + current prompt).
             # Do NOT append prior failures to history.
@@ -612,6 +615,7 @@ class DSLGenerator:
 
         repair_text = response.text or ""
         self.repair_iteration_count += 1
+        print(f"📥 Repair response received ({len(repair_text)} chars)")
 
         # Telemetry: record repair prompt/response sizes (no sanitization)
         self._record_llm_call("repair", prompt, repair_text)
@@ -804,6 +808,17 @@ class DSLGenerator:
         # Initialize per-run metadata and output directory
         self._init_run_metadata(config, compiler_jar_path, max_iterations)
 
+        print(f"\n{'='*60}")
+        print(f"🚀 Starting automated session")
+        print(f"   Model (gen):    {config.get('generation_model')}")
+        print(f"   Model (repair): {config.get('repair_model')}")
+        print(f"   System prompt:  {config.get('system_prompt')}")
+        print(f"   Scenario:       {config.get('scenario')}")
+        print(f"   Shots:          {config.get('shots')}")
+        print(f"   Max iterations: {max_iterations}")
+        print(f"   Repair prompt:  {self.repair_prompt_template_path.name}")
+        print(f"{'='*60}")
+
         # Fail fast if the compiler JAR is missing, but still record the interruption.
         if not compiler_jar_path.exists():
             if self.run_metadata is not None:
@@ -836,10 +851,13 @@ class DSLGenerator:
             # Automated compile/repair loop
             iteration = 0
             while iteration < max_iterations:
+                print(f"\n--- Iteration {iteration}/{max_iterations - 1} ---")
+
                 # Save the raw DSL output immediately for debugging/repro
                 saved_dsl_path = self.save_result(dsl_code, iteration=iteration, success=False)
 
                 # Validate via local compiler
+                print("🔨 Compiling DSL...")
                 is_valid, feedback = self.validate_code(saved_dsl_path, compiler_jar_path)
 
                 # Track approximate “progress” signal from compiler output.
@@ -898,6 +916,7 @@ class DSLGenerator:
                 )
 
                 if is_valid:
+                    print("✅ Compilation successful!")
                     success_artifact = self.save_result(dsl_code, iteration=iteration, success=True)
                     if self.run_metadata is not None:
                         self.run_metadata["status"] = "success"
@@ -921,6 +940,7 @@ class DSLGenerator:
                 # This helps when the compiler signals success without a clean exit code.
                 no_error_output = not (feedback or "").strip()
                 if no_error_output:
+                    print("✅ No compiler errors (treating as success)")
                     success_artifact = self.save_result(dsl_code, iteration=iteration, success=True)
 
                     if self.run_metadata is not None:
@@ -942,7 +962,10 @@ class DSLGenerator:
                         self._persist_run_metadata()
                     break
 
+                print(f"❌ Compilation failed — {score.get('error_lines', '?')} error(s), {score.get('warning_lines', '?')} warning(s)")
+
                 if iteration + 1 >= max_iterations:
+                    print("⛔ Max iterations reached — stopping.")
                     if self.run_metadata is not None:
                         self.run_metadata["status"] = "max_iterations_reached"
                         self.run_metadata["run_finished_at"] = datetime.now().isoformat()
@@ -977,6 +1000,7 @@ class DSLGenerator:
                     self._persist_run_metadata()
 
                 # Repair with LLM using a dedicated repair chat (system prompt = repair prompt).
+                print(f"🔧 Requesting LLM repair (iteration {iteration} → {iteration + 1})...")
                 dsl_code = self.repair_with_compiler_output(
                     previous_dsl=dsl_code,
                     compiler_output=feedback,

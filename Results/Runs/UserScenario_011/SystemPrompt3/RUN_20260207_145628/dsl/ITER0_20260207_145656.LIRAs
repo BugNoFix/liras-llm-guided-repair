@@ -1,0 +1,31 @@
+LabSampleTransport
+
+agents:
+	humans: Nurse, LabPersonnel
+	robots: TransportRobot, RoboticArm
+locations: PatientFloor, Laboratory, AnalysisMachine
+resources: Sample
+
+Nurse:
+	1: fetch Sample
+	2: moveTo TransportRobot
+	   stop until position(TransportRobot, PatientFloor)
+	3: deliver Sample
+
+TransportRobot:
+	1: stop
+	   restart if !possess(Nurse, Sample)
+	2: moveTo PatientFloor
+	3: receiveFrom Nurse
+	4: moveTo Laboratory
+	5: stop until !possess(TransportRobot, Sample)
+
+RoboticArm:
+	1: stop until position(TransportRobot, Laboratory)
+	2: fetch Sample
+	3: moveTo AnalysisMachine
+	4: deliver Sample
+
+conclusion:
+	success: possess(AnalysisMachine, Sample)
+	failure: time(30)
