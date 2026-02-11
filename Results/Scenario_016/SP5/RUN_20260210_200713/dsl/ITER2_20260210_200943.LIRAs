@@ -1,0 +1,94 @@
+Supermarket
+
+agents:
+	humans: Human
+	robots: Robot
+locations: l1, l2, l3, l4, room_7002, elevator, room_3201
+resources: none
+
+Robot:
+	1: moveTo l1
+	2: CheckItems
+	3: moveTo l2
+	4: CheckItems
+	5: moveTo l3
+	6: CheckItems
+	7: moveTo l4
+	8: CheckItems
+	9: wait if !presence(humans)
+	10: NavigateToServiceStartLocation
+	11-13: WaitForHumanAssistance
+	14: ServiceGoalReached
+
+Human:
+	1-4: moveTo l4
+	5: NavigateToServiceStartLocation
+	6-8: WaitForRobotAssistance
+	9: ServiceGoalReached
+
+NavigateToServiceStartLocation:
+	1: moveTo room_7002
+	2: WaitForConfirmation
+	3: NavigateToElevator
+	4: AskForHumanAssistanceToTakeElevator
+	5: NavigateInsideElevator
+	6: AskForHumanAssistanceToKnowCorrectFloorReached
+	7: NavigateOutOfElevator
+	8: NavigateToServiceGoalLocation
+
+WaitForHumanAssistance:
+	1: wait
+
+NavigateToElevator:
+	1: moveTo elevator
+
+AskForHumanAssistanceToTakeElevator:
+	1: AskForHumanAssistance
+
+NavigateInsideElevator:
+	1: moveTo elevator
+
+AskForHumanAssistanceToKnowCorrectFloorReached:
+	1: AskForHumanAssistance
+
+NavigateOutOfElevator:
+	1: MoveOutOfElevator
+
+ServiceGoalReached:
+	1: CheckIfServiceGoalReached
+
+MoveToCurrentLocation:
+	1: wait
+
+CheckItems:
+	1: wait
+
+MoveToLocation:
+	1: wait
+
+WaitForConfirmation:
+	1: wait
+
+AskForHumanAssistance:
+	1: wait
+
+MoveToServiceStartLocation:
+	1: moveTo room_7002
+
+MoveToElevator:
+	1: moveTo elevator
+
+MoveOutOfElevator:
+	1: moveTo l1
+
+CheckIfServiceGoalReached:
+	1: wait
+
+ServiceGoalReachedConfirmation:
+	1: wait
+
+WaitForRobotAssistance:
+	1: wait
+
+NavigateToServiceGoalLocation:
+	1: wait

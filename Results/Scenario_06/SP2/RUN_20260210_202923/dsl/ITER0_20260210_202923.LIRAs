@@ -1,0 +1,12 @@
+Hotel Butler
+
+agents:
+	robots: Robot
+	guests: Guest
+locations: lobby, rooms
+resources: storageBox, items
+
+Robot:
+	1: moveTo lobby
+	   checkMap
+	2: navigateTo rooms

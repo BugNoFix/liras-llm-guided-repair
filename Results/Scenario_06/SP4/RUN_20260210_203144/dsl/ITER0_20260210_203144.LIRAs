@@ -1,0 +1,86 @@
+ Here is the generated LIRAs code for the given description:
+```liras
+grammar it.polimi.LIRAs with org.eclipse.xtext.common.Terminals
+
+Model:
+  NL*
+    pattern=Pattern
+    sequence+=Sequence*
+    conclusion=Conclusion?
+;
+
+// A pattern is initially defined with the name of the pattern itself and then taking as input the agents involved in the pattern divided by them type (the same type of agents share the same set of basic actions), the location and the resources needed in the pattern execution.
+Pattern:
+  name=ID NL+
+    (('agents:'  NL+
+      ('humans:' (human+=Human (',' human+=Human)*)? NL+)?
+      ('robots:' (robot+=Robot (',' robot+=Robot)*)? NL+)? )
+    | 'locations:' (location+=Location (',' location+=Location)*)? NL+
+    | 'resources:' (resources+=Resource (',' resources+=Resource)*)? NL+)*
+;
+
+// A sequence for each agent is created by combining multiple SubSequences, the default action if not specified is free-to to move in case of missing or empty SubSequence
+Sequence:
+  agent=Agent ('default' action=Action)? ':' NL+
+  (subSequence+=SubSequence)*
+;
+
+// In each subsequence we can have several conditioned actions to be executed sequentially or loop elements
+SubSequence:
+  i=INT ('-' j=INT)? ':' ( ( (loop+=Loop) | ((actionC+=ActionC) )?) NL )+
+;
+
+// The conclusion provides the possible success and failure condition for a pattern
+Conclusion:
+  'success:' condition+=Condition NL*
+  'failure:' condition+=Condition NL*
+;
+
+// the skip keyword avoid the execution of the current SubSequence, and the restart makes the SubSequence executing from the beginning. The all keyword extend this to all the subsequence that are executed in that moment from all the agents
+Loop:
+  ('skip' ('all')? 'if' condition=Condition) | ('restart' ('all')? 'if' condition=Condition)
+;
+
+// when the until condition is true then the correspondent conditioned action ends
+// when the if/else condition is false the alternative action is executed
+// wait is followed by the minimum amount of time before the action can end
+ConditionalStatement:
+  {ConditionalStatement} cs1 = 'until' condition+=Condition
+  | cs2 = 'if' condition+=Condition 'else' action=Action
+  | cs3 = 'if' condition+=Condition 'else' action=Action
+  | cs4 = 'wait' time=INT
+;
+
+// comparison for the non boolean atomic predicates
+Relation:
+  ('dist' '(' agent+=Agent ',' agent+=Agent ')' ('>' | '<' | '>=' | '<=' | '==' | '!=') th=INT)
+  | 'soc' '(' agent+=Agent ')' ('>' | '<' | '>=' | '<=' | '==' | '!=') th=INT
+;
+
+Target: 
+  name=ID
+;
+
+Agent:
+  name=ID
+;
+
+Human:
+  name=ID
+;
+
+Robot:
+  name=ID
+;
+
+Location:
+  name=ID
+;
+
+Resource:
+  name=ID
+;
+
+terminal NL:
+  (' '* '\r'? '\n' '\t'*)+
+```

@@ -1,0 +1,23 @@
+Supermarket
+
+agents:
+	humans: Human
+	robots: Robot
+locations: l1, l2, l3, l4, loc7002, elevator7th, floor3rd, room3201
+resources: none
+
+Robot:
+	1: moveTo l1 wait
+	2: moveTo l2 wait
+	3: moveTo l3 wait
+	4: moveTo l4 wait
+	5: wait
+	6: moveTo loc7002 wait
+	7: moveTo elevator7th wait
+	8: moveTo floor3rd wait
+	9: moveTo room3201 wait
+	10: stop
+
+Human:
+	1-4: moveTo l4
+	5: wait

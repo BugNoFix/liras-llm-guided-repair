@@ -69,40 +69,51 @@ def _default_system_prompts(sp_dir: Path) -> list[str]:
         if "Repair" in name:
             continue
         prompts.append(name)
+    for p in sorted(sp_dir.glob("SP*.txt")):
+        name = p.name
+        if name in prompts:
+            continue
+        prompts.append(name)
     return prompts
 
 
 def _default_scenarios(scenarios_dir: Path) -> list[str]:
-    return [p.name for p in sorted(scenarios_dir.glob("UserScenario_*.txt"))]
+    scenarios = [p.name for p in sorted(scenarios_dir.glob("UserScenario_*.txt"))]
+    if scenarios:
+        return scenarios
+    return [p.name for p in sorted(scenarios_dir.glob("Scenario_*.txt"))]
 
 
-def _validate_template_config(config: dict) -> None:
+def _validate_template_config(config: dict, *, generation_only: bool) -> None:
     required_keys = [
-        "compiler_jar",
         "generation_model",
-        "repair_model",
         "shots",
-        "max_iterations",
         "system_prompt",
         "scenario",
     ]
+    if not generation_only:
+        required_keys.extend(["compiler_jar", "repair_model", "max_iterations"])
     missing = [k for k in required_keys if k not in config]
     if missing:
         raise ValueError(f"config.json missing required keys: {missing}")
 
-    if not isinstance(config["max_iterations"], int):
-        raise ValueError("'max_iterations' must be an integer")
+    if not generation_only:
+        if not isinstance(config.get("max_iterations"), int):
+            raise ValueError("'max_iterations' must be an integer")
 
-    for k in ("generation_model", "repair_model"):
-        if not isinstance(config.get(k), str) or not config[k].strip():
-            raise ValueError(f"'{k}' must be a non-empty string")
+    if not isinstance(config.get("generation_model"), str) or not config["generation_model"].strip():
+        raise ValueError("'generation_model' must be a non-empty string")
+    if not generation_only:
+        if not isinstance(config.get("repair_model"), str) or not config["repair_model"].strip():
+            raise ValueError("'repair_model' must be a non-empty string")
 
     if not isinstance(config.get("shots"), (int, list)):
         raise ValueError("'shots' must be an integer or a list")
 
-    if "repair_shots" in config and config["repair_shots"] is not None:
-        if not isinstance(config["repair_shots"], (int, list)):
-            raise ValueError("'repair_shots' must be an integer or a list")
+    if not generation_only:
+        if "repair_shots" in config and config["repair_shots"] is not None:
+            if not isinstance(config["repair_shots"], (int, list)):
+                raise ValueError("'repair_shots' must be an integer or a list")
 
     for name in ("generation_temperature", "repair_temperature"):
         if name in config and config[name] is not None:
@@ -110,6 +121,26 @@ def _validate_template_config(config: dict) -> None:
                 raise ValueError(f"'{name}' must be a number")
             if float(config[name]) < 0.0:
                 raise ValueError(f"'{name}' must be >= 0.0")
+
+
+def _parse_shots_arg(value: str) -> Optional[list[int]]:
+    """Parse comma-separated shot counts into a list of ints.
+
+    Returns None when the argument is empty/whitespace, meaning "use template shots".
+    """
+    if value is None:
+        return None
+    raw = value.strip()
+    if not raw:
+        return None
+    parts = [p.strip() for p in raw.split(",") if p.strip()]
+    shots = []
+    for part in parts:
+        try:
+            shots.append(int(part))
+        except ValueError as exc:
+            raise ValueError(f"Invalid shot count '{part}'. Use comma-separated integers.") from exc
+    return shots
 
 
 def main() -> int:
@@ -136,6 +167,24 @@ def main() -> int:
         action="store_true",
         help="Print planned runs and exit without executing",
     )
+    parser.add_argument(
+        "--shots",
+        default="",
+        help=(
+            "Comma-separated shot counts to run (e.g., 0,1,2). "
+            "Leave empty to use shots from config.json."
+        ),
+    )
+    parser.add_argument(
+        "--generation-only",
+        action="store_true",
+        help="Only generate DSL (skip compile/repair) for each pair",
+    )
+    parser.add_argument(
+        "--disable-generation",
+        action="store_true",
+        help="Skip generation and load DSL from cache for each pair",
+    )
 
     args = parser.parse_args()
 
@@ -146,7 +195,9 @@ def main() -> int:
         raise FileNotFoundError(f"config file not found: {cfg_path}")
 
     template = _load_json(cfg_path)
-    _validate_template_config(template)
+    _validate_template_config(template, generation_only=args.generation_only)
+
+    shots_override = _parse_shots_arg(args.shots)
 
     sp_dir = PROJECT_ROOT / "SPs"
     scenarios_dir = PROJECT_ROOT / "Scenarios"
@@ -159,17 +210,22 @@ def main() -> int:
     if not scenarios:
         raise RuntimeError(f"No user scenarios found under: {scenarios_dir}")
 
-    planned_pairs: list[tuple[str, str]] = []
+    planned_pairs: list[tuple[str, str, Optional[int]]] = []
+    shots_values = shots_override if shots_override is not None else [None]
     for scenario in scenarios:
         for sp in system_prompts:
-            planned_pairs.append((scenario, sp))
+            for shots in shots_values:
+                planned_pairs.append((scenario, sp, shots))
 
     if args.limit and args.limit > 0:
         planned_pairs = planned_pairs[: args.limit]
 
     if args.list_only:
-        for i, (scenario, sp) in enumerate(planned_pairs, start=1):
-            print(f"[{i}/{len(planned_pairs)}] scenario={scenario}  system_prompt={sp}")
+        for i, (scenario, sp, shots) in enumerate(planned_pairs, start=1):
+            shots_label = shots if shots is not None else template.get("shots")
+            print(
+                f"[{i}/{len(planned_pairs)}] scenario={scenario}  system_prompt={sp}  shots={shots_label}"
+            )
         return 0
 
     service_account_key = _resolve_service_account_key(template)
@@ -187,8 +243,12 @@ def main() -> int:
     batch_id = datetime.now().strftime("%Y%m%d_%H%M%S")
     total = len(planned_pairs)
 
-    for idx, (scenario, sp) in enumerate(planned_pairs, start=1):
-        print(f"[{idx}/{total}] START batch={batch_id}  scenario={scenario}  system_prompt={sp}")
+    for idx, (scenario, sp, shots) in enumerate(planned_pairs, start=1):
+        shots_label = shots if shots is not None else template.get("shots")
+        print(
+            f"[{idx}/{total}] START batch={batch_id}  scenario={scenario}  "
+            f"system_prompt={sp}  shots={shots_label}"
+        )
 
         # Fresh generator per run to avoid any cross-run chat/history leakage.
         generator = DSLGenerator(
@@ -202,6 +262,13 @@ def main() -> int:
         run_config = deepcopy(template)
         run_config["scenario"] = scenario
         run_config["system_prompt"] = sp
+        if shots is not None:
+            run_config["shots"] = shots
+        if args.generation_only:
+            run_config["generation_only"] = True
+        if args.disable_generation:
+            run_config["use_generated_dsl_cache"] = True
+            run_config.setdefault("generated_dsl_source", "dsl_folder")
 
         try:
             generator.run_automated_session(run_config)
@@ -210,7 +277,10 @@ def main() -> int:
             print(f"[{idx}/{total}] ERROR scenario={scenario} system_prompt={sp}: {type(e).__name__}: {e}")
             continue
 
-        print(f"[{idx}/{total}] DONE  batch={batch_id}  scenario={scenario}  system_prompt={sp}")
+        print(
+            f"[{idx}/{total}] DONE  batch={batch_id}  scenario={scenario}  "
+            f"system_prompt={sp}  shots={shots_label}"
+        )
 
     return 0
 

@@ -1,0 +1,168 @@
+{
+  "run_id": "20260210_201131",
+  "run_started_at": "2026-02-10T20:11:31.008142",
+  "project_id": "aerobic-stream-483313-v6",
+  "location": "global",
+  "system_prompt": "SP2.txt",
+  "shots": 0,
+  "scenario": "Scenario_029.txt",
+  "repair_prompt": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/SPs/SystemPromptRepair3_lightweigth.txt",
+  "generation_model": "gemini-3-pro-preview",
+  "generation_temperature": 1.0,
+  "repair_model": "gemini-3-pro-preview",
+  "repair_temperature": 0.35,
+  "repair_max_output_tokens": 16384,
+  "repair_shots": 0,
+  "use_generated_dsl_cache": true,
+  "generated_dsl_source": "dsl_folder",
+  "generated_dsl_cache_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/DSL/Scenario_29/SP2_Shot0.txt",
+  "compiler_jar": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/liras_compiler.jar",
+  "max_iterations": 10,
+  "run_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_029/SP2/RUN_20260210_201131",
+  "dsl_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_029/SP2/RUN_20260210_201131/dsl",
+  "compiler_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_029/SP2/RUN_20260210_201131/compiler",
+  "iterations": [
+    {
+      "iteration": 0,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_029/SP2/RUN_20260210_201131/dsl/ITER0_20260210_201131.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_029/SP2/RUN_20260210_201131/compiler/ITER0_20260210_201131.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 461,
+      "compiler_error_score": {
+        "feedback_chars": 461,
+        "lines": 8,
+        "error_lines": 6,
+        "warning_lines": 0,
+        "score": 62
+      },
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 1,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_029/SP2/RUN_20260210_201131/dsl/ITER1_20260210_201316.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_029/SP2/RUN_20260210_201131/compiler/ITER1_20260210_201316.LIRAs.compiler.txt",
+      "validated": false,
+      "is_valid": false,
+      "validation": {
+        "returncode": null,
+        "timed_out": true,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_error_score": {
+        "feedback_chars": 442,
+        "lines": 3,
+        "error_lines": 1,
+        "warning_lines": 0,
+        "score": 12
+      },
+      "ended_because": "validation_setup_error"
+    }
+  ],
+  "telemetry": {
+    "llm_calls": 1,
+    "prompt_chars_total": 1240,
+    "response_chars_total": 147,
+    "prompt_tokens_est_total": 310,
+    "response_tokens_est_total": 37,
+    "last_call": {
+      "kind": "repair",
+      "timestamp": "2026-02-10T20:13:16.557712",
+      "finish_reason": "FinishReason.STOP",
+      "safety_ratings": [
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HATE_SPEECH",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HARASSMENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        }
+      ],
+      "prompt_chars": 1240,
+      "response_chars": 147,
+      "prompt_tokens_est": 310,
+      "response_tokens_est": 37
+    }
+  },
+  "llm_call_history": [
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-10T20:13:16.557712",
+      "finish_reason": "FinishReason.STOP",
+      "safety_ratings": [
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HATE_SPEECH",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HARASSMENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        }
+      ],
+      "prompt_chars": 1240,
+      "response_chars": 147,
+      "prompt_tokens_est": 310,
+      "response_tokens_est": 37
+    }
+  ],
+  "status": "setup_error",
+  "run_finished_at": "2026-02-10T20:13:26.734704",
+  "summary": {
+    "iterations_recorded": 2,
+    "validations_attempted": 1,
+    "compiler_failures": 1,
+    "compiler_successes": 0,
+    "setup_errors": 1,
+    "first_success_iteration": null,
+    "final_success_dsl_path": null,
+    "total_compiler_feedback_chars": 461,
+    "llm_calls": 1,
+    "prompt_tokens_est_total": 310,
+    "response_tokens_est_total": 37
+  },
+  "updated_at": "2026-02-10T20:13:26.735007",
+  "repair": {
+    "repair_chat_initialized_at": "2026-02-10T20:11:55.625114",
+    "repair_prompt_template_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/SPs/SystemPromptRepair3_lightweigth.txt",
+    "repair_system_prompt_chars": 3685,
+    "repair_stateless": true,
+    "repair_uses_server_chat": false,
+    "repair_temperature": 0.35
+  },
+  "interrupted": true,
+  "breaking_error": {
+    "type": "validation_setup_error",
+    "message": "Validation could not be performed (see compiler feedback)",
+    "when": "2026-02-10T20:13:26.734210",
+    "where": "run_automated_session/validate_code",
+    "iteration": 1,
+    "feedback_preview": "[VALIDATION_SETUP_ERROR] Compiler invocation timed out after 10 seconds.\nCommand: java -jar /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/liras_compiler.jar /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_029/SP2/RUN_20260210_201131/dsl/ITER1_20260210_201316.LIRAs\nDSL file: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_029/SP2/RUN_20260210_201131/dsl/ITER1_20260210_201316.LIRAs"
+  }
+}

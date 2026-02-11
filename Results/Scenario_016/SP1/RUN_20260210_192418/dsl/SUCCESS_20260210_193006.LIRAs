@@ -1,0 +1,17 @@
+AMR_photovoltaic_pipeline
+
+agents:
+humans: Human
+robots: Drone1, Drone2
+
+locations: currentLocation, serviceStartLocation, elevatorLocation7thFloor, elevatorLocation3rdFloor, goalLocationRoom3201
+
+resources: basket
+
+Drone1:
+1: moveTo currentLocation
+2: pick basket
+3: moveTo serviceStartLocation
+4: moveTo elevatorLocation7thFloor
+5: moveTo goalLocationRoom3201
+6: deposit basket

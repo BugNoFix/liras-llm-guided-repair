@@ -1,0 +1,16 @@
+Transport_Basket
+
+agents:
+robots: Robot1
+
+locations: room_3201
+
+resources: basket
+
+Robot1:
+1: fetch basket
+2: moveTo room_3201
+3: leave basket
+
+success: position(Robot1, room_3201)
+failure: tired

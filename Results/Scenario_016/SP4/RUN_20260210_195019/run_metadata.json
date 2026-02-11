@@ -1,0 +1,90 @@
+{
+  "run_id": "20260210_195019",
+  "run_started_at": "2026-02-10T19:50:19.557970",
+  "project_id": "aerobic-stream-483313-v6",
+  "location": "global",
+  "system_prompt": "SP4.txt",
+  "shots": 2,
+  "scenario": "Scenario_016.txt",
+  "repair_prompt": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/SPs/SystemPromptRepair3_lightweigth.txt",
+  "generation_model": "gemini-3-pro-preview",
+  "generation_temperature": 1.0,
+  "repair_model": "gemini-3-pro-preview",
+  "repair_temperature": 0.35,
+  "repair_max_output_tokens": 16384,
+  "repair_shots": 0,
+  "use_generated_dsl_cache": true,
+  "generated_dsl_source": "dsl_folder",
+  "generated_dsl_cache_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/DSL/Scenario_16/SP4_Shot2.txt",
+  "compiler_jar": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/liras_compiler.jar",
+  "max_iterations": 10,
+  "run_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP4/RUN_20260210_195019",
+  "dsl_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP4/RUN_20260210_195019/dsl",
+  "compiler_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP4/RUN_20260210_195019/compiler",
+  "iterations": [
+    {
+      "iteration": 0,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP4/RUN_20260210_195019/dsl/ITER0_20260210_195019.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP4/RUN_20260210_195019/compiler/ITER0_20260210_195019.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 2186,
+      "compiler_error_score": {
+        "feedback_chars": 2186,
+        "lines": 32,
+        "error_lines": 30,
+        "warning_lines": 0,
+        "score": 310
+      }
+    }
+  ],
+  "telemetry": {
+    "llm_calls": 0,
+    "prompt_chars_total": 0,
+    "response_chars_total": 0,
+    "prompt_tokens_est_total": 0,
+    "response_tokens_est_total": 0,
+    "last_call": null
+  },
+  "llm_call_history": [],
+  "status": "crashed",
+  "run_finished_at": "2026-02-10T20:06:05.530328",
+  "summary": {
+    "iterations_recorded": 1,
+    "validations_attempted": 1,
+    "compiler_failures": 1,
+    "compiler_successes": 0,
+    "setup_errors": 0,
+    "first_success_iteration": null,
+    "final_success_dsl_path": null,
+    "total_compiler_feedback_chars": 2186,
+    "llm_calls": 0,
+    "prompt_tokens_est_total": 0,
+    "response_tokens_est_total": 0
+  },
+  "updated_at": "2026-02-10T20:06:05.530356",
+  "repair": {
+    "repair_chat_initialized_at": "2026-02-10T19:50:21.643290",
+    "repair_prompt_template_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/SPs/SystemPromptRepair3_lightweigth.txt",
+    "repair_system_prompt_chars": 3685,
+    "repair_stateless": true,
+    "repair_uses_server_chat": false,
+    "repair_temperature": 0.35
+  },
+  "interrupted": true,
+  "breaking_error": {
+    "type": "ReadError",
+    "message": "[Errno 54] Connection reset by peer",
+    "when": "2026-02-10T20:06:05.487258",
+    "where": "run_automated_session/exception",
+    "iteration": 0,
+    "traceback": "Traceback (most recent call last):\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpx/_transports/default.py\", line 101, in map_httpcore_exceptions\n    yield\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpx/_transports/default.py\", line 250, in handle_request\n    resp = self._pool.handle_request(req)\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpcore/_sync/connection_pool.py\", line 256, in handle_request\n    raise exc from None\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpcore/_sync/connection_pool.py\", line 236, in handle_request\n    response = connection.handle_request(\n        pool_request.request\n    )\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpcore/_sync/connection.py\", line 103, in handle_request\n    return self._connection.handle_request(request)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpcore/_sync/http11.py\", line 136, in handle_request\n    raise exc\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpcore/_sync/http11.py\", line 106, in handle_request\n    ) = self._receive_response_headers(**kwargs)\n        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpcore/_sync/http11.py\", line 177, in _receive_response_headers\n    event = self._receive_event(timeout=timeout)\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpcore/_sync/http11.py\", line 217, in _receive_event\n    data = self._network_stream.read(\n        self.READ_NUM_BYTES, timeout=timeout\n    )\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpcore/_backends/sync.py\", line 126, in read\n    with map_exceptions(exc_map):\n         ~~~~~~~~~~~~~~^^^^^^^^^\n  File \"/usr/local/Cellar/python@3.14/3.14.3/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py\", line 162, in __exit__\n    self.gen.throw(value)\n    ~~~~~~~~~~~~~~^^^^^^^\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpcore/_exceptions.py\", line 14, in map_exceptions\n    raise to_exc(exc) from exc\nhttpcore.ReadError: [Errno 54] Connection reset by peer\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/dsl_generator.py\", line 1281, in run_automated_session\n    repair_result = self.repair_with_compiler_output(\n        previous_dsl=dsl_code,\n    ...<2 lines>...\n        repair_shots=config.get('repair_shots'),\n    )\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/dsl_generator.py\", line 786, in repair_with_compiler_output\n    response = self._call_with_backoff(\n        lambda: self.client.models.generate_content(\n    ...<13 lines>...\n        label=\"repair.generate_content\",\n    )\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/dsl_generator.py\", line 170, in _call_with_backoff\n    return func()\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/dsl_generator.py\", line 787, in <lambda>\n    lambda: self.client.models.generate_content(\n            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^\n        model=self.repair_model_name,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<10 lines>...\n        ),\n        ^^\n    ),\n    ^\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/google/genai/models.py\", line 5474, in generate_content\n    response = self._generate_content(\n        model=model, contents=contents, config=parsed_config\n    )\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/google/genai/models.py\", line 4214, in _generate_content\n    response = self._api_client.request(\n        'post', path, request_dict, http_options\n    )\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/google/genai/_api_client.py\", line 1386, in request\n    response = self._request(http_request, http_options, stream=False)\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/google/genai/_api_client.py\", line 1222, in _request\n    return self._retry(self._request_once, http_request, stream)  # type: ignore[no-any-return]\n           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/tenacity/__init__.py\", line 471, in __call__\n    do = self.iter(retry_state=retry_state)\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/tenacity/__init__.py\", line 372, in iter\n    result = action(retry_state)\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/tenacity/__init__.py\", line 414, in exc_check\n    raise retry_exc.reraise()\n          ~~~~~~~~~~~~~~~~~^^\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/tenacity/__init__.py\", line 185, in reraise\n    raise self.last_attempt.result()\n          ~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"/usr/local/Cellar/python@3.14/3.14.3/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py\", line 443, in result\n    return self.__get_result()\n           ~~~~~~~~~~~~~~~~~^^\n  File \"/usr/local/Cellar/python@3.14/3.14.3/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py\", line 395, in __get_result\n    raise self._exception\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/tenacity/__init__.py\", line 474, in __call__\n    result = fn(*args, **kwargs)\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/google/genai/_api_client.py\", line 1192, in _request_once\n    response = self._httpx_client.request(\n        method=http_request.method,\n    ...<3 lines>...\n        timeout=http_request.timeout,\n    )\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpx/_client.py\", line 825, in request\n    return self.send(request, auth=auth, follow_redirects=follow_redirects)\n           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpx/_client.py\", line 914, in send\n    response = self._send_handling_auth(\n        request,\n    ...<2 lines>...\n        history=[],\n    )\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpx/_client.py\", line 942, in _send_handling_auth\n    response = self._send_handling_redirects(\n        request,\n        follow_redirects=follow_redirects,\n        history=history,\n    )\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpx/_client.py\", line 979, in _send_handling_redirects\n    response = self._send_single_request(request)\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpx/_client.py\", line 1014, in _send_single_request\n    response = transport.handle_request(request)\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpx/_transports/default.py\", line 249, in handle_request\n    with map_httpcore_exceptions():\n         ~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"/usr/local/Cellar/python@3.14/3.14.3/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py\", line 162, in __exit__\n    self.gen.throw(value)\n    ~~~~~~~~~~~~~~^^^^^^^\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/httpx/_transports/default.py\", line 118, in map_httpcore_exceptions\n    raise mapped_exc(message) from exc\nhttpx.ReadError: [Errno 54] Connection reset by peer\n"
+  }
+}

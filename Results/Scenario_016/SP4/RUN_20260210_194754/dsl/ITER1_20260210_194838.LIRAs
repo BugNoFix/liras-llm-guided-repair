@@ -1,0 +1,17 @@
+HospitalDelivery
+agents:
+robots: Robot1
+humans: Human1
+locations: room_7002, elevator_7th, elevator_inside, elevator_3rd, room_3201
+resources: package
+
+Robot1:
+1: moveTo room_7002
+2: receiveFrom Human1
+3: moveTo elevator_7th
+4: stop until Human1 ready
+5: moveTo elevator_inside
+6: stop until Human1 ready
+7: moveTo elevator_3rd
+8: moveTo room_3201
+9: deliver package

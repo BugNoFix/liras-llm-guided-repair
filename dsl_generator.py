@@ -1,4 +1,5 @@
 import os
+import re
 import shlex
 import subprocess
 import time
@@ -72,6 +73,7 @@ class DSLGenerator:
         self.scenarios_path = self.base_path / "Scenarios"
         self.results_path = self.base_path / "Results"
         self.repair_prompt_template_path = self.base_path / "SPs" / "RepairPrompt.txt"
+        self.generated_dsl_root = self.base_path / "GeneratedDSL"
         
         self.model = None
         # Backward-compat alias: when server-side chat is enabled, we set self.chat to the
@@ -221,6 +223,112 @@ class DSLGenerator:
             return 0
         return max(1, int(round(len(text) / 4)))
 
+    @staticmethod
+    def _strip_extension(name: str) -> str:
+        return name.replace(".txt", "") if isinstance(name, str) else str(name)
+
+    @staticmethod
+    def _extract_first_int(text: str) -> Optional[int]:
+        if not text:
+            return None
+        match = re.search(r"(\d+)", text)
+        if not match:
+            return None
+        try:
+            return int(match.group(1))
+        except ValueError:
+            return None
+
+    def _resolve_generated_dsl_path(self, config: dict) -> Path:
+        """Resolve cache path for generated DSL based on scenario, system prompt, and shots."""
+        explicit_path = config.get("generated_dsl_path")
+        if isinstance(explicit_path, str) and explicit_path.strip():
+            candidate = Path(explicit_path).expanduser()
+            if not candidate.is_absolute():
+                candidate = self.base_path / candidate
+            return candidate
+
+        root = config.get("generated_dsl_root")
+        if isinstance(root, str) and root.strip():
+            base_root = Path(root).expanduser()
+            if not base_root.is_absolute():
+                base_root = self.base_path / base_root
+        else:
+            base_root = self.generated_dsl_root
+
+        scenario_id = self._strip_extension(config.get("scenario", "scenario"))
+        sp_id = self._strip_extension(config.get("system_prompt", "system_prompt"))
+        shots = config.get("shots")
+        shots_label = str(shots) if shots is not None else "unknown"
+
+        return base_root / scenario_id / sp_id / f"shots_{shots_label}.LIRAs"
+
+    def _resolve_existing_dsl_path_from_dsl_folder(self, config: dict) -> Path:
+        """Resolve an existing DSL path in the DSL/Scenario_X folder structure."""
+        dsl_root = config.get("dsl_source_root")
+        if isinstance(dsl_root, str) and dsl_root.strip():
+            base_root = Path(dsl_root).expanduser()
+            if not base_root.is_absolute():
+                base_root = self.base_path / base_root
+        else:
+            base_root = self.base_path / "DSL"
+
+        scenario_name = self._strip_extension(config.get("scenario", ""))
+        scenario_num = self._extract_first_int(scenario_name)
+        if scenario_num is None:
+            raise ValueError(f"Could not extract scenario number from '{scenario_name}'")
+        scenario_dir = base_root / f"Scenario_{scenario_num}"
+
+        sp_name = self._strip_extension(config.get("system_prompt", ""))
+        sp_num = self._extract_first_int(sp_name)
+        if sp_num is None:
+            raise ValueError(f"Could not extract system prompt number from '{sp_name}'")
+
+        shots = config.get("shots")
+        if not isinstance(shots, int):
+            raise ValueError("'shots' must be an integer when loading DSL from DSL folder")
+
+        base_name = f"SP{sp_num}_Shot{shots}"
+        exact_path = scenario_dir / f"{base_name}.txt"
+        if exact_path.exists():
+            return exact_path
+
+        time_candidates = sorted(scenario_dir.glob(f"{base_name}_Time*.txt"))
+        if time_candidates:
+            return time_candidates[-1]
+
+        raise FileNotFoundError(
+            f"DSL file not found for scenario={scenario_dir.name}, system_prompt=SP{sp_num}, "
+            f"shots={shots} under {scenario_dir}"
+        )
+
+    def _resolve_cached_dsl_path(self, config: dict) -> Path:
+        """Resolve which cache source to use for loading DSL."""
+        source = (config.get("generated_dsl_source") or "generated_cache").strip().lower()
+        if source in ("dsl", "dsl_folder", "runs", "run_folder"):
+            return self._resolve_existing_dsl_path_from_dsl_folder(config)
+        return self._resolve_generated_dsl_path(config)
+
+    def _save_generated_dsl_cache(self, dsl_code: str, config: dict) -> Optional[Path]:
+        """Persist generated DSL to a deterministic cache path."""
+        if not dsl_code:
+            return None
+        cache_path = self._resolve_generated_dsl_path(config)
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+        content = dsl_code
+        if content and not content.endswith("\n"):
+            content += "\n"
+        with open(cache_path, "w", encoding="utf-8") as f:
+            f.write(content)
+        return cache_path
+
+    def _load_generated_dsl_cache(self, config: dict) -> str:
+        """Load generated DSL from cache based on config."""
+        cache_path = self._resolve_cached_dsl_path(config)
+        if not cache_path.exists():
+            raise FileNotFoundError(f"Generated DSL cache not found: {cache_path}")
+        return self.load_file(cache_path)
+
     def _record_llm_call(self, kind: str, prompt_text: str, response_obj) -> None:
         """Record telemetry for an LLM call, including model metadata.
 
@@ -278,10 +386,10 @@ class DSLGenerator:
 
         # User-friendly hierarchy: every run is fully contained in its own directory.
         # Results/
-        #   Runs/<Scenario>/<SystemPrompt>/RUN_<run_id>/
+        #   <Scenario>/<SystemPrompt>/RUN_<run_id>/
         #     dsl/
         #     compiler/
-        runs_root = self.results_path / "Runs" / scenario_name / sp_name
+        runs_root = self.results_path / scenario_name / sp_name
         runs_root.mkdir(parents=True, exist_ok=True)
 
         self.run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -309,6 +417,9 @@ class DSLGenerator:
             "repair_temperature": float(getattr(self, "repair_temperature", 0.2)),
             "repair_max_output_tokens": int(getattr(self, "repair_max_output_tokens", 16384)),
             "repair_shots": config.get("repair_shots"),
+            "use_generated_dsl_cache": bool(config.get("use_generated_dsl_cache")),
+            "generated_dsl_source": config.get("generated_dsl_source") or "generated_cache",
+            "generated_dsl_cache_path": str(self._resolve_cached_dsl_path(config)),
             "compiler_jar": str(compiler_jar_path),
             "max_iterations": max_iterations,
             "run_dir": str(self.run_dir),
@@ -930,16 +1041,18 @@ class DSLGenerator:
     def run_automated_session(self, config: dict):
         """Run an automated session with hardcoded configuration"""
         shot_pairs = self._normalize_shots(config.get('shots'))
+        generation_only = bool(config.get("generation_only"))
 
         # Optional: configure which repair prompt to use for refinement iterations
         self.configure_repair_prompt(config.get("repair_prompt"))
 
         # Resolve compiler JAR path (relative paths are relative to project root)
-        compiler_jar_path = Path(config["compiler_jar"])
-        if not compiler_jar_path.is_absolute():
+        compiler_jar_raw = config.get("compiler_jar")
+        compiler_jar_path = Path(compiler_jar_raw) if compiler_jar_raw else Path("")
+        if compiler_jar_raw and not compiler_jar_path.is_absolute():
             compiler_jar_path = (self.base_path / compiler_jar_path)
 
-        max_iterations = int(config["max_iterations"])
+        max_iterations = int(config.get("max_iterations", 1))
         if max_iterations < 1:
             max_iterations = 1
 
@@ -959,7 +1072,7 @@ class DSLGenerator:
         print(f"{'='*60}")
 
         # Fail fast if the compiler JAR is missing, but still record the interruption.
-        if not compiler_jar_path.exists():
+        if not generation_only and not compiler_jar_path.exists():
             if self.run_metadata is not None:
                 self.run_metadata["status"] = "setup_error"
                 self.run_metadata["interrupted"] = True
@@ -976,16 +1089,41 @@ class DSLGenerator:
         
         # Start conversation and get initial DSL code
         try:
-            response_text = self.start_conversation(
-                config['system_prompt'],
-                config['shots'],
-                config['scenario'],
-                model_name=config['generation_model'],
-            )
-            # Clean model output: strip any markdown fences or conversational preamble
-            dsl_code = self._extract_dsl_code(response_text)
+            use_cached_generation = bool(config.get("use_generated_dsl_cache"))
+            if use_cached_generation:
+                print("[GENERATE] Skipping generation; loading DSL from cache...")
+                dsl_code = self._load_generated_dsl_cache(config)
+            else:
+                response_text = self.start_conversation(
+                    config['system_prompt'],
+                    config['shots'],
+                    config['scenario'],
+                    model_name=config['generation_model'],
+                )
+                # Clean model output: strip any markdown fences or conversational preamble
+                dsl_code = self._extract_dsl_code(response_text)
+                self._save_generated_dsl_cache(dsl_code, config)
+
             self.last_dsl_code = dsl_code
             self.initial_dsl_from_generation = dsl_code
+
+            if generation_only:
+                print("[GENERATE] Generation-only mode; skipping compile/repair.")
+                saved_dsl_path = self.save_result(dsl_code, iteration=0, success=False)
+                if self.run_metadata is not None:
+                    self.run_metadata["status"] = "generation_only"
+                    self.run_metadata["run_finished_at"] = datetime.now().isoformat()
+                    self.run_metadata.setdefault("iterations", []).append(
+                        {
+                            "iteration": 0,
+                            "dsl_path": str(saved_dsl_path),
+                            "validated": False,
+                            "is_valid": False,
+                            "ended_because": "generation_only",
+                        }
+                    )
+                    self._persist_run_metadata()
+                return
 
             # Automated compile/repair loop
             iteration = 0
@@ -1225,32 +1363,34 @@ def main():
         return
     
     # Validate configuration
+    generation_only = bool(config.get("generation_only"))
     required_keys = [
         "system_prompt",
         "generation_model",
-        "repair_model",
         "shots",
         "scenario",
-        "compiler_jar",
-        "max_iterations",
     ]
+    if not generation_only:
+        required_keys.extend(["repair_model", "compiler_jar", "max_iterations"])
     for key in required_keys:
         if key not in config:
             print(f"\n[ERROR] Missing required key '{key}' in config.json")
             return
 
-    # Validate max_iterations type
-    if not isinstance(config["max_iterations"], int):
-        print(f"\n[ERROR] 'max_iterations' must be an integer in config.json")
-        return
+    # Validate max_iterations type when needed
+    if not generation_only:
+        if not isinstance(config.get("max_iterations"), int):
+            print(f"\n[ERROR] 'max_iterations' must be an integer in config.json")
+            return
 
     # Validate model keys
     if not isinstance(config["generation_model"], str) or not config["generation_model"].strip():
         print(f"\n[ERROR] 'generation_model' must be a non-empty string in config.json")
         return
-    if not isinstance(config["repair_model"], str) or not config["repair_model"].strip():
-        print(f"\n[ERROR] 'repair_model' must be a non-empty string in config.json")
-        return
+    if not generation_only:
+        if not isinstance(config["repair_model"], str) or not config["repair_model"].strip():
+            print(f"\n[ERROR] 'repair_model' must be a non-empty string in config.json")
+            return
 
     # Optional decoding parameters (experimental variables)
     generation_temperature = config.get("generation_temperature", 1.0)
@@ -1276,10 +1416,11 @@ def main():
         return
 
     # Validate optional repair_shots type
-    if "repair_shots" in config and config["repair_shots"] is not None:
-        if not isinstance(config["repair_shots"], (int, list)):
-            print(f"\n[ERROR] 'repair_shots' must be an integer or a list in config.json")
-            return
+    if not generation_only:
+        if "repair_shots" in config and config["repair_shots"] is not None:
+            if not isinstance(config["repair_shots"], (int, list)):
+                print(f"\n[ERROR] 'repair_shots' must be an integer or a list in config.json")
+                return
     
     # Non-interactive authentication + project resolution.
     # Priority order:

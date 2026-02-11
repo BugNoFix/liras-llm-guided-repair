@@ -1,0 +1,43 @@
+LIRAS Code:
+
+ agents:
+	nurses: Nurse
+	robots: Robot
+locations: patientFloors, laboratory
+resources: samples, lockedDrawers
+
+Nurse:
+	1-4: moveTo patientFloors
+	5: requestDelivery(laboratory)
+	6: insertData(samples)
+	7: collectSample()
+	8: moveTo lockedDrawers
+	9: openLockedDrawers()
+	10: pickSample()
+	11: scanBarcode(sample)
+	12: sortSamplese()
+	13: loadSamples(analysisMachine)
+	14: logInformation()
+	15: trackTime()
+Robot:
+	1-4: moveTo laboratory
+	5: receiveDelivery()
+	6: openLockedDrawers()
+	7: pickSample()
+	8: scanBarcode(sample)
+	9: sortSamplese()
+	10: loadSamples(analysisMachine)
+	11: logInformation()
+	12: trackTime()
+lockedDrawers:
+	1-4: moveTo laboratory
+	5: secureLockedDrawers()
+patientFloors:
+	1-4: moveTo laboratory
+	5: securePatientFloors()
+analysisMachine:
+	1-4: moveTo laboratory
+	5: receiveSamplese()
+laboratory:
+	1-4: moveTo patientFloors
+	5: secureLaboratory()

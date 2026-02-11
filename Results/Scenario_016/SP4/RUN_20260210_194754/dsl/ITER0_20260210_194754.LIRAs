@@ -1,0 +1,83 @@
+Here is the generated LIRAs code for the given task descriptions:
+```liras
+grammar it.polimi.LIRAs with org.eclipse.xtext.common.Terminals
+
+Model:
+    NL*
+    pattern=Pattern
+    sequence+=Sequence*
+    conclusion=Conclusion?
+;
+
+// A pattern is initially defined with the name of the pattern itself and then taking as input the agents involved in the pattern divided by them type (the same type of agents share the same set of basic actions), the location and the resources needed in the pattern execution.
+Pattern:
+    name=ID NL+
+	(('agents:'  NL+
+	('humans:' (human+=Human (',' human+=Human)*)? NL+)?
+	('robots:' (robot+=Robot (',' robot+=Robot)*)? NL+)? )
+    | 'locations:' (location+=Location (',' location+=Location)*)? NL+
+    | 'resources:' (resources+=Resource (',' resources+=Resource)*)? NL+)*
+;
+
+// A sequence for each agent is created by combining multiple SubSequences, the default action if not specified is free-to to move in case of missing or empty SubSequence
+Sequence:
+	agent=Agent ('default' action=Action)? ':' NL+ 
+	(subSequence+=SubSequence)*
+;
+
+// In each subsequence we can have several conditioned actions to be executed sequentially of loop elements
+SubSequence:
+    i=INT ('-' j=INT)? ':' ( ( (loop+=Loop) | ((actionC+=ActionC) )?) NL )+
+;
+
+// The conclusion provides the possible success and failure condition for a pattern
+Conclusion:
+	'success:' condition+=Condition NL*
+	'failure:' condition+=Condition NL*
+;
+
+// the skip keyword avoid the execution of the current SubSequence, and the restart makes the SubSequence executing from the beginning. The all keyword extend this to all the subsequence that are executed in that moment from all the agents
+Loop:
+	('skip' ('all')? 'if' condition=Condition) | ('restart' ('all')?  'if' condition=Condition)
+;
+
+// when the until condition is true then the correspondent action ends
+// when the if condition is true then the action executes
+// when the else condition is true then the action restarts
+SubLoop:
+    (('until' | 'if') condition=Condition ('else' ('all')?)) | ('restart' ('all')?)
+;
+
+// comperison for the non boolean atomic predicates
+Relation:
+    ('dist' '(' agent+=Agent ',' agent+=Agent ')' ('>' | '<' | '>=' | '<=' | '==' | '!=' | 'is' | 'is not')) th=INT
+;
+
+// Task descriptions as LIRAs code
+Task 1: Navigate from current location to service start location (room 7002).
+NL(serviceStartLocation=Location)
+
+Task 2: Wait for human to put the object to be transported in basket, and get confirmation.
+NL(waitForHumanConfirmation=Condition)
+
+Task 3: Navigate from room 7002 to the 7th floor elevator.
+NL(elevatorGoalLocation=Location)
+
+Task 4: Ask for human assistance to take the elevator to the 3rd floor.
+NL(askForHumanAssistance=Condition)
+
+Task 5: Navigate inside the elevator.
+NL()
+
+Task 6: Ask for human assistance to know when correct floor is reached.
+NL(askForHumanAssistance=Condition)
+
+Task 7: Navigate out of the elevator.
+NL(elevatorGoalLocation=Location)
+
+Task 8: Navigate from the 3rd floor elevator to service goal location (room 3201).
+NL(serviceGoalLocation=Location)
+
+Task 9: Wait for human to collect object and get service completion confirmation.
+NL(waitForHumanConfirmation=Condition)
+```

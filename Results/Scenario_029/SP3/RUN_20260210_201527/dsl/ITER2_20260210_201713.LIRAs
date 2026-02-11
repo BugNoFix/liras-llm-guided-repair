@@ -1,0 +1,31 @@
+ChemotherapyWard
+
+agents:
+	humans: Child, Parent, Nurse
+	robots: Robot, Cart
+locations: chemotherapyArea
+resources: book
+
+Robot:
+	1: moveTo chemotherapyArea
+	2-5: moveTo Child
+	6: moveTo Parent
+	7-8: pick book
+	9: moveTo Nurse
+
+Nurse:
+	1: stop
+	2-3: stop
+	4-5: stop
+
+Child:
+	1-3: follow Robot
+	4-5: stop
+
+Parent:
+	1-2: stop
+	3-4: stop
+
+Cart:
+	1: moveTo chemotherapyArea
+	2-3: deliver book

@@ -1,0 +1,25 @@
+HotelButler
+
+agents:
+	humans: Guest
+	robots: HotelRobot
+locations: lobby, room1, room2, ...
+resources: item
+
+Guest:
+	1-5: order(item)
+	6-7: enterPIN(roomNumber)
+	8: skip if !isDelivered(item) && ! isAtLocation(roomNumber)
+	9: HotelRobot
+
+HotelRobot:
+	1-3: patrol(lobby, room1, room2, ...) until !isOrdered(item) && !isAtLocation(roomNumber)
+	4: moveTo Guest
+	5-6: deliver(item)
+	7: skip if isDelivered(item) || isAtLocation(roomNumber)
+
+HotelRobot:
+	1-3: navigate(lobby, room1, room2, ...) using map
+	4-6: stop until at(location)
+	7-8: deliver(item)
+	9-10: skip if isDelivered(item) || isAtLocation(roomNumber)

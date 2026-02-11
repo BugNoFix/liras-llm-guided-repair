@@ -1,0 +1,26 @@
+HotelButler
+
+agents:
+	humans: Guest
+	robots: Butler
+locations: lobby, room1, room2
+resources: item1, item2
+
+Butler:
+
+1-5: moveTo lobby
+6-7: moveTo room1
+8-9: stop
+10: deliver item2 room1
+
+Guest:
+
+10-15: stop
+16: pick item1
+
+Butler:
+
+10-15: moveTo Guest
+16: stop
+17: pick item2
+18: deliver item2 room1

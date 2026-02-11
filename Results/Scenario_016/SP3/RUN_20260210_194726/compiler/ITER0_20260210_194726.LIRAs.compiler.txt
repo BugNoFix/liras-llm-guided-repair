@@ -1,0 +1,3 @@
+[VALIDATION_SETUP_ERROR] Compiler invocation timed out after 10 seconds.
+Command: java -jar /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/liras_compiler.jar /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP3/RUN_20260210_194726/dsl/ITER0_20260210_194726.LIRAs
+DSL file: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP3/RUN_20260210_194726/dsl/ITER0_20260210_194726.LIRAs

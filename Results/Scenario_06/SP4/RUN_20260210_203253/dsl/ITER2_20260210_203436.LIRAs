@@ -1,0 +1,15 @@
+Hotel
+
+agents:
+	robots: HotelRobot
+locations: lobby, rooms
+resources: storageBox, items
+
+HotelRobot:
+	1: moveTo lobby
+	2: moveTo rooms
+	3: moveTo lobby
+	4: pick storageBox
+	5: moveTo rooms
+	6: deposit storageBox
+	7: deliver items

@@ -1,0 +1,567 @@
+{
+  "run_id": "20260210_190938",
+  "run_started_at": "2026-02-10T19:09:38.133071",
+  "project_id": "aerobic-stream-483313-v6",
+  "location": "global",
+  "system_prompt": "SP5.txt",
+  "shots": 0,
+  "scenario": "Scenario_011.txt",
+  "repair_prompt": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/SPs/SystemPromptRepair3_lightweigth.txt",
+  "generation_model": "gemini-3-pro-preview",
+  "generation_temperature": 1.0,
+  "repair_model": "gemini-3-pro-preview",
+  "repair_temperature": 0.35,
+  "repair_max_output_tokens": 16384,
+  "repair_shots": 0,
+  "use_generated_dsl_cache": true,
+  "generated_dsl_source": "dsl_folder",
+  "generated_dsl_cache_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/DSL/Scenario_11/SP5_Shot0.txt",
+  "compiler_jar": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/liras_compiler.jar",
+  "max_iterations": 10,
+  "run_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938",
+  "dsl_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/dsl",
+  "compiler_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/compiler",
+  "iterations": [
+    {
+      "iteration": 0,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/dsl/ITER0_20260210_190938.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/compiler/ITER0_20260210_190938.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 2763,
+      "compiler_error_score": {
+        "feedback_chars": 2763,
+        "lines": 40,
+        "error_lines": 38,
+        "warning_lines": 0,
+        "score": 390
+      },
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 1,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/dsl/ITER1_20260210_191014.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/compiler/ITER1_20260210_191014.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 709,
+      "compiler_error_score": {
+        "feedback_chars": 709,
+        "lines": 11,
+        "error_lines": 9,
+        "warning_lines": 0,
+        "score": 93
+      },
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 2,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/dsl/ITER2_20260210_191228.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/compiler/ITER2_20260210_191228.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1016,
+      "compiler_error_score": {
+        "feedback_chars": 1016,
+        "lines": 15,
+        "error_lines": 13,
+        "warning_lines": 0,
+        "score": 135
+      },
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 3,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/dsl/ITER3_20260210_191305.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/compiler/ITER3_20260210_191305.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 709,
+      "compiler_error_score": {
+        "feedback_chars": 709,
+        "lines": 11,
+        "error_lines": 9,
+        "warning_lines": 0,
+        "score": 93
+      },
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 4,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/dsl/ITER4_20260210_191537.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/compiler/ITER4_20260210_191537.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 220,
+      "compiler_error_score": {
+        "feedback_chars": 220,
+        "lines": 4,
+        "error_lines": 2,
+        "warning_lines": 0,
+        "score": 21
+      },
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 5,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/dsl/ITER5_20260210_191555.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/compiler/ITER5_20260210_191555.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 709,
+      "compiler_error_score": {
+        "feedback_chars": 709,
+        "lines": 11,
+        "error_lines": 9,
+        "warning_lines": 0,
+        "score": 93
+      },
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 6,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/dsl/ITER6_20260210_191647.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/compiler/ITER6_20260210_191647.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 709,
+      "compiler_error_score": {
+        "feedback_chars": 709,
+        "lines": 11,
+        "error_lines": 9,
+        "warning_lines": 0,
+        "score": 93
+      },
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 7,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/dsl/ITER7_20260210_191906.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/compiler/ITER7_20260210_191906.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1016,
+      "compiler_error_score": {
+        "feedback_chars": 1016,
+        "lines": 15,
+        "error_lines": 13,
+        "warning_lines": 0,
+        "score": 135
+      },
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 8,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/dsl/ITER8_20260210_191921.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/compiler/ITER8_20260210_191921.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 709,
+      "compiler_error_score": {
+        "feedback_chars": 709,
+        "lines": 11,
+        "error_lines": 9,
+        "warning_lines": 0,
+        "score": 93
+      },
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 9,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/dsl/ITER9_20260210_192047.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260210_190938/compiler/ITER9_20260210_192047.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 220,
+      "compiler_error_score": {
+        "feedback_chars": 220,
+        "lines": 4,
+        "error_lines": 2,
+        "warning_lines": 0,
+        "score": 21
+      }
+    }
+  ],
+  "telemetry": {
+    "llm_calls": 9,
+    "prompt_chars_total": 13231,
+    "response_chars_total": 2199,
+    "prompt_tokens_est_total": 3309,
+    "response_tokens_est_total": 550,
+    "last_call": {
+      "kind": "repair",
+      "timestamp": "2026-02-10T19:20:47.449128",
+      "finish_reason": "FinishReason.STOP",
+      "safety_ratings": [
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HATE_SPEECH",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HARASSMENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        }
+      ],
+      "prompt_chars": 1166,
+      "response_chars": 232,
+      "prompt_tokens_est": 292,
+      "response_tokens_est": 58
+    }
+  },
+  "llm_call_history": [
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-10T19:10:14.866100",
+      "finish_reason": "FinishReason.STOP",
+      "safety_ratings": [
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HATE_SPEECH",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HARASSMENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        }
+      ],
+      "prompt_chars": 4152,
+      "response_chars": 248,
+      "prompt_tokens_est": 1038,
+      "response_tokens_est": 62
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-10T19:12:28.930363",
+      "finish_reason": "FinishReason.STOP",
+      "safety_ratings": [
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HATE_SPEECH",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HARASSMENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        }
+      ],
+      "prompt_chars": 1166,
+      "response_chars": 246,
+      "prompt_tokens_est": 292,
+      "response_tokens_est": 62
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-10T19:13:05.673530",
+      "finish_reason": "FinishReason.STOP",
+      "safety_ratings": [
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HATE_SPEECH",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HARASSMENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        }
+      ],
+      "prompt_chars": 1194,
+      "response_chars": 248,
+      "prompt_tokens_est": 298,
+      "response_tokens_est": 62
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-10T19:15:37.073216",
+      "finish_reason": "FinishReason.STOP",
+      "safety_ratings": [
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HATE_SPEECH",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HARASSMENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        }
+      ],
+      "prompt_chars": 1166,
+      "response_chars": 236,
+      "prompt_tokens_est": 292,
+      "response_tokens_est": 59
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-10T19:15:55.500980",
+      "finish_reason": "FinishReason.STOP",
+      "safety_ratings": [
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HATE_SPEECH",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HARASSMENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        }
+      ],
+      "prompt_chars": 861,
+      "response_chars": 248,
+      "prompt_tokens_est": 215,
+      "response_tokens_est": 62
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-10T19:16:47.113028",
+      "finish_reason": "FinishReason.STOP",
+      "safety_ratings": [
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HATE_SPEECH",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HARASSMENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        }
+      ],
+      "prompt_chars": 1166,
+      "response_chars": 248,
+      "prompt_tokens_est": 292,
+      "response_tokens_est": 62
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-10T19:19:06.070720",
+      "finish_reason": "FinishReason.STOP",
+      "safety_ratings": [
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HATE_SPEECH",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HARASSMENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        }
+      ],
+      "prompt_chars": 1166,
+      "response_chars": 245,
+      "prompt_tokens_est": 292,
+      "response_tokens_est": 61
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-10T19:19:21.740669",
+      "finish_reason": "FinishReason.STOP",
+      "safety_ratings": [
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HATE_SPEECH",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HARASSMENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        }
+      ],
+      "prompt_chars": 1194,
+      "response_chars": 248,
+      "prompt_tokens_est": 298,
+      "response_tokens_est": 62
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-02-10T19:20:47.449128",
+      "finish_reason": "FinishReason.STOP",
+      "safety_ratings": [
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HATE_SPEECH",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HARASSMENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        }
+      ],
+      "prompt_chars": 1166,
+      "response_chars": 232,
+      "prompt_tokens_est": 292,
+      "response_tokens_est": 58
+    }
+  ],
+  "status": "max_iterations_reached",
+  "run_finished_at": "2026-02-10T19:20:50.355685",
+  "summary": {
+    "iterations_recorded": 10,
+    "validations_attempted": 10,
+    "compiler_failures": 10,
+    "compiler_successes": 0,
+    "setup_errors": 0,
+    "first_success_iteration": null,
+    "final_success_dsl_path": null,
+    "total_compiler_feedback_chars": 8780,
+    "llm_calls": 9,
+    "prompt_tokens_est_total": 3309,
+    "response_tokens_est_total": 550
+  },
+  "updated_at": "2026-02-10T19:20:50.355787",
+  "repair": {
+    "repair_chat_initialized_at": "2026-02-10T19:09:40.456674",
+    "repair_prompt_template_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/SPs/SystemPromptRepair3_lightweigth.txt",
+    "repair_system_prompt_chars": 3685,
+    "repair_stateless": true,
+    "repair_uses_server_chat": false,
+    "repair_temperature": 0.35
+  }
+}

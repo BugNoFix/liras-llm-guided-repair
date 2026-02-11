@@ -1,0 +1,18 @@
+SampleDeliveryPattern
+
+agents:
+  robots: Robot1
+  humans: LabPersonnel
+locations:
+  PatientFloor, Lab
+resources:
+  sample
+
+Robot1:
+1: moveTo PatientFloor
+2: pick sample
+3: moveTo Lab
+4: deposit sample
+
+LabPersonnel:
+1: pick sample

@@ -1,0 +1,177 @@
+Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP5/RUN_20260210_200713/dsl/ITER1_20260210_200829.LIRAs
+FAILURE: Validation errors found.
+
+[ERROR] Line 11: required (...)+ loop did not match anything at input 'CheckItems'
+[ERROR] Line 11: mismatched input '(' expecting ':'
+[ERROR] Line 12: missing ':' at '\n\t'
+[ERROR] Line 13: required (...)+ loop did not match anything at input 'CheckItems'
+[ERROR] Line 13: mismatched input '(' expecting ':'
+[ERROR] Line 14: missing ':' at '\n\t'
+[ERROR] Line 15: required (...)+ loop did not match anything at input 'CheckItems'
+[ERROR] Line 15: mismatched input '(' expecting ':'
+[ERROR] Line 16: missing ':' at '\n\t'
+[ERROR] Line 17: required (...)+ loop did not match anything at input 'CheckItems'
+[ERROR] Line 17: mismatched input '(' expecting ':'
+[ERROR] Line 18: mismatched input '(' expecting ':'
+[ERROR] Line 18: mismatched input ')' expecting ':'
+[ERROR] Line 19: mismatched input '(' expecting ':'
+[ERROR] Line 20: mismatched input '(' expecting ':'
+[ERROR] Line 21: mismatched input '(' expecting ':'
+[ERROR] Line 25: required (...)+ loop did not match anything at input 'NavigateToServiceStartLocation'
+[ERROR] Line 25: mismatched input '(' expecting ':'
+[ERROR] Line 26: mismatched input '(' expecting ':'
+[ERROR] Line 27: mismatched input '(' expecting ':'
+[ERROR] Line 31: required (...)+ loop did not match anything at input 'WaitForConfirmation'
+[ERROR] Line 31: mismatched input '(' expecting ':'
+[ERROR] Line 32: mismatched input '(' expecting ':'
+[ERROR] Line 33: mismatched input '(' expecting ':'
+[ERROR] Line 34: mismatched input '(' expecting ':'
+[ERROR] Line 35: mismatched input '(' expecting ':'
+[ERROR] Line 36: mismatched input '(' expecting ':'
+[ERROR] Line 37: mismatched input '(' expecting ':'
+[ERROR] Line 40: required (...)+ loop did not match anything at input 'wait'
+[ERROR] Line 46: required (...)+ loop did not match anything at input 'AskForHumanAssistance'
+[ERROR] Line 46: mismatched input '(' expecting ':'
+[ERROR] Line 52: required (...)+ loop did not match anything at input 'AskForHumanAssistance'
+[ERROR] Line 52: mismatched input '(' expecting ':'
+[ERROR] Line 55: required (...)+ loop did not match anything at input 'MoveOutOfElevator'
+[ERROR] Line 55: mismatched input '(' expecting ':'
+[ERROR] Line 58: required (...)+ loop did not match anything at input 'CheckIfServiceGoalReached'
+[ERROR] Line 58: mismatched input '(' expecting ':'
+[ERROR] Line 61: required (...)+ loop did not match anything at input 'wait'
+[ERROR] Line 64: required (...)+ loop did not match anything at input 'wait'
+[ERROR] Line 67: required (...)+ loop did not match anything at input 'wait'
+[ERROR] Line 70: required (...)+ loop did not match anything at input 'wait'
+[ERROR] Line 73: required (...)+ loop did not match anything at input 'wait'
+[ERROR] Line 85: required (...)+ loop did not match anything at input 'wait'
+[ERROR] Line 88: required (...)+ loop did not match anything at input 'wait'
+[ERROR] Line 91: required (...)+ loop did not match anything at input 'wait'
+[ERROR] Line 94: required (...)+ loop did not match anything at input 'wait'
+[ERROR] Line 11: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 11: The same agent cannot be used in more than one sequence..
+[ERROR] Line 11: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 12: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 12: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 13: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 13: The same agent cannot be used in more than one sequence..
+[ERROR] Line 13: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 14: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 14: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 15: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 15: The same agent cannot be used in more than one sequence..
+[ERROR] Line 15: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 16: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 16: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 17: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 17: The same agent cannot be used in more than one sequence..
+[ERROR] Line 17: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 18: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 18: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 18: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 18: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 19: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 19: The same agent cannot be used in more than one sequence..
+[ERROR] Line 19: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 20: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 20: The same agent cannot be used in more than one sequence..
+[ERROR] Line 20: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 21: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 21: The same agent cannot be used in more than one sequence..
+[ERROR] Line 21: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 25: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 25: The same agent cannot be used in more than one sequence..
+[ERROR] Line 25: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 26: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 26: The same agent cannot be used in more than one sequence..
+[ERROR] Line 26: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 27: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 27: The same agent cannot be used in more than one sequence..
+[ERROR] Line 27: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 29: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 29: The same agent cannot be used in more than one sequence..
+[ERROR] Line 29: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 31: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 31: The same agent cannot be used in more than one sequence..
+[ERROR] Line 31: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 32: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 32: The same agent cannot be used in more than one sequence..
+[ERROR] Line 32: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 33: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 33: The same agent cannot be used in more than one sequence..
+[ERROR] Line 33: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 34: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 34: The same agent cannot be used in more than one sequence..
+[ERROR] Line 34: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 35: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 35: The same agent cannot be used in more than one sequence..
+[ERROR] Line 35: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 36: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 36: The same agent cannot be used in more than one sequence..
+[ERROR] Line 36: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 37: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 37: The same agent cannot be used in more than one sequence..
+[ERROR] Line 37: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 39: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 39: The same agent cannot be used in more than one sequence..
+[ERROR] Line 39: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 42: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 42: The same agent cannot be used in more than one sequence..
+[ERROR] Line 42: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 45: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 45: The same agent cannot be used in more than one sequence..
+[ERROR] Line 45: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 46: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 46: The same agent cannot be used in more than one sequence..
+[ERROR] Line 46: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 48: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 48: The same agent cannot be used in more than one sequence..
+[ERROR] Line 48: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 51: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 51: The same agent cannot be used in more than one sequence..
+[ERROR] Line 51: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 52: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 52: The same agent cannot be used in more than one sequence..
+[ERROR] Line 52: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 54: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 54: The same agent cannot be used in more than one sequence..
+[ERROR] Line 54: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 55: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 55: The same agent cannot be used in more than one sequence..
+[ERROR] Line 55: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 57: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 57: The same agent cannot be used in more than one sequence..
+[ERROR] Line 57: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 58: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 58: The same agent cannot be used in more than one sequence..
+[ERROR] Line 58: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 60: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 60: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 63: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 63: The same agent cannot be used in more than one sequence..
+[ERROR] Line 63: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 66: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 66: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 69: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 69: The same agent cannot be used in more than one sequence..
+[ERROR] Line 69: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 72: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 72: The same agent cannot be used in more than one sequence..
+[ERROR] Line 72: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 75: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 75: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 78: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 78: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 81: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 81: The same agent cannot be used in more than one sequence..
+[ERROR] Line 81: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 84: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 84: The same agent cannot be used in more than one sequence..
+[ERROR] Line 84: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 87: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 87: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 90: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 90: The same agent cannot be used in more than one sequence..
+[ERROR] Line 90: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 93: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 93: The same agent cannot be used in more than one sequence..
+[ERROR] Line 93: Agent name must be one of the names specified in the pattern.

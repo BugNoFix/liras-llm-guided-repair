@@ -1,0 +1,9 @@
+Chemo_Bot
+agents:
+    robots: Robot
+    humans: Child, Nurse
+locations: TherapyArea
+Robot:
+    1-2: moveTo TherapyArea
+    3-5: stop
+    6-8: stop

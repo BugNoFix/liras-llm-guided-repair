@@ -1,0 +1,18 @@
+ServiceNavigation
+
+agents:
+    robots: ServiceRobot
+    humans: HumanAssistant
+
+locations: ServiceStartLocation, ElevatorLocation, FloorLocation, ServiceGoalLocation
+resources: TransportObject
+
+ServiceRobot:
+    1: moveTo ServiceStartLocation
+    2: pick TransportObject
+    3: moveTo ElevatorLocation
+    4: stop
+    5: moveTo FloorLocation
+    6: stop
+    7: moveTo ServiceGoalLocation
+    8: deposit TransportObject

@@ -103,6 +103,7 @@ python dsl_generator.py
 ```
 
 The script will automatically detect and use the `key.json` file from either:
+
 1. `keys/key.json` (recommended for shared projects)
 2. `key.json` (root directory, for backward compatibility)
 
@@ -228,7 +229,6 @@ This will automatically load:
 - **`gemini-2.5-pro`**: Most capable model for complex reasoning
   - Input: 2M tokens | Output: 8,192 tokens
   - Best for: Initial generation with complex DSL patterns
-  
 - **`gemini-2.5-flash`**: Fast responses with good quality
   - Input: 1M tokens | Output: 8,192 tokens
   - Best for: Repair iterations or when speed matters
@@ -239,7 +239,6 @@ This will automatically load:
   - Input: 2M tokens | Output: 8,192 tokens
   - Features: Thinking mode, better code generation
   - Best for: Experimental runs with cutting-edge capabilities
-  
 - **`gemini-3-flash-preview`**: Fast generation with improved quality
   - Input: 1M tokens | Output: 8,192 tokens
   - Best for: High-volume experiments or rapid iteration
@@ -261,6 +260,7 @@ This will automatically load:
 ```
 
 **Token Usage per Iteration:**
+
 - System Prompt: ~500-1,500 tokens
 - Few-shot Examples (2 shots): ~2,000-4,000 tokens
 - User Scenario: ~200-500 tokens
@@ -386,6 +386,44 @@ This automatically loads:
   "scenario": "UserScenario_06.txt"
 }
 ```
+
+## Batch Runs (run_all_pairs)
+
+Use `run_all_pairs.py` to execute all Scenario/SystemPrompt pairs with a shared template config.
+
+Common commands:
+
+```bash
+python run_all_pairs.py
+python run_all_pairs.py --shots 0,1,2
+python run_all_pairs.py --generation-only
+python run_all_pairs.py --disable-generation --shots 0,1,2
+python run_all_pairs.py --list-only
+```
+
+Notes:
+
+- `--generation-only` skips compile/repair and only saves the generated DSL.
+- `--disable-generation` loads DSL from cache (e.g., `DSL/Scenario_6/SP1_Shot0.txt`) and runs repair/compile.
+
+## Run History Export (collect_run_history)
+
+The `collect_run_history.py` script scans all `run_metadata.json` files under `Results/` and writes a single CSV:
+
+```bash
+python collect_run_history.py
+```
+
+Output:
+
+- `Report/run_history.csv` (overwritten each run)
+
+The CSV includes:
+
+- Run metadata (scenario, system prompt, shots, models, timestamps, status).
+- Cache provenance (cache source and resolved DSL path).
+- Iteration diagnostics (compiler error/warning counts, error score, validation results).
+- Derived metrics (AUC error score, improvement ratios, monotonicity, duration).
 
 ## Tips for Best Results
 

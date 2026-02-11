@@ -1,0 +1,16 @@
+Transport_Samples_to_Laboratory
+
+humans: Nurse
+robots: Robot1
+
+locations:
+  locked_drawer, entry_module, lab_location
+
+resources:
+  sample
+
+Robot1:
+  1: moveTo locked_drawer
+  2: pick sample
+  3: moveTo entry_module
+  4: deposit sample

@@ -1,0 +1,27 @@
+Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP3/RUN_20260210_194357/dsl/ITER1_20260210_194452.LIRAs
+FAILURE: Validation errors found.
+
+[ERROR] Line 11: extraneous input '\n\t' expecting RULE_INT
+[ERROR] Line 12: mismatched input ':' expecting RULE_NL
+[ERROR] Line 13: mismatched input 'wait' expecting ':'
+[ERROR] Line 15: mismatched input 'wait' expecting ':'
+[ERROR] Line 17: mismatched input 'wait' expecting ':'
+[ERROR] Line 20: mismatched input 'wait' expecting ':'
+[ERROR] Line 22: mismatched input 'wait' expecting ':'
+[ERROR] Line 24: mismatched input 'wait' expecting ':'
+[ERROR] Line 26: mismatched input 'wait' expecting ':'
+[ERROR] Line 31: required (...)+ loop did not match anything at input 'wait'
+[ERROR] Line 12: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 12: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 14: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 14: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 16: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 16: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 19: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 19: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 21: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 21: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 23: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 23: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 25: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 25: Agent name must be one of the names specified in the pattern.

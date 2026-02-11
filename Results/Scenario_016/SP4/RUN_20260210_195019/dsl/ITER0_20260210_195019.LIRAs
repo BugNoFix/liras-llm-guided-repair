@@ -1,0 +1,70 @@
+Here is a possible LIRa code for the given task descriptions:
+```liral
+// Importing required packages
+import org.eclipse.xtext.common.grammar.GrammarUtil;
+import org. Eclipse. xtext.tree.ITerminalNode;
+
+// Defining agents, locations, and resources
+agents:
+	humans: Nurse, Doctor
+	robots: ServiceBot
+locations: room7002, elevator, room3201
+resources: basket, objectToBeTransported
+
+Nurse:
+	1: need(basket)
+	5: moveTo ServiceBot
+
+Doctor:
+
+ServiceBot:
+	1-5: patrol(room7002, elevator, room3201) until !need(basket) && !isInElevator()
+	6: moveTo whoNeed(basket)
+	7: askForHumanAssistanceToKnowWhenCorrectFloorIsReached()
+	8: moveTo elevator
+	9-10: askForHumanAssistanceToKnowWhenServiceGoalIsReached()
+	11: moveTo serviceGoalLocation()
+
+// Define task 1: navigate from current location to service start location
+task 1:
+	moveTo room7002
+
+// Define task 2: wait for human to put the object to be transported in basket, and get confirmation
+task 2:
+	askForHumanConfirmation(basket)
+
+// Define task 3: navigate from room 7002 to the 7th floor elevator
+task 3:
+	moveTo elevator
+
+// Define task 4: ask for human assistance to take the elevator to the 3rd floor
+task 4:
+	askForHumanAssistanceToTakeElevator()
+
+// Define task 5: navigate inside the elevator
+task 5:
+	moveInsideElevator()
+
+// Define task 6: ask for human assistance to know when correct floor is reached
+task 6:
+	askForHumanAssistanceToKnowWhenCorrectFloorIsReached()
+
+// Define task 7: navigate out of the elevator
+task 7:
+	moveOutsideElevator()
+
+// Define task 8: navigate from the 3rd floor elevator to service goal location
+task 8:
+	moveTo serviceGoalLocation()
+
+// Define task 9: wait for human to collect object and get service completion confirmation
+task 9:
+	askForHumanConfirmation(serviceGoalLocation())
+
+// Define task 10: move to the next goal location (room 3201)
+task 10:
+	moveToNextGoalLocation()
+```
+Note that this code assumes that the `Nurse` and `Doctor` agents have a `need` function that takes a resource as input, and returns a boolean indicating whether the agent needs the resource. Similarly, the `ServiceBot` agent has an `askForHumanConfirmation` function that takes a location as input and returns a boolean indicating whether the agent asked for human confirmation at that location.
+
+Also note that this code uses the `GrammarUtil` class from the Eclipse Xtext framework to define the grammar of the LIRa language. This class provides a set of utility methods for working with grammars, including parsing and generating code.
