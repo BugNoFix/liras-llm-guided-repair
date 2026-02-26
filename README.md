@@ -429,6 +429,41 @@ The CSV includes:
 - Iteration diagnostics (compiler error/warning counts, error score, validation results).
 - Derived metrics (AUC error score, improvement ratios, monotonicity, duration).
 
+## Multi-Configuration Comparison Workflow
+
+When each pipeline configuration has its own run-history CSV, use the comparison utilities in `Utils/`:
+
+1. Collect one CSV per configuration (choose a clear filename suffix):
+
+```bash
+python collect_run_history.py --export Report/Histories/run_history_configA.csv
+python collect_run_history.py --export Report/Histories/run_history_configB.csv
+```
+
+2. (Optional) Build one combined comparison dataset:
+
+```bash
+./venv/bin/python Utils/compile_run_histories.py \
+  --input-glob 'Report/Histories/run_history_*.csv' \
+  --outcsv Report/combined_run_histories.csv
+```
+
+3. Generate cross-configuration viability figures directly from all CSVs:
+
+```bash
+./venv/bin/python Utils/plot_run_history.py \
+  --csv-glob 'Report/Histories/run_history_*.csv' \
+  --outdir Report/Figures
+```
+
+Generated comparison figures:
+
+- `fig01_viability_funnel.png`
+- `fig02_success_rate_with_ci.png`
+- `fig03_iterations_to_success_ecdf.png`
+- `fig04_cost_to_success.png`
+- `config_mapping.csv` (maps figure labels `C1`, `C2`, ... to each input run-history file/config)
+
 ## Tips for Best Results
 
 1. **System Prompts**: Create clear, detailed system prompts that explain the DSL syntax and rules
