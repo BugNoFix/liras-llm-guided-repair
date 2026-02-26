@@ -1,0 +1,26 @@
+INITIAL_DSL_FROM_GENERATION:
+user_guided_transport
+
+agents:
+    humans: Human
+    robots: Robot
+
+locations: bedroom, kitchen
+resources: object
+
+Human:
+    1: moveTo bedroom 
+       if position(Robot, bedroom) else stop
+    3: moveTo kitchen until position(Robot, bedroom)
+    
+Robot:
+    1: moveTo bedroom
+    2: grab object
+    3: follow Human (kitchen)
+    4: 
+
+CURRENT_COMPILER_OUTPUT:
+Description    Resource    Path    Location    Type
+mismatched input 'if' expecting RULE_INT    user_guided_transport.LIRAs    line 12    LIRAs Problem
+rule ruleAction failed predicate: mismatched input 'grab' expecting RULE_ID    user_guided_transport.LIRAs    line 17    LIRAs Problem
+mismatched input '<EOF>' expecting ruleActionC    user_guided_transport.LIRAs    line 19    LIRAs Problem

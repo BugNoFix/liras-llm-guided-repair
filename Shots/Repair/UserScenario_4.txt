@@ -1,0 +1,22 @@
+INITIAL_DSL_FROM_GENERATION:
+Coffee_Delivery
+
+agents:
+    robots: Robot
+
+locations: office001, office004, coffee_room
+Resources: coffee
+
+Robot:
+    1: moveTo coffee_room pick coffee
+    moveTo office001
+    deposit coffee
+    moveTo coffee_room
+    pick coffee
+    moveTo office004
+    deposit coffee
+
+CURRENT_COMPILER_OUTPUT:
+Description    Resource    Path    Location    Type
+mismatched input 'Resources:' expecting 'resources:'    Coffee_Delivery.LIRAs    line 7    LIRAs Problem
+mismatched input 'pick' expecting RULE_NL    Coffee_Delivery.LIRAs    line 10    LIRAs Problem

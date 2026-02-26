@@ -1,0 +1,31 @@
+INITIAL_DSL_FROM_GENERATION:
+AMR_photovoltaic_pipeline
+
+Agents:
+    robots: Robot1, Robot2, Robot3, Robot4
+
+locations: 
+    warehouse,
+    surface_texturization_start,
+    surface_texturization_end
+   
+resources: 
+    raw_materials,
+    texturized_materials
+
+Robot1:
+    1: moveTo warehouse
+    pick raw_materials
+    moveTo surface_texturization_start
+    drop raw_materials
+    2: moveTo surface_texturization_end
+    pick texturized_materials
+    3: 
+    4:
+
+CURRENT_COMPILER_OUTPUT:
+Description    Resource    Path    Location    Type
+mismatched input 'Agents:' expecting 'agents:'    AMR_photovoltaic_pipeline.LIRAs    line 4    LIRAs Problem
+rule ruleAction failed predicate: mismatched input 'drop' expecting RULE_ID    AMR_photovoltaic_pipeline.LIRAs    line 16    LIRAs Problem
+mismatched input '\n' expecting ruleActionC at line 19    AMR_photovoltaic_pipeline.LIRAs    line 19    LIRAs Problem
+mismatched input '<EOF>' expecting ruleActionC    AMR_photovoltaic_pipeline.LIRAs    line 20    LIRAs Problem

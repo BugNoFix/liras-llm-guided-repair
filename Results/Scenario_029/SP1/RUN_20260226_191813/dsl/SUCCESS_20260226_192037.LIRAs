@@ -1,0 +1,15 @@
+Chemotherapy_Therapy
+
+agents:
+robots: A1, A2
+locations: L1, L2, L3
+resources: R1, R2
+
+A1:
+1: moveTo L1
+2: moveTo L2
+
+A2:
+1: moveTo L3
+2: pick R2
+3: deposit R2

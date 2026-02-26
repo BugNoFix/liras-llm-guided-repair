@@ -1,0 +1,195 @@
+AMR_photovoltaic_pipeline
+
+
+agents:
+	robots: Robot1, Robot2, Robot3, Robot4
+
+locations: 
+    warehouse,
+    surface_texturization_start,
+    surface_texturization_end,
+    diffusion_start, diffusion_end,
+    laser_start, laser_end,
+    etching_start,
+    etching_end, annealing_start,
+    annealing_end,
+    perc_start,
+    perc_end,
+    rear_top_paste_start,
+    rear_top_paste_end,
+    laser_slotting_start,
+    laser_slotting_end,
+    loading_area
+   
+resources: 
+    raw_materials,
+    texturized_materials,
+    diffused_materials,
+    lasered_materials,
+    etched_materials,
+    annealed_materials,
+    perc_cells,
+    pasted_cells,
+    slotted_cells
+
+
+
+
+Robot1:
+	1: moveTo warehouse
+	pick raw_materials
+	moveTo surface_texturization_start
+	deposit raw_materials
+	2: moveTo surface_texturization_end
+	pick texturized_materials
+	3: moveTo diffusion_start
+	deposit texturized_materials
+	4: moveTo diffusion_end
+	pick diffused_materials
+	5: moveTo laser_start  
+	deposit diffused_materials  
+	6: moveTo laser_end  
+	pick lasered_materials
+	7: moveTo etching_start  
+	deposit lasered_materials
+	8: moveTo etching_end  
+	pick etched_materials  
+	9: moveTo annealing_start  
+	deposit etched_materials  
+	10: moveTo annealing_end  
+	pick annealed_materials  
+	11: moveTo perc_start  
+	deposit annealed_materials  
+	12: moveTo perc_end  
+	pick perc_cells  
+	13: moveTo rear_top_paste_start  
+	deposit perc_cells  
+	14: moveTo rear_top_paste_end  
+	pick pasted_cells 
+	15: moveTo laser_slotting_start  
+	deposit pasted_cells  
+	16: moveTo laser_slotting_end
+	pick slotted_cells
+	17: moveTo loading_area
+	deposit slotted_cells
+	18: 
+	19-22:
+	
+	
+
+Robot2:
+	1: moveTo warehouse
+	pick raw_materials
+	
+	5: moveTo surface_texturization_start
+	deposit raw_materials
+	6: moveTo surface_texturization_end
+	pick texturized_materials
+	7: moveTo diffusion_start
+	deposit texturized_materials
+	8: moveTo diffusion_end
+	pick diffused_materials
+	9: moveTo laser_start  
+	deposit diffused_materials  
+	10: moveTo laser_end  
+	pick lasered_materials
+	11: moveTo etching_start  
+	deposit lasered_materials
+	12: moveTo etching_end  
+	pick etched_materials  
+	13: moveTo annealing_start  
+	deposit etched_materials  
+	14: moveTo annealing_end  
+	pick annealed_materials  
+	15: moveTo perc_start  
+	deposit annealed_materials  
+	16: moveTo perc_end  
+	pick perc_cells  
+	17: moveTo rear_top_paste_start  
+	deposit perc_cells  
+	18: moveTo rear_top_paste_end  
+	pick pasted_cells 
+	19: moveTo laser_slotting_start  
+	deposit pasted_cells  
+	20: moveTo laser_slotting_end
+	pick slotted_cells  
+	21: moveTo loading_area
+	deposit slotted_cells
+
+Robot3:
+	1: moveTo warehouse
+	pick raw_materials
+	
+	9: moveTo surface_texturization_start
+	deposit raw_materials
+	10: moveTo surface_texturization_end
+	pick texturized_materials
+	11: moveTo diffusion_start
+	deposit texturized_materials
+	12: moveTo diffusion_end
+	pick diffused_materials
+	13: moveTo laser_start  
+	deposit diffused_materials  
+	14: moveTo laser_end  
+	pick lasered_materials
+	15: moveTo etching_start  
+	deposit lasered_materials
+	16: moveTo etching_end  
+	pick etched_materials  
+	17: moveTo annealing_start  
+	deposit etched_materials  
+	18: moveTo annealing_end  
+	pick annealed_materials  
+	19: moveTo perc_start  
+	deposit annealed_materials  
+	20: moveTo perc_end  
+	pick perc_cells  
+	21: moveTo rear_top_paste_start  
+	deposit perc_cells  
+	22: moveTo rear_top_paste_end  
+	pick pasted_cells 
+	23: moveTo laser_slotting_start  
+	deposit pasted_cells  
+	24: moveTo laser_slotting_end
+	pick slotted_cells
+	25: moveTo loading_area
+	deposit slotted_cells
+	
+Robot4:
+	1: moveTo warehouse
+	pick raw_materials
+	
+	13: moveTo surface_texturization_start
+	deposit raw_materials
+	14: moveTo surface_texturization_end
+	pick texturized_materials
+	15: moveTo diffusion_start
+	deposit texturized_materials
+	16: moveTo diffusion_end
+	pick diffused_materials
+	17: moveTo laser_start  
+	deposit diffused_materials  
+	18: moveTo laser_end  
+	pick lasered_materials
+	19: moveTo etching_start  
+	deposit lasered_materials
+	20: moveTo etching_end  
+	pick etched_materials  
+	21: moveTo annealing_start  
+	deposit etched_materials  
+	22: moveTo annealing_end  
+	pick annealed_materials  
+	23: moveTo perc_start  
+	deposit annealed_materials  
+	24: moveTo perc_end  
+	pick perc_cells  
+	25: moveTo rear_top_paste_start  
+	deposit perc_cells  
+	26: moveTo rear_top_paste_end  
+	pick pasted_cells 
+	27: moveTo laser_slotting_start  
+	deposit pasted_cells  
+	28: moveTo laser_slotting_end
+	pick slotted_cells  
+	29: moveTo loading_area
+	deposit slotted_cells
