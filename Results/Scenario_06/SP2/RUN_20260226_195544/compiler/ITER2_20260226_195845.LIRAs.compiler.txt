@@ -1,0 +1,4 @@
+Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_06/SP2/RUN_20260226_195544/dsl/ITER2_20260226_195845.LIRAs
+FAILURE: Validation errors found.
+
+[ERROR] Line 3: missing EOF at 'robots:'

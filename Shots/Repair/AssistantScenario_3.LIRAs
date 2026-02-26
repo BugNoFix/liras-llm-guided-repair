@@ -1,0 +1,17 @@
+AMR_photovoltaic_pipeline
+
+agents:
+robots: Robot1
+
+locations: warehouse, surface_texturization_start, loading_area, laser_slotting_end
+resources: raw_materials, slotted_cells
+
+Robot1:
+1: moveTo warehouse
+pick raw_materials
+moveTo surface_texturization_start
+deposit raw_materials
+16: moveTo laser_slotting_end
+pick slotted_cells
+17: moveTo loading_area
+deposit slotted_cells
