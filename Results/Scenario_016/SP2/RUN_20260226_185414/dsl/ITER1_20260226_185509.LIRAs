@@ -1,0 +1,19 @@
+Service_Delivery
+
+agents:
+    robots: robot1
+    humans: human1
+
+locations:
+    room7002, floor7, floor3, room3201
+
+resources:
+    object
+
+robot1:
+    1: moveTo room7002
+    2: pick object
+    3: moveTo floor7
+    4: moveTo floor3
+    5: moveTo room3201
+    6: deposit object

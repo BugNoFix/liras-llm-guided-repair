@@ -1,0 +1,27 @@
+LabSampleTransportation
+
+agents:
+	humans: Nurse, LaboratoryPersonnel
+	robots: RobotArm
+locations: patientFloor, laboratory
+resources: sample, lockedDrawer, entryModule
+
+Nurse:
+	1-3: moveTo patientFloor
+	4: fetch lockedDrawer
+	5: deposit lockedDrawer
+
+LaboratoryPersonnel:
+	1-2: moveTo laboratory
+	3: fetch lockedDrawer
+	4-5: pick lockedDrawer
+	6: fetch sample
+	7-8: fetch sample
+	9: deposit entryModule
+
+RobotArm:
+	1-3: moveTo patientFloor
+	4-5: pick lockedDrawer
+	6: fetch sample
+	7-8: fetch sample
+	9: deposit entryModule

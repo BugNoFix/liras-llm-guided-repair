@@ -1,0 +1,4 @@
+Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP1/RUN_20260226_182734/dsl/ITER2_20260226_182931.LIRAs
+FAILURE: Validation errors found.
+
+[ERROR] Line 5: missing EOF at 'humans:'

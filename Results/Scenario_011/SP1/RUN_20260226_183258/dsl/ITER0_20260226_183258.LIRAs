@@ -1,0 +1,62 @@
+SampleTransportation
+
+agents:
+	humans: Nurse, LaboratoryPersonnel
+	robots: RobotArm
+locations: patientFloor, laboratory
+resources: sample, entryModule
+
+Nurse:
+	1-3: need(sample)
+	4: track(sample)
+	5: requestDelivery(laboratory)
+
+LaboratoryPersonnel:
+	1-2: moveTo laboratory
+	3: unlockSecureDrawers()
+	4-5: sortSamples()
+	6: loadSamples(entryModule)
+
+RobotArm:
+	1: patrol(patientFloor, laboratory) until !need(sample) && !isUnlocked()
+	2-3: moveTo patientFloor
+	4: unlockSecureDrawers()
+	5: pickSample(sample)
+	6: scanBarcode(sample)
+	7-8: moveTo laboratory
+	9: sortSamples()
+	10: loadSamples(entryModule)
+
+RobotArm:
+
+unlockSecureDrawers():
+	1: moveTo secureDrawers()
+	2: unlock()
+
+isUnlocked():
+	1: moveTo laboratory
+	2: return !secureDrawers().locked()
+
+pickSample(sample):
+	1: moveTo sample
+	2: pick()
+
+scanBarcode(sample):
+	1: moveTo barcode()
+	2: scan()
+
+sortSamples():
+	1-3: moveTo sortLocation()
+	4-6: sort()
+
+loadSamples(entryModule):
+	1-3: moveTo entryModule()
+	4-6: load()
+
+secureDrawers():
+	1-2: moveTo secureLocation()
+	3: return location.locked()
+
+track(sample):
+	1-2: moveTo trackLocation()
+	3-4: log()

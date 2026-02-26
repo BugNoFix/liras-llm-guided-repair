@@ -1,0 +1,17 @@
+Service_Delivery_Pattern
+
+agents:
+robots: Robot1
+
+locations: room_3201, storage
+
+resources: basket
+
+Robot1:
+1: moveTo storage
+2: fetch basket
+3: moveTo room_3201
+4: deliver basket
+
+success: position(Robot1, room_3201)
+failure: tired

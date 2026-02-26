@@ -1,0 +1,27 @@
+Lab_Sample_Transportation
+
+agents:
+	humans: Nurse
+	robots: Robot
+locations: patientFloors, laboratory
+resources: samples
+
+Nurse:
+	1-5: moveTo patientFloors
+	6: stop
+	7: stop
+	8: moveTo patientFloors
+	9: pick samples
+	10: stop
+	11: moveTo patientFloors
+	12: stop
+	13: pick samples
+	14: stop
+
+Robot:
+	1-4: moveTo laboratory
+	5: pick samples
+	6: stop
+	7: stop
+	8: stop
+	9: stop

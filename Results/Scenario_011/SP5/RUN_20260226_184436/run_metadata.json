@@ -1,0 +1,90 @@
+{
+  "run_id": "20260226_184436",
+  "run_started_at": "2026-02-26T18:44:36.237584",
+  "project_id": "aerobic-stream-483313-v6",
+  "location": "global",
+  "system_prompt": "SP5.txt",
+  "shots": 0,
+  "scenario": "Scenario_011.txt",
+  "repair_prompt": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/SPs/Repair/SPR2.txt",
+  "generation_model": "gemini-3-pro-preview",
+  "generation_temperature": 1.0,
+  "repair_model": "gemini-3-pro-preview",
+  "repair_temperature": 0.35,
+  "repair_max_output_tokens": 16384,
+  "repair_shots": 0,
+  "use_generated_dsl_cache": true,
+  "generated_dsl_source": "dsl_folder",
+  "generated_dsl_cache_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/DSL/Scenario_11/SP5_Shot0.txt",
+  "compiler_jar": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/liras_compiler.jar",
+  "max_iterations": 10,
+  "run_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260226_184436",
+  "dsl_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260226_184436/dsl",
+  "compiler_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260226_184436/compiler",
+  "iterations": [
+    {
+      "iteration": 0,
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260226_184436/dsl/ITER0_20260226_184436.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260226_184436/compiler/ITER0_20260226_184436.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 2763,
+      "compiler_error_score": {
+        "feedback_chars": 2763,
+        "lines": 40,
+        "error_lines": 38,
+        "warning_lines": 0,
+        "score": 390
+      }
+    }
+  ],
+  "telemetry": {
+    "llm_calls": 0,
+    "prompt_chars_total": 0,
+    "response_chars_total": 0,
+    "prompt_tokens_est_total": 0,
+    "response_tokens_est_total": 0,
+    "last_call": null
+  },
+  "llm_call_history": [],
+  "status": "crashed",
+  "run_finished_at": "2026-02-26T18:44:45.588415",
+  "summary": {
+    "iterations_recorded": 1,
+    "validations_attempted": 1,
+    "compiler_failures": 1,
+    "compiler_successes": 0,
+    "setup_errors": 0,
+    "first_success_iteration": null,
+    "final_success_dsl_path": null,
+    "total_compiler_feedback_chars": 2763,
+    "llm_calls": 0,
+    "prompt_tokens_est_total": 0,
+    "response_tokens_est_total": 0
+  },
+  "updated_at": "2026-02-26T18:44:45.588455",
+  "repair": {
+    "repair_chat_initialized_at": "2026-02-26T18:44:39.442526",
+    "repair_prompt_template_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/SPs/Repair/SPR2.txt",
+    "repair_system_prompt_chars": 3685,
+    "repair_stateless": true,
+    "repair_uses_server_chat": false,
+    "repair_temperature": 0.35
+  },
+  "interrupted": true,
+  "breaking_error": {
+    "type": "ClientError",
+    "message": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}",
+    "when": "2026-02-26T18:44:45.582239",
+    "where": "run_automated_session/exception",
+    "iteration": 0,
+    "traceback": "Traceback (most recent call last):\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/dsl_generator.py\", line 1382, in run_automated_session\n    repair_result = self.repair_with_compiler_output(\n        previous_dsl=dsl_code,\n    ...<2 lines>...\n        repair_shots=config.get('repair_shots'),\n    )\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/dsl_generator.py\", line 831, in repair_with_compiler_output\n    response = self._call_with_backoff(\n        lambda: self.client.models.generate_content(\n    ...<13 lines>...\n        label=\"repair.generate_content\",\n    )\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/dsl_generator.py\", line 175, in _call_with_backoff\n    return func()\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/dsl_generator.py\", line 832, in <lambda>\n    lambda: self.client.models.generate_content(\n            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^\n        model=self.repair_model_name,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<10 lines>...\n        ),\n        ^^\n    ),\n    ^\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/google/genai/models.py\", line 5474, in generate_content\n    response = self._generate_content(\n        model=model, contents=contents, config=parsed_config\n    )\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/google/genai/models.py\", line 4214, in _generate_content\n    response = self._api_client.request(\n        'post', path, request_dict, http_options\n    )\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/google/genai/_api_client.py\", line 1386, in request\n    response = self._request(http_request, http_options, stream=False)\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/google/genai/_api_client.py\", line 1222, in _request\n    return self._retry(self._request_once, http_request, stream)  # type: ignore[no-any-return]\n           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/tenacity/__init__.py\", line 471, in __call__\n    do = self.iter(retry_state=retry_state)\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/tenacity/__init__.py\", line 372, in iter\n    result = action(retry_state)\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/tenacity/__init__.py\", line 414, in exc_check\n    raise retry_exc.reraise()\n          ~~~~~~~~~~~~~~~~~^^\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/tenacity/__init__.py\", line 185, in reraise\n    raise self.last_attempt.result()\n          ~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"/usr/local/Cellar/python@3.14/3.14.3/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py\", line 443, in result\n    return self.__get_result()\n           ~~~~~~~~~~~~~~~~~^^\n  File \"/usr/local/Cellar/python@3.14/3.14.3/Frameworks/Python.framework/Versions/3.14/lib/python3.14/concurrent/futures/_base.py\", line 395, in __get_result\n    raise self._exception\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/tenacity/__init__.py\", line 474, in __call__\n    result = fn(*args, **kwargs)\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/google/genai/_api_client.py\", line 1199, in _request_once\n    errors.APIError.raise_for_response(response)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/google/genai/errors.py\", line 134, in raise_for_response\n    cls.raise_error(response.status_code, response_json, response)\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/venv/lib/python3.14/site-packages/google/genai/errors.py\", line 159, in raise_error\n    raise ClientError(status_code, response_json, response)\ngoogle.genai.errors.ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Resource exhausted. Please try again later. Please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/error-code-429 for more details.', 'status': 'RESOURCE_EXHAUSTED'}}\n"
+  }
+}

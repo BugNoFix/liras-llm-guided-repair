@@ -1,0 +1,3 @@
+The company needed to use AMR and the upper system to achieve fully automatic transportation of raw materials across the entire factory.
+This process includes the following steps: dispensers to surface texturization, surface texturization to diffusion, diffusion to lasers, lasers to etching, etching to annealing, annealing to PERC (Passivated Emitter and Rear Cell), PERC to rear paste, rear paste to top paste, and top paste to laser slotting.
+

@@ -1,11 +1,11 @@
 {
-  "run_id": "20260226_182734",
-  "run_started_at": "2026-02-26T18:27:34.768572",
+  "run_id": "20260226_190422",
+  "run_started_at": "2026-02-26T19:04:22.609198",
   "project_id": "aerobic-stream-483313-v6",
   "location": "global",
-  "system_prompt": "SP1.txt",
+  "system_prompt": "SP5.txt",
   "shots": 0,
-  "scenario": "Scenario_011.txt",
+  "scenario": "Scenario_016.txt",
   "repair_prompt": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/SPs/Repair/SPR2.txt",
   "generation_model": "gemini-3-pro-preview",
   "generation_temperature": 1.0,
@@ -15,17 +15,17 @@
   "repair_shots": 0,
   "use_generated_dsl_cache": true,
   "generated_dsl_source": "dsl_folder",
-  "generated_dsl_cache_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/DSL/Scenario_11/SP1_Shot0.txt",
+  "generated_dsl_cache_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/DSL/Scenario_16/SP5_Shot0.txt",
   "compiler_jar": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/liras_compiler.jar",
   "max_iterations": 10,
-  "run_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP1/RUN_20260226_182734",
-  "dsl_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP1/RUN_20260226_182734/dsl",
-  "compiler_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP1/RUN_20260226_182734/compiler",
+  "run_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP5/RUN_20260226_190422",
+  "dsl_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP5/RUN_20260226_190422/dsl",
+  "compiler_dir": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP5/RUN_20260226_190422/compiler",
   "iterations": [
     {
       "iteration": 0,
-      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP1/RUN_20260226_182734/dsl/ITER0_20260226_182734.LIRAs",
-      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP1/RUN_20260226_182734/compiler/ITER0_20260226_182734.LIRAs.compiler.txt",
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP5/RUN_20260226_190422/dsl/ITER0_20260226_190422.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP5/RUN_20260226_190422/compiler/ITER0_20260226_190422.LIRAs.compiler.txt",
       "validated": true,
       "is_valid": false,
       "validation": {
@@ -35,21 +35,21 @@
         "jar_missing": false,
         "dsl_missing": false
       },
-      "compiler_feedback_chars": 281,
+      "compiler_feedback_chars": 3037,
       "compiler_error_score": {
-        "feedback_chars": 281,
-        "lines": 5,
-        "error_lines": 3,
+        "feedback_chars": 3037,
+        "lines": 44,
+        "error_lines": 42,
         "warning_lines": 0,
-        "score": 31
+        "score": 430
       },
       "repair_prompt_included_previous_dsl": true,
       "repair_prompt_mode": "dsl_plus_compiler"
     },
     {
       "iteration": 1,
-      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP1/RUN_20260226_182734/dsl/ITER1_20260226_182835.LIRAs",
-      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP1/RUN_20260226_182734/compiler/ITER1_20260226_182835.LIRAs.compiler.txt",
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP5/RUN_20260226_190422/dsl/ITER1_20260226_190457.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP5/RUN_20260226_190422/compiler/ITER1_20260226_190457.LIRAs.compiler.txt",
       "validated": true,
       "is_valid": false,
       "validation": {
@@ -72,8 +72,8 @@
     },
     {
       "iteration": 2,
-      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP1/RUN_20260226_182734/dsl/ITER2_20260226_182931.LIRAs",
-      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP1/RUN_20260226_182734/compiler/ITER2_20260226_182931.LIRAs.compiler.txt",
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP5/RUN_20260226_190422/dsl/ITER2_20260226_190631.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP5/RUN_20260226_190422/compiler/ITER2_20260226_190631.LIRAs.compiler.txt",
       "validated": true,
       "is_valid": false,
       "validation": {
@@ -96,36 +96,36 @@
     },
     {
       "iteration": 3,
-      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP1/RUN_20260226_182734/dsl/ITER3_20260226_183034.LIRAs",
-      "success_artifact_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP1/RUN_20260226_182734/dsl/SUCCESS_20260226_183037.LIRAs",
-      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP1/RUN_20260226_182734/compiler/ITER3_20260226_183034.LIRAs.compiler.txt",
+      "dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP5/RUN_20260226_190422/dsl/ITER3_20260226_190653.LIRAs",
+      "compiler_output_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP5/RUN_20260226_190422/compiler/ITER3_20260226_190653.LIRAs.compiler.txt",
       "validated": true,
-      "is_valid": true,
+      "is_valid": false,
       "validation": {
-        "returncode": 0,
+        "returncode": 1,
         "timed_out": false,
         "java_missing": false,
         "jar_missing": false,
         "dsl_missing": false
       },
+      "compiler_feedback_chars": 709,
       "compiler_error_score": {
-        "feedback_chars": 169,
-        "lines": 2,
-        "error_lines": 0,
+        "feedback_chars": 709,
+        "lines": 11,
+        "error_lines": 9,
         "warning_lines": 0,
-        "score": 0
+        "score": 93
       }
     }
   ],
   "telemetry": {
     "llm_calls": 3,
-    "prompt_chars_total": 5125,
-    "response_chars_total": 585,
-    "prompt_tokens_est_total": 1282,
-    "response_tokens_est_total": 146,
+    "prompt_chars_total": 7502,
+    "response_chars_total": 1349,
+    "prompt_tokens_est_total": 1875,
+    "response_tokens_est_total": 338,
     "last_call": {
       "kind": "repair",
-      "timestamp": "2026-02-26T18:30:34.360750",
+      "timestamp": "2026-02-26T19:06:53.178386",
       "finish_reason": "FinishReason.STOP",
       "safety_ratings": [
         {
@@ -145,16 +145,16 @@
           "probability": "HarmProbability.NEGLIGIBLE"
         }
       ],
-      "prompt_chars": 822,
-      "response_chars": 183,
-      "prompt_tokens_est": 206,
-      "response_tokens_est": 46
+      "prompt_chars": 1064,
+      "response_chars": 455,
+      "prompt_tokens_est": 266,
+      "response_tokens_est": 114
     }
   },
   "llm_call_history": [
     {
       "kind": "repair",
-      "timestamp": "2026-02-26T18:28:35.203579",
+      "timestamp": "2026-02-26T19:04:57.513351",
       "finish_reason": "FinishReason.STOP",
       "safety_ratings": [
         {
@@ -174,14 +174,14 @@
           "probability": "HarmProbability.NEGLIGIBLE"
         }
       ],
-      "prompt_chars": 3180,
-      "response_chars": 205,
-      "prompt_tokens_est": 795,
-      "response_tokens_est": 51
+      "prompt_chars": 5065,
+      "response_chars": 455,
+      "prompt_tokens_est": 1266,
+      "response_tokens_est": 114
     },
     {
       "kind": "repair",
-      "timestamp": "2026-02-26T18:29:31.050624",
+      "timestamp": "2026-02-26T19:06:31.641105",
       "finish_reason": "FinishReason.STOP",
       "safety_ratings": [
         {
@@ -201,14 +201,14 @@
           "probability": "HarmProbability.NEGLIGIBLE"
         }
       ],
-      "prompt_chars": 1123,
-      "response_chars": 197,
-      "prompt_tokens_est": 281,
-      "response_tokens_est": 49
+      "prompt_chars": 1373,
+      "response_chars": 439,
+      "prompt_tokens_est": 343,
+      "response_tokens_est": 110
     },
     {
       "kind": "repair",
-      "timestamp": "2026-02-26T18:30:34.360750",
+      "timestamp": "2026-02-26T19:06:53.178386",
       "finish_reason": "FinishReason.STOP",
       "safety_ratings": [
         {
@@ -228,30 +228,30 @@
           "probability": "HarmProbability.NEGLIGIBLE"
         }
       ],
-      "prompt_chars": 822,
-      "response_chars": 183,
-      "prompt_tokens_est": 206,
-      "response_tokens_est": 46
+      "prompt_chars": 1064,
+      "response_chars": 455,
+      "prompt_tokens_est": 266,
+      "response_tokens_est": 114
     }
   ],
-  "status": "success",
-  "run_finished_at": "2026-02-26T18:30:37.223588",
+  "status": "running",
+  "run_finished_at": null,
   "summary": {
     "iterations_recorded": 4,
     "validations_attempted": 4,
-    "compiler_failures": 3,
-    "compiler_successes": 1,
+    "compiler_failures": 4,
+    "compiler_successes": 0,
     "setup_errors": 0,
-    "first_success_iteration": 3,
-    "final_success_dsl_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP1/RUN_20260226_182734/dsl/ITER3_20260226_183034.LIRAs",
-    "total_compiler_feedback_chars": 1210,
+    "first_success_iteration": null,
+    "final_success_dsl_path": null,
+    "total_compiler_feedback_chars": 4675,
     "llm_calls": 3,
-    "prompt_tokens_est_total": 1282,
-    "response_tokens_est_total": 146
+    "prompt_tokens_est_total": 1875,
+    "response_tokens_est_total": 338
   },
-  "updated_at": "2026-02-26T18:30:37.223696",
+  "updated_at": "2026-02-26T19:06:55.920017",
   "repair": {
-    "repair_chat_initialized_at": "2026-02-26T18:27:38.296727",
+    "repair_chat_initialized_at": "2026-02-26T19:04:25.189302",
     "repair_prompt_template_path": "/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/SPs/Repair/SPR2.txt",
     "repair_system_prompt_chars": 3685,
     "repair_stateless": true,

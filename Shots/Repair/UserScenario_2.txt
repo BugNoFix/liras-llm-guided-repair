@@ -1,0 +1,44 @@
+INITIAL_DSL_FROM_GENERATION:
+NurseAssistant
+
+agents:
+    humans: Nurse, Doctor
+    robots: MP, M, MM
+locations: radiotherapy, reservedRoom1, reservedRoom2
+resources: towel, item2
+
+Nurse:
+    1: receiveFrom MP
+    5: receiveFrom MM
+
+Doctor:
+    1: 
+
+M:
+    1: stop 
+    restart if !possess(Nurse, towel)
+    3: skip !possess(Nurse, towel)
+       load towel
+    4: skip if possess(Doctor, item2)
+       fetch item2
+
+MP:
+    1: moveTo radiotherapy
+    until possess(Nurse, towel)
+    2: moveTo M 3-4: stop
+    5: moveTo Doctor2
+
+MM: 
+    1-5: moveTo reservedRoom1
+    moveTo Nurse
+    deliver towel
+
+
+CURRENT_COMPILER_OUTPUT:
+Description    Resource    Path    Location    Type
+mismatched input '\n' expecting ruleActionC at line 17    NurseAssistant.LIRAs    line 17    LIRAs Problem
+mismatched input '!' expecting 'if' at line 22    NurseAssistant.LIRAs    line 22    LIRAs Problem
+rule ruleAction failed predicate: mismatched input 'load' expecting RULE_ID    NurseAssistant.LIRAs    line 23    LIRAs Problem
+mismatched input 'until' expecting RULE_INT    NurseAssistant.LIRAs    line 29    LIRAs Problem
+mismatched input '3-4:' expecting RULE_NL    NurseAssistant.LIRAs    line 30    LIRAs Problem
+Agent name must be one of the names specified in the pattern at 'Doctor2'    NurseAssistant.LIRAs    line 31    LIRAs Problem

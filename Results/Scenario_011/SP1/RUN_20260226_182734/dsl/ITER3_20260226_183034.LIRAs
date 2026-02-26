@@ -1,0 +1,14 @@
+SampleTransport
+
+agents:
+robots: Robot
+
+locations: PatientFloor, Laboratory
+
+resources: Samples
+
+Robot:
+1: moveTo PatientFloor
+2: pick Samples
+3: moveTo Laboratory
+4: deposit Samples

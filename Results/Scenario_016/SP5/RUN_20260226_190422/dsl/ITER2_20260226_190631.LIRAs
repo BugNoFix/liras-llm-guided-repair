@@ -1,0 +1,23 @@
+Service_Navigation
+
+robots: ServiceRobot
+humans: HumanAssistant
+
+locations:
+    serviceStartLocation, elevatorLocation, floorLocation, serviceGoalLocation
+
+resources:
+    transportObject
+
+ServiceRobot:
+    1: moveTo serviceStartLocation
+    2: pick transportObject
+    3: moveTo elevatorLocation
+    4: stop
+    5: wait
+    6: moveTo floorLocation
+    7: moveTo serviceGoalLocation
+    8: deposit transportObject
+
+conclusion:
+    finished

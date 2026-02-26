@@ -1,0 +1,40 @@
+Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_011/SP5/RUN_20260226_184436/dsl/ITER0_20260226_184436.LIRAs
+FAILURE: Validation errors found.
+
+[ERROR] Line 1: required (...)+ loop did not match anything at input 'is'
+[ERROR] Line 1: mismatched input 'a' expecting ':'
+[ERROR] Line 1: mismatched input 'possible' expecting ':'
+[ERROR] Line 1: mismatched input 'implementation' expecting ':'
+[ERROR] Line 1: mismatched input 'of' expecting ':'
+[ERROR] Line 1: mismatched input 'the' expecting ':'
+[ERROR] Line 1: mismatched input 'LIrAs' expecting ':'
+[ERROR] Line 1: mismatched input 'pattern' expecting ':'
+[ERROR] Line 1: mismatched input 'in' expecting ':'
+[ERROR] Line 1: mismatched input 'this' expecting ':'
+[ERROR] Line 1: mismatched input 'pseudo' expecting ':'
+[ERROR] Line 1: mismatched input '-' expecting ':'
+[ERROR] Line 2: missing EOF at '`'
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 1: Agent name must be one of the names specified in the pattern.

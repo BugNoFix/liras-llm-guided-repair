@@ -1,0 +1,7 @@
+Scenario_011
+agents:
+robots: r1
+locations: l1
+
+r1:
+1: stop
