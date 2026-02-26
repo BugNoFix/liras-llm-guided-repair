@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Optional
 
 
-PROJECT_ROOT = Path(__file__).parent
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
 def _default_key_path() -> Path:
@@ -81,6 +81,20 @@ def _default_system_prompts(sp_dir: Path) -> list[str]:
         if name in prompts:
             continue
         prompts.append(name)
+
+    # Current repo layout stores generation prompts under SPs/Generative/
+    if not prompts:
+        gen_dir = sp_dir / "Generative"
+        for p in sorted(gen_dir.glob("SystemPrompt*.txt")):
+            name = p.name
+            if "Repair" in name:
+                continue
+            prompts.append(name)
+        for p in sorted(gen_dir.glob("SP*.txt")):
+            name = p.name
+            if name in prompts:
+                continue
+            prompts.append(name)
     return prompts
 
 

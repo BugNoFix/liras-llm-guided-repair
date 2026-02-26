@@ -1,2 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260209_152403/dsl/ITER1_20260209_152554.LIRAs
-SUCCESS: Model is valid.

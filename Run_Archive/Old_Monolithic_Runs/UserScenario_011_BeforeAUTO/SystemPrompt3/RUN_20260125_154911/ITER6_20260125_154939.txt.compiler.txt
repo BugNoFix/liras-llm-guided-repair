@@ -1,8 +1,0 @@
-CRITICAL ERROR: Could not load file. Cannot create a resource for 'file:/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/UserScenario_011/SystemPrompt3/RUN_20260125_154911/ITER6_20260125_154939.txt'; a registered resource factory is needed
-java.lang.RuntimeException: Cannot create a resource for 'file:/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/UserScenario_011/SystemPrompt3/RUN_20260125_154911/ITER6_20260125_154939.txt'; a registered resource factory is needed
-	at org.eclipse.xtext.resource.XtextResourceSet.getResource(XtextResourceSet.java:263)
-	at org.eclipse.xtext.resource.SynchronizedXtextResourceSet.getResource(SynchronizedXtextResourceSet.java:33)
-	at it.polimi.CompilerMain.main(CompilerMain.java:32)
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:578)
-	at org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader.main(JarRsrcLoader.java:63)

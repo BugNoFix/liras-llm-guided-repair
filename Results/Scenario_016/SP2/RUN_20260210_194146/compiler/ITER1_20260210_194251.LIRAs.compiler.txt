@@ -1,2 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_016/SP2/RUN_20260210_194146/dsl/ITER1_20260210_194251.LIRAs
-SUCCESS: Model is valid.

@@ -10,9 +10,9 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 
-PROJECT_ROOT = Path(__file__).parent
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_RESULTS_ROOT = PROJECT_ROOT / "Results"
-DEFAULT_EXPORT_PATH = PROJECT_ROOT / "Report" / "run_history.csv"
+DEFAULT_EXPORT_PATH = PROJECT_ROOT / "Report" / "Histories" / "c1.csv"
 
 _ERROR_RE = re.compile(r"\berror\b", re.IGNORECASE)
 _WARNING_RE = re.compile(r"\bwarning\b", re.IGNORECASE)
@@ -498,8 +498,8 @@ def export_csv(results_root: Path, out_path: Path, *, verbose: bool = False) -> 
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
-            "Scan Results/Runs/**/run_metadata.json and write a single CSV with run + iteration data. "
-            "This overwrites the CSV each run so you always have one canonical source."
+            "Scan Results/Runs/**/run_metadata.json and write a single per-configuration CSV "
+            "under Report/Histories (e.g., c1.csv, c2.csv)."
         )
     )
     parser.add_argument(

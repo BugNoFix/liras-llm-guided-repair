@@ -1,7 +1,0 @@
-Scenario_029
-
-agents:
-robots: robot1
-
-robot1:
-1: stop

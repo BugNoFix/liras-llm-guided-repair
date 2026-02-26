@@ -31,10 +31,14 @@ def _style():
 
 
 def _config_from_filename(path: Path) -> str:
-    stem = path.stem
-    name = re.sub(r"^run_history[_-]?", "", stem, flags=re.IGNORECASE)
-    name = name.strip("_-")
-    return name or stem
+    return path.stem
+
+
+def _config_sort_key(label: str):
+    m = re.fullmatch(r"c(\d+)", str(label).strip(), flags=re.IGNORECASE)
+    if m:
+        return (0, int(m.group(1)))
+    return (1, str(label))
 
 
 def _load_data_from_paths(csv_paths: list[Path]):
@@ -119,18 +123,43 @@ def _load_data_from_paths(csv_paths: list[Path]):
     return df, run_df
 
 
-def _attach_config_labels(run_df, config_cols: list[str]):
+def _load_paths_from_manifest(manifest_path: Path):
     import pandas as pd
+
+    if not manifest_path.exists():
+        raise FileNotFoundError(f"Manifest not found: {manifest_path}")
+
+    mdf = pd.read_csv(manifest_path)
+    if "history_csv" not in mdf.columns:
+        raise ValueError("Manifest missing required column: history_csv")
+
+    paths = [Path(p) for p in mdf["history_csv"].dropna().astype(str).tolist()]
+    label_map = None
+    if "label" in mdf.columns:
+        pairs = mdf[["history_csv", "label"]].dropna()
+        label_map = {str(Path(h)): str(l) for h, l in pairs.values.tolist()}
+    return paths, label_map
+
+
+def _attach_config_labels(run_df, config_cols: list[str], file_label_map: dict[str, str] | None = None):
+    import pandas as pd
+
+    if file_label_map:
+        run_df = run_df.copy()
+        run_df["config_details"] = run_df["source_history_file"].map(
+            lambda p: file_label_map.get(str(Path(p)), str(Path(p)))
+        )
+        unique_details = sorted(run_df["config_details"].dropna().unique().tolist())
+        run_df["config_label"] = run_df["config_details"]
+        mapping = pd.DataFrame([{"config_label": d, "config_details": d} for d in unique_details])
+        return run_df, mapping
 
     if "source_config" in run_df.columns and run_df["source_config"].notna().any():
         run_df = run_df.copy()
         run_df["config_details"] = run_df["source_config"].astype(str)
-        unique_details = sorted(run_df["config_details"].dropna().unique().tolist())
-        label_map = {d: f"C{i+1}" for i, d in enumerate(unique_details)}
-        run_df["config_label"] = run_df["config_details"].map(label_map)
-        mapping = pd.DataFrame(
-            [{"config_label": label_map[d], "config_details": d} for d in unique_details]
-        )
+        unique_details = sorted(run_df["config_details"].dropna().unique().tolist(), key=_config_sort_key)
+        run_df["config_label"] = run_df["config_details"]
+        mapping = pd.DataFrame([{"config_label": d, "config_details": d} for d in unique_details])
         return run_df, mapping
 
     available = [c for c in config_cols if c in run_df.columns]
@@ -152,7 +181,7 @@ def _attach_config_labels(run_df, config_cols: list[str]):
     run_df["config_details"] = run_df.apply(mk, axis=1)
 
     unique_details = sorted(run_df["config_details"].dropna().unique().tolist())
-    label_map = {d: f"C{i+1}" for i, d in enumerate(unique_details)}
+    label_map = {d: f"c{i+1}" for i, d in enumerate(unique_details)}
     run_df["config_label"] = run_df["config_details"].map(label_map)
 
     mapping = pd.DataFrame(
@@ -184,7 +213,7 @@ def _figure_viability_funnel(run_df, out_dir: Path):
     )
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    configs = sorted(long_df["config_label"].unique())
+    configs = sorted(long_df["config_label"].unique(), key=_config_sort_key)
     stages = ["Total", "Initial compile", "Final success"]
     width = 0.8 / max(1, len(configs))
 
@@ -220,6 +249,7 @@ def _figure_success_rate_ci(run_df, out_dir: Path):
         n=("run_uid", "count"),
         successes=("success_bool", "sum"),
     )
+    g = g.sort_values("config_label", key=lambda s: s.map(_config_sort_key))
     g["rate"] = g["successes"] / g["n"]
 
     ci = g.apply(lambda r: _wilson_ci(float(r["rate"]), int(r["n"])), axis=1)
@@ -253,7 +283,7 @@ def _figure_iterations_success_ecdf(run_df, out_dir: Path):
 
     fig, ax = plt.subplots(figsize=(10, 6))
 
-    for cfg in sorted(run_df["config_label"].dropna().unique()):
+    for cfg in sorted(run_df["config_label"].dropna().unique(), key=_config_sort_key):
         subset = run_df[(run_df["config_label"] == cfg) & (run_df["success_bool"])].copy()
         s = subset["derived_first_success_iteration"].dropna().sort_values()
         total_cfg = int((run_df["config_label"] == cfg).sum())
@@ -286,7 +316,7 @@ def _figure_cost_to_success(run_df, out_dir: Path):
     if succ.empty:
         return
 
-    cfgs = sorted(succ["config_label"].unique())
+    cfgs = sorted(succ["config_label"].unique(), key=_config_sort_key)
     token_data = [succ[succ["config_label"] == c]["tokens_total"].values for c in cfgs]
     dur_data = [succ[succ["config_label"] == c]["derived_run_duration_seconds"].values for c in cfgs]
 
@@ -312,11 +342,16 @@ def _figure_cost_to_success(run_df, out_dir: Path):
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate viability figures from one or many run_history CSV files")
-    parser.add_argument("--csv", default="Report/run_history.csv", help="Single input run history CSV")
+    parser.add_argument("--csv", default="Report/Histories/c1.csv", help="Single input run history CSV")
     parser.add_argument(
         "--csv-glob",
+        default="Report/Histories/c*.csv",
+        help="Glob for multiple run_history CSV files (e.g., 'Report/Histories/c*.csv')",
+    )
+    parser.add_argument(
+        "--manifest",
         default="",
-        help="Glob for multiple run_history CSV files (e.g., 'Report/Histories/run_history_*.csv')",
+        help="Optional manifest CSV from run_all_configurations.py (uses history_csv + label)",
     )
     parser.add_argument("--outdir", default="Report/Figures", help="Output directory for PNG figures")
     parser.add_argument(
@@ -329,7 +364,12 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    if args.csv_glob and str(args.csv_glob).strip():
+    file_label_map = None
+    if args.manifest and str(args.manifest).strip():
+        csv_paths, file_label_map = _load_paths_from_manifest(Path(str(args.manifest).strip()))
+        if not csv_paths:
+            raise FileNotFoundError(f"No history CSVs found in manifest: {args.manifest}")
+    elif args.csv_glob and str(args.csv_glob).strip():
         csv_paths = sorted(Path().glob(str(args.csv_glob).strip()))
         if not csv_paths:
             raise FileNotFoundError(f"No files matched --csv-glob: {args.csv_glob}")
@@ -343,7 +383,7 @@ def main() -> int:
     _, run_df = _load_data_from_paths(csv_paths)
 
     config_cols = [c.strip() for c in str(args.config_cols).split(",") if c.strip()]
-    run_df, mapping = _attach_config_labels(run_df, config_cols)
+    run_df, mapping = _attach_config_labels(run_df, config_cols, file_label_map=file_label_map)
     mapping.to_csv(out_dir / "config_mapping.csv", index=False)
 
     _figure_viability_funnel(run_df, out_dir)

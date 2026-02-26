@@ -6,15 +6,31 @@ import argparse
 from pathlib import Path
 
 
-def _load(csv_path: Path):
+def _config_from_filename(path: Path) -> str:
+    return path.stem
+
+
+def _load(csv_paths: list[Path]):
     import pandas as pd
 
-    if not csv_path.exists():
-        raise FileNotFoundError(f"CSV not found: {csv_path}")
+    if not csv_paths:
+        raise ValueError("No CSV files provided")
 
-    df = pd.read_csv(csv_path)
-    if df.empty:
-        raise ValueError(f"CSV is empty: {csv_path}")
+    chunks = []
+    for csv_path in csv_paths:
+        if not csv_path.exists():
+            raise FileNotFoundError(f"CSV not found: {csv_path}")
+        dfi = pd.read_csv(csv_path)
+        if dfi.empty:
+            continue
+        dfi["source_history_file"] = str(csv_path)
+        dfi["source_config"] = _config_from_filename(csv_path)
+        chunks.append(dfi)
+
+    if not chunks:
+        raise ValueError("All input CSV files are empty")
+
+    df = pd.concat(chunks, ignore_index=True)
 
     numeric_cols = [
         "iteration",
@@ -31,9 +47,19 @@ def _load(csv_path: Path):
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
 
+    run_key_col = "run_key" if "run_key" in df.columns else "run_id"
+    if run_key_col not in df.columns:
+        raise ValueError("Expected 'run_key' or 'run_id' column in CSV")
+
+    df["run_uid"] = (
+        df["source_history_file"].astype(str)
+        + "::"
+        + df[run_key_col].astype(str)
+    )
+
     run_df = (
-        df.sort_values(["run_id", "iteration"], na_position="last")
-        .groupby("run_id", as_index=False)
+        df.sort_values(["run_uid", "iteration"], na_position="last")
+        .groupby("run_uid", as_index=False)
         .first()
     )
 
@@ -77,31 +103,35 @@ def _table_overall(run_df):
 
 
 def _table_prompt_shots(run_df):
+    group_cols = ["source_config", "system_prompt", "shots_count"]
+    group_cols = [c for c in group_cols if c in run_df.columns]
     grouped = (
-        run_df.groupby(["system_prompt", "shots_count"], as_index=False)
+        run_df.groupby(group_cols, as_index=False)
         .agg(
-            runs=("run_id", "count"),
+            runs=("run_uid", "count"),
             success_rate=("success_bool", "mean"),
             median_duration_s=("derived_run_duration_seconds", "median"),
             median_first_success_iter=("derived_first_success_iteration", "median"),
             median_best_error_score=("derived_best_error_score", "median"),
             median_monotonicity=("derived_monotonicity_ratio", "median"),
         )
-        .sort_values(["system_prompt", "shots_count"])
+        .sort_values(group_cols)
     )
     return grouped
 
 
 def _table_scenario_prompt(run_df):
+    group_cols = ["source_config", "scenario", "system_prompt"]
+    group_cols = [c for c in group_cols if c in run_df.columns]
     grouped = (
-        run_df.groupby(["scenario", "system_prompt"], as_index=False)
+        run_df.groupby(group_cols, as_index=False)
         .agg(
-            runs=("run_id", "count"),
+            runs=("run_uid", "count"),
             success_rate=("success_bool", "mean"),
             median_duration_s=("derived_run_duration_seconds", "median"),
             median_best_error_score=("derived_best_error_score", "median"),
         )
-        .sort_values(["scenario", "system_prompt"])
+        .sort_values(group_cols)
     )
     return grouped
 
@@ -115,16 +145,28 @@ def _table_status_breakdown(run_df):
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Export publication tables from Report/run_history.csv")
-    parser.add_argument("--csv", default="Report/run_history.csv", help="Input run history CSV")
+    parser = argparse.ArgumentParser(description="Export publication tables from one or more run history CSV files")
+    parser.add_argument("--csv", default="Report/Histories/c1.csv", help="Single input run history CSV")
+    parser.add_argument(
+        "--csv-glob",
+        default="Report/Histories/c*.csv",
+        help="Glob for multiple run history CSV files",
+    )
     parser.add_argument("--outdir", default="Report/Tables", help="Output directory for tables")
     args = parser.parse_args()
 
-    csv_path = Path(args.csv)
+    csv_glob = str(args.csv_glob or "").strip()
+    if csv_glob:
+        csv_paths = sorted(Path().glob(csv_glob))
+        if not csv_paths:
+            raise FileNotFoundError(f"No files matched --csv-glob: {args.csv_glob}")
+    else:
+        csv_paths = [Path(args.csv)]
+
     out_dir = Path(args.outdir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    _, run_df = _load(csv_path)
+    _, run_df = _load(csv_paths)
 
     t1 = _table_overall(run_df)
     t2 = _table_prompt_shots(run_df)
@@ -137,6 +179,7 @@ def main() -> int:
     _save_table(t4, out_dir / "table04_status_breakdown.csv", out_dir / "table04_status_breakdown.tex")
 
     print(f"Exported tables to: {out_dir}")
+    print(f"Compared input files: {len(csv_paths)}")
     return 0
 
 

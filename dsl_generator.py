@@ -67,12 +67,16 @@ class DSLGenerator:
         # Define workspace paths
         self.base_path = Path(__file__).parent
         self.sp_path = self.base_path / "SPs"
+        self.generative_sp_path = self.sp_path / "Generative"
+        self.repair_sp_path = self.sp_path / "Repair"
         self.shots_path = self.base_path / "Shots"
         self.generative_shots_path = self.shots_path / "Generative"
         self.repair_shots_path = self.shots_path / "Repair"
         self.scenarios_path = self.base_path / "Scenarios"
         self.results_path = self.base_path / "Results"
-        self.repair_prompt_template_path = self.base_path / "SPs" / "RepairPrompt.txt"
+        self.repair_prompt_template_path = self.repair_sp_path / "SystemPromptRepair1.txt"
+        if not self.repair_prompt_template_path.exists():
+            self.repair_prompt_template_path = self.sp_path / "RepairPrompt.txt"
         self.generated_dsl_root = self.base_path / "GeneratedDSL"
         
         self.model = None
@@ -484,6 +488,7 @@ class DSLGenerator:
     def list_available_files(self) -> dict:
         """Return available system prompts, shots, and scenarios (no printing)."""
         sp_files = [p.name for p in sorted(self.sp_path.glob("*.txt"))]
+        sp_files.extend([f"Generative/{p.name}" for p in sorted(self.generative_sp_path.glob("*.txt"))])
         generative_shots = [p.name for p in sorted(self.generative_shots_path.glob("*.txt"))]
         repair_shots = [p.name for p in sorted(self.repair_shots_path.glob("*.txt"))]
         scenario_files = [p.name for p in sorted(self.scenarios_path.glob("*.txt"))]
@@ -494,6 +499,44 @@ class DSLGenerator:
             "repair_shots": repair_shots,
             "scenarios": scenario_files,
         }
+
+    def _resolve_system_prompt_path(self, system_prompt_file: str) -> Path:
+        """Resolve generation system prompt path across legacy and nested SP layouts."""
+        candidate = Path(system_prompt_file).expanduser()
+        candidates = []
+
+        if candidate.is_absolute():
+            candidates.append(candidate)
+        else:
+            candidates.extend(
+                [
+                    self.base_path / candidate,
+                    self.sp_path / candidate,
+                    self.generative_sp_path / candidate,
+                ]
+            )
+            if candidate.parent == Path("."):
+                candidates.append(self.generative_sp_path / candidate.name)
+
+        for path in candidates:
+            if path.exists() and path.is_file():
+                return path
+
+        searched = "\n - ".join(str(p) for p in candidates)
+        raise FileNotFoundError(
+            f"System prompt not found: {system_prompt_file}\n"
+            f"Searched:\n - {searched}"
+        )
+
+    def _default_repair_prompt_path(self) -> Path:
+        preferred = [
+            self.repair_sp_path / "SystemPromptRepair1.txt",
+            self.sp_path / "RepairPrompt.txt",
+        ]
+        for path in preferred:
+            if path.exists() and path.is_file():
+                return path
+        return preferred[0]
     
     def start_conversation(self, system_prompt_file: str, shots, scenario_file: str, model_name: str):
         """
@@ -518,7 +561,8 @@ class DSLGenerator:
         }
         
         # Load system prompt
-        system_prompt = self.load_file(self.sp_path / system_prompt_file)
+        system_prompt_path = self._resolve_system_prompt_path(system_prompt_file)
+        system_prompt = self.load_file(system_prompt_path)
 
         # Capture generation context for the repair phase
         self.generation_system_prompt_text = system_prompt
@@ -983,7 +1027,7 @@ class DSLGenerator:
         - an absolute path: used as-is
         """
         if not repair_prompt:
-            self.repair_prompt_template_path = self.base_path / "SPs" / "RepairPrompt.txt"
+            self.repair_prompt_template_path = self._default_repair_prompt_path()
             return
 
         candidate = Path(repair_prompt)
@@ -997,6 +1041,21 @@ class DSLGenerator:
             return
 
         rel_to_sps = self.sp_path / repair_prompt
+        if rel_to_sps.exists():
+            self.repair_prompt_template_path = rel_to_sps
+            return
+
+        rel_to_repair = self.repair_sp_path / repair_prompt
+        if rel_to_repair.exists():
+            self.repair_prompt_template_path = rel_to_repair
+            return
+
+        if candidate.parent == Path("."):
+            named_in_repair = self.repair_sp_path / candidate.name
+            if named_in_repair.exists():
+                self.repair_prompt_template_path = named_in_repair
+                return
+
         self.repair_prompt_template_path = rel_to_sps
     
     def refine_with_error(self, error_message: str) -> str:

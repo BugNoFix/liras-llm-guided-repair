@@ -126,10 +126,15 @@ RESEARCH_PROJECT/
 ├── keys/                     # API keys directory (gitignored)
 │   ├── key.json              # Your Google Cloud credentials
 │   └── README.md             # Key setup instructions
-├── SPs/                      # System prompts
-│   ├── SystemPrompt1.txt
-│   ├── SystemPrompt2.txt
-│   └── ...
+├── SPs/
+│   ├── Generative/           # Generation-stage system prompts
+│   │   ├── SP1.txt
+│   │   ├── SP2.txt
+│   │   └── ...
+│   └── Repair/               # Repair-stage system prompts
+│       ├── SystemPromptRepair1.txt
+│       ├── SystemPromptRepair2.txt
+│       └── ...
 ├── Shots/                    # Few-shot learning examples
 │   ├── UserScenario_1.txt
 │   ├── AssistantScenario_1.txt
@@ -156,12 +161,12 @@ Edit the `config.json` file to specify your configuration:
 
 ```json
 {
-  "system_prompt": "SystemPrompt1.txt",
+  "system_prompt": "Generative/SP1.txt",
   "generation_model": "gemini-2.0-flash-lite-001",
   "repair_model": "gemini-2.0-flash-lite-001",
   "shots": 2,
   "scenario": "UserScenario_011.txt",
-  "repair_prompt": "RepairPrompt.txt",
+  "repair_prompt": "Repair/SystemPromptRepair1.txt",
   "repair_shots": 0,
   "compiler_jar": "Compiler/liras-compiler.jar",
   "max_iterations": 10
@@ -170,12 +175,13 @@ Edit the `config.json` file to specify your configuration:
 
 Optional:
 
-- **`repair_prompt`**: Repair-stage prompt template used only during refinement (when you paste compiler output). Defaults to `SPs/RepairPrompt.txt`. You can provide either a filename under `SPs/`, a relative path from the project root, or an absolute path.
+- **`repair_prompt`**: Repair-stage prompt template used only during refinement (when you paste compiler output). Defaults to `SPs/Repair/SystemPromptRepair1.txt` (fallback to legacy `SPs/RepairPrompt.txt` if present). You can provide either a filename under `SPs/Repair/`, a path relative to `SPs/`, a project-relative path, or an absolute path.
 
 Included templates:
 
-- `SPs/RepairPrompt.txt`: Full repair guidance (fixes based on compiler output + pragmatic DSL repair heuristics).
-- `SPs/RepairPrompt_Extended.txt`: More verbose/structured repair guidance (useful when compiler messages are ambiguous or repeated).
+- `SPs/Repair/SystemPromptRepair1.txt`: Baseline repair guidance.
+- `SPs/Repair/SystemPromptRepair2.txt`: Alternative repair policy.
+- `SPs/Repair/SystemPromptRepair3.txt`: Lightweight repair variant.
 
 This will automatically load:
 
@@ -186,7 +192,7 @@ This will automatically load:
 
 ```json
 {
-  "system_prompt": "SystemPrompt1.txt",
+  "system_prompt": "Generative/SP1.txt",
   "generation_model": "gemini-2.0-flash-lite-001",
   "repair_model": "gemini-2.0-flash-lite-001",
   "shots": [
@@ -200,7 +206,7 @@ This will automatically load:
     }
   ],
   "scenario": "UserScenario_011.txt",
-  "repair_prompt": "RepairPrompt.txt",
+  "repair_prompt": "Repair/SystemPromptRepair1.txt",
   "repair_shots": 0,
   "compiler_jar": "Compiler/liras-compiler.jar",
   "max_iterations": 10
@@ -209,7 +215,7 @@ This will automatically load:
 
 **Configuration Options:**
 
-- **`system_prompt`**: The system prompt file from the `SPs/` directory that defines the AI's role and instructions
+- **`system_prompt`**: Generation prompt file from `SPs/Generative/` (for example `Generative/SP3.txt`)
 - **`generation_model` (required)**: Vertex AI Gemini model name used for initial generation (e.g., `gemini-2.0-flash-lite-001`, `gemini-2.5-pro`)
 - **`repair_model` (required)**: Vertex AI Gemini model name used for repair iterations (can be the same as `generation_model`)
 - **`shots`**:
@@ -217,7 +223,7 @@ This will automatically load:
   - **Array**: Custom shot pairs with specific file names
   - **0 or []**: Zero-shot learning (no examples)
 - **`scenario`**: The scenario file from `Scenarios/` directory to generate DSL code for
-- **`repair_prompt`**: Repair-stage system prompt used by the repair chat. Defaults to `SPs/RepairPrompt.txt`. You can provide either a filename under `SPs/`, a relative path from the project root, or an absolute path.
+- **`repair_prompt`**: Repair-stage system prompt used by the repair chat. Defaults to `SPs/Repair/SystemPromptRepair1.txt`. Recommended format is `Repair/<filename>.txt` (for example `Repair/SystemPromptRepair2.txt`).
 - **`repair_shots`**: Optional additional few-shots used only for the repair chat. Can be an integer (like `shots`) or an explicit list of `{user, assistant}` pairs. Use `0`/`[]` for none.
 - **`compiler_jar` (required)**: Path to the runnable compiler JAR used for validation (relative to project root or absolute path)
 - **`max_iterations` (required)**: Maximum number of generate→compile→repair attempts before stopping
@@ -335,7 +341,7 @@ Each run produces a single `run_metadata.json` that is updated over time with te
 
 ```json
 {
-  "system_prompt": "SystemPrompt1.txt",
+  "system_prompt": "Generative/SP1.txt",
   "shots": 0,
   "scenario": "UserScenario_011.txt"
 }
@@ -345,7 +351,7 @@ Each run produces a single `run_metadata.json` that is updated over time with te
 
 ```json
 {
-  "system_prompt": "SystemPrompt2.txt",
+  "system_prompt": "Generative/SP2.txt",
   "shots": 1,
   "scenario": "UserScenario_016.txt"
 }
@@ -357,7 +363,7 @@ This automatically loads `UserScenario_1.txt` + `AssistantScenario_1.txt` as cha
 
 ```json
 {
-  "system_prompt": "SystemPrompt3.txt",
+  "system_prompt": "Generative/SP3.txt",
   "shots": 2,
   "scenario": "UserScenario_029.txt"
 }
@@ -372,7 +378,7 @@ This automatically loads:
 
 ```json
 {
-  "system_prompt": "SystemPrompt4.txt",
+  "system_prompt": "Generative/SP4.txt",
   "shots": [
     {
       "user": "UserScenario_1.txt",
@@ -389,18 +395,18 @@ This automatically loads:
 
 ## Batch Runs (run_all_pairs)
 
-Use `run_all_pairs.py` to execute all Scenario/SystemPrompt pairs with a shared template config.
+Use `Utils/run_all_pairs.py` to execute all Scenario/SystemPrompt pairs with a shared template config.
 
 Common commands:
 
 ```bash
-python run_all_pairs.py
-python run_all_pairs.py --shots 0,1,2
-python run_all_pairs.py --generation-only
-python run_all_pairs.py --disable-generation --shots 0,1,2
-python run_all_pairs.py --disable-generation --shots 0,1,2 --compiler-timeout 120
-python run_all_pairs.py --disable-generation --shots 0,1,2 --compiler-timeout 120 --inter-run-delay 2
-python run_all_pairs.py --list-only
+python Utils/run_all_pairs.py
+python Utils/run_all_pairs.py --shots 0,1,2
+python Utils/run_all_pairs.py --generation-only
+python Utils/run_all_pairs.py --disable-generation --shots 0,1,2
+python Utils/run_all_pairs.py --disable-generation --shots 0,1,2 --compiler-timeout 120
+python Utils/run_all_pairs.py --disable-generation --shots 0,1,2 --compiler-timeout 120 --inter-run-delay 2
+python Utils/run_all_pairs.py --list-only
 ```
 
 Notes:
@@ -412,15 +418,15 @@ Notes:
 
 ## Run History Export (collect_run_history)
 
-The `collect_run_history.py` script scans all `run_metadata.json` files under `Results/` and writes a single CSV:
+The `Utils/collect_run_history.py` script scans all `run_metadata.json` files under `Results/` and writes a per-configuration CSV in `Report/Histories/`:
 
 ```bash
-python collect_run_history.py
+python Utils/collect_run_history.py --out Report/Histories/c1.csv
 ```
 
 Output:
 
-- `Report/run_history.csv` (overwritten each run)
+- `Report/Histories/c1.csv`, `Report/Histories/c2.csv`, ... (one file per configuration)
 
 The CSV includes:
 
@@ -433,26 +439,26 @@ The CSV includes:
 
 When each pipeline configuration has its own run-history CSV, use the comparison utilities in `Utils/`:
 
-1. Collect one CSV per configuration (choose a clear filename suffix):
+1. Collect one CSV per configuration (use `c1.csv` to `cXX.csv` IDs):
 
 ```bash
-python collect_run_history.py --export Report/Histories/run_history_configA.csv
-python collect_run_history.py --export Report/Histories/run_history_configB.csv
+python Utils/collect_run_history.py --out Report/Histories/c1.csv
+python Utils/collect_run_history.py --out Report/Histories/c2.csv
 ```
 
 2. (Optional) Build one combined comparison dataset:
 
 ```bash
 ./venv/bin/python Utils/compile_run_histories.py \
-  --input-glob 'Report/Histories/run_history_*.csv' \
-  --outcsv Report/combined_run_histories.csv
+  --input-glob 'Report/Histories/c*.csv' \
+  --outcsv Report/Histories/combined_run_histories.csv
 ```
 
 3. Generate cross-configuration viability figures directly from all CSVs:
 
 ```bash
 ./venv/bin/python Utils/plot_run_history.py \
-  --csv-glob 'Report/Histories/run_history_*.csv' \
+  --csv-glob 'Report/Histories/c*.csv' \
   --outdir Report/Figures
 ```
 
@@ -462,7 +468,7 @@ Generated comparison figures:
 - `fig02_success_rate_with_ci.png`
 - `fig03_iterations_to_success_ecdf.png`
 - `fig04_cost_to_success.png`
-- `config_mapping.csv` (maps figure labels `C1`, `C2`, ... to each input run-history file/config)
+- `config_mapping.csv` (uses your config IDs directly, e.g., `c1`, `c2`, ...)
 
 ## Tips for Best Results
 

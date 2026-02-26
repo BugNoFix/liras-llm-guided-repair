@@ -1,6 +1,0 @@
-line 4 : Agent name must be one of the names specified in the pattern.
-line 5 : Multiple markers at this line
-- Agent name must be one of the names specified in the pattern.
-- missing ':' at '\n'
-- required (...)+ loop did not match anything at input 'RobotArm'
-line 6 : missing EOF at 'locations:'

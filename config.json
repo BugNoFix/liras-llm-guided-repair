@@ -1,5 +1,5 @@
 {
-  "system_prompt": "SystemPrompt3.txt",
+  "system_prompt": "Generative/SP3.txt",
   "scenario": "UserScenario_011.txt",
   "compiler_jar": "liras_compiler.jar",
   "generation_model": "gemini-3-pro-preview",
@@ -11,12 +11,10 @@
   "generated_dsl_root": "GeneratedDSL",
   "dsl_source_root": "DSL",
 
-
-  
   "repair_model": "gemini-3-pro-preview",
   "repair_temperature": 0.35,
   "repair_max_output_tokens": 16384,
-  "repair_prompt": "Repair/SystemPromptRepair3.txt",
+  "repair_prompt": "Repair/SPR2.txt",
   "repair_shots": 0,
   "compiler_timeout": 60,
   "max_iterations": 10

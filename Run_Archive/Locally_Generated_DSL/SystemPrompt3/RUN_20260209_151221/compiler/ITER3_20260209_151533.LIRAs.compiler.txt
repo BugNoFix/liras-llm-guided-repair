@@ -1,4 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Runs/UserScenario_011/SystemPrompt3/RUN_20260209_151221/dsl/ITER3_20260209_151533.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 26: mismatched input '<EOF>' expecting RULE_NL
