@@ -3,15 +3,21 @@
 import argparse
 import json
 import os
+import time
 from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from dsl_generator import DSLGenerator, KEY_PATH
-
 
 PROJECT_ROOT = Path(__file__).parent
+
+
+def _default_key_path() -> Path:
+    key_path = PROJECT_ROOT / "keys" / "key.json"
+    if key_path.exists():
+        return key_path
+    return PROJECT_ROOT / "key.json"
 
 
 def _load_json(path: Path) -> dict:
@@ -33,8 +39,9 @@ def _resolve_service_account_key(config: dict) -> Optional[str]:
             raise FileNotFoundError(f"service account key file not found: {candidate}")
         return str(candidate)
 
-    if KEY_PATH.exists():
-        return str(KEY_PATH)
+    key_path = _default_key_path()
+    if key_path.exists():
+        return str(key_path)
 
     return None
 
@@ -122,6 +129,12 @@ def _validate_template_config(config: dict, *, generation_only: bool) -> None:
             if float(config[name]) < 0.0:
                 raise ValueError(f"'{name}' must be >= 0.0")
 
+    if "compiler_timeout" in config and config["compiler_timeout"] is not None:
+        if not isinstance(config["compiler_timeout"], (int, float)):
+            raise ValueError("'compiler_timeout' must be a number")
+        if float(config["compiler_timeout"]) <= 0:
+            raise ValueError("'compiler_timeout' must be > 0")
+
 
 def _parse_shots_arg(value: str) -> Optional[list[int]]:
     """Parse comma-separated shot counts into a list of ints.
@@ -185,8 +198,25 @@ def main() -> int:
         action="store_true",
         help="Skip generation and load DSL from cache for each pair",
     )
+    parser.add_argument(
+        "--compiler-timeout",
+        type=int,
+        default=0,
+        help="Compiler timeout in seconds (0 = use config.json default of 60)",
+    )
+    parser.add_argument(
+        "--inter-run-delay",
+        type=float,
+        default=1.0,
+        help="Delay in seconds between runs to allow system recovery (default: 1.0)",
+    )
 
     args = parser.parse_args()
+
+    if args.compiler_timeout < 0:
+        parser.error("--compiler-timeout must be >= 0")
+    if args.inter_run_delay < 0:
+        parser.error("--inter-run-delay must be >= 0")
 
     cfg_path = Path(args.config)
     if not cfg_path.is_absolute():
@@ -242,6 +272,17 @@ def main() -> int:
 
     batch_id = datetime.now().strftime("%Y%m%d_%H%M%S")
     total = len(planned_pairs)
+    
+    # Print batch summary
+    print(f"\n{'='*70}")
+    print(f"[BATCH] Starting {total} run(s)")
+    print(f"  Batch ID:        {batch_id}")
+    print(f"  Generation:      {'disabled (loading from cache)' if args.disable_generation else 'enabled'}")
+    print(f"  Compiler timeout: {args.compiler_timeout if args.compiler_timeout > 0 else 'default (60s)'}")
+    print(f"  Inter-run delay: {args.inter_run_delay}s")
+    print(f"{'='*70}\n")
+
+    from dsl_generator import DSLGenerator
 
     for idx, (scenario, sp, shots) in enumerate(planned_pairs, start=1):
         shots_label = shots if shots is not None else template.get("shots")
@@ -264,6 +305,11 @@ def main() -> int:
         run_config["system_prompt"] = sp
         if shots is not None:
             run_config["shots"] = shots
+        
+        # Override compiler timeout if provided
+        if args.compiler_timeout > 0:
+            run_config["compiler_timeout"] = args.compiler_timeout
+        
         if args.generation_only:
             run_config["generation_only"] = True
         if args.disable_generation:
@@ -281,6 +327,11 @@ def main() -> int:
             f"[{idx}/{total}] DONE  batch={batch_id}  scenario={scenario}  "
             f"system_prompt={sp}  shots={shots_label}"
         )
+        
+        # Add inter-run delay to allow system recovery (unless it's the last run)
+        if idx < total and args.inter_run_delay > 0:
+            print(f"[BATCH] Waiting {args.inter_run_delay}s before next run...\n")
+            time.sleep(args.inter_run_delay)
 
     return 0
 

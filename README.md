@@ -398,6 +398,8 @@ python run_all_pairs.py
 python run_all_pairs.py --shots 0,1,2
 python run_all_pairs.py --generation-only
 python run_all_pairs.py --disable-generation --shots 0,1,2
+python run_all_pairs.py --disable-generation --shots 0,1,2 --compiler-timeout 120
+python run_all_pairs.py --disable-generation --shots 0,1,2 --compiler-timeout 120 --inter-run-delay 2
 python run_all_pairs.py --list-only
 ```
 
@@ -405,6 +407,8 @@ Notes:
 
 - `--generation-only` skips compile/repair and only saves the generated DSL.
 - `--disable-generation` loads DSL from cache (e.g., `DSL/Scenario_6/SP1_Shot0.txt`) and runs repair/compile.
+- `--compiler-timeout` overrides compiler timeout in seconds for the batch run.
+- `--inter-run-delay` adds a pause between runs to reduce resource pressure and transient timeouts.
 
 ## Run History Export (collect_run_history)
 

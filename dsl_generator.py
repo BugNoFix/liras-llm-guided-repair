@@ -104,6 +104,7 @@ class DSLGenerator:
         # Repair decoding defaults (favor determinism to reduce regressions).
         self.repair_temperature = float(repair_temperature)
         self.repair_max_output_tokens = int(repair_max_output_tokens)
+        self.compiler_timeout = 60
 
         # Approximate compiler error progress tracking (used as a light “monotonic improvement” signal)
         self.compiler_error_score_history: list[dict] = []
@@ -882,11 +883,16 @@ class DSLGenerator:
 
         return text
 
-    def validate_code(self, dsl_filepath: Path, compiler_jar_path: Path) -> tuple[bool, str]:
+    def validate_code(self, dsl_filepath: Path, compiler_jar_path: Path, compiler_timeout: int = None) -> tuple[bool, str]:
         """Validate DSL code by running the local Java-based compiler.
 
         Runs:
             java -jar <compiler_jar_path> <dsl_filepath>
+
+        Args:
+            dsl_filepath: Path to the DSL file to validate
+            compiler_jar_path: Path to the compiler JAR
+            compiler_timeout: Timeout in seconds (default: 60, or config value)
 
         Returns:
             (is_valid, feedback)
@@ -895,6 +901,10 @@ class DSLGenerator:
         """
         dsl_filepath = Path(dsl_filepath)
         compiler_jar_path = Path(compiler_jar_path)
+
+        # Use provided timeout, fall back to instance config, then to 60s default
+        if compiler_timeout is None:
+            compiler_timeout = getattr(self, 'compiler_timeout', 60)
 
         # Reset last validation markers
         self.last_validation = {
@@ -933,7 +943,7 @@ class DSLGenerator:
                 cmd,
                 capture_output=True,
                 text=True,
-                timeout=10,
+                timeout=compiler_timeout,
             )
         except FileNotFoundError as e:
             # Most commonly: Java not installed / not on PATH
@@ -948,9 +958,11 @@ class DSLGenerator:
         except subprocess.TimeoutExpired:
             self.last_validation["timed_out"] = True
             feedback = (
-                "[VALIDATION_SETUP_ERROR] Compiler invocation timed out after 10 seconds.\n"
+                f"[VALIDATION_SETUP_ERROR] Compiler invocation timed out after {compiler_timeout} seconds.\n"
                 f"Command: {shlex.join(cmd)}\n"
-                f"DSL file: {dsl_filepath}"
+                f"DSL file: {dsl_filepath}\n"
+                f"Possible fixes: (1) Increase 'compiler_timeout' in config.json, "
+                f"(2) Optimize DSL complexity, (3) Check system resources"
             )
             return False, feedback
 
@@ -1011,6 +1023,29 @@ class DSLGenerator:
             repair_shots=0,
         )
     
+    def _cleanup_resources(self) -> None:
+        """Clean up resources to prevent accumulation during batch execution."""
+        try:
+            # Close chat sessions
+            self.chat = None
+            self.generation_chat = None
+            self.repair_chat = None
+            self.chat_history = []
+            self.repair_chat_history = None
+            
+            # Clear large data structures
+            self.compiler_error_score_history.clear()
+            self.repair_history_window.clear()
+            
+            # Reset state
+            self.last_dsl_code = None
+            self.generation_system_prompt_text = None
+            self.generation_scenario_text = None
+            self.initial_dsl_from_generation = None
+        except Exception:
+            # Silently ignore cleanup errors
+            pass
+
     def save_result(self, dsl_code: str, iteration: int = 0, success: bool = False) -> Path:
         """
         Save generated DSL code to results directory
@@ -1135,7 +1170,14 @@ class DSLGenerator:
 
                 # Validate via local compiler
                 print("[COMPILE] Validating DSL...")
-                is_valid, feedback = self.validate_code(saved_dsl_path, compiler_jar_path)
+                compiler_timeout_raw = config.get("compiler_timeout", self.compiler_timeout)
+                try:
+                    compiler_timeout = int(compiler_timeout_raw)
+                except (TypeError, ValueError):
+                    compiler_timeout = int(self.compiler_timeout)
+                if compiler_timeout <= 0:
+                    compiler_timeout = int(self.compiler_timeout)
+                is_valid, feedback = self.validate_code(saved_dsl_path, compiler_jar_path, compiler_timeout=compiler_timeout)
 
                 # Track approximate “progress” signal from compiler output.
                 score = self._score_compiler_output(feedback)
@@ -1345,6 +1387,9 @@ class DSLGenerator:
                     self._persist_run_metadata()
                 except Exception:
                     pass
+        finally:
+            # Clean up resources to prevent accumulation during batch execution
+            self._cleanup_resources()
 
 
 def main():
@@ -1402,6 +1447,14 @@ def main():
         if float(value) < 0.0:
             print(f"\n[ERROR] '{name}' must be >= 0.0")
             return
+
+    compiler_timeout = config.get("compiler_timeout", 60)
+    if not isinstance(compiler_timeout, (int, float)):
+        print("\n[ERROR] 'compiler_timeout' must be a number in config.json")
+        return
+    if float(compiler_timeout) <= 0:
+        print("\n[ERROR] 'compiler_timeout' must be > 0 in config.json")
+        return
 
     # Optional: Vertex AI location/region (model availability can be region-dependent)
     location = config.get("location", "global")
