@@ -1,0 +1,9 @@
+model,system_prompt_clean,repair_shots,Total_Runs,Success_Rate,Success_Rate_Pct,Avg_Iters_to_Success
+gemini-2.5-flash,SPR1.txt,0,546,0.05311355311355311,5.31%,4.55
+gemini-2.5-flash,SPR1.txt,3,567,0.10052910052910052,10.05%,6.84
+gemini-2.5-flash,SPR2.txt,0,576,0.0798611111111111,7.99%,6.39
+gemini-2.5-flash,SPR2.txt,3,515,0.15145631067961166,15.15%,6.85
+gemini-3-pro-preview,SPR1.txt,0,322,0.3167701863354037,31.68%,1.94
+gemini-3-pro-preview,SPR1.txt,3,169,1.0,100.0%,2.51
+gemini-3-pro-preview,SPR2.txt,0,158,0.6835443037974683,68.35%,1.61
+gemini-3-pro-preview,SPR2.txt,3,162,0.9382716049382716,93.83%,1.88
