@@ -1,0 +1,9 @@
+config_id,failed_runs,err_syntax_structure_runs,err_syntax_structure_pct,err_token_recognition_runs,err_token_recognition_pct,err_mismatched_input_runs,err_mismatched_input_pct,err_extraneous_input_runs,err_extraneous_input_pct,err_missing_token_runs,err_missing_token_pct,err_semantic_agent_runs,err_semantic_agent_pct,err_semantic_resource_runs,err_semantic_resource_pct,err_semantic_target_runs,err_semantic_target_pct,err_semantic_dup_agent_runs,err_semantic_dup_agent_pct,err_semantic_ordering_runs,err_semantic_ordering_pct,err_other_runs,err_other_pct
+c1,52,52,100.0,0,0.0,48,92.3,17,32.7,33,63.5,52,100.0,19,36.5,10,19.2,42,80.8,0,0.0,29,55.8
+c2,51,46,90.2,0,0.0,47,92.2,16,31.4,34,66.7,50,98.0,15,29.4,12,23.5,35,68.6,0,0.0,19,37.3
+c3,53,46,86.8,0,0.0,45,84.9,11,20.8,34,64.2,52,98.1,13,24.5,11,20.8,29,54.7,1,1.9,23,43.4
+c4,47,42,89.4,0,0.0,39,83.0,10,21.3,33,70.2,45,95.7,14,29.8,11,23.4,24,51.1,1,2.1,19,40.4
+c5,22,16,72.7,0,0.0,15,68.2,2,9.1,18,81.8,20,90.9,3,13.6,2,9.1,16,72.7,0,0.0,2,9.1
+c7,15,12,80.0,0,0.0,12,80.0,4,26.7,15,100.0,13,86.7,2,13.3,1,6.7,7,46.7,0,0.0,4,26.7
+c8,1,1,100.0,0,0.0,1,100.0,0,0.0,1,100.0,1,100.0,0,0.0,0,0.0,0,0.0,0,0.0,0,0.0
+ALL,241,215,89.2,0,0.0,207,85.9,60,24.9,168,69.7,233,96.7,66,27.4,47,19.5,153,63.5,2,0.8,96,39.8

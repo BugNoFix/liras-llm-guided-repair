@@ -1,0 +1,7 @@
+factor,level,runs,success_rate,median_first_success_iter,median_best_error_score,median_duration_s,median_tokens
+model,gemini-2.5-flash,240,0.154,5.0,88.0,149.28924999999998,4775.5
+model,gemini-3-pro-preview,240,0.842,1.0,0.0,73.4192725,839.5
+repair_system_prompt,SPR1.txt,240,0.479,1.0,11.0,119.738585,3255.0
+repair_system_prompt,SPR2.txt,240,0.517,1.0,0.0,104.5076975,1504.0
+few_shots,No,240,0.408,1.0,42.0,120.555274,3282.5
+few_shots,Yes,240,0.588,1.0,0.0,96.57990649999999,1519.5

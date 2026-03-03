@@ -95,6 +95,11 @@ def main() -> int:
             if rename_map:
                 configs_df = configs_df.rename(columns=rename_map)
             combined = combined.merge(configs_df, on="config_id", how="left")
+            # Derive unified 'few_shots' column (Yes/No) from jshots or repair_shots
+            if "jshots" in combined.columns:
+                combined["few_shots"] = combined["jshots"].map({"yes": "Yes", "no": "No"}).fillna("No")
+            elif "repair_shots" in combined.columns:
+                combined["few_shots"] = combined["repair_shots"].apply(lambda v: "Yes" if int(v) > 0 else "No")
             print(f"Enriched with config parameters from: {configs_path}")
         else:
             print(f"WARN: {configs_path} has no 'config_id' column — skipping enrichment")
