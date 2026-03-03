@@ -22,14 +22,13 @@ Table 4 – Parameter Effect Isolation
     Main-effect comparison for each independent variable (model, prompt, few_shots)
     averaged across all other factors.
 
-Table 5 – Error Category Frequency (Failed Runs)
-    For unsuccessful runs: frequency distribution of compiler error types in the
-    final iteration, grouped by config.
-
-Table 6 – Failure Root-Cause by Prompt × Scenario
+Table 5 – Failure Root-Cause by Prompt × Scenario
     For unsuccessful runs: dominant error category breakdown per
     (system_prompt, scenario) cell — demonstrates failures are linked to
     generated-DSL quality driven by the initial prompt/scenario.
+
+Table 6 – Status Breakdown
+    Simple count/fraction of terminal run statuses.
 """
 
 from __future__ import annotations
@@ -334,7 +333,7 @@ def _table_error_frequency(df, run_df):
 
 
 # ---------------------------------------------------------------------------
-# Table 6 – Failure Root-Cause by Prompt × Scenario
+# Table 5 – Failure Root-Cause by Prompt × Scenario
 # ---------------------------------------------------------------------------
 def _table_failure_by_prompt_scenario(run_df):
     import pandas as pd
@@ -376,7 +375,7 @@ def _table_failure_by_prompt_scenario(run_df):
 
 
 # ---------------------------------------------------------------------------
-# Table 7 – Status Breakdown
+# Table 6 – Status Breakdown
 # ---------------------------------------------------------------------------
 def _table_status_breakdown(run_df):
     import pandas as pd
@@ -435,9 +434,8 @@ def main() -> int:
         ("table02_prompt_scenario_matrix", _table_prompt_scenario_matrix(run_df)),
         ("table03_time_to_success", _table_time_to_success(run_df)),
         ("table04_parameter_effects", _table_parameter_effects(run_df)),
-        ("table05_error_frequency", _table_error_frequency(df, run_df)),
-        ("table06_failure_by_prompt_scenario", _table_failure_by_prompt_scenario(run_df)),
-        ("table07_status_breakdown", _table_status_breakdown(run_df)),
+        ("table05_failure_by_prompt_scenario", _table_failure_by_prompt_scenario(run_df)),
+        ("table06_status_breakdown", _table_status_breakdown(run_df)),
     ]
 
     for name, tbl in tables:

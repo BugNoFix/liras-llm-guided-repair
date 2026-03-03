@@ -10,9 +10,9 @@ Figures
 2  Main-Effect Forest Plot
 3  Factor Interaction: Model x Few-Shot x Repair Prompt
 4  Prompt x Scenario Success-Rate Heatmap
-5  Iteration-to-Success ECDF
+5  Iterations to Success (Box + Strip, Pro-model)
 6  Error-Score Convergence by Configuration
-7  Error-Category Prevalence Heatmap (failed runs)
+7  Error-Category Flow: Generation -> Post-Repair (failed runs)
 8  Scenario Difficulty Profile
 """
 
@@ -97,9 +97,25 @@ def _short_model(name: str) -> str:
     return str(name).replace("gemini-", "")
 
 
+# Human-readable labels for error categories
+_CAT_LABELS: dict[str, str] = {
+    "err_syntax_structure":   "Syntax Structure",
+    "err_token_recognition":  "Token Recognition",
+    "err_mismatched_input":   "Mismatched Input",
+    "err_extraneous_input":   "Extraneous Input",
+    "err_missing_token":      "Missing Token",
+    "err_semantic_agent":     "Invalid Agent",
+    "err_semantic_resource":  "Invalid Resource",
+    "err_semantic_target":    "Invalid Target",
+    "err_semantic_dup_agent": "Duplicate Agent",
+    "err_semantic_ordering":  "Ordering Violation",
+    "err_other":              "Other",
+}
+
+
 def _short_cat(col: str) -> str:
-    """err_semantic_agent -> sem:agent"""
-    return col.replace("err_", "").replace("semantic_", "sem:")
+    """Return a readable label for an error category column."""
+    return _CAT_LABELS.get(col, col.replace("err_", "").replace("_", " ").title())
 
 
 def _style():
@@ -507,57 +523,117 @@ def fig06_error_convergence(iter_df: pd.DataFrame, out_dir: Path):
 
 
 # ---------------------------------------------------------------------------
-# Figure 7 – Error-Category Prevalence Heatmap (failed runs)
+# Figure 7 – Error-Category Flow (Initial → Final, failed runs)
 # ---------------------------------------------------------------------------
 
 
-def fig07_error_categories(last_df: pd.DataFrame, out_dir: Path):
-    """Heatmap showing what fraction of failed runs exhibit each error
-    category in their *final* iteration, broken down by config."""
-    failed = last_df[last_df["status"].astype(str).ne("success")].copy()
-    if failed.empty:
-        return
-    present = [c for c in ERR_CATS if c in failed.columns]
+def fig07_error_flow(iter_df: pd.DataFrame, out_dir: Path):
+    """Horizontal diverging bar chart comparing the share of each error
+    category at the *initial* iteration versus the *final* iteration of
+    failed runs.  A delta annotation quantifies what the repair loop
+    resolved (negative) or introduced (positive)."""
+    present = [c for c in ERR_CATS if c in iter_df.columns]
     if not present:
         return
 
-    cfgs = sorted(failed["config_label"].dropna().unique(), key=_csort)
-    rows, labels = [], []
-    for cfg in list(cfgs) + ["ALL"]:
-        sub = failed if cfg == "ALL" else failed[failed["config_label"] == cfg]
-        n = len(sub)
-        if n == 0:
+    run_key = "run_key" if "run_key" in iter_df.columns else "run_id"
+
+    # Build first / last iteration views
+    first = (
+        iter_df.sort_values([run_key, "iteration"])
+        .groupby(run_key, as_index=False)
+        .first()
+    )
+    last = (
+        iter_df.sort_values([run_key, "iteration"])
+        .groupby(run_key, as_index=False)
+        .last()
+    )
+
+    # Keep only failed runs
+    failed_keys = set(first.loc[first["status"].astype(str).ne("success"), run_key])
+    if not failed_keys:
+        return
+    fi = first[first[run_key].isin(failed_keys)]
+    la = last[last[run_key].isin(failed_keys)]
+
+    # Compute shares
+    init_total = sum(fi[c].sum() for c in present)
+    final_total = sum(la[c].sum() for c in present)
+    if init_total == 0 and final_total == 0:
+        return
+
+    cats, init_shares, final_shares, deltas = [], [], [], []
+    for c in present:
+        label = _short_cat(c)
+        i_share = fi[c].sum() / init_total * 100 if init_total else 0
+        f_share = la[c].sum() / final_total * 100 if final_total else 0
+        delta = f_share - i_share
+        # Skip categories with negligible presence at both stages
+        if i_share < 0.3 and f_share < 0.3:
             continue
-        rows.append({_short_cat(c): (sub[c] > 0).sum() / n for c in present})
-        labels.append(f"{cfg} (n={n})")
+        cats.append(label)
+        init_shares.append(i_share)
+        final_shares.append(f_share)
+        deltas.append(delta)
 
-    mat = pd.DataFrame(rows, index=labels)
+    # Sort by initial share descending
+    order = sorted(range(len(cats)), key=lambda i: init_shares[i])
+    cats = [cats[i] for i in order]
+    init_shares = [init_shares[i] for i in order]
+    final_shares = [final_shares[i] for i in order]
+    deltas = [deltas[i] for i in order]
 
-    fig, ax = plt.subplots(figsize=(13, 0.6 * len(mat) + 2))
-    if _HAS_SNS:
-        sns.heatmap(
-            mat, annot=True, fmt=".0%", cmap="YlOrRd",
-            vmin=0, vmax=1, linewidths=0.5, ax=ax,
-            cbar_kws={"label": "Prevalence"},
+    n_cats = len(cats)
+    y = np.arange(n_cats)
+    bar_h = 0.35
+
+    fig, ax = plt.subplots(figsize=(11, max(n_cats * 0.7 + 1.5, 5)))
+
+    bars_init = ax.barh(
+        y + bar_h / 2, init_shares, bar_h,
+        color="#1f77b4", edgecolor="black", linewidth=0.4, label="Initial (gen)",
+    )
+    bars_final = ax.barh(
+        y - bar_h / 2, final_shares, bar_h,
+        color="#d62728", edgecolor="black", linewidth=0.4, label="Final (post-repair)",
+    )
+
+    # Annotate shares and delta
+    for i in range(n_cats):
+        # Initial
+        ax.text(
+            init_shares[i] + 0.5, y[i] + bar_h / 2,
+            f"{init_shares[i]:.1f}%", va="center", fontsize=8,
         )
-    else:
-        im = ax.imshow(mat.values, cmap="YlOrRd", vmin=0, vmax=1, aspect="auto")
-        ax.set_xticks(range(mat.shape[1]))
-        ax.set_xticklabels(mat.columns, rotation=45, ha="right")
-        ax.set_yticks(range(mat.shape[0]))
-        ax.set_yticklabels(mat.index)
-        for i in range(mat.shape[0]):
-            for j in range(mat.shape[1]):
-                ax.text(
-                    j, i, f"{mat.values[i, j]:.0%}",
-                    ha="center", va="center", fontsize=9,
-                )
-        plt.colorbar(im, ax=ax, label="Prevalence")
+        # Final
+        ax.text(
+            final_shares[i] + 0.5, y[i] - bar_h / 2,
+            f"{final_shares[i]:.1f}%", va="center", fontsize=8,
+        )
+        # Delta badge (right margin)
+        d = deltas[i]
+        sign = "+" if d > 0 else ""
+        colour = "#d62728" if d > 0.5 else ("#2ca02c" if d < -0.5 else "#555555")
+        ax.text(
+            max(init_shares[i], final_shares[i]) + 4.5, y[i],
+            f"\u0394 {sign}{d:.1f}pp",
+            va="center", fontsize=8, fontweight="bold", color=colour,
+        )
 
-    ax.set_title("Fig. 7 \u2014 Error-Category Prevalence among Failed Runs")
-    ax.set_xlabel("Error Category")
-    ax.set_ylabel("Configuration")
-    _save(fig, out_dir, "fig07_error_categories")
+    ax.set_yticks(y)
+    ax.set_yticklabels(cats, fontsize=10)
+    ax.set_xlabel("Share of Total Errors (%)")
+    ax.set_title(
+        f"Fig. 7 \u2014 Error-Category Flow: Generation \u2192 Post-Repair\n"
+        f"(failed runs, n={len(failed_keys)};  "
+        f"initial total={int(init_total):,}, final total={int(final_total):,})",
+        fontsize=12,
+    )
+    ax.legend(loc="lower right", fontsize=9)
+    ax.set_xlim(0, max(max(init_shares), max(final_shares)) * 1.35)
+    ax.invert_yaxis()
+    _save(fig, out_dir, "fig07_error_flow")
 
 
 # ---------------------------------------------------------------------------
@@ -565,7 +641,7 @@ def fig07_error_categories(last_df: pd.DataFrame, out_dir: Path):
 # ---------------------------------------------------------------------------
 
 
-def fig08_scenario_difficulty(run_df: pd.DataFrame, out_dir: Path):
+def fig08_scenario_difficulty(run_df: pd.DataFrame, out_dir: Path):  # noqa: kept as fig08 internally
     """Three-panel bar chart profiling each scenario's difficulty."""
     if "scenario" not in run_df.columns:
         return
@@ -651,7 +727,7 @@ def main() -> int:
     fig04_prompt_scenario_heatmap(run_df, out_dir)
     fig05_iterations_box_strip(run_df, out_dir)
     fig06_error_convergence(iter_df, out_dir)
-    fig07_error_categories(last_df, out_dir)
+    fig07_error_flow(iter_df, out_dir)
     fig08_scenario_difficulty(run_df, out_dir)
 
     print(f"\nExported 8 figures to: {out_dir}")

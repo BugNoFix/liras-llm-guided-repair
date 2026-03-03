@@ -8,8 +8,7 @@ Usage
 
 Each CSV is read with pandas and drawn via matplotlib, producing a tight
 table image with alternating row shading, bold headers, and automatic
-column-width sizing.  Wide tables (e.g. table05 with 24 raw columns) are
-reformatted to show only the most informative columns.
+column-width sizing.
 
 Outputs land next to the CSVs by default (Report/Tables/Images/).
 """
@@ -150,13 +149,8 @@ TABLE_CONFIG: dict[str, dict] = {
             "Med. Tokens": "{:.0f}",
         },
     ),
-    "table05_error_frequency": dict(
-        title="Table 5 — Error-Category Frequency (failed runs)",
-        # Drop raw-count columns; keep only config_id, failed_runs, and *_pct
-        note="Values are % of failed runs exhibiting each error category.",
-    ),
-    "table06_failure_by_prompt_scenario": dict(
-        title="Table 6 — Failure Analysis by Prompt × Scenario",
+    "table05_failure_by_prompt_scenario": dict(
+        title="Table 5 — Failure Analysis by Prompt × Scenario",
         rename={
             "system_prompt": "System Prompt",
             "scenario": "Scenario",
@@ -172,8 +166,8 @@ TABLE_CONFIG: dict[str, dict] = {
             "Dom. %": "{:.1f}%",
         },
     ),
-    "table07_status_breakdown": dict(
-        title="Table 7 — Run Status Breakdown",
+    "table06_status_breakdown": dict(
+        title="Table 6 — Run Status Breakdown",
         rename={
             "status": "Status",
             "count": "Count",
@@ -320,23 +314,19 @@ def render_csv(csv_path: Path, out_dir: Path):
 
     df = pd.read_csv(csv_path)
 
-    # Special reshape for table05
-    if stem == "table05_error_frequency":
-        df = _reshape_table05(df)
-    else:
-        # General formatting pipeline
-        drop = cfg.get("drop", [])
-        if drop:
-            df = df.drop(columns=[c for c in drop if c in df.columns], errors="ignore")
+    # General formatting pipeline
+    drop = cfg.get("drop", [])
+    if drop:
+        df = df.drop(columns=[c for c in drop if c in df.columns], errors="ignore")
 
-        rename = cfg.get("rename", {})
-        if rename:
-            df = df.rename(columns=rename)
+    rename = cfg.get("rename", {})
+    if rename:
+        df = df.rename(columns=rename)
 
-        fmt = cfg.get("fmt", {})
-        for col in df.columns:
-            if col in fmt:
-                df[col] = df[col].apply(lambda v, f=fmt[col]: _format_cell(v, f))
+    fmt = cfg.get("fmt", {})
+    for col in df.columns:
+        if col in fmt:
+            df[col] = df[col].apply(lambda v, f=fmt[col]: _format_cell(v, f))
 
     title = cfg.get("title", stem.replace("_", " ").title())
     note = cfg.get("note")
