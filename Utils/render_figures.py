@@ -404,35 +404,74 @@ def fig04_prompt_scenario_heatmap(run_df: pd.DataFrame, out_dir: Path):
 
 
 # ---------------------------------------------------------------------------
-# Figure 5 – Iteration-to-Success ECDF
+# Figure 5 – Iterations-to-Success (Box + Strip)
 # ---------------------------------------------------------------------------
 
 
-def fig05_ecdf_iterations(run_df: pd.DataFrame, out_dir: Path):
+def fig05_iterations_box_strip(run_df: pd.DataFrame, out_dir: Path):
+    """Box-plot of first-success iteration per config, overlaid with
+    individual data points (strip / swarm).  Median is marked with a
+    line; the annotation shows n_success / n_total.
+    """
     col = "derived_first_success_iteration"
     if col not in run_df.columns:
         return
 
+    cfgs = sorted(run_df["config_label"].dropna().unique(), key=_csort)
+    # Only include Pro-model configs (C5–C8) — Flash configs have too few
+    # successes for a meaningful iteration distribution.
+    cfgs = [c for c in cfgs if c in ("C5", "C6", "C7", "C8")]
+    succ = run_df[run_df["success_bool"]].copy()
+    if succ.empty:
+        return
+
     fig, ax = plt.subplots(figsize=(10, 5))
-    for cfg in sorted(run_df["config_label"].dropna().unique(), key=_csort):
-        sub = run_df[(run_df["config_label"] == cfg) & run_df["success_bool"]]
-        s = sub[col].dropna().sort_values()
+
+    # Collect data & colours per config
+    data, colours, labels = [], [], []
+    for cfg in cfgs:
+        s = succ.loc[succ["config_label"] == cfg, col].dropna()
         total = int((run_df["config_label"] == cfg).sum())
         if s.empty:
             continue
-        cdf = np.arange(1, len(s) + 1) / len(s)
-        ax.step(
-            s.values, cdf, where="post",
-            label=f"{cfg} ({len(s)}/{total})",
-            color=_PAL.get(cfg), linewidth=1.8,
+        data.append(s.values)
+        colours.append(_PAL.get(cfg, "#888888"))
+        labels.append(f"{cfg}\n({len(s)}/{total})")
+
+    positions = np.arange(len(data))
+
+    # Box-plots (no outlier markers — the strip shows them)
+    bp = ax.boxplot(
+        data, positions=positions, widths=0.45,
+        patch_artist=True, showfliers=False,
+        medianprops=dict(color="black", linewidth=2),
+        whiskerprops=dict(linewidth=1.2),
+        capprops=dict(linewidth=1.2),
+    )
+    for patch, c in zip(bp["boxes"], colours):
+        patch.set_facecolor(c)
+        patch.set_alpha(0.45)
+        patch.set_edgecolor("black")
+        patch.set_linewidth(0.8)
+
+    # Strip (jittered dots)
+    rng = np.random.default_rng(42)
+    for i, (vals, c) in enumerate(zip(data, colours)):
+        jitter = rng.uniform(-0.12, 0.12, size=len(vals))
+        ax.scatter(
+            positions[i] + jitter, vals,
+            color=c, edgecolors="black", linewidths=0.4,
+            s=30, alpha=0.75, zorder=3,
         )
 
-    ax.set_xlabel("Iteration of First Success")
-    ax.set_ylabel("Cumulative Probability")
-    ax.set_ylim(0, 1.05)
-    ax.set_title("Fig. 5 \u2014 Iteration-to-Success ECDF")
-    ax.legend(title="Config (succ/total)", fontsize=8, title_fontsize=9)
-    _save(fig, out_dir, "fig05_ecdf_iterations")
+    ax.set_xticks(positions)
+    ax.set_xticklabels(labels, fontsize=9)
+    ax.set_ylabel("Iteration of First Success")
+    ax.set_xlabel("Configuration (success / total)")
+    ax.set_title("Fig. 5 \u2014 Iterations to Success (Pro-model Configs)")
+    ax.yaxis.set_major_locator(plt.MaxNLocator(integer=True))
+    ax.set_ylim(0.5, run_df[col].max() + 0.5 if run_df[col].notna().any() else 10.5)
+    _save(fig, out_dir, "fig05_iterations_box_strip")
 
 
 # ---------------------------------------------------------------------------
@@ -535,16 +574,13 @@ def fig08_scenario_difficulty(run_df: pd.DataFrame, out_dir: Path):
     sc_short = [s.replace("Scenario_", "S").replace(".txt", "") for s in scenarios]
     x = np.arange(len(scenarios))
 
-    fail_rate, mean_err, med_iter = [], [], []
+    fail_rate, mean_err, mean_init_err = [], [], []
     for sc in scenarios:
         sub = run_df[run_df["scenario"] == sc]
         fail_rate.append(1 - sub["success_bool"].mean())
         fs = sub[~sub["success_bool"]]
         mean_err.append(fs["derived_final_error_score"].mean() if len(fs) else 0)
-        ss = sub[sub["success_bool"]]
-        med_iter.append(
-            ss["derived_first_success_iteration"].median() if len(ss) else np.nan
-        )
+        mean_init_err.append(sub["derived_initial_error_score"].mean() if len(sub) else 0)
 
     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
 
@@ -563,13 +599,12 @@ def fig08_scenario_difficulty(run_df: pd.DataFrame, out_dir: Path):
     axes[1].set_title("Mean Final Error Score (failed)")
     axes[1].set_ylabel("Error Score")
 
-    # Panel C – Median iterations to success
-    axes[2].bar(x, med_iter, color="#2ca02c", edgecolor="black", linewidth=0.4)
-    for xi, v in zip(x, med_iter):
-        if not np.isnan(v):
-            axes[2].text(xi, v + 0.05, f"{v:.1f}", ha="center", fontsize=9)
-    axes[2].set_title("Median Iterations to Success")
-    axes[2].set_ylabel("Iterations")
+    # Panel C – Mean initial error score (all runs)
+    axes[2].bar(x, mean_init_err, color="#1f77b4", edgecolor="black", linewidth=0.4)
+    for xi, v in zip(x, mean_init_err):
+        axes[2].text(xi, v + 10, f"{v:.0f}", ha="center", fontsize=9)
+    axes[2].set_title("Mean Initial Error Score (all runs)")
+    axes[2].set_ylabel("Error Score")
 
     for ax in axes:
         ax.set_xticks(x)
@@ -614,7 +649,7 @@ def main() -> int:
     fig02_main_effect_forest(run_df, out_dir)
     fig03_factor_interaction(run_df, out_dir)
     fig04_prompt_scenario_heatmap(run_df, out_dir)
-    fig05_ecdf_iterations(run_df, out_dir)
+    fig05_iterations_box_strip(run_df, out_dir)
     fig06_error_convergence(iter_df, out_dir)
     fig07_error_categories(last_df, out_dir)
     fig08_scenario_difficulty(run_df, out_dir)
