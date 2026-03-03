@@ -20,8 +20,8 @@ def main() -> int:
     )
     parser.add_argument(
         "--input-glob",
-        default="Report/Histories/c*.csv",
-        help="Glob for input run_history files",
+        default="Report/Histories/c[0-9]*.csv",
+        help="Glob for input run_history files (default matches c1.csv through c99.csv)",
     )
     parser.add_argument(
         "--manifest",

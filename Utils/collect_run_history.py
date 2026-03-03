@@ -18,6 +18,91 @@ DEFAULT_EXPORT_PATH = DEFAULT_EXPORT_DIR / "c1.csv"
 _ERROR_RE = re.compile(r"\berror\b", re.IGNORECASE)
 _WARNING_RE = re.compile(r"\bwarning\b", re.IGNORECASE)
 
+# Compiler error taxonomy used for frequency-distribution analysis.
+# Each category maps a human-readable label to a detection predicate.
+_ERROR_CATEGORIES: List[tuple] = []  # populated after function def below
+
+
+def _classify_compiler_errors(text: str) -> Dict[str, int]:
+    """Classify [ERROR] lines into a taxonomy and return per-category counts.
+
+    Categories (non-exclusive per line):
+      syntax_structure   – required (...)+ loop did not match
+      token_recognition  – token recognition error
+      mismatched_input   – mismatched input ... expecting
+      extraneous_input   – extraneous input ... expecting
+      missing_token      – missing ... at
+      semantic_agent     – Agent name must be one of
+      semantic_resource  – Resource name must be one of
+      semantic_target    – Target name must be one of
+      semantic_dup_agent – same agent cannot be used
+      semantic_ordering  – value ... must be greater
+    """
+    cats: Dict[str, int] = {}
+    for line in text.splitlines():
+        if "[ERROR]" not in line:
+            continue
+        matched = False
+        if "required (...)+ loop did not match" in line:
+            cats["syntax_structure"] = cats.get("syntax_structure", 0) + 1
+            matched = True
+        if "token recognition error" in line:
+            cats["token_recognition"] = cats.get("token_recognition", 0) + 1
+            matched = True
+        if "mismatched input" in line:
+            cats["mismatched_input"] = cats.get("mismatched_input", 0) + 1
+            matched = True
+        if "extraneous input" in line:
+            cats["extraneous_input"] = cats.get("extraneous_input", 0) + 1
+            matched = True
+        if re.search(r"missing\b.*\bat\b", line, re.IGNORECASE):
+            cats["missing_token"] = cats.get("missing_token", 0) + 1
+            matched = True
+        if "Agent name must be one of" in line:
+            cats["semantic_agent"] = cats.get("semantic_agent", 0) + 1
+            matched = True
+        if "Resource name must be one of" in line:
+            cats["semantic_resource"] = cats.get("semantic_resource", 0) + 1
+            matched = True
+        if "Target name must be one of" in line:
+            cats["semantic_target"] = cats.get("semantic_target", 0) + 1
+            matched = True
+        if "same agent cannot be used" in line:
+            cats["semantic_dup_agent"] = cats.get("semantic_dup_agent", 0) + 1
+            matched = True
+        if "must be greater" in line:
+            cats["semantic_ordering"] = cats.get("semantic_ordering", 0) + 1
+            matched = True
+        if not matched:
+            cats["other"] = cats.get("other", 0) + 1
+    return cats
+
+
+ALL_ERROR_CATEGORY_NAMES = [
+    "syntax_structure", "token_recognition", "mismatched_input",
+    "extraneous_input", "missing_token", "semantic_agent",
+    "semantic_resource", "semantic_target", "semantic_dup_agent",
+    "semantic_ordering", "other",
+]
+
+
+def _resolve_local_compiler_path(
+    compiler_output_path: Optional[str], run_dir: Path
+) -> Optional[Path]:
+    """Try to resolve the compiler output file locally.
+
+    The path in run_metadata.json is an absolute path from the machine that ran
+    the experiment. We look for the filename in the `compiler/` subdirectory
+    next to run_metadata.json (i.e. the local Runs/ copy).
+    """
+    if not compiler_output_path:
+        return None
+    filename = Path(compiler_output_path).name
+    local = run_dir / "compiler" / filename
+    if local.exists():
+        return local
+    return None
+
 
 def _utcnow_iso() -> str:
     return datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
@@ -323,7 +408,9 @@ def _extract_run_row(metadata: Dict[str, Any], *, run_key: str, source_path: str
     }
 
 
-def _extract_iteration_rows(metadata: Dict[str, Any]) -> List[Dict[str, Any]]:
+def _extract_iteration_rows(
+    metadata: Dict[str, Any], *, run_dir: Optional[Path] = None
+) -> List[Dict[str, Any]]:
     rows: List[Dict[str, Any]] = []
     iterations = metadata.get("iterations")
     if not isinstance(iterations, list):
@@ -337,10 +424,21 @@ def _extract_iteration_rows(metadata: Dict[str, Any]) -> List[Dict[str, Any]]:
         if iteration_num is None:
             iteration_num = idx
 
-        # Try reading compiler output file first; fall back to pre-computed
-        # metrics embedded in the iteration dict (avoids path-mismatch when
-        # analysing runs produced on a different machine).
-        metrics = _compute_compiler_metrics(_safe_str(it.get("compiler_output_path")))
+        raw_co_path = _safe_str(it.get("compiler_output_path"))
+
+        # --- Resolve local compiler output file ---
+        local_co = (
+            _resolve_local_compiler_path(raw_co_path, run_dir)
+            if run_dir
+            else None
+        )
+
+        # --- Numeric metrics (error/warning counts, score) ---
+        metrics: Dict[str, Optional[int]]
+        if local_co is not None:
+            metrics = _compute_compiler_metrics(str(local_co))
+        else:
+            metrics = _compute_compiler_metrics(raw_co_path)
 
         if metrics.get("error_lines") is None:
             embedded = it.get("compiler_error_score")
@@ -351,23 +449,39 @@ def _extract_iteration_rows(metadata: Dict[str, Any]) -> List[Dict[str, Any]]:
                     "score": _safe_int(embedded.get("score")),
                 }
 
-        rows.append(
-            {
-                "iteration": _safe_int(iteration_num),
-                "dsl_path": _safe_str(it.get("dsl_path")),
-                "compiler_output_path": _safe_str(it.get("compiler_output_path")),
-                "validated": _safe_int(it.get("validated")),
-                "is_valid": _safe_int(it.get("is_valid")),
-                "compiler_feedback_chars": _safe_int(it.get("compiler_feedback_chars")),
-                "compiler_error_lines": metrics.get("error_lines"),
-                "compiler_warning_lines": metrics.get("warning_lines"),
-                "compiler_error_score": metrics.get("score"),
-                "repair_prompt_included_previous_dsl": _safe_int(
-                    it.get("repair_prompt_included_previous_dsl")
-                ),
-                "repair_prompt_mode": _safe_str(it.get("repair_prompt_mode")),
-            }
+        # --- Error category classification ---
+        err_cats: Dict[str, int] = {}
+        if local_co is not None:
+            try:
+                err_cats = _classify_compiler_errors(
+                    local_co.read_text(encoding="utf-8", errors="ignore")
+                )
+            except Exception:
+                pass
+
+        row_data: Dict[str, Any] = {
+            "iteration": _safe_int(iteration_num),
+            "dsl_path": _safe_str(it.get("dsl_path")),
+            "compiler_output_path": raw_co_path,
+            "validated": _safe_int(it.get("validated")),
+            "is_valid": _safe_int(it.get("is_valid")),
+            "compiler_feedback_chars": _safe_int(it.get("compiler_feedback_chars")),
+            "compiler_error_lines": metrics.get("error_lines"),
+            "compiler_warning_lines": metrics.get("warning_lines"),
+            "compiler_error_score": metrics.get("score"),
+            "repair_prompt_included_previous_dsl": _safe_int(
+                it.get("repair_prompt_included_previous_dsl")
+            ),
+            "repair_prompt_mode": _safe_str(it.get("repair_prompt_mode")),
+        }
+        # Add per-category error counts (0 when absent).
+        for cat in ALL_ERROR_CATEGORY_NAMES:
+            row_data[f"err_{cat}"] = err_cats.get(cat, 0)
+        row_data["err_categories_json"] = (
+            json.dumps(err_cats, ensure_ascii=True) if err_cats else None
         )
+
+        rows.append(row_data)
 
     return rows
 
@@ -405,9 +519,25 @@ def export_csv(
             run_row = _extract_run_row(metadata, run_key=run_key, source_path=str(meta_path))
             if config_id:
                 run_row["config_id"] = config_id
-            iter_rows = _extract_iteration_rows(metadata)
+            iter_rows = _extract_iteration_rows(metadata, run_dir=meta_path.parent)
             derived = _compute_run_derived_metrics(metadata=metadata, iteration_rows=iter_rows)
             run_row.update(derived)
+
+            # Aggregate error categories from the *final* iteration for run-level analysis.
+            if iter_rows:
+                final_iter = iter_rows[-1]
+                final_cats = {cat: final_iter.get(f"err_{cat}", 0) for cat in ALL_ERROR_CATEGORY_NAMES}
+                run_row["final_err_categories_json"] = json.dumps(
+                    {k: v for k, v in final_cats.items() if v}, ensure_ascii=True
+                ) or None
+                # Dominant error category in final iteration
+                nonzero = {k: v for k, v in final_cats.items() if v}
+                run_row["final_dominant_error"] = (
+                    max(nonzero, key=nonzero.get) if nonzero else None
+                )
+            else:
+                run_row["final_err_categories_json"] = None
+                run_row["final_dominant_error"] = None
 
             if not iter_rows:
                 row = dict(run_row)
@@ -491,6 +621,8 @@ def export_csv(
         "derived_avg_delta_per_step",
         "derived_run_duration_seconds",
         "derived_llm_span_seconds",
+        "final_err_categories_json",
+        "final_dominant_error",
         "iteration",
         "dsl_path",
         "compiler_output_path",
@@ -500,6 +632,8 @@ def export_csv(
         "compiler_error_lines",
         "compiler_warning_lines",
         "compiler_error_score",
+    ] + [f"err_{cat}" for cat in ALL_ERROR_CATEGORY_NAMES] + [
+        "err_categories_json",
         "repair_prompt_included_previous_dsl",
         "repair_prompt_mode",
         "source_path",

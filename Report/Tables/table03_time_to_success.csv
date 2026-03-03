@@ -1,0 +1,9 @@
+config_id,model,cfg_system_prompt,jshots,repair_shots,successful_runs,median_iters_to_success,mean_iters_to_success,max_iters_to_success,median_duration_s
+c1,gemini-2.5-flash,SPR1.txt,no,0,8,1.0,2.62,9.0,48.1819905
+c2,gemini-2.5-flash,SPR1.txt,yes,3,9,6.0,5.33,9.0,114.38549
+c3,gemini-2.5-flash,SPR2.txt,no,0,7,6.0,5.57,9.0,121.045029
+c4,gemini-2.5-flash,SPR2.txt,yes,3,13,5.0,5.0,9.0,83.794876
+c5,gemini-3-pro-preview,SPR1.txt,no,0,38,1.0,1.68,4.0,67.2357725
+c6,gemini-3-pro-preview,SPR1.txt,yes,3,60,1.0,1.82,9.0,57.361386499999995
+c7,gemini-3-pro-preview,SPR2.txt,no,0,45,1.0,1.4,4.0,73.793442
+c8,gemini-3-pro-preview,SPR2.txt,yes,3,59,1.0,1.58,6.0,68.15944
