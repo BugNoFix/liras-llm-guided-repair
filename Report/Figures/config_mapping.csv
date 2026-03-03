@@ -1,2 +1,0 @@
-config_label,config_details
-C1,repair_prompt=/Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/SPs/SystemPromptRepair3_lightweigth.txt | repair_model=gemini-3-pro-preview | repair_temperature=0.35 | generation_model=gemini-3-pro-preview | generation_temperature=1.0 | max_iterations=10

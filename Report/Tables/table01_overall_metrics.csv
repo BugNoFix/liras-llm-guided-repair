@@ -1,2 +1,0 @@
-runs,success_rate,median_duration_s,median_first_success_iter,median_best_error_score,median_monotonicity,median_prompt_tokens,median_response_tokens
-60,0.38333333333333336,67.28793,1.0,2.0,1.0,498.5,58.0
