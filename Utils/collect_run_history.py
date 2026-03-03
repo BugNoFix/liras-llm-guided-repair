@@ -11,8 +11,9 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_RESULTS_ROOT = PROJECT_ROOT / "Results"
-DEFAULT_EXPORT_PATH = PROJECT_ROOT / "Report" / "Histories" / "c1.csv"
+DEFAULT_RUNS_ROOT = PROJECT_ROOT / "Runs"
+DEFAULT_EXPORT_DIR = PROJECT_ROOT / "Report" / "Histories"
+DEFAULT_EXPORT_PATH = DEFAULT_EXPORT_DIR / "c1.csv"
 
 _ERROR_RE = re.compile(r"\berror\b", re.IGNORECASE)
 _WARNING_RE = re.compile(r"\bwarning\b", re.IGNORECASE)
@@ -336,7 +337,19 @@ def _extract_iteration_rows(metadata: Dict[str, Any]) -> List[Dict[str, Any]]:
         if iteration_num is None:
             iteration_num = idx
 
+        # Try reading compiler output file first; fall back to pre-computed
+        # metrics embedded in the iteration dict (avoids path-mismatch when
+        # analysing runs produced on a different machine).
         metrics = _compute_compiler_metrics(_safe_str(it.get("compiler_output_path")))
+
+        if metrics.get("error_lines") is None:
+            embedded = it.get("compiler_error_score")
+            if isinstance(embedded, dict):
+                metrics = {
+                    "error_lines": _safe_int(embedded.get("error_lines")),
+                    "warning_lines": _safe_int(embedded.get("warning_lines")),
+                    "score": _safe_int(embedded.get("score")),
+                }
 
         rows.append(
             {
@@ -367,7 +380,13 @@ class ExportStats:
     errors: int = 0
 
 
-def export_csv(results_root: Path, out_path: Path, *, verbose: bool = False) -> ExportStats:
+def export_csv(
+    results_root: Path,
+    out_path: Path,
+    *,
+    config_id: Optional[str] = None,
+    verbose: bool = False,
+) -> ExportStats:
     stats = ExportStats()
     rows: List[Dict[str, Any]] = []
 
@@ -384,6 +403,8 @@ def export_csv(results_root: Path, out_path: Path, *, verbose: bool = False) -> 
 
             run_key = _normalize_run_key(metadata, meta_path)
             run_row = _extract_run_row(metadata, run_key=run_key, source_path=str(meta_path))
+            if config_id:
+                run_row["config_id"] = config_id
             iter_rows = _extract_iteration_rows(metadata)
             derived = _compute_run_derived_metrics(metadata=metadata, iteration_rows=iter_rows)
             run_row.update(derived)
@@ -407,6 +428,7 @@ def export_csv(results_root: Path, out_path: Path, *, verbose: bool = False) -> 
                 print(f"ERROR: failed {meta_path}: {exc}")
 
     fieldnames = [
+        "config_id",
         "run_key",
         "run_id",
         "run_started_at",
@@ -495,36 +517,88 @@ def export_csv(results_root: Path, out_path: Path, *, verbose: bool = False) -> 
     return stats
 
 
+def _discover_config_dirs(runs_root: Path) -> List[Path]:
+    """Return sorted list of Runs/C*/ directories that contain run_metadata.json files."""
+    dirs = []
+    for d in sorted(runs_root.iterdir()):
+        if d.is_dir() and d.name.upper().startswith("C"):
+            if any(d.glob("**/run_metadata.json")):
+                dirs.append(d)
+    return dirs
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
-            "Scan Results/Runs/**/run_metadata.json and write a single per-configuration CSV "
-            "under Report/Histories (e.g., c1.csv, c2.csv)."
+            "Scan Runs/**/run_metadata.json and write per-configuration CSVs "
+            "under Report/Histories/ (e.g., c1.csv, c2.csv).\n"
+            "Use --all to auto-detect and process every Runs/C*/ folder."
         )
     )
     parser.add_argument(
         "--results-root",
         type=Path,
-        default=DEFAULT_RESULTS_ROOT,
-        help=f"Root directory to scan (default: {DEFAULT_RESULTS_ROOT})",
+        default=None,
+        help="Root directory to scan for a single config (e.g. Runs/C1)",
     )
     parser.add_argument(
         "--out",
         type=Path,
-        default=DEFAULT_EXPORT_PATH,
-        help=f"CSV output path (default: {DEFAULT_EXPORT_PATH})",
+        default=None,
+        help="CSV output path (for single-config mode)",
+    )
+    parser.add_argument(
+        "--config-id",
+        type=str,
+        default=None,
+        help="Config identifier to tag rows with (e.g. c1). Auto-detected in --all mode.",
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Batch mode: auto-discover all Runs/C*/ directories and produce one CSV each.",
+    )
+    parser.add_argument(
+        "--runs-root",
+        type=Path,
+        default=DEFAULT_RUNS_ROOT,
+        help=f"Parent directory containing C1/, C2/, ... folders (default: {DEFAULT_RUNS_ROOT})",
+    )
+    parser.add_argument(
+        "--outdir",
+        type=Path,
+        default=DEFAULT_EXPORT_DIR,
+        help=f"Output directory for per-config CSVs in --all mode (default: {DEFAULT_EXPORT_DIR})",
     )
     parser.add_argument("--verbose", action="store_true", help="Print per-file ingest logs")
 
     args = parser.parse_args()
 
-    stats = export_csv(args.results_root, args.out, verbose=args.verbose)
-    print("\n=== Run history export complete ===")
-    print(f"Scanned:     {stats.scanned}")
-    print(f"Parsed:      {stats.parsed}")
-    print(f"Rows written:{stats.rows_written}")
-    print(f"Errors:      {stats.errors}")
-    print(f"CSV: {args.out}")
+    if args.all:
+        config_dirs = _discover_config_dirs(args.runs_root)
+        if not config_dirs:
+            print(f"No C*/ directories with run_metadata.json found under {args.runs_root}")
+            return
+        print(f"Discovered {len(config_dirs)} config directories under {args.runs_root}")
+        for cfg_dir in config_dirs:
+            config_id = cfg_dir.name.lower()  # e.g. "c1"
+            out_path = args.outdir / f"{config_id}.csv"
+            print(f"\n--- Processing {cfg_dir.name} -> {out_path} ---")
+            stats = export_csv(cfg_dir, out_path, config_id=config_id, verbose=args.verbose)
+            print(f"  Scanned: {stats.scanned}  Parsed: {stats.parsed}  "
+                  f"Rows: {stats.rows_written}  Errors: {stats.errors}")
+        print(f"\n=== Batch export complete ({len(config_dirs)} configs) ===")
+    else:
+        results_root = args.results_root or DEFAULT_RUNS_ROOT
+        out_path = args.out or DEFAULT_EXPORT_PATH
+        config_id = args.config_id
+        stats = export_csv(results_root, out_path, config_id=config_id, verbose=args.verbose)
+        print("\n=== Run history export complete ===")
+        print(f"Scanned:     {stats.scanned}")
+        print(f"Parsed:      {stats.parsed}")
+        print(f"Rows written:{stats.rows_written}")
+        print(f"Errors:      {stats.errors}")
+        print(f"CSV: {out_path}")
 
 
 if __name__ == "__main__":

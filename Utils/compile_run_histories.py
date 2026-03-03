@@ -6,6 +6,10 @@ import argparse
 from pathlib import Path
 
 
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_CONFIGS_CSV = PROJECT_ROOT / "Report" / "configs.csv"
+
+
 def _config_from_filename(path: Path) -> str:
     return path.stem
 
@@ -23,6 +27,11 @@ def main() -> int:
         "--manifest",
         default="",
         help="Optional manifest CSV from run_all_configurations.py (uses history_csv column)",
+    )
+    parser.add_argument(
+        "--configs",
+        default=str(DEFAULT_CONFIGS_CSV),
+        help="Path to configs.csv mapping config_id -> model, system_prompt, jshots, repair_shots",
     )
     parser.add_argument(
         "--outcsv",
@@ -61,7 +70,9 @@ def main() -> int:
         if df.empty:
             continue
         df["source_history_file"] = str(p)
-        df["source_config"] = _config_from_filename(p)
+        # Use config_id column if present; otherwise infer from filename
+        if "config_id" not in df.columns or df["config_id"].isna().all():
+            df["config_id"] = _config_from_filename(p)
         chunks.append(df)
 
     if not chunks:
@@ -69,10 +80,33 @@ def main() -> int:
 
     combined = pd.concat(chunks, ignore_index=True)
 
+    # --------------- Enrich with config parameters from configs.csv ---------------
+    configs_path = Path(str(args.configs).strip()) if args.configs else None
+    if configs_path and configs_path.exists():
+        configs_df = pd.read_csv(configs_path)
+        if "config_id" in configs_df.columns:
+            # Merge config parameters (model, system_prompt, jshots, repair_shots, etc.)
+            param_cols = [c for c in configs_df.columns if c != "config_id"]
+            # Avoid overwriting existing columns — prefix with cfg_ if collision
+            rename_map = {}
+            for c in param_cols:
+                if c in combined.columns:
+                    rename_map[c] = f"cfg_{c}"
+            if rename_map:
+                configs_df = configs_df.rename(columns=rename_map)
+            combined = combined.merge(configs_df, on="config_id", how="left")
+            print(f"Enriched with config parameters from: {configs_path}")
+        else:
+            print(f"WARN: {configs_path} has no 'config_id' column — skipping enrichment")
+    else:
+        if configs_path:
+            print(f"WARN: configs file not found ({configs_path}) — skipping enrichment")
+
+    # --------------- Build unique run identifier ---------------
     run_key_col = "run_key" if "run_key" in combined.columns else "run_id"
     if run_key_col in combined.columns:
         combined["run_uid"] = (
-            combined["source_history_file"].astype(str)
+            combined["config_id"].astype(str)
             + "::"
             + combined[run_key_col].astype(str)
         )
@@ -83,6 +117,7 @@ def main() -> int:
 
     print(f"Combined files: {len(paths)}")
     print(f"Rows written: {len(combined)}")
+    print(f"Unique configs: {combined['config_id'].nunique()}")
     print(f"Output: {out_path}")
     return 0
 
