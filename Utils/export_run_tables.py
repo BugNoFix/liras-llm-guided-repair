@@ -159,6 +159,40 @@ def _table_study_summary(df, run_df):
 # ---------------------------------------------------------------------------
 # Table 1 – Configuration Scorecard
 # ---------------------------------------------------------------------------
+# def _table_config_scorecard(run_df):
+#     import pandas as pd
+#     import numpy as np
+
+#     group_cols = [c for c in ["config_id", "model", "cfg_system_prompt", "few_shots"]
+#                   if c in run_df.columns]
+#     if not group_cols:
+#         group_cols = ["config_id"] if "config_id" in run_df.columns else []
+#     if not group_cols:
+#         return pd.DataFrame()
+
+#     g = (
+#         run_df.groupby(group_cols, as_index=False)
+#         .agg(
+#             runs=("success_bool", "count"),
+#             successes=("success_bool", "sum"),
+#             success_rate=("success_bool", "mean"),
+#             median_first_success_iter=("derived_first_success_iteration", "median"),
+#             mean_first_success_iter=("derived_first_success_iteration", "mean"),
+#             median_best_error_score=("derived_best_error_score", "median"),
+#             median_final_error_score=("derived_final_error_score", "median"),
+#             median_duration_s=("derived_run_duration_seconds", "median"),
+#             median_tokens=("tokens_total", "median"),
+#         )
+#         .sort_values(group_cols)
+#     )
+#     # Round
+#     for c in ["success_rate", "mean_first_success_iter"]:
+#         if c in g.columns:
+#             g[c] = g[c].round(3)
+#     return g
+# ---------------------------------------------------------------------------
+# Table 1 – Configuration Scorecard
+# ---------------------------------------------------------------------------
 def _table_config_scorecard(run_df):
     import pandas as pd
     import numpy as np
@@ -178,6 +212,7 @@ def _table_config_scorecard(run_df):
             success_rate=("success_bool", "mean"),
             median_first_success_iter=("derived_first_success_iteration", "median"),
             mean_first_success_iter=("derived_first_success_iteration", "mean"),
+            var_first_success_iter=("derived_first_success_iteration", "var"),  # Added variance here
             median_best_error_score=("derived_best_error_score", "median"),
             median_final_error_score=("derived_final_error_score", "median"),
             median_duration_s=("derived_run_duration_seconds", "median"),
@@ -186,11 +221,10 @@ def _table_config_scorecard(run_df):
         .sort_values(group_cols)
     )
     # Round
-    for c in ["success_rate", "mean_first_success_iter"]:
+    for c in ["success_rate", "mean_first_success_iter", "var_first_success_iter"]:  # Added to rounding
         if c in g.columns:
             g[c] = g[c].round(3)
     return g
-
 
 # ---------------------------------------------------------------------------
 # Table 2 – Generative Prompt × Scenario Success Matrix
