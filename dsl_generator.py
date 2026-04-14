@@ -13,7 +13,8 @@ except ImportError:
 from pathlib import Path
 from datetime import datetime
 import json
-from typing import Optional
+from typing import Optional, Any
+from groq import Groq
 
 # 🔴 KEY PATH CONFIGURATION
 # For shared projects: place your personal key in keys/key.json
@@ -36,13 +37,15 @@ else:
 class DSLGenerator:
     def __init__(
         self,
-        project_id: str,
+        project_id: Optional[str] = None,
         location: str = "global",
         service_account_key: str = None,
         *,
         generation_temperature: float = 1.0,
         repair_temperature: float = 0.2,
         repair_max_output_tokens: int = 16384,
+        provider: str = "gemini",
+        api_key: Optional[str] = None,
     ):
         """
         Initialize the DSL Generator with Vertex AI credentials
@@ -55,9 +58,16 @@ class DSLGenerator:
         # Set credentials if service account key is provided
         if service_account_key:
             os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = service_account_key
-        
-        # Initialize Gemini 3 client
-        self.client = genai.Client(vertexai=True, project=project_id, location=location)
+
+        self.provider = (provider or "gemini").strip().lower()
+
+        if self.provider == "gemini":
+            self.client = genai.Client(vertexai=True, project=project_id, location=location)
+        elif self.provider == "groq":
+            self.client = Groq(api_key=api_key)
+        else:
+            raise ValueError("Unsupported provider. Use 'gemini' or 'groq'")
+
         self.project_id = project_id
         self.location = location
 
@@ -66,7 +76,7 @@ class DSLGenerator:
 
         # Server-side chat support (SDK/version dependent). If unavailable or errors at runtime,
         # we fall back to stateless generate_content with explicit contents history.
-        self.supports_server_chat = hasattr(self.client, "chats")
+        self.supports_server_chat = self.provider == "gemini" and hasattr(self.client, "chats")
         
         # Define workspace paths
         self.base_path = Path(__file__).parent
@@ -129,6 +139,7 @@ class DSLGenerator:
         self.run_compiler_dir: Optional[Path] = None
         self.run_metadata_path: Optional[Path] = None
         self.run_metadata: Optional[dict] = None
+        self.prompt_log_path: Optional[Path] = None
 
         # Last validation details (populated by validate_code)
         self.last_validation = {
@@ -149,6 +160,38 @@ class DSLGenerator:
             "response_tokens_est_total": 0,
             "last_call": None,
         }
+
+    def _extract_response_text(self, response_obj) -> str:
+        """Normalize text extraction across Gemini and Groq responses."""
+        if self.provider == "gemini":
+            return response_obj.text or ""
+
+        return response_obj.choices[0].message.content or ""
+
+    def _call_groq_chat(
+        self,
+        *,
+        model_name: str,
+        system_instruction: str,
+        history: list[dict],
+        user_message: str,
+        temperature: float,
+        max_output_tokens: Optional[int] = None,
+    ):
+        """Call Groq chat completion API in OpenAI-compatible messages format."""
+        messages = [{"role": "system", "content": system_instruction}]
+        messages.extend(history or [])
+        messages.append({"role": "user", "content": user_message})
+
+        params = {
+            "model": model_name,
+            "messages": messages,
+            "temperature": float(temperature),
+        }
+        if max_output_tokens is not None:
+            params["max_tokens"] = int(max_output_tokens)
+
+        return self.client.chat.completions.create(**params)
 
     def _maybe_create_server_chat(self, *, model_name: str, system_instruction: str, history: list[types.Content]):
         """Best-effort create a server-side chat session.
@@ -177,6 +220,9 @@ class DSLGenerator:
         """Run a callable with exponential backoff on resource exhaustion (429)."""
         import random
 
+        if self.provider == "groq":
+            return func()
+
         # Build a tuple of exception types to catch.
         _retryable = (GenaiClientError,)
         if ResourceExhausted is not None:
@@ -189,6 +235,7 @@ class DSLGenerator:
                 # GenaiClientError is raised for ALL 4xx codes; only retry on 429.
                 if isinstance(exc, GenaiClientError) and getattr(exc, 'code', None) != 429:
                     raise
+
                 if attempt == max_retries:
                     print(f"[BACKOFF] {label} exhausted all {max_retries} retries. Raising.")
                     raise
@@ -199,17 +246,21 @@ class DSLGenerator:
                       f"Waiting {wait:.1f}s before retry...")
                 time.sleep(wait)
 
-    def _build_shot_history(self, shot_pairs: list[dict], *, shots_base_path: Path) -> list[types.Content]:
+    def _build_shot_history(self, shot_pairs: list[dict], *, shots_base_path: Path) -> list[Any]:
         """Build alternating user/model Content messages from configured shot pairs."""
-        history: list[types.Content] = []
+        history: list[Any] = []
         if not shot_pairs:
             return history
 
         for pair in shot_pairs:
             user_content = self.load_file(shots_base_path / pair["user"])
             assistant_content = self.load_file(shots_base_path / pair["assistant"])
-            history.append(types.Content(role="user", parts=[types.Part(text=user_content)]))
-            history.append(types.Content(role="model", parts=[types.Part(text=assistant_content)]))
+            if self.provider == "gemini":
+                history.append(types.Content(role="user", parts=[types.Part(text=user_content)]))
+                history.append(types.Content(role="model", parts=[types.Part(text=assistant_content)]))
+            else:
+                history.append({"role": "user", "content": user_content})
+                history.append({"role": "assistant", "content": assistant_content})
         return history
 
     def _normalize_shots(self, shots, *, start_index: int = 1) -> list[dict]:
@@ -365,15 +416,19 @@ class DSLGenerator:
             prompt_text: The prompt string sent to the model
             response_obj: The raw Gemini response object (GenerateContentResponse)
         """
-        # Extract metadata from the Gemini response object
-        candidate = response_obj.candidates[0] if response_obj.candidates else None
-        finish_reason = candidate.finish_reason if candidate else "UNKNOWN"
-        safety_ratings = [
-            {"category": str(r.category), "probability": str(r.probability)}
-            for r in (candidate.safety_ratings if candidate and candidate.safety_ratings else [])
-        ]
+        if self.provider == "gemini":
+            candidate = response_obj.candidates[0] if response_obj.candidates else None
+            finish_reason = candidate.finish_reason if candidate else "UNKNOWN"
+            safety_ratings = [
+                {"category": str(r.category), "probability": str(r.probability)}
+                for r in (candidate.safety_ratings if candidate and candidate.safety_ratings else [])
+            ]
+        else:
+            choices = getattr(response_obj, "choices", None) or []
+            finish_reason = getattr(choices[0], "finish_reason", "UNKNOWN") if choices else "UNKNOWN"
+            safety_ratings = []
 
-        response_text = response_obj.text or ""
+        response_text = self._extract_response_text(response_obj)
         prompt_chars = len(prompt_text or "")
         response_chars = len(response_text)
         prompt_tokens_est = self._estimate_tokens(prompt_text or "")
@@ -438,11 +493,23 @@ class DSLGenerator:
         self.run_compiler_dir = self.run_dir / "compiler"
         self.run_dsl_dir.mkdir(parents=True, exist_ok=True)
         self.run_compiler_dir.mkdir(parents=True, exist_ok=True)
+        self.prompt_log_path = self.run_dir / "llm_prompts.jsonl"
 
         self.run_metadata_path = self.run_dir / "run_metadata.json"
+        use_cached_generation = bool(config.get("use_generated_dsl_cache"))
+        generated_dsl_source = config.get("generated_dsl_source") or "generated_cache"
+        if use_cached_generation:
+            try:
+                generated_dsl_cache_path = str(self._resolve_cached_dsl_path(config))
+            except Exception as e:
+                generated_dsl_cache_path = f"<unresolved: {type(e).__name__}>"
+        else:
+            generated_dsl_cache_path = str(self._resolve_generated_dsl_path(config))
+
         self.run_metadata = {
             "run_id": self.run_id,
             "run_started_at": datetime.now().isoformat(),
+            "provider": self.provider,
             "project_id": self.project_id,
             "location": self.location,
             "system_prompt": config.get("system_prompt"),
@@ -455,14 +522,15 @@ class DSLGenerator:
             "repair_temperature": float(getattr(self, "repair_temperature", 0.2)),
             "repair_max_output_tokens": int(getattr(self, "repair_max_output_tokens", 16384)),
             "repair_shots": config.get("repair_shots"),
-            "use_generated_dsl_cache": bool(config.get("use_generated_dsl_cache")),
-            "generated_dsl_source": config.get("generated_dsl_source") or "generated_cache",
-            "generated_dsl_cache_path": str(self._resolve_cached_dsl_path(config)),
+            "use_generated_dsl_cache": use_cached_generation,
+            "generated_dsl_source": generated_dsl_source,
+            "generated_dsl_cache_path": generated_dsl_cache_path,
             "compiler_jar": str(compiler_jar_path),
             "max_iterations": max_iterations,
             "run_dir": str(self.run_dir),
             "dsl_dir": str(self.run_dsl_dir),
             "compiler_dir": str(self.run_compiler_dir),
+            "prompt_log": str(self.prompt_log_path),
             "iterations": [],
             "telemetry": self.telemetry,
             "llm_call_history": [],
@@ -512,6 +580,39 @@ class DSLGenerator:
         self.run_metadata["updated_at"] = datetime.now().isoformat()
         with open(self.run_metadata_path, "w", encoding="utf-8") as f:
             json.dump(self.run_metadata, f, indent=2)
+
+    def _log_outgoing_prompt(
+        self,
+        *,
+        kind: str,
+        model_name: str,
+        prompt_text: str,
+        system_prompt: Optional[str] = None,
+        attempt: Optional[int] = None,
+        temperature: Optional[float] = None,
+    ) -> None:
+        """Append one outbound LLM prompt entry before sending it to the provider."""
+        if self.prompt_log_path is None:
+            fallback_dir = self.base_path / "Results" / "prompt_logs"
+            fallback_dir.mkdir(parents=True, exist_ok=True)
+            fallback_name = datetime.now().strftime("prompts_%Y%m%d_%H%M%S.jsonl")
+            self.prompt_log_path = fallback_dir / fallback_name
+
+        entry = {
+            "timestamp": datetime.now().isoformat(),
+            "provider": self.provider,
+            "kind": kind,
+            "model": model_name,
+            "attempt": attempt,
+            "temperature": temperature,
+            "system_prompt_chars": len(system_prompt or ""),
+            "prompt_chars": len(prompt_text or ""),
+            "system_prompt": system_prompt,
+            "prompt": prompt_text,
+        }
+
+        with open(self.prompt_log_path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
         
     def load_file(self, filepath: Path) -> str:
         """Load and return content from a text file"""
@@ -620,7 +721,7 @@ class DSLGenerator:
 
         # Send the actual scenario and get DSL code
         # Prefer server-side chat (stateful) if available, else fallback to stateless contents replay.
-        if self.generation_chat is None and self.chat is None:
+        if self.provider == "gemini" and self.generation_chat is None and self.chat is None:
             self.generation_chat = self._maybe_create_server_chat(
                 model_name=model_name,
                 system_instruction=system_prompt,
@@ -630,15 +731,29 @@ class DSLGenerator:
             self.chat = self.generation_chat
 
         print(f"[GENERATE] Sending scenario to generation model ({model_name})...")
-        if self.generation_chat is not None:
+        if self.provider == "gemini" and self.generation_chat is not None:
+            self._log_outgoing_prompt(
+                kind="generate",
+                model_name=model_name,
+                prompt_text=scenario_content,
+                system_prompt=system_prompt,
+                temperature=self.generation_temperature,
+            )
             response = self._call_with_backoff(
                 lambda: self.generation_chat.send_message(scenario_content),
                 label="generation_chat.send_message",
             )
-        else:
+        elif self.provider == "gemini":
             current_history = self.chat_history + [
                 types.Content(role="user", parts=[types.Part(text=scenario_content)])
             ]
+            self._log_outgoing_prompt(
+                kind="generate",
+                model_name=model_name,
+                prompt_text=scenario_content,
+                system_prompt=system_prompt,
+                temperature=self.generation_temperature,
+            )
             response = self._call_with_backoff(
                 lambda: self.client.models.generate_content(
                     model=model_name,
@@ -655,15 +770,37 @@ class DSLGenerator:
                 ),
                 label="generation.generate_content",
             )
+        else:
+            self._log_outgoing_prompt(
+                kind="generate",
+                model_name=model_name,
+                prompt_text=scenario_content,
+                system_prompt=system_prompt,
+                temperature=self.generation_temperature,
+            )
+            response = self._call_with_backoff(
+                lambda: self._call_groq_chat(
+                    model_name=model_name,
+                    system_instruction=system_prompt,
+                    history=self.chat_history,
+                    user_message=scenario_content,
+                    temperature=self.generation_temperature,
+                ),
+                label="generation.groq.chat.completions",
+            )
         
-        response_text = response.text or ""
+        response_text = self._extract_response_text(response)
         print(f"[GENERATE] Response received ({len(response_text)} chars)")
         if not response_text.strip():
             print("[WARNING] Generation model returned an empty response")
 
         # Update chat history with user message and response
-        self.chat_history.append(types.Content(role="user", parts=[types.Part(text=scenario_content)]))
-        self.chat_history.append(types.Content(role="model", parts=[types.Part(text=response_text)]))
+        if self.provider == "gemini":
+            self.chat_history.append(types.Content(role="user", parts=[types.Part(text=scenario_content)]))
+            self.chat_history.append(types.Content(role="model", parts=[types.Part(text=response_text)]))
+        else:
+            self.chat_history.append({"role": "user", "content": scenario_content})
+            self.chat_history.append({"role": "assistant", "content": response_text})
 
         # Telemetry: record prompt/response sizes + model metadata
         self._record_llm_call("generate", scenario_content, response)
@@ -813,7 +950,9 @@ class DSLGenerator:
         # NOTE: When repair_stateless is enabled, we intentionally do NOT use a stateful chat
         # for repair iterations (to avoid history poisoning). We still keep the shot history
         # around and re-send it each turn.
-        if self.repair_stateless:
+        if self.provider != "gemini":
+            self.repair_chat = None
+        elif self.repair_stateless:
             self.repair_chat = None
         else:
             self.repair_chat = self._maybe_create_server_chat(
@@ -857,8 +996,28 @@ class DSLGenerator:
 
         for attempt in range(2):  # Try twice if the first fix is a duplicate
             print(f"[REPAIR] Sending repair request to {self.repair_model_name} (temp={current_temp}, attempt={attempt})...")
+            self._log_outgoing_prompt(
+                kind="repair",
+                model_name=self.repair_model_name,
+                prompt_text=prompt,
+                system_prompt=self.repair_system_prompt,
+                attempt=attempt,
+                temperature=current_temp,
+            )
 
-            if self.repair_stateless:
+            if self.provider != "gemini":
+                response = self._call_with_backoff(
+                    lambda: self._call_groq_chat(
+                        model_name=self.repair_model_name,
+                        system_instruction=self.repair_system_prompt,
+                        history=(self.repair_chat_history or []),
+                        user_message=prompt,
+                        temperature=current_temp,
+                        max_output_tokens=self.repair_max_output_tokens,
+                    ),
+                    label="repair.groq.chat.completions",
+                )
+            elif self.repair_stateless:
                 current_contents = (self.repair_chat_history or []) + [
                     types.Content(role="user", parts=[types.Part(text=prompt)])
                 ]
@@ -909,7 +1068,7 @@ class DSLGenerator:
                         label="repair.generate_content_stateful",
                     )
 
-            repair_text = (response.text or "").strip()
+            repair_text = self._extract_response_text(response).strip()
 
             # Stagnation detection: if the output is identical to the input DSL,
             # jump to a high temperature to break the deterministic loop.
@@ -921,8 +1080,12 @@ class DSLGenerator:
 
         # Only in stateful mode do we accumulate the conversation history.
         if not self.repair_stateless:
-            self.repair_chat_history.append(types.Content(role="user", parts=[types.Part(text=prompt)]))
-            self.repair_chat_history.append(types.Content(role="model", parts=[types.Part(text=repair_text)]))
+            if self.provider == "gemini":
+                self.repair_chat_history.append(types.Content(role="user", parts=[types.Part(text=prompt)]))
+                self.repair_chat_history.append(types.Content(role="model", parts=[types.Part(text=repair_text)]))
+            else:
+                self.repair_chat_history.append({"role": "user", "content": prompt})
+                self.repair_chat_history.append({"role": "assistant", "content": repair_text})
 
             # Sliding window: keep initial shot messages + only the last N repair turns
             # to prevent context poisoning from accumulated failed attempts.
@@ -1227,6 +1390,7 @@ class DSLGenerator:
 
         print(
             "[START] "
+            f"provider={self.provider} "
             f"scenario={config.get('scenario')} "
             f"sp={config.get('system_prompt')} "
             f"gen_model={config.get('generation_model')} "
@@ -1537,6 +1701,11 @@ def main():
         return
     
     # Validate configuration
+    provider = str(config.get("provider", "gemini")).strip().lower()
+    if provider not in ("gemini", "groq"):
+        print("\n[ERROR] 'provider' must be 'gemini' or 'groq' in config.json")
+        return
+
     generation_only = bool(config.get("generation_only"))
     required_keys = [
         "system_prompt",
@@ -1585,7 +1754,7 @@ def main():
         print("\n[ERROR] 'compiler_timeout' must be > 0 in config.json")
         return
 
-    # Optional: Vertex AI location/region (model availability can be region-dependent)
+    # Optional: Vertex AI location/region (only used by Gemini provider)
     location = config.get("location", "global")
     if not isinstance(location, str) or not location.strip():
         print(f"\n[ERROR] 'location' must be a non-empty string when provided in config.json")
@@ -1604,64 +1773,75 @@ def main():
                 print(f"\n[ERROR] 'repair_shots' must be an integer or a list in config.json")
                 return
     
-    # Non-interactive authentication + project resolution.
-    # Priority order:
-    # - project_id: config.json -> key.json -> env
-    # - credentials: config.json -> key.json -> ADC
     service_account_key = None
     project_id = None
+    groq_api_key = None
 
-    cfg_project_id = config.get("project_id")
-    if isinstance(cfg_project_id, str) and cfg_project_id.strip():
-        project_id = cfg_project_id.strip()
+    if provider == "gemini":
+        # Non-interactive authentication + project resolution.
+        # Priority order:
+        # - project_id: config.json -> key.json -> env
+        # - credentials: config.json -> key.json -> ADC
+        cfg_project_id = config.get("project_id")
+        if isinstance(cfg_project_id, str) and cfg_project_id.strip():
+            project_id = cfg_project_id.strip()
 
-    cfg_key_path = (
-        config.get("service_account_key_path")
-        or config.get("service_account_key")
-        or config.get("credentials_path")
-    )
-    if isinstance(cfg_key_path, str) and cfg_key_path.strip():
-        candidate = Path(cfg_key_path).expanduser()
-        if not candidate.is_absolute():
-            candidate = (Path(__file__).parent / candidate)
-        if not candidate.exists():
-            print(f"\n[ERROR] Service account key file not found: {candidate}")
-            return
-        service_account_key = str(candidate)
-
-    # If no explicit key path provided, use detected key.json if present
-    if service_account_key is None and KEY_PATH.exists():
-        service_account_key = str(KEY_PATH)
-
-    # If we have a key file, attempt to pull project_id from it (unless already set)
-    if service_account_key is not None:
-        try:
-            with open(service_account_key, "r") as f:
-                key_data = json.load(f)
-            if not project_id:
-                project_id = key_data.get("project_id")
-        except Exception as e:
-            # Keep going; project_id might be provided via config/env, and ADC may still work.
-            pass
-
-    # If still no project_id, fall back to environment variables
-    if not project_id:
-        for env_key in ("GOOGLE_CLOUD_PROJECT", "GCLOUD_PROJECT", "GOOGLE_PROJECT_ID"):
-            env_val = os.environ.get(env_key)
-            if env_val and env_val.strip():
-                project_id = env_val.strip()
-                break
-
-    if not project_id:
-        print(
-            "\n[ERROR] Google Cloud Project ID not found. "
-            "Set 'project_id' in config.json or export GOOGLE_CLOUD_PROJECT (or include project_id in key.json)."
+        cfg_key_path = (
+            config.get("service_account_key_path")
+            or config.get("service_account_key")
+            or config.get("credentials_path")
         )
-        return
+        if isinstance(cfg_key_path, str) and cfg_key_path.strip():
+            candidate = Path(cfg_key_path).expanduser()
+            if not candidate.is_absolute():
+                candidate = (Path(__file__).parent / candidate)
+            if not candidate.exists():
+                print(f"\n[ERROR] Service account key file not found: {candidate}")
+                return
+            service_account_key = str(candidate)
 
-    if service_account_key is None:
-        # Using ADC (gcloud / workload identity).
-        pass
+        # If no explicit key path provided, use detected key.json if present
+        if service_account_key is None and KEY_PATH.exists():
+            service_account_key = str(KEY_PATH)
+
+        # If we have a key file, attempt to pull project_id from it (unless already set)
+        if service_account_key is not None:
+            try:
+                with open(service_account_key, "r") as f:
+                    key_data = json.load(f)
+                if not project_id:
+                    project_id = key_data.get("project_id")
+            except Exception:
+                # Keep going; project_id might be provided via config/env, and ADC may still work.
+                pass
+
+        # If still no project_id, fall back to environment variables
+        if not project_id:
+            for env_key in ("GOOGLE_CLOUD_PROJECT", "GCLOUD_PROJECT", "GOOGLE_PROJECT_ID"):
+                env_val = os.environ.get(env_key)
+                if env_val and env_val.strip():
+                    project_id = env_val.strip()
+                    break
+
+        if not project_id:
+            print(
+                "\n[ERROR] Google Cloud Project ID not found. "
+                "Set 'project_id' in config.json or export GOOGLE_CLOUD_PROJECT (or include project_id in key.json)."
+            )
+            return
+    else:
+        cfg_key = config.get("groq_api_key")
+        if isinstance(cfg_key, str) and cfg_key.strip():
+            groq_api_key = cfg_key.strip()
+        if not groq_api_key:
+            groq_api_key = os.environ.get("GROQ_API_KEY")
+
+        if not groq_api_key:
+            print(
+                "\n[ERROR] Groq API key missing. "
+                "Set 'groq_api_key' in config.json, or export GROQ_API_KEY."
+            )
+            return
     
     # Initialize generator
     generator = DSLGenerator(
@@ -1671,6 +1851,8 @@ def main():
         generation_temperature=float(generation_temperature),
         repair_temperature=float(repair_temperature),
         repair_max_output_tokens=int(config.get("repair_max_output_tokens", 16384)),
+        provider=provider,
+        api_key=groq_api_key,
     )
     
     # Run automated session with configuration from config.json
