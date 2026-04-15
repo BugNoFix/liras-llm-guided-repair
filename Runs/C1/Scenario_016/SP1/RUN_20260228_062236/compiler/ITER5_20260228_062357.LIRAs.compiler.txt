@@ -1,8 +1,0 @@
-Validating: /home/yoursenpai/polimi/sem3/fucking_SE/RP/RESEARCH_PROJECT/Results/Scenario_016/SP1/RUN_20260228_062236/dsl/ITER5_20260228_062357.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 3: required (...)+ loop did not match anything at input 'Drone1'
-[ERROR] Line 3: missing ':' at '\n'
-[ERROR] Line 4: missing EOF at 'agents:'
-[ERROR] Line 3: Agent name must be one of the names specified in the pattern.
-[ERROR] Line 3: Agent name must be one of the names specified in the pattern.

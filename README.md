@@ -1,6 +1,6 @@
 # LLM-Guided DSL Generation and Repair
 
-A comparative study of LLM-guided code generation and iterative compiler-feedback repair for a domain-specific language (LIRAs DSL), using Google Gemini models via Vertex AI.
+A comparative study of LLM-guided code generation and iterative compiler-feedback repair for a domain-specific language (LIRAs DSL), with support for Google Gemini (Vertex AI) and Groq models.
 
 ## Overview
 
@@ -77,7 +77,8 @@ Each configuration is run against 4 scenarios × 5 generation prompts × 3 shot 
 
 - **Python 3.9+**
 - **Java runtime** on `PATH` (required to run the LIRAs compiler JAR)
-- **Google Cloud** project with Vertex AI API enabled
+- **Google Cloud** project with Vertex AI API enabled (if using `provider: "gemini"`)
+- **Groq API key** (if using `provider: "groq"`)
 
 ## Setup
 
@@ -90,9 +91,10 @@ Each configuration is run against 4 scenarios × 5 generation prompts × 3 shot 
    pip install -r requirements.txt
    ```
 
-2. **Configure Google Cloud credentials:**
+2. **Configure credentials:**
 
-   Place a Vertex AI service account JSON key at `keys/key.json` (gitignored). The script also supports Application Default Credentials via `gcloud auth application-default login`.
+   - Gemini: place a Vertex AI service account JSON key at `keys/key.json` (gitignored), or use ADC with `gcloud auth application-default login`.
+   - Groq: export `GROQ_API_KEY` (or set `groq_api_key` in `config.json`).
 
 3. **Verify Java is available:**
 
@@ -115,6 +117,8 @@ python dsl_generator.py
 | Key                       | Type        | Description                                                              |
 | ------------------------- | ----------- | ------------------------------------------------------------------------ |
 | `system_prompt`           | string      | Generation prompt from `SPs/Generative/` (e.g., `"Generative/SP3.txt"`)  |
+| `provider`                | string      | Model backend: `"gemini"` or `"groq"`                                   |
+| `groq_api_key`            | string      | Optional Groq key in config (recommended: env var instead)                |
 | `generation_model`        | string      | Vertex AI model for generation (e.g., `"gemini-3-pro-preview"`)          |
 | `repair_model`            | string      | Vertex AI model for repair iterations                                    |
 | `shots`                   | int \| list | Few-shot example count (0, 1, 2) or explicit `[{user, assistant}]` pairs |
@@ -130,6 +134,16 @@ python dsl_generator.py
 | `generated_dsl_source`    | string      | Cache source: `"generated_cache"` or `"dsl_folder"`                      |
 | `results_dir`             | string      | Override output directory (e.g., `"Runs/C5"`)                            |
 
+Example for Groq in `config.json`:
+
+```json
+{
+   "provider": "groq",
+   "generation_model": "llama-4-scout-17b-16e-instruct-maas",
+   "repair_model": "llama-4-scout-17b-16e-instruct-maas"
+}
+```
+
 ### Batch Runs
 
 Run all scenario × prompt × shot combinations:
@@ -140,6 +154,14 @@ python Utils/run_all_pairs.py --shots 0,1,2
 python Utils/run_all_pairs.py --generation-only
 python Utils/run_all_pairs.py --disable-generation --shots 0,1,2
 python Utils/run_all_pairs.py --list-only
+```
+
+Run all scenarios using the single prompt/model settings already defined in `config.json`:
+
+```bash
+python Utils/run_all_scenarios.py
+python Utils/run_all_scenarios.py --list-only
+python Utils/run_all_scenarios.py --shots 0,1,2
 ```
 
 | Flag                   | Description                                          |
