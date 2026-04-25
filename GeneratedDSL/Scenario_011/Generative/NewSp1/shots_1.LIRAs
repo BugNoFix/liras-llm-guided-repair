@@ -1,0 +1,25 @@
+LabSampleDelivery
+agents:
+	humans: Nurse, LabPersonnel
+	robots: TransportRobot, RobotArm
+locations: PatientFloor, LabReception, AnalysisMachine
+resources: Sample, Drawer
+
+Nurse:
+	1: pick Sample
+	2: deposit Sample
+
+TransportRobot:
+	1: moveTo PatientFloor
+	2: pick Drawer if position(Sample, PatientFloor)
+	3: moveTo LabReception
+	4: deliver Drawer
+
+LabPersonnel:
+	1: pick Drawer if position(Drawer, LabReception)
+	2: pick Sample
+	3: deposit Sample
+
+RobotArm:
+	1: pick Sample if position(Sample, LabReception)
+	2: deposit Sample

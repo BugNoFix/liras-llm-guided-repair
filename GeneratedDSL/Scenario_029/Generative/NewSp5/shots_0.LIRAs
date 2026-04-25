@@ -1,0 +1,18 @@
+ChemotherapyStorytelling
+agents:
+	humans: Child, Parent, Nurse
+	robots: StoryRobot, Cart
+locations: TherapyArea, Ward
+resources: Books
+StoryRobot:
+	1: moveTo TherapyArea
+	2: receiveFrom Cart
+	3: follow Child (TherapyArea) if !busy(Child) else stop
+Cart:
+	1: moveTo Ward
+	2: fetch Books
+	3: moveTo TherapyArea
+	4: deliver Books
+Nurse:
+	1: moveTo TherapyArea
+	2: stop until time(60)

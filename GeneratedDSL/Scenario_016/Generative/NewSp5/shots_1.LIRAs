@@ -1,0 +1,17 @@
+ElevatorTransport
+agents:
+	humans: Human
+	robots: Robot
+locations: room7002, elevator7, elevatorInside, elevator3, room3201
+resources: object
+
+Robot:
+	1: moveTo room7002
+	2: receiveFrom Human
+	3: moveTo elevator7
+	4: stop wait 5
+	5: moveTo elevatorInside
+	6: stop wait 5
+	7: moveTo elevator3
+	8: moveTo room3201
+	9: deliver object

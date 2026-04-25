@@ -1,0 +1,15 @@
+HotelButler
+agents:
+	humans: Guest
+	robots: Butler
+locations: Room
+resources: Item
+
+Butler:
+	1: pick Item
+	2: moveTo Room
+	3: deliver Item
+
+Guest:
+	1: stop until position(Butler, Room)
+	2: receiveFrom Butler

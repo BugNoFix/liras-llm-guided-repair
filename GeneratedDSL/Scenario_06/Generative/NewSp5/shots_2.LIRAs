@@ -1,0 +1,13 @@
+HotelDelivery
+agents:
+	humans: Guest
+	robots: Robot
+locations: Room
+resources: Item
+Robot:
+	1: fetch Item
+	2: moveTo Room
+	3: deliver Item
+Guest:
+	1-2: stop
+	3: receiveFrom Robot

@@ -1,0 +1,31 @@
+AutoTransportagents:
+    robots: Robot1, Robot2
+locations:
+    Warehouse, SurfaceTexturizationLoading, SurfaceTexturizationUnloading, LaserLoading, LaserUnloading, LoadingArearesources:
+    RawMaterial, ProcessedMaterial, FinalMaterial
+Robot1:
+    1: moveTo Warehouse
+    2: pick RawMaterial
+    3: moveTo SurfaceTexturizationLoading
+    4: deliver RawMaterial
+    5: moveTo SurfaceTexturizationUnloading
+    6: pick ProcessedMaterial
+    7: moveTo LaserLoading
+    8: deliver ProcessedMaterial
+    9: moveTo LaserUnloading
+    10: pick FinalMaterial
+    11: moveTo LoadingArea
+    12: leave FinalMaterial
+Robot2:
+    1: moveTo Warehouse
+    2: pick RawMaterial
+    3: moveTo SurfaceTexturizationLoading
+    4: deliver RawMaterial
+    5: moveTo SurfaceTexturizationUnloading
+    6: pick ProcessedMaterial
+    7: moveTo LaserLoading
+    8: deliver ProcessedMaterial
+    9: moveTo LaserUnloading
+    10: pick FinalMaterial    11: moveTo LoadingArea    12: leave FinalMaterial
+success: !busy(Robot1) && !busy(Robot2)
+failure: busy(Robot1) || busy(Robot2)

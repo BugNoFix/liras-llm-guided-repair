@@ -1,4 +1,0 @@
-Validating: /home/yoursenpai/polimi/sem3/fucking_SE/RP/RESEARCH_PROJECT/Results/Scenario_06/SP3/RUN_20260228_110501/dsl/ITER6_20260228_110823.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 10: required (...)+ loop did not match anything at input '1'

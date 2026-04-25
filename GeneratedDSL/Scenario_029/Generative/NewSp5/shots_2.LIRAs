@@ -1,0 +1,25 @@
+TherapyStorytelling
+agents:
+	humans: Child, Parent, Nurse
+	robots: Robot, Cart
+locations: therapyArea
+resources: Book
+Robot:
+	1: moveTo therapyArea
+	2: stop wait 5
+	3: receiveFrom Cart
+	4: follow Child(therapyArea)
+Cart:
+	1: fetch Book
+	2: moveTo therapyArea
+	3: deliver Book
+	4: stop
+Nurse:
+	1: moveTo therapyArea
+	2-4: stop
+Child:
+	1: moveTo therapyArea
+	2-4: stop
+Parent:
+	1: moveTo therapyArea
+	2-4: stop

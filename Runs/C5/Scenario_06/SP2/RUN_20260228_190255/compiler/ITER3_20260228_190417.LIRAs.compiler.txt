@@ -1,4 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Runs/C5/Scenario_06/SP2/RUN_20260228_190255/dsl/ITER3_20260228_190417.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 10: extraneous input 'stop' expecting RULE_NL

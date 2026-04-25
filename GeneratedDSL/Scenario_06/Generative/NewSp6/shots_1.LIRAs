@@ -1,0 +1,14 @@
+HotelRobotButler
+
+agents:
+	humans: Human
+	robots: Robot
+locations: StorageBox, GuestRoom, Lift, HotelLobby
+resources: item
+
+Robot:
+	1: moveTo StorageBox
+	2: pick item
+	3: moveTo GuestRoom
+	4: deliver item
+	5: receiveFrom Human

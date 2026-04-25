@@ -1,0 +1,5 @@
+scenario,runs,success_count,success_rate,iterations_avg,iterations_median,iterations_max,duration_seconds_avg,prompt_tokens_total,response_tokens_total
+Scenario_011.txt,24,24,1.0,2.375,2.0,10,0.0,0,0
+Scenario_016.txt,24,24,1.0,1.375,1.0,5,0.0,0,0
+Scenario_029.txt,24,24,1.0,2.333,1.5,9,0.0,0,0
+Scenario_06.txt,24,24,1.0,1.542,1.0,4,0.0,0,0

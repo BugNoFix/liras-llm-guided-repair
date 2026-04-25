@@ -1,8 +1,0 @@
-Scenario_011
-
-agents:
-humans: human1
-locations: location1
-
-human1:
-1: stop

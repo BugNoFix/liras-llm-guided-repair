@@ -1,0 +1,15 @@
+HotelDelivery
+agents:
+	humans: Guest
+	robots: Butler
+locations: Kitchen, Lift, Room
+resources: Item
+Butler:
+	1: pick Item
+	2: moveTo Lift
+	3: moveTo Room
+	4: deliver Item
+Guest:
+	1: stop until position(Butler,Room)
+	2: receiveFrom Butler
+success: possess(Guest,Item)

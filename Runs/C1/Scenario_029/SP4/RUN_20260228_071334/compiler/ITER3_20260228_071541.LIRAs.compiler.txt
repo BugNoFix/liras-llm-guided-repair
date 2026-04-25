@@ -1,7 +1,0 @@
-Validating: /home/yoursenpai/polimi/sem3/fucking_SE/RP/RESEARCH_PROJECT/Results/Scenario_029/SP4/RUN_20260228_071334/dsl/ITER3_20260228_071541.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 2: required (...)+ loop did not match anything at input 'locations:'
-[ERROR] Line 2: missing ':' at '\n'
-[ERROR] Line 2: Agent name must be one of the names specified in the pattern.
-[ERROR] Line 2: Agent name must be one of the names specified in the pattern.

@@ -1,7 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_029/SP4/RUN_20260227_194646/dsl/ITER7_20260227_195149.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 10: required (...)+ loop did not match anything at input '1'
-[ERROR] Line 10: missing ':' at '\n'
-[ERROR] Line 10: Agent name must be one of the names specified in the pattern.
-[ERROR] Line 10: Agent name must be one of the names specified in the pattern.

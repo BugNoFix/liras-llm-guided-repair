@@ -1,0 +1,13 @@
+ChemotherapyTherapy
+agents:
+	humans: Child1, Parent1, Nurse
+	robots: TherapyRobot
+locations: TherapyArea
+resources: Books, Cart
+TherapyRobot:
+	1: moveTo TherapyArea
+	2: follow Child1
+	3: deliver Books
+	4: receiveFrom Nurse else stop
+success:!busy(TherapyRobot)
+failure:busy(TherapyRobot)

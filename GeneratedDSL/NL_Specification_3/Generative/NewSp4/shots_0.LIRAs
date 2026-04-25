@@ -1,0 +1,26 @@
+FactoryAutomation
+	agents:
+		robots: Robot1, Robot2
+	locations: Warehouse, TexturizationStart, TexturizationEnd, LaserStart, LaserEnd, LoadingArea
+	resources: RawMaterial
+
+Robot1:
+	1: pick RawMaterial if position(Robot1,Warehouse) else stop
+	2: moveTo TexturizationStart
+	3: deliver RawMaterial
+	4: moveTo TexturizationEnd until position(Robot2,TexturizationEnd)
+	5: pick RawMaterial
+	6: moveTo LaserStart
+	7: deliver RawMaterial
+	8: moveTo LaserEnd until position(Robot2,LaserEnd)
+	9: pick RawMaterial
+	10: moveTo LoadingArea
+	11: deliver RawMaterial
+
+Robot2:
+	1: moveTo TexturizationEnd if position(Robot1,TexturizationStart) else stop
+	2: moveTo LaserEnd if position(Robot1,LaserStart) else stop
+	3: moveTo LoadingArea if position(Robot1,LoadingArea) else stop
+
+success: position(Robot1,LoadingArea) && !possess(Robot1,RawMaterial)
+failure: time(720)

@@ -1,0 +1,31 @@
+LabSampleTransport
+agents:
+	humans: Nurse, LaboratoryPersonnel
+	robots: DeliveryRobot, RoboticArm
+locations: PatientFloor, Laboratory, AnalysisMachineEntryModule
+resources: Sample, LockedDrawer
+
+Nurse:
+	1: moveTo PatientFloor
+	2: deposit LockedDrawer
+
+DeliveryRobot:
+	1: moveTo PatientFloor
+	2: pick LockedDrawer if position(DeliveryRobot, PatientFloor)
+	3: moveTo Laboratory
+	4: deliver LockedDrawer
+
+RoboticArm:
+	1: moveTo Laboratory
+	2: pick Sample if position(RoboticArm, Laboratory)
+	3: moveTo AnalysisMachineEntryModule
+	4: deliver Sample
+
+LaboratoryPersonnel:
+	1: moveTo Laboratory
+	2: pick Sample if position(LaboratoryPersonnel, Laboratory)
+	3: moveTo AnalysisMachineEntryModule
+	4: deliver Sample
+
+success: time(60) && position(RoboticArm, AnalysisMachineEntryModule) && !possess(RoboticArm, Sample)
+failure: time(60) && !position(RoboticArm, AnalysisMachineEntryModule)

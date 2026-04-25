@@ -1,0 +1,16 @@
+MultiFloorDelivery
+agents:
+	humans: Helper
+	robots: DeliveryBot
+locations: Room7002, ElevatorFloor7, InsideElevator, ElevatorFloor3, Room3201
+resources: Package
+DeliveryBot:
+	1: moveTo Room7002
+	2: stop until possess(DeliveryBot, Package)
+	3: moveTo ElevatorFloor7
+	4: stop until !busy(Helper)
+	5: moveTo InsideElevator
+	6: stop until !busy(Helper)
+	7: moveTo ElevatorFloor3
+	8: moveTo Room3201
+	9: stop until !possess(DeliveryBot, Package)

@@ -1,4 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Runs/C5/Scenario_029/SP4/RUN_20260228_174933/dsl/ITER5_20260228_175344.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 16: Agent name must be one of the names specified in the pattern.

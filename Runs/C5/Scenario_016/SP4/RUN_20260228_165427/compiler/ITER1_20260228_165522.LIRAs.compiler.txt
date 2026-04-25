@@ -1,4 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Runs/C5/Scenario_016/SP4/RUN_20260228_165427/dsl/ITER1_20260228_165522.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 18: Resource name must be one of the names specified in the pattern.

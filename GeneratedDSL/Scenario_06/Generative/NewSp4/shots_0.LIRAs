@@ -1,0 +1,28 @@
+HotelDeliverySystem
+	agents:
+		robots: ButlerBot
+	locations: StorageRoom, Lobby, Lift, Room1, Room2, Room3
+	resources: Package1, Package2, Package3
+
+ButlerBot:
+	1: pick Package1 if possess(ButlerBot, Package1) else stop
+	2: moveTo Lift
+	3: moveTo Room1
+	4: deliver Package1 if position(ButlerBot, Room1) else restart
+	5: moveTo Lift
+	6: moveTo StorageRoom
+	7: pick Package2 if possess(ButlerBot, Package2) else stop
+	8: moveTo Lift
+	9: moveTo Room2
+	10: deliver Package2 if position(ButlerBot, Room2) else restart
+	11: moveTo Lift
+	12: moveTo StorageRoom
+	13: pick Package3 if possess(ButlerBot, Package3) else stop
+	14: moveTo Lift
+	15: moveTo Room3
+	16: deliver Package3 if position(ButlerBot, Room3) else restart
+	17: moveTo Lift
+	18: moveTo StorageRoom
+
+success: position(ButlerBot, StorageRoom) && !possess(ButlerBot, Package1) && !possess(ButlerBot, Package2) && !possess(ButlerBot, Package3)
+failure: time(120) || tired

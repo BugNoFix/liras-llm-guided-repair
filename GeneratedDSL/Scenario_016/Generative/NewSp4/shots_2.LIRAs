@@ -1,0 +1,29 @@
+TransportTask
+
+agents:
+	humans: Human
+	robots: Robot
+locations: room7002, elevator7, elevatorInside, elevator3, room3201
+resources: object
+
+Robot:
+	1: moveTo room7002
+	2: receiveFrom Human
+	3: moveTo elevator7
+	4: stop until position(Human, elevator7)
+	5: moveTo elevatorInside
+	6: stop until position(Human, elevator3)
+	7: moveTo elevator3
+	8: moveTo room3201
+	9: leave object
+
+Human:
+	1: moveTo room7002
+	2: deliver object
+	3: moveTo elevator7
+	4: stop
+	5: moveTo elevatorInside
+	6: moveTo elevator3
+	7: stop
+	8: moveTo room3201
+	9: receiveFrom Robot

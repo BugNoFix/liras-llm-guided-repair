@@ -1,0 +1,19 @@
+FactoryTransport
+agents:
+	robots: Robot1, Robot2
+locations: Warehouse, SurfaceStart, SurfaceEnd, LaserStart, LaserEnd, LoadingArea
+resources: rawMaterial
+Robot1:
+	1: moveTo Warehouse
+	2: pick rawMaterial
+	3: moveTo SurfaceStart
+	4: deliver rawMaterial
+	5: moveTo LaserEnd
+	6: pick rawMaterial
+	7: moveTo LoadingArea
+	8: deliver rawMaterial
+Robot2:
+	1: moveTo SurfaceEnd
+	2: pick rawMaterial
+	3: moveTo LaserStart
+	4: deliver rawMaterial

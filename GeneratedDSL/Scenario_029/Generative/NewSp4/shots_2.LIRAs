@@ -1,0 +1,27 @@
+ChemoWardAssist
+agents:
+	humans: Child, Parent, Nurse
+	robots: Robot, Cart
+locations: therapyArea
+resources: book
+Robot:
+	1: moveTo therapyArea
+	2: stop until !busy(Nurse)
+	3: receiveFrom Cart
+	4: follow Child(therapyArea) until time(60)
+Cart:
+	1: fetch book
+	2: moveTo therapyArea
+	3: deliver book
+	4: stop
+Nurse:
+	1: moveTo therapyArea
+	2-4: stop
+Child:
+	1: moveTo therapyArea
+	2: stop
+	3: receiveFrom Robot
+	4: stop
+Parent:
+	1: moveTo therapyArea
+	2-4: stop

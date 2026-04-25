@@ -1,0 +1,17 @@
+UniversityCoffeeDelivery
+	agents:
+		humans: Employee
+		robots: BaristaBot
+	locations: Kitchen, Office
+	resources: Coffee, Mug
+
+BaristaBot:
+	1: moveTo Kitchen
+	2: fetch Coffee if possess(BaristaBot, Coffee)==False else stop
+	3: moveTo Office
+	4: deliver Coffee else stop
+
+success:
+	position(BaristaBot, Office) && possess(Employee, Coffee)
+failure:
+	time(120) || tired

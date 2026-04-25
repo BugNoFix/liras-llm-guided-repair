@@ -1,0 +1,22 @@
+TransportTask
+agents:
+	humans: User
+	robots: Transporter
+locations: room7002, elevator7, elevator3, room3201
+resources: package
+
+Transporter:
+	1: moveTo room7002
+	2: receiveFrom User
+	3: moveTo elevator7
+	4: follow User (elevator3)
+	5: moveTo room3201
+	6: stop until !possess(Transporter, package)
+
+User:
+	1: stop until position(Transporter, room7002)
+	2: deliver package
+	3: moveTo elevator7
+	4: moveTo elevator3
+	5: moveTo room3201
+	6: pick package

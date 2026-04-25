@@ -1,5 +1,0 @@
-RobotTherapySession
-inputs: id Robot, id Nurse, id AutonomousCart
-Robot: deliver story
-Nurse: stop
-AutonomousCart: deliver books

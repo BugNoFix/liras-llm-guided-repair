@@ -1,4 +1,0 @@
-Validating: /home/yoursenpai/polimi/sem3/fucking_SE/RP/RESEARCH_PROJECT/Results/Scenario_06/SP3/RUN_20260228_111033/dsl/ITER3_20260228_111135.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 5: missing EOF at 'humans:'

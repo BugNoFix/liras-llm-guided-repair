@@ -1,0 +1,56 @@
+UniversityCoffeeDelivery
+
+agents:
+	robots: Robot
+locations: coffeeMachine, officeA, officeB, officeC
+resources: coffee
+
+Robot:
+	1: moveTo coffeeMachine
+	2: prepare coffee
+	3: moveTo officeA if possess(Robot, coffee) else stop
+	4: deliver coffee
+	5: moveTo officeB if possess(Robot, coffee) else stop
+	6: deliver coffee
+	7: moveTo officeC if possess(Robot, coffee) else stop
+	8: deliver coffee
+	9: stop
+
+
++++++ outputs/parsed_10.md
+
+HospitalEmergency
+
+agents:
+	humans: Doctor, Nurse
+	robots: Robot1
+locations: EmergencyRoom, OperatingRoom, StorageRoom, RecoveryRoom
+resources: MedicalKit, Defibrillator, Medication
+
+Doctor:
+	1: moveTo EmergencyRoom
+	2: assessPatient if !busy(Doctor) else wait 5
+	3: moveTo OperatingRoom if needSurgery else moveTo RecoveryRoom
+	4: performSurgery if position(Doctor, OperatingRoom) else stop
+	5: moveTo RecoveryRoom
+
+Nurse:
+	1: moveTo StorageRoom
+	2: fetch MedicalKit
+	3: moveTo EmergencyRoom
+	4: assist Doctor if possess(Nurse, MedicalKit) else moveTo StorageRoom
+	5: moveTo RecoveryRoom if !busy(Doctor) else wait 10
+
+Robot1:
+	1: moveTo StorageRoom
+	2: fetch Defibrillator
+	3: moveTo EmergencyRoom if dist(Robot1, Doctor) <= 5 else wait 2
+	4: deliver Defibrillator to Doctor if position(Robot1, EmergencyRoom) else stop
+	5: moveTo StorageRoom
+	6: fetch Medication
+	7: moveTo RecoveryRoom
+
+success:
+	position(Doctor, RecoveryRoom) && possess(Doctor, Medication)
+failure:
+	busy(Doctor) && time(60)

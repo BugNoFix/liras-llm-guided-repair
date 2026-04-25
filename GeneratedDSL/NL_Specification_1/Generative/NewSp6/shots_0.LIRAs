@@ -1,0 +1,11 @@
+CoffeeDelivery
+agents:
+	humans: Employee	robots: RobotCoffee
+locations: CoffeeMachine
+resources: Coffee
+RobotCoffee:
+	1: moveTo CoffeeMachine
+	2: fetch Coffee
+	3: deliver Coffee
+success: !busy(RobotCoffee)
+failure: busy(RobotCoffee)

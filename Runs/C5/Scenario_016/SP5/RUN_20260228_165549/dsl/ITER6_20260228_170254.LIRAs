@@ -1,9 +1,0 @@
-ServiceNavigation
-agent agent1: moveTo serviceStartLocation
-agent agent2: pick object
-agent agent3: moveTo elevatorLocation
-agent agent4: stop
-agent agent5: moveTo elevatorLocation
-agent agent6: stop
-agent agent7: moveTo floorLocation
-agent agent8: moveTo serviceGoalLocation

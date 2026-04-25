@@ -1,5 +1,0 @@
-ChemoBot
-Agent Robot
-Robot: moveTo therapyArea
-Robot: follow child
-Robot: stop

@@ -1,7 +1,0 @@
-Validating: /home/yoursenpai/polimi/sem3/fucking_SE/RP/RESEARCH_PROJECT/Results/Scenario_011/SP3/RUN_20260228_085920/dsl/ITER4_20260228_090206.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 10: required (...)+ loop did not match anything at input '1'
-[ERROR] Line 12: mismatched input 'stop' expecting ':'
-[ERROR] Line 11: Agent name must be one of the names specified in the pattern.
-[ERROR] Line 11: Agent name must be one of the names specified in the pattern.

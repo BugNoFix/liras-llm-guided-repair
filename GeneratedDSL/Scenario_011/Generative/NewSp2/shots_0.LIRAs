@@ -1,0 +1,24 @@
+LabSampleTransport
+agents:
+  humans: Nurse, LabPersonnel
+  robots: TransportBot, RoboticArm
+locations: PatientFloor, Laboratory, AnalysisZone
+resources: Sample
+
+Nurse:
+1: pick Sample
+2: deliver Sample until !busy(TransportBot)
+
+TransportBot:
+1: receiveFrom Nurse
+2: moveTo Laboratory
+3: leave Sample until position(TransportBot, Laboratory)
+
+RoboticArm:
+1: moveTo Laboratory
+2: pick Sample until position(RoboticArm, Laboratory) || position(LabPersonnel, Laboratory)
+3: moveTo AnalysisZone
+4: deposit Sample
+
+success: position(Sample, AnalysisZone)
+failure: time(60) && !position(Sample, AnalysisZone)

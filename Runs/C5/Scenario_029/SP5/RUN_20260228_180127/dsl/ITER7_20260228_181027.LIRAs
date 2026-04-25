@@ -1,8 +1,0 @@
-RobotTherapySession
-inputs:
-  agent Robot
-  agent Nurse
-  agent AutonomousCart
-Robot: deliver story
-Nurse: stop
-AutonomousCart: deliver books

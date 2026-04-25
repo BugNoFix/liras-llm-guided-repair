@@ -1,4 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Runs/C5/Scenario_06/SP2/RUN_20260228_185055/dsl/ITER9_20260228_190252.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 2: missing EOF at 'moveTo'

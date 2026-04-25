@@ -1,7 +1,0 @@
-ExamplePattern
-agents:
-  robots: robot1
-locations:
-  location1
-resources:
-  resource1

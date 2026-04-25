@@ -1,6 +1,0 @@
-ChemoBot
-{
-    moveTo therapyArea
-    follow child
-    stop
-}

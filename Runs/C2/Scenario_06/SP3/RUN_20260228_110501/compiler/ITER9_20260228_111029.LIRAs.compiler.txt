@@ -1,7 +1,0 @@
-Validating: /home/yoursenpai/polimi/sem3/fucking_SE/RP/RESEARCH_PROJECT/Results/Scenario_06/SP3/RUN_20260228_110501/dsl/ITER9_20260228_111029.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 5: missing ':' at '\n'
-[ERROR] Line 6: missing EOF at 'resources:'
-[ERROR] Line 5: Agent name must be one of the names specified in the pattern.
-[ERROR] Line 5: Agent name must be one of the names specified in the pattern.

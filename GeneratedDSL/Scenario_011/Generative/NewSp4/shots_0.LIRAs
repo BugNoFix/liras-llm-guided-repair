@@ -1,0 +1,29 @@
+LabSampleTransport
+	agents:
+		humans: Nurse, LabTechnician
+		robots: RoboticArm
+	locations: PatientFloor, Laboratory, AnalysisMachine
+	resources: Sample, SecureDrawer, Barcode, TrackSystem, LogSystem
+
+Nurse:
+	1: pick Sample
+	2: deposit Sample in SecureDrawer
+	3: moveTo Laboratory if !position(Nurse, Laboratory) else stop
+	4: deliver SecureDrawer to Laboratory
+	5: stop
+
+RoboticArm default stop:
+	1: pick Sample from SecureDrawer if position(RoboticArm, Laboratory) && possess(SecureDrawer, Sample) else stop
+	2: scan Barcode if possess(RoboticArm, Sample) else stop
+	3: sort Sample if possess(RoboticArm, Sample) else stop
+	4: deliver Sample to AnalysisMachine if possess(RoboticArm, Sample) else stop
+	5: stop
+
+LabTechnician:
+	1: moveTo Laboratory if !position(LabTechnician, Laboratory) else stop
+	2: pick Sample from SecureDrawer if position(LabTechnician, Laboratory) && possess(SecureDrawer, Sample) else stop
+	3: deliver Sample to AnalysisMachine if possess(LabTechnician, Sample) else stop
+	4: stop
+
+success: position(Sample, AnalysisMachine) && time(180) >= 0
+failure: !position(Sample, AnalysisMachine) || time(180) < 0

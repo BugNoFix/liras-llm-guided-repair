@@ -1,0 +1,17 @@
+HouseTask
+agents:
+	humans: Human1
+	robots: Robot1
+locations: bedroom, kitchen
+resources: object
+Robot1:
+	1: moveTo bedroom
+	2: stop until position(Human1, bedroom)
+	3: pick object
+	4: follow Human1(kitchen)
+Human1:
+	1: moveTo bedroom
+	2: stop until possess(Robot1, object)
+	3: moveTo kitchen
+success: position(Human1, kitchen) && position(Robot1, kitchen) && possess(Robot1, object)
+failure: !possess(Robot1, object)

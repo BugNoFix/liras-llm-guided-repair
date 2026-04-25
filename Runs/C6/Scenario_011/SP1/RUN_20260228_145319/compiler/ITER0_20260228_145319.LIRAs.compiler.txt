@@ -1,5 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Runs/C6/Scenario_011/SP1/RUN_20260228_145319/dsl/ITER0_20260228_145319.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 14: extraneous input 'moveTo' expecting RULE_ID
-[ERROR] Line 20: missing EOF at 'moveTo'

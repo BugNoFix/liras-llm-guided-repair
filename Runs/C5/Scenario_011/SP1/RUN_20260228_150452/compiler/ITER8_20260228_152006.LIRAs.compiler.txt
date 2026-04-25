@@ -1,6 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Runs/C5/Scenario_011/SP1/RUN_20260228_150452/dsl/ITER8_20260228_152006.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 19: missing EOF at 'agents:'
-[ERROR] Line 7: Agent name must be one of the names specified in the pattern.
-[ERROR] Line 7: Agent name must be one of the names specified in the pattern.

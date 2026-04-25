@@ -1,5 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_06/SP1/RUN_20260227_170715/dsl/ITER1_20260227_170807.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 10: The same agent cannot be used in more than one sequence..
-[ERROR] Line 20: The same agent cannot be used in more than one sequence..

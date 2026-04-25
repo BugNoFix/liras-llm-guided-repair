@@ -1,0 +1,30 @@
+ChemotherapyWardInteraction
+	agents:
+		humans: Child,Parent,Nurse
+		robots: StoryRobot,Cart
+	locations: TherapyArea,Storage,WardEntrance,NursesStation
+	resources: Book
+
+StoryRobot:
+	1:	moveTo TherapyArea
+	2:	stop if !position(Child,TherapyArea) else follow Child
+	3:	stop if !position(Parent,TherapyArea) else receiveFrom Nurse
+	4:	deliver Book if !possess(Child,Book) else stop until time(30)
+	5:	moveTo WardEntrance if time(60) else restart
+
+Cart:
+	1:	moveTo Storage
+	2:	pick Book
+	3:	moveTo TherapyArea
+	4:	deliver Book if still(StoryRobot) else wait 5
+	5:	moveTo NursesStation if time(60) else stop
+
+Nurse:
+	1:	stop
+	2:	moveTo TherapyArea if time(5)
+	3:	deliver Book if !possess(StoryRobot,Book) else stop
+	4:	follow StoryRobot if busy(StoryRobot) else moveTo NursesStation
+	5:	stop if time(60) else restart
+
+success: position(StoryRobot,TherapyArea) && possess(Child,Book) && !tired
+failure: dist(StoryRobot,Child) > 5 || !position(StoryRobot,TherapyArea)

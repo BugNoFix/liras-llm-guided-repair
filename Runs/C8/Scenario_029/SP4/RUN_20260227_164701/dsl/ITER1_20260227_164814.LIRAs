@@ -1,9 +1,0 @@
-Pattern1
-
-agents:
-robots: Robot1
-
-locations: location1
-
-Robot1:
-1: moveTo location1

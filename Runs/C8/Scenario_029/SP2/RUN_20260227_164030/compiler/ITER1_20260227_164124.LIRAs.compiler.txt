@@ -1,7 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_029/SP2/RUN_20260227_164030/dsl/ITER1_20260227_164124.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 13: required (...)+ loop did not match anything at input 'wait'
-[ERROR] Line 27: required (...)+ loop did not match anything at input 'wait'
-[ERROR] Line 28: required (...)+ loop did not match anything at input 'wait'
-[ERROR] Line 29: required (...)+ loop did not match anything at input 'wait'

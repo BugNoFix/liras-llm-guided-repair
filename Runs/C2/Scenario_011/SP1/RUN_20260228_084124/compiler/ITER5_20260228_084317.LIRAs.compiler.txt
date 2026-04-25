@@ -1,4 +1,0 @@
-Validating: /home/yoursenpai/polimi/sem3/fucking_SE/RP/RESEARCH_PROJECT/Results/Scenario_011/SP1/RUN_20260228_084124/dsl/ITER5_20260228_084317.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 34: missing EOF at 'moveTo'

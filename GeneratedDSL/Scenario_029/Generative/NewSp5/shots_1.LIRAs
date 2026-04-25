@@ -1,0 +1,22 @@
+ChemoWard
+agents:
+	humans: Child, Parent, Nurse
+	robots: StoryRobot, Cart
+locations: TherapyArea
+resources: Book
+Nurse:
+	1: moveTo TherapyArea
+	2: stop
+Child:
+	1: moveTo TherapyArea
+	2: stop
+Parent:
+	1: follow Child
+Cart:
+	1: pick Book
+	2: moveTo TherapyArea
+	3: deliver Book
+StoryRobot:
+	1: moveTo TherapyArea
+	2: receiveFrom Cart
+	3: follow Child

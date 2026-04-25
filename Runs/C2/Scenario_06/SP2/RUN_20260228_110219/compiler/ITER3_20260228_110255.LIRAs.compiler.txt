@@ -1,6 +1,0 @@
-Validating: /home/yoursenpai/polimi/sem3/fucking_SE/RP/RESEARCH_PROJECT/Results/Scenario_06/SP2/RUN_20260228_110219/dsl/ITER3_20260228_110255.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 10: extraneous input 'checkMap' expecting RULE_NL
-[ERROR] Line 11: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
-[ERROR] Line 11: Resource name must be one of the names specified in the pattern.

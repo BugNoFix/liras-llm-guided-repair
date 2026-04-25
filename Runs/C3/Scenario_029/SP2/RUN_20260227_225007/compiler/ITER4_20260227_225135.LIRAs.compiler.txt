@@ -1,8 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_029/SP2/RUN_20260227_225007/dsl/ITER4_20260227_225135.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 1: required (...)+ loop did not match anything at input '-'
-[ERROR] Line 1: missing ':' at '\n'
-[ERROR] Line 2: missing EOF at 'agents:'
-[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
-[ERROR] Line 1: Agent name must be one of the names specified in the pattern.

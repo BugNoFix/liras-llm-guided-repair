@@ -1,2 +1,0 @@
-Validating: /home/yoursenpai/polimi/sem3/fucking_SE/RP/RESEARCH_PROJECT/Results/Scenario_016/SP3/RUN_20260228_063919/dsl/ITER1_20260228_063947.LIRAs
-SUCCESS: Model is valid.

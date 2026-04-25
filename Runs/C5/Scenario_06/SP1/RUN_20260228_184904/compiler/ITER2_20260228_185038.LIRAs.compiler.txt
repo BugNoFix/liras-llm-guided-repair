@@ -1,4 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Runs/C5/Scenario_06/SP1/RUN_20260228_184904/dsl/ITER2_20260228_185038.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 15: The value of 'i' must be greater than the previous one.

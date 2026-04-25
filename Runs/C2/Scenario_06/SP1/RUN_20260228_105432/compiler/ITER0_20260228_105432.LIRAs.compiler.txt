@@ -1,8 +1,0 @@
-Validating: /home/yoursenpai/polimi/sem3/fucking_SE/RP/RESEARCH_PROJECT/Results/Scenario_06/SP1/RUN_20260228_105432/dsl/ITER0_20260228_105432.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 1: required (...)+ loop did not match anything at input 'Butler'
-[ERROR] Line 1: missing ':' at '\n\n'
-[ERROR] Line 3: missing EOF at 'agents:'
-[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
-[ERROR] Line 1: Agent name must be one of the names specified in the pattern.

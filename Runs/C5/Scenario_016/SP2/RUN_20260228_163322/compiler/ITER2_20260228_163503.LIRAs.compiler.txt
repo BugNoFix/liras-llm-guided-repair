@@ -1,7 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Runs/C5/Scenario_016/SP2/RUN_20260228_163322/dsl/ITER2_20260228_163503.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 2: extraneous input 'robot' expecting ':'
-[ERROR] Line 3: missing EOF at 'moveTo'
-[ERROR] Line 2: Agent name must be one of the names specified in the pattern.
-[ERROR] Line 2: Agent name must be one of the names specified in the pattern.

@@ -1,9 +1,0 @@
-Scenario_011
-
-agents:
-robots: robot1
-
-locations: start
-
-robot1:
-1: stop

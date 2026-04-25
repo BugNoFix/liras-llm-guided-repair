@@ -1,0 +1,13 @@
+generation_model,system_prompt,shots,runs,success_count,success_rate,iterations_avg,iterations_median,iterations_max,duration_seconds_avg,prompt_tokens_total,response_tokens_total
+gemini-2.5-flash,Generative/NewSp4.txt,0,8,8,1.0,4.25,3.5,10,0.0,0,0
+gemini-2.5-flash,Generative/NewSp4.txt,1,8,8,1.0,1.5,1.5,2,0.0,0,0
+gemini-2.5-flash,Generative/NewSp4.txt,2,8,8,1.0,2.375,2.0,5,0.0,0,0
+gemini-2.5-flash,Generative/NewSp5.txt,0,8,8,1.0,2.75,3.0,5,0.0,0,0
+gemini-2.5-flash,Generative/NewSp5.txt,1,8,8,1.0,2.0,2.0,4,0.0,0,0
+gemini-2.5-flash,Generative/NewSp5.txt,2,8,8,1.0,2.75,2.5,6,0.0,0,0
+gemini-3.1-pro-preview,Generative/NewSp4.txt,0,8,8,1.0,1.25,1.0,2,0.0,0,0
+gemini-3.1-pro-preview,Generative/NewSp4.txt,1,8,8,1.0,1.25,1.0,2,0.0,0,0
+gemini-3.1-pro-preview,Generative/NewSp4.txt,2,8,8,1.0,1.0,1.0,1,0.0,0,0
+gemini-3.1-pro-preview,Generative/NewSp5.txt,0,8,8,1.0,1.25,1.0,2,0.0,0,0
+gemini-3.1-pro-preview,Generative/NewSp5.txt,1,8,8,1.0,1.125,1.0,2,0.0,0,0
+gemini-3.1-pro-preview,Generative/NewSp5.txt,2,8,8,1.0,1.375,1.0,2,0.0,0,0

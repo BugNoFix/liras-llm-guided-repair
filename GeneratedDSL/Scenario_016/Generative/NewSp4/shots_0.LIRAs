@@ -1,0 +1,17 @@
+DeliveryRobotTask
+	agents:
+		humans: HumanAssistant
+		robots: DeliveryRobot
+	locations: CurrentLocation, Room7002, Elevator7thFloor, Elevator3rdFloor, Room3201
+	resources: TransportBasket, Object
+
+DeliveryRobot:
+	1: moveTo Room7002
+	2: wait 300 until possess(HumanAssistant, Object)
+	3: moveTo Elevator7thFloor
+	4: stop if position(DeliveryRobot, Elevator7thFloor) else restart
+	5: follow HumanAssistant(Elevator3rdFloor)
+	6: stop if position(DeliveryRobot, Elevator3rdFloor) else restart
+	7: moveTo Elevator3rdFloor
+	8: moveTo Room3201
+	9: stop until !possess(DeliveryRobot, Object) && time(300)

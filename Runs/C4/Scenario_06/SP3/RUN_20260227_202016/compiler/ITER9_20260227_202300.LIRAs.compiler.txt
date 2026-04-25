@@ -1,7 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_06/SP3/RUN_20260227_202016/dsl/ITER9_20260227_202300.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 12: extraneous input 'guest' expecting RULE_NL
-[ERROR] Line 14: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
-[ERROR] Line 16: missing EOF at 'agents:'
-[ERROR] Line 14: Resource name must be one of the names specified in the pattern.

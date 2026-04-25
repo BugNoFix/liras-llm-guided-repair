@@ -1,9 +1,0 @@
-ServiceMission
-agents: robot, human
-robot:
-	moveTo 7002
-	receiveFrom human
-	moveTo elevator
-	stop
-	moveTo 3201
-	deposit

@@ -1,6 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_06/SP4/RUN_20260227_203510/dsl/ITER3_20260227_203556.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 15: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
-[ERROR] Line 14: Target name must be one of the names specified in the pattern (Agent, Location, or Resource).
-[ERROR] Line 15: Resource name must be one of the names specified in the pattern.

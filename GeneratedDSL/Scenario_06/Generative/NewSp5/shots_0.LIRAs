@@ -1,0 +1,16 @@
+HotelButlerDelivery
+agents:
+	humans: Guest
+	robots: RobotButler
+locations: Room
+resources: Item
+RobotButler:
+	1: pick Item
+	2: moveTo Room
+	3: deliver Item
+Guest:
+	1: receiveFrom RobotButler
+success:
+	possess(Guest, Item)
+failure:
+	time(30)

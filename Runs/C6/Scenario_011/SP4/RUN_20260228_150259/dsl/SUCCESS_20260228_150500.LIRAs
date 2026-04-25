@@ -1,9 +1,0 @@
-Scenario_011
-
-agents:
-robots: Robot1
-
-locations: warehouse
-
-Robot1:
-1: moveTo warehouse

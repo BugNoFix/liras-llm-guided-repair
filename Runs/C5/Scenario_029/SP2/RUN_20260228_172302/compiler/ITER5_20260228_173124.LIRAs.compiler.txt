@@ -1,4 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Runs/C5/Scenario_029/SP2/RUN_20260228_172302/dsl/ITER5_20260228_173124.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 2: missing EOF at '{'

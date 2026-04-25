@@ -1,9 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Runs/C5/Scenario_016/SP4/RUN_20260228_165158/dsl/ITER1_20260228_165325.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 11: extraneous input 'pick' expecting RULE_NL
-[ERROR] Line 13: extraneous input 'pick' expecting RULE_NL
-[ERROR] Line 15: extraneous input 'pick' expecting RULE_NL
-[ERROR] Line 17: extraneous input 'pick' expecting RULE_NL
-[ERROR] Line 19: extraneous input 'pick' expecting RULE_NL
-[ERROR] Line 23: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?

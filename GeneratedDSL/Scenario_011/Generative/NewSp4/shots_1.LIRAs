@@ -1,0 +1,23 @@
+LabSampleTransport
+agents:
+	humans: Nurse
+	robots: Transporter, RoboticArm
+locations: PatientFloor, Laboratory, EntryModule
+resources: LabSample
+Nurse:
+	1: moveTo PatientFloor
+	2: fetch LabSample
+	3-7: stop
+Transporter:
+	1: stop
+	2: moveTo PatientFloor
+	3: receiveFrom Nurse if position(Transporter, PatientFloor) else stop
+	4: moveTo Laboratory
+	5-7: stop
+RoboticArm:
+	1-4: moveTo Laboratory
+	5: receiveFrom Transporter if position(RoboticArm, Laboratory) else stop
+	6: moveTo EntryModule
+	7: leave LabSample
+success: position(RoboticArm, EntryModule)
+failure: time(30)

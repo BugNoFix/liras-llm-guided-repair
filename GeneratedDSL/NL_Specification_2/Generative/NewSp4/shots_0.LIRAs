@@ -1,0 +1,16 @@
+BedroomScenario
+	agents:
+		humans: Human1
+		robots: Robot1
+	locations: Bedroom, Kitchen
+	resources: Apple
+
+	success: position(Robot1, Kitchen) && possess(Robot1, Apple) && position(Human1, Kitchen)
+
+	Robot1:
+		1: moveTo Bedroom
+		2: pick Apple if possess(Robot1, Apple)==false else stop
+		3: moveTo Kitchen if possess(Robot1, Apple) else stop
+
+	Human1:
+		1: moveTo Bedroom if position(Robot1, Bedroom)==false else moveTo Kitchen

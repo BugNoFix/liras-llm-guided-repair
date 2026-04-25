@@ -1,0 +1,40 @@
+Sample Transportation
+
+agents:
+	humans: Nurse
+	robots: LabRobot, SampleTransporter
+locations: PatientF, Lab
+resources: Sample
+
+PatientF:
+	robots: SampleTransporter
+	SampleTransporter: default moveTo PatientF: checkSamples
+	         1: moveTo PatientF
+	     2: flag sample1
+	     3: skip if !sample_ready(sample1)
+	        sample_transportRequest(sample1)
+
+Nurse:
+	SampleTransporter: 
+	4: moveTo Lab if sample1_valid(sample1)
+	  else: stop
+
+Lab:
+	1: default moveTo Lab
+	 LabRobot: default pickSample
+ paramIntarameter skip if !LabRobot
+	   pick sample1 if time<transportProtocols(sample1)
+	 2: loadSample(sample1)
+	 3: recordlog(sample1, pickup_location="Lab",
+                   pickup_time="time")
+	 4: skip if !addBarcodeInformation
+	        barcodeScanner
+	 5: loadInfoFromScanner(sample1)
+	 6: dataSetProcess(sample1)
+	 7: updateTransportStatistics(sample1)
+
+Model Validation:
+-Scoping: Each agent used is declared in the header.
+-SubSequence Ordering:  The line numbers start at 1 and increase in each section of the model. No gaps in numbering.
+-Recursive Action Assignment: Each robot only has one assigned sequence, none overlap.
+-Verb Semantic Mapping: The actions fetch and deliver used were identified and relating to texto are related to picked and loadSample but still semantic are the closest unused for final functionality

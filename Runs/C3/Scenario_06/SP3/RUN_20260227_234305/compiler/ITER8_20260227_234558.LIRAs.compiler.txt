@@ -1,8 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Results/Scenario_06/SP3/RUN_20260227_234305/dsl/ITER8_20260227_234558.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 14: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
-[ERROR] Line 16: missing EOF at 'agents:'
-[ERROR] Line 8: Agent name must be one of the names specified in the pattern.
-[ERROR] Line 8: Agent name must be one of the names specified in the pattern.
-[ERROR] Line 14: Resource name must be one of the names specified in the pattern.

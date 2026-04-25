@@ -1,9 +1,0 @@
-HotelButler
-agent: HotelButler
-  moveTo guestRoom
-  pick item
-  stop
-  deliver item
-  moveTo nextAction
-  moveTo hotelFloor
-  moveTo lift

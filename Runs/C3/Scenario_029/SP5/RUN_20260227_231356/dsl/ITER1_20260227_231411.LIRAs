@@ -1,4 +1,0 @@
-RobotTherapySession:
-agents:
-  robots: Robot, AutonomousCart
-  humans: Nurse

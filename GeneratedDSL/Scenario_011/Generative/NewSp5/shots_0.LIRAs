@@ -1,0 +1,25 @@
+LabSampleTransport
+agents:
+	humans: Nurse, Personnel
+	robots: Transporter, Arm
+locations: Floor, Lab
+resources: Sample, Drawer
+Nurse:
+	1: moveTo Floor
+	2: pick Sample
+	3: deliver Sample
+Transporter:
+	1: moveTo Floor
+	2: pick Drawer
+	3: receiveFrom Nurse
+	4: moveTo Lab
+	5: leave Sample
+	6: leave Drawer
+Arm:
+	1: moveTo Lab
+	2: pick Sample
+Personnel:
+	1: moveTo Lab
+	2: pick Sample
+success: possess(Arm, Sample) || possess(Personnel, Sample)
+failure: time(60)

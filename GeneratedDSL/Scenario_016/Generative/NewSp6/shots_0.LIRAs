@@ -1,0 +1,10 @@
+TransportTaskagents:
+ humans: Human1
+ robots: Robot1
+locations: room7002, elevator7thfloor, elevator3rdfloor, room3201
+resources:
+Robot1:
+	1: moveTo room7002 wait 10
+	2: moveTo elevator7thfloor wait 5	3: moveTo room3201 wait 10
+success: !busy(Robot1)
+failure: busy(Robot1)

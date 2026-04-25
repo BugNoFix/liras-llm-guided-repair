@@ -1,5 +1,0 @@
-Validating: /home/yoursenpai/polimi/sem3/fucking_SE/RP/RESEARCH_PROJECT/Results/Scenario_06/SP4/RUN_20260228_112554/dsl/ITER7_20260228_112737.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 12: Target name must be one of the names specified in the pattern (Agent, Location, or Resource).
-[ERROR] Line 14: Target name must be one of the names specified in the pattern (Agent, Location, or Resource).

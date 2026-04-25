@@ -1,7 +1,0 @@
-Validating: /Users/dimitricopley/Desktop/Challenge/RESEARCH_PROJECT/Runs/C5/Scenario_029/SP1/RUN_20260228_171143/dsl/ITER4_20260228_171515.LIRAs
-FAILURE: Validation errors found.
-
-[ERROR] Line 1: required (...)+ loop did not match anything at input 'ChemotherapyTherapy'
-[ERROR] Line 2: missing EOF at 'agents:'
-[ERROR] Line 1: Agent name must be one of the names specified in the pattern.
-[ERROR] Line 1: Agent name must be one of the names specified in the pattern.

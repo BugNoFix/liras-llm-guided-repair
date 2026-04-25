@@ -1,0 +1,29 @@
+LabSampleTransport
+  agents:
+    humans: Nurse, LabPersonnel
+    robots: TransportRobot, RoboticArm
+  locations: PatientFloor, Laboratory, AnalysisMachineEntryModule
+  resources: Sample, LockedDrawer
+
+Nurse:
+  1: deposit Sample
+
+TransportRobot:
+  1: moveTo PatientFloor until possess(Nurse, Sample)
+  2: pick LockedDrawer if position(TransportRobot, PatientFloor)
+  3: moveTo Laboratory if possess(TransportRobot, LockedDrawer)
+  4: deposit LockedDrawer if position(TransportRobot, Laboratory)
+
+RoboticArm:
+  1: fetch Sample if position(RoboticArm, Laboratory) && !busy(TransportRobot)
+  2: moveTo AnalysisMachineEntryModule if possess(RoboticArm, Sample)
+  3: deposit Sample if position(RoboticArm, AnalysisMachineEntryModule)
+
+LabPersonnel:
+  1: fetch Sample if position(LabPersonnel, Laboratory) && !busy(TransportRobot)
+  2: moveTo AnalysisMachineEntryModule if possess(LabPersonnel, Sample)
+  3: deposit Sample if position(LabPersonnel, AnalysisMachineEntryModule)
+
+conclusion:
+  success: position(Sample, AnalysisMachineEntryModule)
+  failure: position(Sample, PatientFloor)

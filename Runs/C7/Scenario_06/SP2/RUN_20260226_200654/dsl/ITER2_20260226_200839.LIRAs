@@ -1,9 +1,0 @@
-Hotel_Butler
-
-agents: robots: Robot, humans: Guest
-locations: lobby, rooms
-resources: storageBox, items
-
-Robot:
-	1: moveTo lobby
-	2: moveTo rooms
