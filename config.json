@@ -1,9 +1,9 @@
 {
-  "provider": "huggingface",
+  "provider": "gemini",
   "system_prompt": "Generative/NewSp6.txt",
-  "scenario": "NL_Specification_2.txt",
+  "scenario": "NL_Specification_3.txt",
   "compiler_jar": "liras_compiler.jar",
-  "generation_model": "openai/gpt-oss-20b:groq",
+  "generation_model": "gemini-3.1-pro-preview",
   "generation_temperature": 1.0,
   "shots": 1,
   "generation_only": false,
@@ -13,12 +13,21 @@
   "dsl_source_root": "DSL",
   
   "repair_stateless": false,
-  "repair_model": "openai/gpt-oss-20b:groq",
+  "repair_model": "gemini-3.1-pro-preview",
   "repair_temperature": 0.35,
   "repair_max_output_tokens": 2048,
   "repair_prompt": "Repair/NewSPR6.txt",
   "repair_shots": 1,
   "compiler_timeout": 60,
   "max_iterations": 11,
-  "results_dir": "Runs/provanuova"
+  "results_dir": "Runs/provanuova",
+
+  "enable_xml_export": true,
+  "lira_cli_jar": "liras-cli-1.0.0.jar",
+  "xml_output_name": "",
+  "lira_cli_timeout": 120,
+
+  "enable_uppaal": true,
+  "verifyta_bin": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta",
+  "verifyta_timeout": 120
 }

@@ -1846,6 +1846,109 @@ class DSLGenerator:
             self._cleanup_resources()
 
 
+def build_generator_from_config(config: dict) -> DSLGenerator:
+    """Create a configured DSLGenerator using auth/provider settings from config."""
+    provider = str(config.get("provider", "gemini")).strip().lower()
+    if provider not in ("gemini", "groq", "mistral", "openrouter", "huggingface"):
+        raise ValueError("'provider' must be 'gemini', 'groq', 'mistral', 'openrouter' or 'huggingface'")
+
+    generation_temperature = float(config.get("generation_temperature", 1.0))
+    repair_temperature = float(config.get("repair_temperature", 0.2))
+    location = str(config.get("location", "global")).strip()
+
+    service_account_key = None
+    project_id = None
+    provider_api_key = None
+
+    if provider == "gemini":
+        cfg_project_id = config.get("project_id")
+        if isinstance(cfg_project_id, str) and cfg_project_id.strip():
+            project_id = cfg_project_id.strip()
+
+        cfg_key_path = (
+            config.get("service_account_key_path")
+            or config.get("service_account_key")
+            or config.get("credentials_path")
+        )
+        if isinstance(cfg_key_path, str) and cfg_key_path.strip():
+            candidate = Path(cfg_key_path).expanduser()
+            if not candidate.is_absolute():
+                candidate = (Path(__file__).parent / candidate)
+            if not candidate.exists():
+                raise FileNotFoundError(f"Service account key file not found: {candidate}")
+            service_account_key = str(candidate)
+
+        if service_account_key is None and KEY_PATH.exists():
+            service_account_key = str(KEY_PATH)
+
+        if service_account_key is not None:
+            try:
+                with open(service_account_key, "r") as f:
+                    key_data = json.load(f)
+                if not project_id:
+                    project_id = key_data.get("project_id")
+            except Exception:
+                pass
+
+        if not project_id:
+            for env_key in ("GOOGLE_CLOUD_PROJECT", "GCLOUD_PROJECT", "GOOGLE_PROJECT_ID"):
+                env_val = os.environ.get(env_key)
+                if env_val and env_val.strip():
+                    project_id = env_val.strip()
+                    break
+
+        if not project_id:
+            raise RuntimeError(
+                "Google Cloud Project ID not found. "
+                "Set 'project_id' in config.json or export GOOGLE_CLOUD_PROJECT."
+            )
+    elif provider == "groq":
+        cfg_key = config.get("groq_api_key")
+        if isinstance(cfg_key, str) and cfg_key.strip():
+            provider_api_key = cfg_key.strip()
+        if not provider_api_key:
+            provider_api_key = os.environ.get("GROQ_API_KEY")
+        if not provider_api_key:
+            raise RuntimeError("Groq API key missing. Set 'groq_api_key' or GROQ_API_KEY.")
+    elif provider == "mistral":
+        cfg_key = config.get("mistral_api_key")
+        if isinstance(cfg_key, str) and cfg_key.strip():
+            provider_api_key = cfg_key.strip()
+        if not provider_api_key:
+            provider_api_key = os.environ.get("MISTRAL_API_KEY")
+        if not provider_api_key:
+            raise RuntimeError("Mistral API key missing. Set 'mistral_api_key' or MISTRAL_API_KEY.")
+    elif provider == "openrouter":
+        cfg_key = config.get("openrouter_api_key")
+        if isinstance(cfg_key, str) and cfg_key.strip():
+            provider_api_key = cfg_key.strip()
+        if not provider_api_key:
+            provider_api_key = os.environ.get("OPENROUTER_API_KEY")
+        if not provider_api_key:
+            raise RuntimeError("OpenRouter API key missing. Set 'openrouter_api_key' or OPENROUTER_API_KEY.")
+    else:
+        cfg_key = config.get("huggingface_api_key")
+        if isinstance(cfg_key, str) and cfg_key.strip():
+            provider_api_key = cfg_key.strip()
+        if not provider_api_key:
+            provider_api_key = os.environ.get("HUGGINGFACE_API_KEY")
+        if not provider_api_key:
+            provider_api_key = os.environ.get("HF_TOKEN")
+        if not provider_api_key:
+            raise RuntimeError("Hugging Face API key missing. Set 'huggingface_api_key' or HUGGINGFACE_API_KEY/HF_TOKEN.")
+
+    return DSLGenerator(
+        project_id,
+        location=location,
+        service_account_key=service_account_key,
+        generation_temperature=generation_temperature,
+        repair_temperature=repair_temperature,
+        repair_max_output_tokens=int(config.get("repair_max_output_tokens", 16384)),
+        provider=provider,
+        api_key=provider_api_key,
+    )
+
+
 def main():
     """Main entry point"""
     # Load configuration from config.json
@@ -1934,128 +2037,11 @@ def main():
                 print(f"\n[ERROR] 'repair_shots' must be an integer or a list in config.json")
                 return
     
-    service_account_key = None
-    project_id = None
-    provider_api_key = None
-
-    if provider == "gemini":
-        # Non-interactive authentication + project resolution.
-        # Priority order:
-        # - project_id: config.json -> key.json -> env
-        # - credentials: config.json -> key.json -> ADC
-        cfg_project_id = config.get("project_id")
-        if isinstance(cfg_project_id, str) and cfg_project_id.strip():
-            project_id = cfg_project_id.strip()
-
-        cfg_key_path = (
-            config.get("service_account_key_path")
-            or config.get("service_account_key")
-            or config.get("credentials_path")
-        )
-        if isinstance(cfg_key_path, str) and cfg_key_path.strip():
-            candidate = Path(cfg_key_path).expanduser()
-            if not candidate.is_absolute():
-                candidate = (Path(__file__).parent / candidate)
-            if not candidate.exists():
-                print(f"\n[ERROR] Service account key file not found: {candidate}")
-                return
-            service_account_key = str(candidate)
-
-        # If no explicit key path provided, use detected key.json if present
-        if service_account_key is None and KEY_PATH.exists():
-            service_account_key = str(KEY_PATH)
-
-        # If we have a key file, attempt to pull project_id from it (unless already set)
-        if service_account_key is not None:
-            try:
-                with open(service_account_key, "r") as f:
-                    key_data = json.load(f)
-                if not project_id:
-                    project_id = key_data.get("project_id")
-            except Exception:
-                # Keep going; project_id might be provided via config/env, and ADC may still work.
-                pass
-
-        # If still no project_id, fall back to environment variables
-        if not project_id:
-            for env_key in ("GOOGLE_CLOUD_PROJECT", "GCLOUD_PROJECT", "GOOGLE_PROJECT_ID"):
-                env_val = os.environ.get(env_key)
-                if env_val and env_val.strip():
-                    project_id = env_val.strip()
-                    break
-
-        if not project_id:
-            print(
-                "\n[ERROR] Google Cloud Project ID not found. "
-                "Set 'project_id' in config.json or export GOOGLE_CLOUD_PROJECT (or include project_id in key.json)."
-            )
-            return
-    elif provider == "groq":
-        cfg_key = config.get("groq_api_key")
-        if isinstance(cfg_key, str) and cfg_key.strip():
-            provider_api_key = cfg_key.strip()
-        if not provider_api_key:
-            provider_api_key = os.environ.get("GROQ_API_KEY")
-
-        if not provider_api_key:
-            print(
-                "\n[ERROR] Groq API key missing. "
-                "Set 'groq_api_key' in config.json, or export GROQ_API_KEY."
-            )
-            return
-    elif provider == "mistral":
-        cfg_key = config.get("mistral_api_key")
-        if isinstance(cfg_key, str) and cfg_key.strip():
-            provider_api_key = cfg_key.strip()
-        if not provider_api_key:
-            provider_api_key = os.environ.get("MISTRAL_API_KEY")
-
-        if not provider_api_key:
-            print(
-                "\n[ERROR] Mistral API key missing. "
-                "Set 'mistral_api_key' in config.json, or export MISTRAL_API_KEY."
-            )
-            return
-    elif provider == "openrouter":
-        cfg_key = config.get("openrouter_api_key")
-        if isinstance(cfg_key, str) and cfg_key.strip():
-            provider_api_key = cfg_key.strip()
-        if not provider_api_key:
-            provider_api_key = os.environ.get("OPENROUTER_API_KEY")
-
-        if not provider_api_key:
-            print(
-                "\n[ERROR] OpenRouter API key missing. "
-                "Set 'openrouter_api_key' in config.json, or export OPENROUTER_API_KEY."
-            )
-            return
-    else:
-        cfg_key = config.get("huggingface_api_key")
-        if isinstance(cfg_key, str) and cfg_key.strip():
-            provider_api_key = cfg_key.strip()
-        if not provider_api_key:
-            provider_api_key = os.environ.get("HUGGINGFACE_API_KEY")
-        if not provider_api_key:
-            provider_api_key = os.environ.get("HF_TOKEN")
-
-        if not provider_api_key:
-            print(
-                "\n[ERROR] Hugging Face API key missing. "
-                "Set 'huggingface_api_key' in config.json, or export HUGGINGFACE_API_KEY / HF_TOKEN."
-            )
-            return
-    
-    # Initialize generator
-    generator = DSLGenerator(
-        project_id,
-        location=location,
-        service_account_key=service_account_key,
-        generation_temperature=float(generation_temperature),
-        repair_temperature=float(repair_temperature),
-        repair_max_output_tokens=int(config.get("repair_max_output_tokens", 16384)),
-        provider=provider,
-        api_key=provider_api_key,
-    )
+    try:
+        generator = build_generator_from_config(config)
+    except Exception as e:
+        print(f"\n[ERROR] {e}")
+        return
     
     # Run automated session with configuration from config.json
     generator.run_automated_session(config)
