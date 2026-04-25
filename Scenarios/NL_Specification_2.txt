@@ -1,0 +1,2 @@
+One human and one robot operate in a house with two locations (bedroom, kitchen) and one object initially in the bedroom.
+The task is strictly sequential: both agents must first reach the bedroom. Once co-located there, the robot picks up the object. Only after the pick-up is completed does the human move to the kitchen, and the robot follows while carrying the object. The goal state is reached when both agents are in the kitchen, and the robot still holds the object.

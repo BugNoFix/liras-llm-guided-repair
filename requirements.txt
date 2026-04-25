@@ -1,6 +1,8 @@
 # Python deps
 google-cloud-aiplatform>=1.38.0
 google-genai>=1.47.0
+groq>=0.18.0
+openai>=1.52.0
 pandas>=2.0.0
 matplotlib>=3.7.0
 seaborn>=0.12.0

@@ -1,0 +1,5 @@
+The company needs to use two robots to achieve fully automated transportation of raw materials from the warehouse throughout the factory.
+
+The process includes the following sequential steps: raw material from the warehouse to surface texturization, surface texturization to lasers, and lasers to the loading area.
+
+Each station (surface texturization and laser) has a loading location (start) and an unloading location (end), and the raw materials are initially stored in a warehouse. The two robots must transport each piece to every station in the specified order, collect the processed piece after each operation, deliver it to the next station, and finally deposit it in the loading area.

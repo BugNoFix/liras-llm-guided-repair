@@ -71,6 +71,23 @@ def _resolve_project_id(config: dict, service_account_key: Optional[str]) -> Opt
     return None
 
 
+def _resolve_api_key(config: dict) -> Optional[str]:
+    cfg_key = (
+        config.get("api_key")
+        or config.get("google_api_key")
+        or config.get("gemini_api_key")
+    )
+    if isinstance(cfg_key, str) and cfg_key.strip():
+        return cfg_key.strip()
+
+    for env_key in ("GEMINI_API_KEY", "GOOGLE_API_KEY", "AI_STUDIO_API_KEY"):
+        env_val = os.environ.get(env_key)
+        if env_val and env_val.strip():
+            return env_val.strip()
+
+    return None
+
+
 def _default_system_prompts(sp_dir: Path) -> list[str]:
     # Only the generation-stage system prompts (exclude repair prompts).
     prompts = []
@@ -291,13 +308,18 @@ def main() -> int:
             )
         return 0
 
-    service_account_key = _resolve_service_account_key(template)
-    project_id = _resolve_project_id(template, service_account_key)
-    if not project_id:
-        raise RuntimeError(
-            "Google Cloud Project ID not found. Set 'project_id' in config.json, "
-            "export GOOGLE_CLOUD_PROJECT, or include project_id in key.json."
-        )
+    api_key = _resolve_api_key(template)
+    service_account_key = None
+    project_id = None
+    if not api_key:
+        service_account_key = _resolve_service_account_key(template)
+        project_id = _resolve_project_id(template, service_account_key)
+        if not project_id:
+            raise RuntimeError(
+                "Missing authentication. Provide either AI Studio API key "
+                "(api_key in config.json or GEMINI_API_KEY/GOOGLE_API_KEY env) "
+                "or Vertex project_id credentials."
+            )
 
     location = template.get("location", "global")
     generation_temperature = float(template.get("generation_temperature", 1.0))
@@ -310,6 +332,7 @@ def main() -> int:
     print(f"\n{'='*70}")
     print(f"[BATCH] Starting {total} run(s)")
     print(f"  Batch ID:        {batch_id}")
+    print(f"  Auth mode:       {'AI Studio (API key)' if api_key else 'Vertex AI'}")
     print(f"  Generation:      {'disabled (loading from cache)' if args.disable_generation else 'enabled'}")
     print(f"  Compiler timeout: {args.compiler_timeout if args.compiler_timeout > 0 else 'default (60s)'}")
     print(f"  Inter-run delay: {args.inter_run_delay}s")
@@ -330,9 +353,10 @@ def main() -> int:
 
         # Fresh generator per run to avoid any cross-run chat/history leakage.
         generator = DSLGenerator(
-            project_id,
+            project_id=project_id,
             location=location,
             service_account_key=service_account_key,
+            api_key=api_key,
             generation_temperature=generation_temperature,
             repair_temperature=repair_temperature,
         )

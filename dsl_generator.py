@@ -15,6 +15,8 @@ from datetime import datetime
 import json
 from typing import Optional, Any
 from groq import Groq
+from mistralai.client import Mistral
+from openai import OpenAI
 
 # 🔴 KEY PATH CONFIGURATION
 # For shared projects: place your personal key in keys/key.json
@@ -65,8 +67,14 @@ class DSLGenerator:
             self.client = genai.Client(vertexai=True, project=project_id, location=location)
         elif self.provider == "groq":
             self.client = Groq(api_key=api_key)
+        elif self.provider == "mistral":
+            self.client = Mistral(api_key=api_key)
+        elif self.provider == "openrouter":
+            self.client = OpenAI(api_key=api_key, base_url="https://openrouter.ai/api/v1")
+        elif self.provider == "huggingface":
+            self.client = OpenAI(api_key=api_key, base_url="https://router.huggingface.co/v1")
         else:
-            raise ValueError("Unsupported provider. Use 'gemini' or 'groq'")
+            raise ValueError("Unsupported provider. Use 'gemini', 'groq', 'mistral', 'openrouter' or 'huggingface'")
 
         self.project_id = project_id
         self.location = location
@@ -140,6 +148,7 @@ class DSLGenerator:
         self.run_metadata_path: Optional[Path] = None
         self.run_metadata: Optional[dict] = None
         self.prompt_log_path: Optional[Path] = None
+        self.response_log_path: Optional[Path] = None
 
         # Last validation details (populated by validate_code)
         self.last_validation = {
@@ -162,7 +171,7 @@ class DSLGenerator:
         }
 
     def _extract_response_text(self, response_obj) -> str:
-        """Normalize text extraction across Gemini and Groq responses."""
+        """Normalize text extraction across Gemini and chat-completions responses."""
         if self.provider == "gemini":
             return response_obj.text or ""
 
@@ -193,6 +202,79 @@ class DSLGenerator:
 
         return self.client.chat.completions.create(**params)
 
+    def _call_mistral_chat(
+        self,
+        *,
+        model_name: str,
+        system_instruction: str,
+        history: list[dict],
+        user_message: str,
+        temperature: float,
+        max_output_tokens: Optional[int] = None,
+    ):
+        """Call Mistral chat completion API using messages format."""
+        messages = [{"role": "system", "content": system_instruction}]
+        messages.extend(history or [])
+        messages.append({"role": "user", "content": user_message})
+
+        params = {
+            "model": model_name,
+            "messages": messages,
+            "temperature": float(temperature),
+        }
+        if max_output_tokens is not None:
+            params["max_tokens"] = int(max_output_tokens)
+
+        return self.client.chat.complete(**params)
+
+    def _call_non_gemini_chat(
+        self,
+        *,
+        model_name: str,
+        system_instruction: str,
+        history: list[dict],
+        user_message: str,
+        temperature: float,
+        max_output_tokens: Optional[int] = None,
+    ):
+        if self.provider == "groq":
+            return self._call_groq_chat(
+                model_name=model_name,
+                system_instruction=system_instruction,
+                history=history,
+                user_message=user_message,
+                temperature=temperature,
+                max_output_tokens=max_output_tokens,
+            )
+        if self.provider == "mistral":
+            return self._call_mistral_chat(
+                model_name=model_name,
+                system_instruction=system_instruction,
+                history=history,
+                user_message=user_message,
+                temperature=temperature,
+                max_output_tokens=max_output_tokens,
+            )
+        if self.provider == "openrouter":
+            return self._call_groq_chat(
+                model_name=model_name,
+                system_instruction=system_instruction,
+                history=history,
+                user_message=user_message,
+                temperature=temperature,
+                max_output_tokens=max_output_tokens,
+            )
+        if self.provider == "huggingface":
+            return self._call_groq_chat(
+                model_name=model_name,
+                system_instruction=system_instruction,
+                history=history,
+                user_message=user_message,
+                temperature=temperature,
+                max_output_tokens=max_output_tokens,
+            )
+        raise ValueError(f"Unsupported non-gemini provider: {self.provider}")
+
     def _maybe_create_server_chat(self, *, model_name: str, system_instruction: str, history: list[types.Content]):
         """Best-effort create a server-side chat session.
 
@@ -220,7 +302,7 @@ class DSLGenerator:
         """Run a callable with exponential backoff on resource exhaustion (429)."""
         import random
 
-        if self.provider == "groq":
+        if self.provider in ("groq", "mistral", "openrouter", "huggingface"):
             return func()
 
         # Build a tuple of exception types to catch.
@@ -494,6 +576,7 @@ class DSLGenerator:
         self.run_dsl_dir.mkdir(parents=True, exist_ok=True)
         self.run_compiler_dir.mkdir(parents=True, exist_ok=True)
         self.prompt_log_path = self.run_dir / "llm_prompts.jsonl"
+        self.response_log_path = self.run_dir / "llm_responses.jsonl"
 
         self.run_metadata_path = self.run_dir / "run_metadata.json"
         use_cached_generation = bool(config.get("use_generated_dsl_cache"))
@@ -531,6 +614,7 @@ class DSLGenerator:
             "dsl_dir": str(self.run_dsl_dir),
             "compiler_dir": str(self.run_compiler_dir),
             "prompt_log": str(self.prompt_log_path),
+            "response_log": str(self.response_log_path),
             "iterations": [],
             "telemetry": self.telemetry,
             "llm_call_history": [],
@@ -612,6 +696,44 @@ class DSLGenerator:
         }
 
         with open(self.prompt_log_path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+
+    def _log_incoming_response(
+        self,
+        *,
+        kind: str,
+        model_name: str,
+        response_text_raw: str,
+        response_text_clean: Optional[str] = None,
+        attempt: Optional[int] = None,
+        finish_reason: Optional[str] = None,
+    ) -> None:
+        """Append one inbound LLM response entry before any DSL cleanup/trimming."""
+        if self.response_log_path is None:
+            fallback_dir = self.base_path / "Results" / "response_logs"
+            fallback_dir.mkdir(parents=True, exist_ok=True)
+            fallback_name = datetime.now().strftime("responses_%Y%m%d_%H%M%S.jsonl")
+            self.response_log_path = fallback_dir / fallback_name
+
+        raw_text = response_text_raw if isinstance(response_text_raw, str) else str(response_text_raw)
+        clean_text = response_text_clean
+        if clean_text is not None and not isinstance(clean_text, str):
+            clean_text = str(clean_text)
+
+        entry = {
+            "timestamp": datetime.now().isoformat(),
+            "provider": self.provider,
+            "kind": kind,
+            "model": model_name,
+            "attempt": attempt,
+            "finish_reason": finish_reason,
+            "response_raw_chars": len(raw_text),
+            "response_clean_chars": len(clean_text or "") if clean_text is not None else None,
+            "response_raw": raw_text,
+            "response_clean": clean_text,
+        }
+
+        with open(self.response_log_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
         
     def load_file(self, filepath: Path) -> str:
@@ -779,17 +901,35 @@ class DSLGenerator:
                 temperature=self.generation_temperature,
             )
             response = self._call_with_backoff(
-                lambda: self._call_groq_chat(
+                lambda: self._call_non_gemini_chat(
                     model_name=model_name,
                     system_instruction=system_prompt,
                     history=self.chat_history,
                     user_message=scenario_content,
                     temperature=self.generation_temperature,
                 ),
-                label="generation.groq.chat.completions",
+                label=f"generation.{self.provider}.chat.completions",
             )
         
         response_text = self._extract_response_text(response)
+        finish_reason = "UNKNOWN"
+        if self.provider == "gemini":
+            candidate = response.candidates[0] if response.candidates else None
+            if candidate is not None:
+                finish_reason = str(candidate.finish_reason)
+        else:
+            choices = getattr(response, "choices", None) or []
+            if choices:
+                finish_reason = str(getattr(choices[0], "finish_reason", "UNKNOWN"))
+
+        # Persist full provider output before any DSL cleanup.
+        self._log_incoming_response(
+            kind="generate",
+            model_name=model_name,
+            response_text_raw=response_text,
+            finish_reason=finish_reason,
+        )
+
         print(f"[GENERATE] Response received ({len(response_text)} chars)")
         if not response_text.strip():
             print("[WARNING] Generation model returned an empty response")
@@ -1007,7 +1147,7 @@ class DSLGenerator:
 
             if self.provider != "gemini":
                 response = self._call_with_backoff(
-                    lambda: self._call_groq_chat(
+                    lambda: self._call_non_gemini_chat(
                         model_name=self.repair_model_name,
                         system_instruction=self.repair_system_prompt,
                         history=(self.repair_chat_history or []),
@@ -1015,7 +1155,7 @@ class DSLGenerator:
                         temperature=current_temp,
                         max_output_tokens=self.repair_max_output_tokens,
                     ),
-                    label="repair.groq.chat.completions",
+                    label=f"repair.{self.provider}.chat.completions",
                 )
             elif self.repair_stateless:
                 current_contents = (self.repair_chat_history or []) + [
@@ -1068,7 +1208,28 @@ class DSLGenerator:
                         label="repair.generate_content_stateful",
                     )
 
-            repair_text = self._extract_response_text(response).strip()
+            repair_text_raw = self._extract_response_text(response)
+
+            finish_reason = "UNKNOWN"
+            if self.provider == "gemini":
+                candidate = response.candidates[0] if response.candidates else None
+                if candidate is not None:
+                    finish_reason = str(candidate.finish_reason)
+            else:
+                choices = getattr(response, "choices", None) or []
+                if choices:
+                    finish_reason = str(getattr(choices[0], "finish_reason", "UNKNOWN"))
+
+            # Persist full provider output before any downstream DSL extraction.
+            self._log_incoming_response(
+                kind="repair",
+                model_name=self.repair_model_name,
+                response_text_raw=repair_text_raw,
+                attempt=attempt,
+                finish_reason=finish_reason,
+            )
+
+            repair_text = repair_text_raw.strip()
 
             # Stagnation detection: if the output is identical to the input DSL,
             # jump to a high temperature to break the deterministic loop.
@@ -1702,8 +1863,8 @@ def main():
     
     # Validate configuration
     provider = str(config.get("provider", "gemini")).strip().lower()
-    if provider not in ("gemini", "groq"):
-        print("\n[ERROR] 'provider' must be 'gemini' or 'groq' in config.json")
+    if provider not in ("gemini", "groq", "mistral", "openrouter", "huggingface"):
+        print("\n[ERROR] 'provider' must be 'gemini', 'groq', 'mistral', 'openrouter' or 'huggingface' in config.json")
         return
 
     generation_only = bool(config.get("generation_only"))
@@ -1775,7 +1936,7 @@ def main():
     
     service_account_key = None
     project_id = None
-    groq_api_key = None
+    provider_api_key = None
 
     if provider == "gemini":
         # Non-interactive authentication + project resolution.
@@ -1829,17 +1990,58 @@ def main():
                 "Set 'project_id' in config.json or export GOOGLE_CLOUD_PROJECT (or include project_id in key.json)."
             )
             return
-    else:
+    elif provider == "groq":
         cfg_key = config.get("groq_api_key")
         if isinstance(cfg_key, str) and cfg_key.strip():
-            groq_api_key = cfg_key.strip()
-        if not groq_api_key:
-            groq_api_key = os.environ.get("GROQ_API_KEY")
+            provider_api_key = cfg_key.strip()
+        if not provider_api_key:
+            provider_api_key = os.environ.get("GROQ_API_KEY")
 
-        if not groq_api_key:
+        if not provider_api_key:
             print(
                 "\n[ERROR] Groq API key missing. "
                 "Set 'groq_api_key' in config.json, or export GROQ_API_KEY."
+            )
+            return
+    elif provider == "mistral":
+        cfg_key = config.get("mistral_api_key")
+        if isinstance(cfg_key, str) and cfg_key.strip():
+            provider_api_key = cfg_key.strip()
+        if not provider_api_key:
+            provider_api_key = os.environ.get("MISTRAL_API_KEY")
+
+        if not provider_api_key:
+            print(
+                "\n[ERROR] Mistral API key missing. "
+                "Set 'mistral_api_key' in config.json, or export MISTRAL_API_KEY."
+            )
+            return
+    elif provider == "openrouter":
+        cfg_key = config.get("openrouter_api_key")
+        if isinstance(cfg_key, str) and cfg_key.strip():
+            provider_api_key = cfg_key.strip()
+        if not provider_api_key:
+            provider_api_key = os.environ.get("OPENROUTER_API_KEY")
+
+        if not provider_api_key:
+            print(
+                "\n[ERROR] OpenRouter API key missing. "
+                "Set 'openrouter_api_key' in config.json, or export OPENROUTER_API_KEY."
+            )
+            return
+    else:
+        cfg_key = config.get("huggingface_api_key")
+        if isinstance(cfg_key, str) and cfg_key.strip():
+            provider_api_key = cfg_key.strip()
+        if not provider_api_key:
+            provider_api_key = os.environ.get("HUGGINGFACE_API_KEY")
+        if not provider_api_key:
+            provider_api_key = os.environ.get("HF_TOKEN")
+
+        if not provider_api_key:
+            print(
+                "\n[ERROR] Hugging Face API key missing. "
+                "Set 'huggingface_api_key' in config.json, or export HUGGINGFACE_API_KEY / HF_TOKEN."
             )
             return
     
@@ -1852,7 +2054,7 @@ def main():
         repair_temperature=float(repair_temperature),
         repair_max_output_tokens=int(config.get("repair_max_output_tokens", 16384)),
         provider=provider,
-        api_key=groq_api_key,
+        api_key=provider_api_key,
     )
     
     # Run automated session with configuration from config.json

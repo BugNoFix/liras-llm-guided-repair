@@ -1,0 +1,1 @@
+A robot is developed within a university building to deliver coffee to employees. The robot reaches the coffee machine, uses the coffee machine to prepare the coffee, and delivers it to the employees.

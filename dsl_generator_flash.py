@@ -434,6 +434,16 @@ class DSLGenerator:
         self.run_compiler_dir.mkdir(parents=True, exist_ok=True)
 
         self.run_metadata_path = self.run_dir / "run_metadata.json"
+        use_cached_generation = bool(config.get("use_generated_dsl_cache"))
+        generated_dsl_source = config.get("generated_dsl_source") or "generated_cache"
+        if use_cached_generation:
+            try:
+                generated_dsl_cache_path = str(self._resolve_cached_dsl_path(config))
+            except Exception as e:
+                generated_dsl_cache_path = f"<unresolved: {type(e).__name__}>"
+        else:
+            generated_dsl_cache_path = str(self._resolve_generated_dsl_path(config))
+
         self.run_metadata = {
             "run_id": self.run_id,
             "run_started_at": datetime.now().isoformat(),
@@ -449,9 +459,9 @@ class DSLGenerator:
             "repair_temperature": float(getattr(self, "repair_temperature", 0.2)),
             "repair_max_output_tokens": int(getattr(self, "repair_max_output_tokens", 16384)),
             "repair_shots": config.get("repair_shots"),
-            "use_generated_dsl_cache": bool(config.get("use_generated_dsl_cache")),
-            "generated_dsl_source": config.get("generated_dsl_source") or "generated_cache",
-            "generated_dsl_cache_path": str(self._resolve_cached_dsl_path(config)),
+            "use_generated_dsl_cache": use_cached_generation,
+            "generated_dsl_source": generated_dsl_source,
+            "generated_dsl_cache_path": generated_dsl_cache_path,
             "compiler_jar": str(compiler_jar_path),
             "max_iterations": max_iterations,
             "run_dir": str(self.run_dir),

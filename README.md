@@ -1,6 +1,6 @@
 # LLM-Guided DSL Generation and Repair
 
-A comparative study of LLM-guided code generation and iterative compiler-feedback repair for a domain-specific language (LIRAs DSL), with support for Google Gemini (Vertex AI) and Groq models.
+A comparative study of LLM-guided code generation and iterative compiler-feedback repair for a domain-specific language (LIRAs DSL), with support for Google Gemini (Vertex AI), Groq, Mistral, OpenRouter, and Hugging Face models.
 
 ## Overview
 
@@ -79,6 +79,9 @@ Each configuration is run against 4 scenarios × 5 generation prompts × 3 shot 
 - **Java runtime** on `PATH` (required to run the LIRAs compiler JAR)
 - **Google Cloud** project with Vertex AI API enabled (if using `provider: "gemini"`)
 - **Groq API key** (if using `provider: "groq"`)
+- **Mistral API key** (if using `provider: "mistral"`)
+- **OpenRouter API key** (if using `provider: "openrouter"`)
+- **Hugging Face API key/token** (if using `provider: "huggingface"`)
 
 ## Setup
 
@@ -95,6 +98,9 @@ Each configuration is run against 4 scenarios × 5 generation prompts × 3 shot 
 
    - Gemini: place a Vertex AI service account JSON key at `keys/key.json` (gitignored), or use ADC with `gcloud auth application-default login`.
    - Groq: export `GROQ_API_KEY` (or set `groq_api_key` in `config.json`).
+   - Mistral: export `MISTRAL_API_KEY` (or set `mistral_api_key` in `config.json`).
+   - OpenRouter: export `OPENROUTER_API_KEY` (or set `openrouter_api_key` in `config.json`).
+   - Hugging Face: export `HUGGINGFACE_API_KEY` or `HF_TOKEN` (or set `huggingface_api_key` in `config.json`).
 
 3. **Verify Java is available:**
 
@@ -117,8 +123,11 @@ python dsl_generator.py
 | Key                       | Type        | Description                                                              |
 | ------------------------- | ----------- | ------------------------------------------------------------------------ |
 | `system_prompt`           | string      | Generation prompt from `SPs/Generative/` (e.g., `"Generative/SP3.txt"`)  |
-| `provider`                | string      | Model backend: `"gemini"` or `"groq"`                                   |
+| `provider`                | string      | Model backend: `"gemini"`, `"groq"`, `"mistral"`, `"openrouter"`, or `"huggingface"` |
 | `groq_api_key`            | string      | Optional Groq key in config (recommended: env var instead)                |
+| `mistral_api_key`         | string      | Optional Mistral key in config (recommended: env var instead)             |
+| `openrouter_api_key`      | string      | Optional OpenRouter key in config (recommended: env var instead)          |
+| `huggingface_api_key`     | string      | Optional Hugging Face key/token in config (recommended: env var instead)  |
 | `generation_model`        | string      | Vertex AI model for generation (e.g., `"gemini-3-pro-preview"`)          |
 | `repair_model`            | string      | Vertex AI model for repair iterations                                    |
 | `shots`                   | int \| list | Few-shot example count (0, 1, 2) or explicit `[{user, assistant}]` pairs |
