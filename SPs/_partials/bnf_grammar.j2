@@ -1,0 +1,58 @@
+## LIRAs BNF Grammar:
+<Model> ::= <Pattern> <Sequence>* <Conclusion>?
+
+<Pattern> ::= <ID> <NL>
+              ( 'agents:' <NL>
+                ( <TAB> 'humans:' <Human> (',' <Human>)* <NL> )? 
+                ( <TAB> 'robots:' <Robot> (',' <Robot>)* <NL> )? 
+              )?
+              ( 'locations:' <Location> (',' <Location>)* <NL> )?
+              ( 'resources:' <Resource> (',' <Resource>)* <NL> )*
+
+<Sequence> ::= <Agent> ('default' <Action>)? ':' <NL> 
+               <SubSequence>*
+
+<SubSequence> ::= <TAB> <INT> ('-' <INT>)? ':' ( <Loop> | <ActionC> )? <NL>
+
+<Conclusion> ::= 'success:' <Condition> <NL>
+                 'failure:' <Condition> <NL>
+
+<Loop> ::= ('skip' | 'restart') ('all')? 'if' <Condition>
+
+<ConditionalStatement> ::= 'until' <Condition>
+                         | 'if' <Condition> 'else' <Action>
+                         | 'if' <Condition> 'else' <Action> 'until' <Condition>
+                         | 'wait' <INT>
+
+<Action> ::= 'stop' 
+           | 'moveTo' <Target> 
+           | ('fetch' | 'pick' | 'deliver' | 'leave') <Resource> 
+           | 'follow' <Agent> ('(' <Target> ')')? 
+           | 'receiveFrom' <Agent>
+
+<ActionC> ::= ( 'stop' 
+              | 'moveTo' <Target> 
+              | ('fetch' | 'pick' | 'deposit' | 'deliver' | 'leave') <Resource> 
+              | 'follow' <Agent> ('(' <Target> ')')? 
+              | 'receiveFrom' <Agent> 
+              ) <ConditionalStatement>?
+
+<Condition> ::= <AtomicPredicate> ( ('&&' | '||') <AtomicPredicate> )*
+
+<AtomicPredicate> ::= ('!')? ( 'tired' 
+                             | 'time' '(' <INT> ')' 
+                             | 'position' '(' <Agent> ',' <Location> ')'
+                             | 'possess' '(' <Agent> ',' <Resource> ')'
+                             | 'busy' '(' <Agent> ')'
+                             | 'still' '(' <Agent> ')'
+                             | <Relation> 
+                             )
+
+<Relation> ::= 'dist' '(' <Agent> ',' <Agent> ')' <Operator> <INT>
+             | 'soc' '(' <Agent> ')' <Operator> <INT>
+
+<Operator> ::= '>' | '<' | '>=' | '<=' | '==' | '!='
+
+<Agent>, <Human>, <Robot>, <Target>, <Location>, <Resource> ::= <ID>
+<NL> ::= (Carriage Return and/or Line Feed character)
+<TAB> ::= (Strictly one ASCII Tab character '\t')

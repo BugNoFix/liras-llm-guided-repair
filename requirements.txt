@@ -1,4 +1,5 @@
 # Python deps
+Jinja2>=3.1.0
 google-cloud-aiplatform>=1.38.0
 google-genai>=1.47.0
 groq>=0.18.0

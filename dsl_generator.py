@@ -14,6 +14,7 @@ from pathlib import Path
 from datetime import datetime
 import json
 from typing import Optional, Any
+import jinja2
 from groq import Groq
 from mistralai.client import Mistral
 from openai import OpenAI
@@ -100,6 +101,15 @@ class DSLGenerator:
         if not self.repair_prompt_template_path.exists():
             self.repair_prompt_template_path = self.sp_path / "RepairPrompt.txt"
         self.generated_dsl_root = self.base_path / "GeneratedDSL"
+
+        # Jinja2 environment: templates are resolved relative to SPs/.
+        # {% include "_partials/foo.j2" %} works from any sub-directory.
+        self.jinja_env = jinja2.Environment(
+            loader=jinja2.FileSystemLoader(str(self.sp_path)),
+            keep_trailing_newline=True,
+            trim_blocks=True,
+            lstrip_blocks=False,
+        )
         
         self.model = None
         # Backward-compat alias: when server-side chat is enabled, we set self.chat to the
@@ -740,7 +750,32 @@ class DSLGenerator:
         """Load and return content from a text file"""
         with open(filepath, 'r', encoding='utf-8') as f:
             return f.read()
-    
+
+    def _render_jinja(self, path: Path, context: Optional[dict] = None) -> str:
+        """Render a Jinja2 template file with the given context variables.
+
+        If the path is inside ``SPs/``, the FileSystemLoader is used so that
+        ``{% include "_partials/foo.j2" %}`` works correctly.  For paths outside
+        the loader root the source is read directly and rendered as a string
+        template (no includes from relative paths in that case).
+        """
+        ctx = context or {}
+        try:
+            rel = path.relative_to(self.sp_path)
+            template = self.jinja_env.get_template(str(rel).replace("\\", "/"))
+        except ValueError:
+            source = path.read_text(encoding="utf-8")
+            template = self.jinja_env.from_string(source)
+        return template.render(**ctx)
+
+    def _load_prompt(self, path: Path, context: Optional[dict] = None) -> str:
+        """Load a prompt file, rendering it as a Jinja2 template when the
+        extension is ``.j2``; otherwise return the raw content.
+        """
+        if path.suffix == ".j2":
+            return self._render_jinja(path, context)
+        return self.load_file(path)
+
     def list_available_files(self) -> dict:
         """Return available system prompts, shots, and scenarios (no printing)."""
         sp_files = [p.name for p in sorted(self.sp_path.glob("*.txt"))]
@@ -757,14 +792,19 @@ class DSLGenerator:
         }
 
     def _resolve_system_prompt_path(self, system_prompt_file: str) -> Path:
-        """Resolve generation system prompt path across legacy and nested SP layouts."""
+        """Resolve generation system prompt path across legacy and nested SP layouts.
+
+        For every candidate ``.txt`` path, also checks a same-name ``.j2`` sibling
+        so that Jinja templates are discovered automatically when a ``.txt`` name is
+        given in the config.  The ``.j2`` variant is preferred when both exist.
+        """
         candidate = Path(system_prompt_file).expanduser()
-        candidates = []
+        raw_candidates = []
 
         if candidate.is_absolute():
-            candidates.append(candidate)
+            raw_candidates.append(candidate)
         else:
-            candidates.extend(
+            raw_candidates.extend(
                 [
                     self.base_path / candidate,
                     self.sp_path / candidate,
@@ -772,13 +812,20 @@ class DSLGenerator:
                 ]
             )
             if candidate.parent == Path("."):
-                candidates.append(self.generative_sp_path / candidate.name)
+                raw_candidates.append(self.generative_sp_path / candidate.name)
+
+        # Expand each candidate: check .j2 sibling first, then the original path.
+        candidates = []
+        for p in raw_candidates:
+            j2_sibling = p.with_suffix(".j2")
+            candidates.append(j2_sibling)
+            candidates.append(p)
 
         for path in candidates:
             if path.exists() and path.is_file():
                 return path
 
-        searched = "\n - ".join(str(p) for p in candidates)
+        searched = "\n - ".join(str(p) for p in raw_candidates)
         raise FileNotFoundError(
             f"System prompt not found: {system_prompt_file}\n"
             f"Searched:\n - {searched}"
@@ -816,9 +863,9 @@ class DSLGenerator:
             "timestamp": datetime.now().isoformat()
         }
         
-        # Load system prompt
+        # Load system prompt (renders Jinja templates when extension is .j2)
         system_prompt_path = self._resolve_system_prompt_path(system_prompt_file)
-        system_prompt = self.load_file(system_prompt_path)
+        system_prompt = self._load_prompt(system_prompt_path)
 
         # Capture generation context for the repair phase
         self.generation_system_prompt_text = system_prompt
@@ -955,9 +1002,20 @@ class DSLGenerator:
     ) -> str:
         """Build a repair user prompt with delta reasoning.
 
-        Anchors the model with the original generation while highlighting the
-        specific recent failure so the model can reason about what NOT to repeat.
+        When ``SPs/Repair/UserPromptTemplate.j2`` exists it is rendered as a
+        Jinja2 template; otherwise the prompt is assembled from Python strings
+        for backward compatibility.
         """
+        truncated_output = self._truncate_compiler_output(compiler_output or "")
+
+        template_path = self.repair_sp_path / "UserPromptTemplate.j2"
+        if template_path.exists():
+            return self._render_jinja(template_path, {
+                "previous_dsl": previous_dsl or "",
+                "compiler_output": truncated_output,
+                "include_previous_dsl": include_previous_dsl and bool(previous_dsl),
+            })
+
         parts: list[str] = []
 
         parts.append("### REPAIR TASK")
@@ -966,18 +1024,15 @@ class DSLGenerator:
             "COMPILER_OUTPUT to identify why and fix it.\n"
         )
 
-        # The most recent failed attempt (the DSL the model must fix)
         if include_previous_dsl and previous_dsl:
             parts.append("### PREVIOUS_FAILED_ATTEMPT")
             parts.append(previous_dsl)
             parts.append("")
 
-        # Current compiler errors (truncated to reduce noise)
         parts.append("### CURRENT_COMPILER_OUTPUT")
-        parts.append(self._truncate_compiler_output(compiler_output or ""))
+        parts.append(truncated_output)
         parts.append("")
 
-        # Instruction block
         parts.append(
             "### INSTRUCTION\n"
             "1. Fix the FIRST error reported. Do not repeat the same edit used in PREVIOUS_FAILED_ATTEMPT.\n"
@@ -1074,8 +1129,8 @@ class DSLGenerator:
         if not self.repair_prompt_template_path.exists():
             raise FileNotFoundError(f"Repair prompt not found: {self.repair_prompt_template_path}")
 
-        repair_template = self.load_file(self.repair_prompt_template_path)
-        repair_system_prompt = self._fill_repair_system_prompt_template(repair_template)
+        repair_system_prompt = self._load_prompt(self.repair_prompt_template_path)
+        repair_system_prompt = self._fill_repair_system_prompt_template(repair_system_prompt)
         self.repair_model_name = repair_model_name
         self.repair_system_prompt = repair_system_prompt
 
@@ -1396,38 +1451,47 @@ class DSLGenerator:
         - a filename: resolved under SPs/
         - a relative path: resolved relative to project root
         - an absolute path: used as-is
+
+        For every ``.txt`` candidate, a same-name ``.j2`` sibling is preferred
+        automatically so that existing configs keep working after templates are
+        introduced.
         """
         if not repair_prompt:
             self.repair_prompt_template_path = self._default_repair_prompt_path()
             return
 
         candidate = Path(repair_prompt)
-        if candidate.is_absolute() and candidate.exists():
-            self.repair_prompt_template_path = candidate
-            return
 
-        rel_to_root = self.base_path / repair_prompt
-        if rel_to_root.exists():
-            self.repair_prompt_template_path = rel_to_root
-            return
+        def _first_existing(*paths: Path) -> Optional[Path]:
+            """Return the first path that exists, preferring .j2 siblings."""
+            for p in paths:
+                for variant in (p.with_suffix(".j2"), p):
+                    if variant.exists() and variant.is_file():
+                        return variant
+            return None
 
-        rel_to_sps = self.sp_path / repair_prompt
-        if rel_to_sps.exists():
-            self.repair_prompt_template_path = rel_to_sps
-            return
+        if candidate.is_absolute():
+            found = _first_existing(candidate)
+            if found:
+                self.repair_prompt_template_path = found
+                return
 
-        rel_to_repair = self.repair_sp_path / repair_prompt
-        if rel_to_repair.exists():
-            self.repair_prompt_template_path = rel_to_repair
+        found = _first_existing(
+            self.base_path / repair_prompt,
+            self.sp_path / repair_prompt,
+            self.repair_sp_path / repair_prompt,
+        )
+        if found:
+            self.repair_prompt_template_path = found
             return
 
         if candidate.parent == Path("."):
-            named_in_repair = self.repair_sp_path / candidate.name
-            if named_in_repair.exists():
-                self.repair_prompt_template_path = named_in_repair
+            found = _first_existing(self.repair_sp_path / candidate.name)
+            if found:
+                self.repair_prompt_template_path = found
                 return
 
-        self.repair_prompt_template_path = rel_to_sps
+        self.repair_prompt_template_path = self.sp_path / repair_prompt
     
     def refine_with_error(self, error_message: str) -> str:
         """

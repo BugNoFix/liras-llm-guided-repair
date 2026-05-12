@@ -172,9 +172,7 @@ def _run_lira_cli_to_xml(
     xml_dir = run_dir / "xml"
     xml_dir.mkdir(parents=True, exist_ok=True)
 
-    default_xml_name = f"{liras_path.stem}.xml"
-    xml_name = str(config.get("xml_output_name") or default_xml_name)
-    xml_path = xml_dir / xml_name
+    xml_path = xml_dir / f"{liras_path.stem}.xml"
 
     command = ["java", "-jar", str(lira_cli_jar), str(liras_path), str(xml_path)]
     timeout_sec = int(config.get("lira_cli_timeout", 120))
@@ -243,6 +241,36 @@ def _run_lira_cli_to_xml(
             extra={"xml_status": "failed"},
         )
         return None
+
+    # Some liras-cli builds create a directory named "*.xml" and place the
+    # actual model file inside it. Normalize this into a single XML file path
+    # so downstream tooling (verifyta) always receives a file.
+    if xml_path.is_dir():
+        nested_xml_files = sorted(xml_path.rglob("*.xml"))
+        if not nested_xml_files:
+            stderr_text = stderr_path.read_text(encoding="utf-8")
+            stderr_path.write_text(
+                stderr_text + f"\nXML output path is a directory with no .xml files: {xml_path}\n",
+                encoding="utf-8",
+            )
+            _record_pipeline_error(
+                metadata_path=metadata_path,
+                step="lira_cli",
+                command=command,
+                exit_code=2,
+                stdout_path=stdout_path,
+                stderr_path=stderr_path,
+                extra={"xml_status": "failed"},
+            )
+            return None
+
+        # Keep behavior deterministic when multiple XML files are emitted.
+        # Always preserve the originally requested output name (xml_path).
+        selected_xml = nested_xml_files[0]
+        temp_flat_xml = xml_dir / f"{xml_path.name}.flat.tmp"
+        shutil.copyfile(selected_xml, temp_flat_xml)
+        shutil.rmtree(xml_path)
+        temp_flat_xml.rename(xml_path)
 
     _update_pipeline_metadata(
         metadata_path,
