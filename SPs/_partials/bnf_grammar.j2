@@ -1,4 +1,4 @@
-## LIRAs BNF Grammar:
+## LIRAs EBNF Grammar:
 <Model> ::= <Pattern> <Sequence>* <Conclusion>?
 
 <Pattern> ::= <ID> <NL>
@@ -21,20 +21,12 @@
 
 <ConditionalStatement> ::= 'until' <Condition>
                          | 'if' <Condition> 'else' <Action>
-                         | 'if' <Condition> 'else' <Action> 'until' <Condition>
-                         | 'wait' <INT>
 
-<Action> ::= 'stop' 
-           | 'moveTo' <Target> 
-           | ('fetch' | 'pick' | 'deliver' | 'leave') <Resource> 
-           | 'follow' <Agent> ('(' <Target> ')')? 
-           | 'receiveFrom' <Agent>
+<Action> ::= 'stop'
 
-<ActionC> ::= ( 'stop' 
-              | 'moveTo' <Target> 
-              | ('fetch' | 'pick' | 'deposit' | 'deliver' | 'leave') <Resource> 
-              | 'follow' <Agent> ('(' <Target> ')')? 
-              | 'receiveFrom' <Agent> 
+<ActionC> ::= ('moveTo' <Target> 
+              | ('pick' | 'deposit') <Resource> 
+              | 'follow' <Agent> ('(' <Target> ')')
               ) <ConditionalStatement>?
 
 <Condition> ::= <AtomicPredicate> ( ('&&' | '||') <AtomicPredicate> )*
@@ -56,3 +48,5 @@
 <Agent>, <Human>, <Robot>, <Target>, <Location>, <Resource> ::= <ID>
 <NL> ::= (Carriage Return and/or Line Feed character)
 <TAB> ::= (Strictly one ASCII Tab character '\t')
+<ID> ::= <LETTER> (<LETTER> | <DIGIT> | '_')*
+<INT> ::= <DIGIT>+

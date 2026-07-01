@@ -1,0 +1,19 @@
+AutomatedTransportation
+agents:
+	robots: Robot1, Robot2
+locations: Warehouse, SurfaceTexturizationStart, SurfaceTexturizationEnd, LaserStart, LaserEnd, LoadingArea
+resources: RawMaterial
+Robot1:
+	1: moveTo Warehouse
+	2: pick RawMaterial
+	3: moveTo SurfaceTexturizationStart
+	4: deposit RawMaterial
+	5: moveTo SurfaceTexturizationEnd
+	6: pick RawMaterial
+	7: moveTo LaserStart
+	8: deposit RawMaterial
+Robot2:
+	1: moveTo LaserEnd
+	2: pick RawMaterial
+	3: moveTo LoadingArea
+	4: deposit RawMaterial

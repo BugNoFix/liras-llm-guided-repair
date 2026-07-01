@@ -1,0 +1,13 @@
+CoffeeDelivery
+agents:
+	humans: Employee
+	robots: CoffeeBot
+locations: CoffeeMachine, Office
+resources: coffee
+CoffeeBot:
+	1: moveTo CoffeeMachine
+	2: fetch coffee
+	3: moveTo Office
+	4: deliver coffee
+success: possess(CoffeeBot, coffee) && position(CoffeeBot, Office)
+failure: !possess(CoffeeBot, coffee) || !position(CoffeeBot, Office)

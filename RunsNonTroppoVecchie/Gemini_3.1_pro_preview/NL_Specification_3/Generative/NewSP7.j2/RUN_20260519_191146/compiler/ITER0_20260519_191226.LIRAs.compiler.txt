@@ -1,0 +1,12 @@
+Validating: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Gemini_3.1_pro_preview/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_191146/dsl/ITER0_20260519_191226.LIRAs
+FAILURE: Validation errors found.
+
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (rsrc:com.google.inject_7.0.0.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[ERROR] Line 7: extraneous input 'Robot1' expecting ':'
+[ERROR] Line 21: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
+[ERROR] Line 7: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 7: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 21: Resource name must be one of the names specified in the pattern.

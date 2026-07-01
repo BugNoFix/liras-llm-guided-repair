@@ -1,0 +1,23 @@
+ChemotherapySupport
+agents:
+	humans: Nurse, Child, Parent
+	robots: Robot, Cart
+locations: Ward, TherapyArea
+resources: Book
+
+Robot:
+1: moveTo TherapyArea
+2: follow Child if !busy(Child) else stop
+3: deliver Book if possess(Cart, Book) else stop
+4: skip if busy(Nurse)
+
+Cart:
+1: moveTo TherapyArea if possess(Cart, Book) else stop
+2: deposit Book if position(Robot, TherapyArea) else stop
+3: moveTo Ward if !possess(Cart, Book) else stop
+
+Nurse:
+1: skip if busy(Nurse)
+
+success: position(Robot, TherapyArea) && possess(Child, Book)
+failure: time(30) && !position(Robot, TherapyArea)

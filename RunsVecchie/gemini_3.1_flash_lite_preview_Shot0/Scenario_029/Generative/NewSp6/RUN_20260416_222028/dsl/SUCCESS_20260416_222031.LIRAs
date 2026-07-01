@@ -1,0 +1,25 @@
+TherapySupportPattern
+agents:
+	humans: Nurse, Child, Parent
+	robots: Robot, Cart
+locations: Ward, TherapyArea
+resources: Book, Narrative
+
+Robot:
+	1: moveTo TherapyArea
+	2: follow Child until position(Robot, TherapyArea)
+	3: deliver Book if possess(Robot, Book) else stop
+	4: restart if busy(Nurse)
+
+Cart:
+	1: moveTo TherapyArea
+	2: fetch Book
+	3: deliver Book
+	4: stop
+
+Nurse:
+	1: moveTo Ward
+	2: stop if time(60) else moveTo TherapyArea
+
+success: position(Robot, TherapyArea) && !busy(Nurse)
+failure: dist(Robot, Child) > 5

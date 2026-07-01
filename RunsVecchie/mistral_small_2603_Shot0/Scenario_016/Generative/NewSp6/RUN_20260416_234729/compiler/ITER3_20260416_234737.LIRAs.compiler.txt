@@ -1,0 +1,20 @@
+Validating: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/mistral_small_2603_Shot0/Scenario_016/Generative/NewSp6/RUN_20260416_234729/dsl/ITER3_20260416_234737.LIRAs
+FAILURE: Validation errors found.
+
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (rsrc:com.google.inject_7.0.0.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[ERROR] Line 11: no viable alternative at input 'else'
+[ERROR] Line 11: missing RULE_NL at 'Robot1'
+[ERROR] Line 11: mismatched input ',' expecting ':'
+[ERROR] Line 11: mismatched input ')' expecting ':'
+[ERROR] Line 11: mismatched input ')' expecting ':'
+[ERROR] Line 12: missing ':' at '\n\t'
+[ERROR] Line 9: The same agent cannot be used in more than one sequence..
+[ERROR] Line 11: The same agent cannot be used in more than one sequence..
+[ERROR] Line 11: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 11: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 12: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 12: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 13: Target name must be one of the names specified in the pattern (Agent, Location, or Resource).

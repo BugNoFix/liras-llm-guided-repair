@@ -1,0 +1,36 @@
+Nurse:
+
+agents:
+humans: Captain
+robots: Robot1, Robot2
+locations: Warehouse, Surface Texturization Start, Surface Texturization End, Lasers Start, Lasers End, Loading Area
+resources: RawMaterial
+
+sequences:
+1: Robot1
+  1: moveTo Surface Texturization Start
+  2: receiveFrom Warehouse RawMaterial
+  3: follow Robot2
+  4: pick RawMaterial from Surface Texturization End
+  5: moveTo Lasers Start
+  6: deposit RawMaterial at Lasers Start
+  7: receiveFrom Lasers End RawMaterial
+  8: pick RawMaterial from Lasers End
+  9: moveTo Loading Area
+  10: deposit RawMaterial at Loading Area
+
+2: Robot2
+  1: moveTo Surface Texturization End
+  2: receiveFrom Surface Texturization Start RawMaterial
+  3: follow Robot1
+  4: pick RawMaterial from Surface Texturization Start
+  5: moveTo Lasers End
+  6: deposit RawMaterial at Lasers End
+  7: receiveFrom Lasers Start RawMaterial
+  8: pick RawMaterial from Lasers Start
+  9: moveTo Surface Texturization Start
+  10: deposit RawMaterial at Surface Texturization Start
+
+system:
+success: time(10)
+failure:

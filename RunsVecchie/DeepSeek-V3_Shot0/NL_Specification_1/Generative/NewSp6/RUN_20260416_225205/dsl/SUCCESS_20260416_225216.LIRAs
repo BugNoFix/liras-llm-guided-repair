@@ -1,0 +1,15 @@
+CoffeeDelivery
+agents:
+	robots: Robot1
+locations: CoffeeMachine, EmployeeDesk
+resources: Coffee
+
+Robot1:
+	1: moveTo CoffeeMachine
+	2: pick Coffee if !possess(Robot1, Coffee) else stop
+	3: moveTo EmployeeDesk
+	4: deliver Coffee if possess(Robot1, Coffee) else stop
+	5: moveTo CoffeeMachine
+
+success: position(Robot1, CoffeeMachine) && !possess(Robot1, Coffee)
+failure: time(30) && !position(Robot1, CoffeeMachine)

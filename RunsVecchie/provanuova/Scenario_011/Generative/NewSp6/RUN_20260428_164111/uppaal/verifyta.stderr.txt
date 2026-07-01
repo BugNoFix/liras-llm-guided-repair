@@ -1,0 +1,10 @@
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/Scenario_011/Generative/NewSp6/RUN_20260428_164111/xml/LabSampleTransport.xml:/nta/declaration:83: [error] Unknown identifier: PatientFloor.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/Scenario_011/Generative/NewSp6/RUN_20260428_164111/xml/LabSampleTransport.xml:/nta/declaration:83: [error] Unknown identifier: Laboratory.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/Scenario_011/Generative/NewSp6/RUN_20260428_164111/xml/LabSampleTransport.xml:/nta/declaration:83: [error] Unknown identifier: AnalysisMachine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/Scenario_011/Generative/NewSp6/RUN_20260428_164111/xml/LabSampleTransport.xml:/nta/declaration:83: [error] Unknown identifier: Sample.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/Scenario_011/Generative/NewSp6/RUN_20260428_164111/xml/LabSampleTransport.xml:/nta/declaration:84: [error] Unknown identifier: PatientFloor.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/Scenario_011/Generative/NewSp6/RUN_20260428_164111/xml/LabSampleTransport.xml:/nta/declaration:84: [error] Unknown identifier: Laboratory.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/Scenario_011/Generative/NewSp6/RUN_20260428_164111/xml/LabSampleTransport.xml:/nta/declaration:84: [error] Unknown identifier: AnalysisMachine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/Scenario_011/Generative/NewSp6/RUN_20260428_164111/xml/LabSampleTransport.xml:/nta/declaration:84: [error] Unknown identifier: Sample.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/Scenario_011/Generative/NewSp6/RUN_20260428_164111/xml/LabSampleTransport.xml:/nta/declaration:88: [error] Unknown identifier: Sample.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/Scenario_011/Generative/NewSp6/RUN_20260428_164111/xml/LabSampleTransport.xml:/nta/declaration:89: [error] Unknown identifier: Sample.

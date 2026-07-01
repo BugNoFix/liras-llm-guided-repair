@@ -1,0 +1,13 @@
+HotelDeliveryScenario
+agents:
+	humans: Guest
+	robots: Butler
+locations: GuestRoom, Hallway
+resources: Item
+
+Butler:
+	1: moveTo GuestRoom if busy(Butler) else stop
+	2: deliver Item until position(Butler, GuestRoom)
+	3: stop
+success: position(Butler, GuestRoom)
+failure: !position(Butler, GuestRoom)

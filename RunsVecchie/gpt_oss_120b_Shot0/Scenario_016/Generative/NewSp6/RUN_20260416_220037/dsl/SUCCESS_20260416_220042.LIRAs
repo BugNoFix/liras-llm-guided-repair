@@ -1,0 +1,18 @@
+TransportService
+agents:
+	humans: Human1
+	robots: Robot1
+locations: Room7002, Elevator7, Elevator3, ElevatorExit3, Room3201
+resources: Object
+Robot1:
+	1: moveTo Room7002
+	2: receiveFrom Human1 if !possess(Robot1,Object) else stop
+	3: moveTo Elevator7
+	4: follow Human1
+	5: moveTo Elevator3
+	6: skip if !position(Robot1,Elevator3)
+	7: moveTo ElevatorExit3
+	8: moveTo Room3201
+	9: skip if possess(Robot1,Object)
+success: possess(Human1,Object) && position(Robot1,Room3201)
+failure: busy(Robot1)

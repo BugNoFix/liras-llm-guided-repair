@@ -1,0 +1,17 @@
+TransportService
+	agents:
+		humans: Assistant
+		robots: TransportRobot
+	locations: CurrentLocation, Room7002, Elevator7thFloor, Elevator3rdFloor, Room3201
+	resources: TransportObject
+
+TransportRobot:
+	1: moveTo Room7002
+	2: stop until possess(Assistant, TransportObject) && !busy(Assistant)
+	3: pick TransportObject if position(Assistant, Room7002) else stop until position(Assistant, Room7002)
+	4: moveTo Elevator7thFloor
+	5: stop until !still(TransportRobot) && position(Assistant, Elevator7thFloor)
+	6: follow Assistant(Elevator3rdFloor) if busy(Assistant) else stop until busy(Assistant)
+	7: moveTo Elevator3rdFloor if position(Assistant, Elevator3rdFloor) else stop
+	8: moveTo Room3201
+	9: stop until !possess(TransportRobot, TransportObject) && position(Assistant, Room3201)

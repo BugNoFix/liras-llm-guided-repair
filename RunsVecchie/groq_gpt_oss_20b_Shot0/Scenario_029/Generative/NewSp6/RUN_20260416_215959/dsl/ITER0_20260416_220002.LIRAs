@@ -1,0 +1,19 @@
+ChemoEngage
+agents:
+	humans: Nurse, Parent, Child
+	robots: Robot1, Cart1
+locations: ChemotherapyWard, TherapyArea, Storage
+resources: Book
+Robot1:
+	1: receiveFrom Nurse
+	2: moveTo TherapyArea
+	3: receiveFrom Cart
+	4: follow Child
+	5: stop
+Cart1:
+	1: moveTo Storage
+	2: pick Book
+	3: moveTo TherapyArea
+	4: deliver Book
+success: position(Robot1, TherapyArea) && position(Cart1, TherapyArea)
+failure: busy(Robot1) || busy(Cart1)

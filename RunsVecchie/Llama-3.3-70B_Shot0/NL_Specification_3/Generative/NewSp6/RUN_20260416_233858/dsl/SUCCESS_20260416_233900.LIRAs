@@ -1,0 +1,35 @@
+FactoryAutomation
+agents:
+	humans: 
+	robots: Robot1, Robot2
+locations: Warehouse, SurfaceTexturizationStart, SurfaceTexturizationEnd, LasersStart, LasersEnd, LoadingArea
+resources: RawMaterial
+
+Robot1:
+1: moveTo Warehouse
+2: fetch RawMaterial
+3: moveTo SurfaceTexturizationStart
+4: deposit RawMaterial
+5: moveTo SurfaceTexturizationEnd
+6: pick RawMaterial
+7: moveTo LasersStart
+8: deposit RawMaterial
+9: moveTo LasersEnd
+10: pick RawMaterial
+11: moveTo LoadingArea
+
+Robot2:
+1: moveTo Warehouse
+2: fetch RawMaterial
+3: moveTo SurfaceTexturizationStart
+4: deposit RawMaterial
+5: moveTo SurfaceTexturizationEnd
+6: pick RawMaterial
+7: moveTo LasersStart
+8: deposit RawMaterial
+9: moveTo LasersEnd
+10: pick RawMaterial
+11: moveTo LoadingArea
+
+success: possess(Robot1, RawMaterial) && position(Robot1, LoadingArea) && possess(Robot2, RawMaterial) && position(Robot2, LoadingArea)
+failure: !possess(Robot1, RawMaterial) || !position(Robot1, LoadingArea) || !possess(Robot2, RawMaterial) || !position(Robot2, LoadingArea)

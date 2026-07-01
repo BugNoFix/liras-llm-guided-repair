@@ -1,0 +1,40 @@
+HotelRobot:
+humans: Guest
+robots: HotelRobotButler
+locations: Lobby, Elevator, GuestRoom
+resources: Item, StorageBox
+
+HotelRobotButler: default moveTo Lobby:
+	1: moveTo Lobby
+	2: fetch Item
+	3: moveTo Elevator
+	4: moveTo GuestRoom
+	5: deliver Item
+	success: true
+	failure: dist(HotelRobotButler, Elevator) && dist(HotelRobotButler, GuestRoom)
+
+success: dist(HotelRobotButler, GuestRoom) && possession(Guest, StorageBox)
+failure: dist(HotelRobotButler, GuestRoom) || !dist(HotelRobotButler, StorageBox)
+
+
+### Explanation:
+1. **Entities Defined**:
+   - `Guest`: Represents the human entity.
+   - `HotelRobotButler`: The robot equipped with a storage box.
+   - `Lobby`: Starting location.
+   - `Elevator`: Used for navigation between floors.
+   - `GuestRoom`: Destination where items are delivered.
+   - `Item`: The object to be delivered.
+   - `StorageBox`: The robot’s storage box for items.
+
+2. **Actions**:
+   - `moveTo`: Used to navigate the robot to specific locations.
+   - `fetch`: The robot retrieves an item.
+   - `deliver`: The robot delivers an item to the destination.
+
+3. **Sequence**:
+   - The robot starts by moving to the lobby, fetches an item, moves to the elevator, then to the guest’s room, and finally delivers the item.
+   - The success condition ensures the robot reaches the guest’s room and the guest possesses the storage box.
+   - The failure condition ensures the robot fails to reach the guest’s room or the storage box.
+
+This code adheres to the LIRAS grammar and constraints, ensuring proper scoping, indentation, and semantic correctness.

@@ -1,0 +1,16 @@
+CooperativeTransport
+agents:
+	humans: H1
+	robots: R1
+locations: Bedroom, Kitchen
+resources: Object
+H1:
+	1: moveTo Bedroom
+	2: stop until possess(R1, Object)
+	3: moveTo Kitchen
+R1:
+	1: moveTo Bedroom
+	2: stop until position(H1, Bedroom)
+	3: pick Object
+	4: follow H1
+success: position(H1, Kitchen) && position(R1, Kitchen) && possess(R1, Object)

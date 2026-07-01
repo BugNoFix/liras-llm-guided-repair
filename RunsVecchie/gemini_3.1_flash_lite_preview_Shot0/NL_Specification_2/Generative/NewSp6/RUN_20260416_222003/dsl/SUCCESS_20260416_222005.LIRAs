@@ -1,0 +1,18 @@
+HouseholdTask
+agents:
+	humans: Human1
+	robots: Robot1
+locations: Bedroom, Kitchen
+resources: Object
+
+Human1:
+	1: moveTo Bedroom
+	2: moveTo Kitchen
+
+Robot1:
+	1: moveTo Bedroom
+	2: pick Object
+	3: follow Human1(Kitchen)
+
+success: position(Human1, Kitchen) && position(Robot1, Kitchen) && possess(Robot1, Object)
+failure: dist(Human1, Robot1) > 100

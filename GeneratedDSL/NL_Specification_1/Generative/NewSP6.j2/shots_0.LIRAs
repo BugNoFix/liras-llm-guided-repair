@@ -1,0 +1,13 @@
+Coffee_Delivery
+agents:
+	robots: r1
+locations: coffee_room, office001
+resources: coffee
+
+r1:
+	1: moveTo coffee_room
+	2: pick coffee
+	3: moveTo office001
+	4: deposit coffee
+
+success: position(r1, office001)

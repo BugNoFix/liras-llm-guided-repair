@@ -1,0 +1,150 @@
+{
+  "run_id": "20260501_163454",
+  "run_started_at": "2026-05-01T16:34:54.677320",
+  "provider": "gemini",
+  "project_id": "project-6a7309b1-0165-4fa2-baf",
+  "location": "global",
+  "system_prompt": "Generative/NewSP6.j2",
+  "shots": 1,
+  "scenario": "NL_Specification_2.txt",
+  "repair_prompt": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/SPs/Repair/NewSPR6.j2",
+  "generation_model": "google/gemini-3.1-pro-preview",
+  "generation_temperature": 1.0,
+  "repair_model": "google/gemini-3.1-pro-preview",
+  "repair_temperature": 0.35,
+  "repair_max_output_tokens": 2048,
+  "repair_shots": 1,
+  "use_generated_dsl_cache": false,
+  "generated_dsl_source": "dsl_folder",
+  "generated_dsl_cache_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/GeneratedDSL/NL_Specification_2/Generative/NewSP6.j2/shots_1.LIRAs",
+  "compiler_jar": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras_compiler.jar",
+  "max_iterations": 11,
+  "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_163454",
+  "dsl_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_163454/dsl",
+  "compiler_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_163454/compiler",
+  "prompt_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_163454/llm_prompts.jsonl",
+  "response_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_163454/llm_responses.jsonl",
+  "iterations": [
+    {
+      "iteration": 0,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_163454/dsl/ITER0_20260501_163521.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_163454/compiler/ITER0_20260501_163521.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 690,
+      "compiler_error_score": {
+        "feedback_chars": 690,
+        "lines": 8,
+        "error_lines": 2,
+        "warning_lines": 4,
+        "score": 31
+      },
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 1,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_163454/dsl/ITER1_20260501_163527.LIRAs",
+      "success_artifact_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_163454/dsl/SUCCESS_20260501_163527.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_163454/compiler/ITER1_20260501_163527.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": true,
+      "validation": {
+        "returncode": 0,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_error_score": {
+        "feedback_chars": 618,
+        "lines": 7,
+        "error_lines": 0,
+        "warning_lines": 4,
+        "score": 11
+      }
+    }
+  ],
+  "telemetry": {
+    "llm_calls": 2,
+    "prompt_chars_total": 1959,
+    "response_chars_total": 814,
+    "prompt_tokens_est_total": 490,
+    "response_tokens_est_total": 203,
+    "last_call": {
+      "kind": "repair",
+      "timestamp": "2026-05-01T16:35:27.219966",
+      "finish_reason": "FinishReason.STOP",
+      "safety_ratings": [],
+      "prompt_chars": 1486,
+      "response_chars": 425,
+      "prompt_tokens_est": 372,
+      "response_tokens_est": 106
+    }
+  },
+  "llm_call_history": [
+    {
+      "kind": "generate",
+      "timestamp": "2026-05-01T16:35:21.114695",
+      "finish_reason": "FinishReason.STOP",
+      "safety_ratings": [],
+      "prompt_chars": 473,
+      "response_chars": 389,
+      "prompt_tokens_est": 118,
+      "response_tokens_est": 97
+    },
+    {
+      "kind": "repair",
+      "timestamp": "2026-05-01T16:35:27.219966",
+      "finish_reason": "FinishReason.STOP",
+      "safety_ratings": [],
+      "prompt_chars": 1486,
+      "response_chars": 425,
+      "prompt_tokens_est": 372,
+      "response_tokens_est": 106
+    }
+  ],
+  "status": "success",
+  "run_finished_at": "2026-05-01T16:35:27.864343",
+  "summary": {
+    "iterations_recorded": 2,
+    "validations_attempted": 2,
+    "compiler_failures": 1,
+    "compiler_successes": 1,
+    "setup_errors": 0,
+    "first_success_iteration": 1,
+    "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_163454/dsl/ITER1_20260501_163527.LIRAs",
+    "total_compiler_feedback_chars": 690,
+    "llm_calls": 2,
+    "prompt_tokens_est_total": 490,
+    "response_tokens_est_total": 203
+  },
+  "updated_at": "2026-05-01T16:35:27.864361",
+  "repair": {
+    "repair_chat_initialized_at": "2026-05-01T16:35:21.827119",
+    "repair_prompt_template_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/SPs/Repair/NewSPR6.j2",
+    "repair_system_prompt_chars": 8114,
+    "repair_stateless": false,
+    "repair_uses_server_chat": true,
+    "repair_temperature": 0.35
+  },
+  "pipeline_runner_version": "v1",
+  "pipeline_final_state": "failed",
+  "failed_step": "verifyta",
+  "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_163454/dsl/ITER1_20260501_163527.LIRAs",
+  "xml_status": "ok",
+  "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_163454/xml/ITER1_20260501_163527.xml",
+  "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_163454/xml/ITER1_20260501_163527.xml",
+  "last_command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_163454/xml/ITER1_20260501_163527.xml",
+  "last_exit_code": 1,
+  "last_stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_163454/uppaal/verifyta.stdout.txt",
+  "last_stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_163454/uppaal/verifyta.stderr.txt",
+  "verifyta_status": "failed"
+}

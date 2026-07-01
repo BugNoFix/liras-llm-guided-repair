@@ -1,0 +1,29 @@
+Robot_Instruction_System
+
+agents: 
+humans: Human1, Human2
+robots: Robot1
+
+locations: Room_7002, Room_3201, Seventh.Floor.Elevator
+
+resources: Basket
+
+Nurse: 
+  1: moveTo Room_7002
+  2: until tired else stop
+  3: if tired else stop
+  4: receiveFrom Human1
+  5: fetch Basket
+  6: until Basket confirmed else stop
+  7: navigate Room_7002
+  8: until at Room_3201 else stop
+  9: moveTo Seventh.Floor.Elevator
+  10: if time(10) else skip
+  11: stop
+  12: skip
+  13: stop
+  14: receiveFrom Human2
+  15: wait 5
+
+success: at Room_3201 && Basket confirmed 
+failure: !at Room_3201 || !Basket confirmed

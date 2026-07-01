@@ -1,0 +1,14 @@
+LabSampleWorkflow
+	agents:
+		humans: Nurse
+		robots: RoboticArm
+		locations: Laboratory, PatientFloor, EntryModule
+		resources: Sample, Scanner, LockedDrawerNurse:
+	1: pick Sample
+	2: deliver Sample
+RoboticArm:
+	1: moveTo Scanner
+	2: pick Sample
+	3: leave Sample
+success: !busy(Nurse)
+failure: busy(Nurse)

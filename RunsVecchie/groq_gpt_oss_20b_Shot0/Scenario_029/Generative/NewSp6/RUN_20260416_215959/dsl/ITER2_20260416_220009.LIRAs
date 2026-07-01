@@ -1,0 +1,19 @@
+ChemoEngage
+agents:
+\thumans: Nurse, Parent, Child
+\trobots: Robot1, Cart1
+locations: ChemotherapyWard, TherapyArea, Storage
+resources: Book
+Robot1:
+\t1: receiveFrom Nurse
+\t2: moveTo TherapyArea
+\t3: receiveFrom Cart1
+\t4: follow Child
+\t5: stop
+Cart1:
+\t1: moveTo Storage
+\t2: pick Book
+\t3: moveTo TherapyArea
+\t4: deliver Book
+success: position(Robot1, TherapyArea) && position(Cart1, TherapyArea)
+failure: busy(Robot1) || busy(Cart1)

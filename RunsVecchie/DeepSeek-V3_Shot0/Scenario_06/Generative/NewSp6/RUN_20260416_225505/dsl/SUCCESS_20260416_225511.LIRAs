@@ -1,0 +1,15 @@
+HotelButler
+agents:
+	robots: Butler
+locations: Lobby, Room, Elevator
+resources: Item
+
+Butler:
+1: pick Item
+2: moveTo Room if !position(Butler, Room) else stop
+3: deliver Item if position(Butler, Room) else stop
+4: leave Item if position(Butler, Room) else stop
+5: moveTo Lobby if !position(Butler, Lobby) else stop
+
+success: position(Butler, Lobby) && !possess(Butler, Item)
+failure: position(Butler, Room) && possess(Butler, Item)

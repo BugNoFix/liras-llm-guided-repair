@@ -1,0 +1,117 @@
+{
+  "run_id": "20260519_192738",
+  "run_started_at": "2026-05-19T19:27:38.432052",
+  "provider": "huggingface",
+  "project_id": null,
+  "location": "global",
+  "system_prompt": "Generative/NewSP7.j2",
+  "shots": 0,
+  "scenario": "NL_Specification_3.txt",
+  "repair_prompt": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/SPs/Repair/NewSPR7.j2",
+  "generation_model": "openai/gpt-oss-120b:groq",
+  "generation_temperature": 1.0,
+  "repair_model": "openai/gpt-oss-120b:groq",
+  "repair_temperature": 0.35,
+  "repair_max_output_tokens": 2048,
+  "repair_shots": 0,
+  "use_generated_dsl_cache": false,
+  "generated_dsl_source": "dsl_folder",
+  "generated_dsl_cache_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/GeneratedDSL/NL_Specification_3/Generative/NewSP7.j2/shots_0.LIRAs",
+  "compiler_jar": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras_compiler.jar",
+  "max_iterations": 11,
+  "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-120b-groq/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_192738",
+  "dsl_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-120b-groq/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_192738/dsl",
+  "compiler_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-120b-groq/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_192738/compiler",
+  "prompt_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-120b-groq/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_192738/llm_prompts.jsonl",
+  "response_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-120b-groq/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_192738/llm_responses.jsonl",
+  "iterations": [
+    {
+      "iteration": 0,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-120b-groq/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_192738/dsl/ITER0_20260519_192742.LIRAs",
+      "success_artifact_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-120b-groq/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_192738/dsl/SUCCESS_20260519_192743.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-120b-groq/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_192738/compiler/ITER0_20260519_192742.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": true,
+      "validation": {
+        "returncode": 0,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_error_score": {
+        "feedback_chars": 625,
+        "lines": 7,
+        "error_lines": 0,
+        "warning_lines": 4,
+        "score": 11
+      }
+    }
+  ],
+  "telemetry": {
+    "llm_calls": 1,
+    "prompt_chars_total": 725,
+    "response_chars_total": 919,
+    "prompt_tokens_est_total": 181,
+    "response_tokens_est_total": 230,
+    "last_call": {
+      "kind": "generate",
+      "timestamp": "2026-05-19T19:27:42.727683",
+      "finish_reason": "stop",
+      "safety_ratings": [],
+      "prompt_chars": 725,
+      "response_chars": 919,
+      "prompt_tokens_est": 181,
+      "response_tokens_est": 230
+    }
+  },
+  "llm_call_history": [
+    {
+      "kind": "generate",
+      "timestamp": "2026-05-19T19:27:42.727683",
+      "finish_reason": "stop",
+      "safety_ratings": [],
+      "prompt_chars": 725,
+      "response_chars": 919,
+      "prompt_tokens_est": 181,
+      "response_tokens_est": 230
+    }
+  ],
+  "status": "success",
+  "run_finished_at": "2026-05-19T19:27:43.473709",
+  "summary": {
+    "iterations_recorded": 1,
+    "validations_attempted": 1,
+    "compiler_failures": 0,
+    "compiler_successes": 1,
+    "setup_errors": 0,
+    "first_success_iteration": 0,
+    "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-120b-groq/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_192738/dsl/ITER0_20260519_192742.LIRAs",
+    "total_compiler_feedback_chars": 0,
+    "llm_calls": 1,
+    "prompt_tokens_est_total": 181,
+    "response_tokens_est_total": 230
+  },
+  "updated_at": "2026-05-19T19:27:43.473717",
+  "repair": {
+    "repair_chat_initialized_at": "2026-05-19T19:27:43.473307",
+    "repair_prompt_template_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/SPs/Repair/NewSPR7.j2",
+    "repair_system_prompt_chars": 9983,
+    "repair_stateless": true,
+    "repair_uses_server_chat": false,
+    "repair_temperature": 0.35
+  },
+  "pipeline_runner_version": "v1",
+  "pipeline_final_state": "verifyta_done",
+  "failed_step": "none",
+  "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-120b-groq/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_192738/dsl/ITER0_20260519_192742.LIRAs",
+  "xml_status": "ok",
+  "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-120b-groq/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_192738/xml/ITER0_20260519_192742.xml",
+  "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-120b-groq/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_192738/xml/ITER0_20260519_192742.xml",
+  "last_command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-120b-groq/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_192738/xml/ITER0_20260519_192742.xml",
+  "last_exit_code": 0,
+  "last_stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-120b-groq/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_192738/uppaal/verifyta.stdout.txt",
+  "last_stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-120b-groq/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_192738/uppaal/verifyta.stderr.txt",
+  "verifyta_status": "ok",
+  "verifyta_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-120b-groq/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_192738/uppaal/verifyta.stdout.txt"
+}

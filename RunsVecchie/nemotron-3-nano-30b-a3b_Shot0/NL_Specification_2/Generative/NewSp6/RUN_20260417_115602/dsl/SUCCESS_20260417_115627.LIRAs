@@ -1,0 +1,15 @@
+HouseTaskPattern
+agents:
+humans: Human1
+robots: Robot1
+locations: bedroom, kitchen
+resources: object
+Human1:
+	1: moveTo bedroom
+	2: moveTo kitchen
+Robot1:
+	3: moveTo bedroom
+	4: pick object
+	5: follow Human1
+success: position(Human1,kitchen) && position(Robot1,kitchen) && possess(Robot1,object)
+failure: !position(Human1,kitchen) || !position(Robot1,kitchen) || !possess(Robot1,object)

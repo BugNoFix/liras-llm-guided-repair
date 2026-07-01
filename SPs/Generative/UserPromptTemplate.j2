@@ -1,0 +1,8 @@
+{{ scenario }}
+
+{% if uppaal_feedback %}
+### UPPAAL FEEDBACK FROM PREVIOUS CYCLE
+The previous LIRAs code compiled but failed UPPAAL verification. Use the failed query descriptions and the incorrect LIRAs code below to generate a corrected LIRAs model that satisfies the scenario and the queries.
+
+{{ uppaal_feedback }}
+{% endif %}

@@ -1,0 +1,4 @@
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSp6/RUN_20260425_205906/xml/ITER0_20260425_205954.xml:1: parser error : Extra content at the end of the document
+
+^
+EXCEPTION: Unexpected end.

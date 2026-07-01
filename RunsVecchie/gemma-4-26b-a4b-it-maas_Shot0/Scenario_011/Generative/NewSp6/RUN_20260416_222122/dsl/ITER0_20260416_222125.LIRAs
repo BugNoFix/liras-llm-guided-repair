@@ -1,0 +1,39 @@
+LabSampleTransport
+agents:
+	humans: Nurse,LabPersonnel
+	robots: RoboticArm
+locations:
+	PatientFloor,Laboratory,AnalysisModule
+resources:
+	Sample,LockedDrawer,BarcodeData,LogData,ProtocolTime
+
+Nurse:
+	1: moveTo PatientFloor
+	2: pick Sample
+	3: moveTo Laboratory
+	4: deposit LockedDrawer
+	5: deliver Sample
+	6: deliver BarcodeData
+success:position(Nurse,Laboratory)
+failure:time(3600)
+
+RoboticArm:
+	1: moveTo Laboratory
+	2: pick LockedDrawer
+	3: pick Sample
+	4: pick BarcodeData
+	5: deliver Sample
+	6: deliver LogData
+	7: deliver ProtocolTime
+	8: moveTo AnalysisModule
+	9: deposit Sample
+success:position(RoboticArm,AnalysisModule)
+failure:busy(RoboticArm)
+
+LabPersonnel:
+	1: moveTo Laboratory
+	2: pick Sample
+	3: moveTo AnalysisModule
+	4: deposit Sample
+success:position(LabPersonnel,AnalysisModule)
+failure:time(7200)

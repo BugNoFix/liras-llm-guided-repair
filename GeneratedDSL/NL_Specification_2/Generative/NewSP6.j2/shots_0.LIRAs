@@ -1,0 +1,14 @@
+user_guided_transport
+agents:
+	humans: h1
+	robots: r1
+locations: bedroom, kitchen
+resources: object
+h1:
+	1: moveTo bedroom until possess(r1, object)
+	2: moveTo kitchen
+r1:
+	1: moveTo bedroom until position(h1, bedroom)
+	2: pick object
+	3: follow h1
+success: position(h1, kitchen) && position(r1, kitchen) && possess(r1, object)

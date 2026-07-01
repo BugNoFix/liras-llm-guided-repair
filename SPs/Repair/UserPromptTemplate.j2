@@ -9,6 +9,11 @@ The DSL below failed to compile. Compare it to the COMPILER_OUTPUT to identify w
 ### CURRENT_COMPILER_OUTPUT
 {{ compiler_output }}
 
+{% if uppaal_feedback %}
+### UPPAAL FEEDBACK FROM PREVIOUS CYCLE
+{{ uppaal_feedback }}
+
+{% endif %}
 ### INSTRUCTION
 1. Fix the FIRST error reported. Do not repeat the same edit used in PREVIOUS_FAILED_ATTEMPT.
 2. If the error is 'unresolved reference', check the Pattern block at the top.

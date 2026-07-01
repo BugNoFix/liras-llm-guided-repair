@@ -1,0 +1,15 @@
+Validating: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/DeepSeek-V3_Shot0/NL_Specification_3/Generative/NewSp6/RUN_20260416_225223/dsl/ITER0_20260416_225233.LIRAs
+FAILURE: Validation errors found.
+
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (rsrc:com.google.inject_7.0.0.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[ERROR] Line 8: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 11: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 14: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 19: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 22: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 25: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 29: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 30: Agent name must be one of the names specified in the pattern.

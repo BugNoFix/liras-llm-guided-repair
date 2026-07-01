@@ -1,0 +1,11 @@
+HotelButlerModel
+agents:
+	humans: Guest
+	robots: RoomServiceBot
+locations:Room101
+resources:Item
+RoomServiceBot:
+	1: moveTo Room101
+	2: deliver Item
+success: !busy(RoomServiceBot)
+failure: time(10)

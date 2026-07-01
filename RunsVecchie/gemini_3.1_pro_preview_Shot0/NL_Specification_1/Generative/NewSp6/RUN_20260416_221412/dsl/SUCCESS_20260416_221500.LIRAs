@@ -1,0 +1,13 @@
+CoffeeDelivery
+agents:
+	humans: Employee
+	robots: DeliveryRobot
+locations: CoffeeMachine
+resources: Coffee
+DeliveryRobot:
+	1: moveTo CoffeeMachine
+	2: pick Coffee
+	3: moveTo Employee
+	4: deliver Coffee
+success: possess(Employee, Coffee)
+failure: !possess(Employee, Coffee)

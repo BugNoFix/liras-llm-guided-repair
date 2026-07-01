@@ -1,0 +1,22 @@
+Coffee_Delivery
+agents:
+	humans: Human1
+	robots: Robot1
+locations: coffee_room, office001
+resources: coffee
+
+Robot1 default stop:
+	1: moveTo coffee_room
+	2: pick coffee
+	3: moveTo office001
+	4: deposit coffee
+	5:
+
+Human1 default stop:
+	1-2:
+	3: moveTo office001
+	4:
+	5: pick coffee
+
+success: possess(Human1, coffee)
+failure: time(150)

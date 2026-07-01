@@ -1,0 +1,127 @@
+{# Fixed source queries for NL_Specification_3 (Factory Transport reference model) #}
+
+### Query 1
+**Description:** The system shall deploy exactly two AMR robots for material transportation within the factory.
+**Expected probability:** 0.975028
+**Original formula:**
+Pr[<=700] ([] N_R == 2)
+
+### Query 2
+**Description:** Raw materials shall be initially stored in a designated warehouse location.
+**Expected probability:** 0.975028
+**Original formula:**
+Pr[<=1] ([] raw_materials[0] == warehouse[0] && raw_materials[1] == warehouse[1])
+
+### Query 3
+**Description:** Robot1 shall be able to pick up raw materials from the warehouse.
+**Expected probability:** 0.02497205
+**Original formula:**
+Pr[<=700] (<> robot_inventory[0][0] == 1)
+
+### Query 4
+**Description:** Robot2 shall be able to pick up raw materials from the warehouse.
+**Expected probability:** 0.02497205
+**Original formula:**
+Pr[<=700] (<> robot_inventory[1][0] == 1)
+
+### Query 5
+**Description:** Upon receiving a transport order, Robot1 shall transition from 'Idle' to 'Active' mode.
+**Expected probability:** 0.02497205
+**Original formula:**
+Pr[<=1] ([] Factory_Pipeline_robot1_def.init_robot1)
+
+### Query 6
+**Description:** Upon receiving a transport order, Robot2 shall transition from 'Idle' to 'Active' mode.
+**Expected probability:** 0.02497205
+**Original formula:**
+Pr[<=1] ([] Factory_Pipeline_robot2_def.init_robot2)
+
+### Query 7
+**Description:** Robot1 shall avoid collisions with ARM2.
+**Expected probability:** 0.975028
+**Original formula:**
+Pr[<=7000] (<> robPositionX[0] == robPositionX[1] && robPositionY[0] == robPositionY[1]  )
+
+### Query 8
+**Description:** Robot2 shall avoid collisions with Robot1.
+**Expected probability:** 0.975028
+**Original formula:**
+Pr[<=7000] (<> robPositionX[1] == robPositionX[0] && robPositionY[1] == robPositionY[0]  )
+
+### Query 9
+**Description:** Robot1 shall not enter forbidden zones during navigation.
+**Expected probability:** 0.02497205
+**Original formula:**
+Pr[<=700] (<> !isValidPosition(robPositionX[0], robPositionY[0]) )
+
+### Query 10
+**Description:** Robot2 shall not enter forbidden zones during navigation.
+**Expected probability:** 0.02497205
+**Original formula:**
+Pr[<=700] (<>  !isValidPosition(robPositionX[1], robPositionY[1] ))
+
+### Query 11
+**Description:** Robot1 shall ensure that its battery level does not reach zero during execution of the transportation workflow.
+**Expected probability:** 0.02497205
+**Original formula:**
+Pr[<=700](<>batteryCharge[0]<=0)
+
+### Query 12
+**Description:** Robot2 shall ensure that its battery level does not reach zero during execution of the transportation workflow.
+**Expected probability:** 0.02497205
+**Original formula:**
+Pr[<=700](<>batteryCharge[1]<=0)
+
+### Query 13
+**Description:** The robots shall transport raw materials from the warehouse to the loading location of the surface texturization station.
+**Expected probability:** 0.02497205
+**Original formula:**
+Pr[<=700] (<> pow(robPositionX[0] - surface_texturization_start[0], 2) + pow(robPositionY[0] - surface_texturization_start[1], 2) <= 900 && robot_inventory[0][0] == 1)
+
+### Query 14
+**Description:** The robots shall transport raw materials from the warehouse to the loading location of the surface texturization station.
+**Expected probability:** 0.02497205
+**Original formula:**
+Pr[<=700] (<> pow(robPositionX[1] - surface_texturization_start[0], 2) + pow(robPositionY[1] - surface_texturization_start[1], 2) <= 900 && robot_inventory[1][0] == 1)
+
+### Query 15
+**Description:** The robots shall collect processed materials from the unloading location of the surface texturization station and deliver them to the loading location of the laser station.
+**Expected probability:** 0.02497205
+**Original formula:**
+Pr[<=700] (<> pow(robPositionX[0] - laser_start[0], 2) + pow(robPositionY[0] - laser_start[1], 2) <= 900 && robot_inventory[0][1] == 1)
+
+### Query 16
+**Description:** The robots shall collect processed materials from the unloading location of the surface texturization station and deliver them to the loading location of the laser station.
+**Expected probability:** 0.02497205
+**Original formula:**
+Pr[<=700] (<> pow(robPositionX[1] - laser_start[0], 2) + pow(robPositionY[1] - laser_start[1], 2) <= 900 && robot_inventory[1][1] == 1)
+
+### Query 17
+**Description:** The robots shall collect processed materials from the unloading location of the laser station and deposit them in the loading area.
+**Expected probability:** 0.02497205
+**Original formula:**
+Pr[<=700] (<> pow(robPositionX[0] - loading_area[0], 2) + pow(robPositionY[0] - loading_area[1], 2) <= 900 && robot_inventory[0][2] == 1)
+
+### Query 18
+**Description:** The robots shall collect processed materials from the unloading location of the laser station and deposit them in the loading area.
+**Expected probability:** 0.02497205
+**Original formula:**
+Pr[<=700] (<> pow(robPositionX[1] - loading_area[0], 2) + pow(robPositionY[1] - loading_area[1], 2) <= 900 && robot_inventory[1][2] == 1)
+
+### Query 19
+**Description:** Each robot shall be able to carry exactly one piece of raw or processed material at a time.
+**Expected probability:** 0.02497205
+**Original formula:**
+Pr[<=700] (<> robot_inventory[0][0] + robot_inventory[0][1] + robot_inventory[0][2] > 1)
+
+### Query 20
+**Description:** The robots shall maintain a safe operating speed to prevent damage to materials, equipment, or infrastructure.
+**Expected probability:** 0.02497205
+**Original formula:**
+Pr[<=700] (<> rm_1.V > rm_1._v_max)
+
+### Query 21
+**Description:** The robots shall maintain a safe operating speed to prevent damage to materials, equipment, or infrastructure.
+**Expected probability:** 0.02497205
+**Original formula:**
+Pr[<=700] (<> rm_2.V > rm_2._v_max)

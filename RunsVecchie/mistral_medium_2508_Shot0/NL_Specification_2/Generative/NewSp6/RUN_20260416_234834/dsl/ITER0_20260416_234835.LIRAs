@@ -1,0 +1,19 @@
+HouseScenario
+agents:
+	humans: Person
+	robots: Robot
+locations: Bedroom, Kitchen
+resources: Object
+
+Person:
+	1: moveTo Bedroom
+	2: moveTo Kitchen if possess(Robot, Object) else stop
+	3: stop
+
+Robot:
+	1: moveTo Bedroom
+	2: pick Object
+	3: follow Person(Kitchen)
+
+success: position(Person, Kitchen) && position(Robot, Kitchen) && possess(Robot, Object)
+failure: time(30)

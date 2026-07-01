@@ -1,0 +1,16 @@
+ElevatorDelivery
+agents:
+	humans: Human
+	robots: DeliveryBot
+locations: Room7002, Elevator7, InsideElevator, Elevator3, Room3201
+resources: Object
+DeliveryBot:
+	1: moveTo Room7002
+	2: receiveFrom Human
+	3: moveTo Elevator7
+	4: follow Human
+	5: moveTo InsideElevator
+	6: follow Human
+	7: moveTo Elevator3
+	8: moveTo Room3201
+	9: deliver Object

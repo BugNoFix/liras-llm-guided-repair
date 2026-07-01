@@ -1,0 +1,20 @@
+ModelDeliverObject
+agents:
+	humans: Human1
+	robots: Robot1
+locations: Room7002, Elevator7th, Elevator3rd, Room3201
+resources: Object
+
+Robot1: 
+1: moveTo Room7002
+2: receiveFrom Human1: Object if possess(Human1, Object) else stop
+3: moveTo Elevator7th
+4: follow Human1: Elevator7th if busy(Human1) else stop
+5: moveTo Elevator3rd if position(Robot1, Elevator7th) else stop
+6: follow Human1: Elevator3rd if busy(Human1) else stop
+7: moveTo Room3201 if position(Robot1, Elevator3rd) else stop
+8: deliver: Object if possess(Robot1, Object) else stop
+9: stop if still(Robot1) else moveTo Room3201
+
+success: position(Robot1, Room3201) && !possess(Robot1, Object)
+failure: !position(Robot1, Room3201) || possess(Robot1, Object)

@@ -1,0 +1,16 @@
+UniversityDelivery
+
+agents:
+	humans: Employee
+	robots: Robot
+locations: CoffeeMachine, Office
+resources: Coffee
+
+Robot:
+	1: moveTo CoffeeMachine
+	2: fetch Coffee
+	3: moveTo Employee if !position(Robot, Office) else stop
+	4: deliver Coffee
+
+success: possess(Robot, Coffee)
+failure: !possess(Robot, Coffee)

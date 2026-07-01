@@ -1,0 +1,24 @@
+TherapySupportBot
+	agents:
+		humans: Nurse, Child1, Parent1, Parent2
+		robots: TherapyBot, DeliveryCart
+
+	locations: ChemotherapyWard, TherapyArea
+	resources: Book1, Book2
+
+TherapyBot:
+	1: moveTo TherapyArea
+	2: deliver Book1 else stop
+	3: follow Child1 if still(Child1) else moveTo TherapyArea
+	4: moveTo ChemotherapyWard if time(30) else moveTo TherapyArea
+	5: receiveFrom Nurse if !busy(Nurse) else follow Parent1
+	6: moveTo ChemotherapyWard until position(TherapyBot, ChemotherapyWard)
+
+DeliveryCart:
+	1: moveTo TherapyArea
+	2: deliver Book2 else stop
+	3: receiveFrom Nurse if !busy(Nurse) else stop
+	4: moveTo ChemotherapyWard until position(DeliveryCart, ChemotherapyWard)
+
+success: position(TherapyBot, TherapyArea) && possess(TherapyBot, Book1) && possess(DeliveryCart, Book2)
+failure: time(120) || dist(Nurse, TherapyBot) > 10

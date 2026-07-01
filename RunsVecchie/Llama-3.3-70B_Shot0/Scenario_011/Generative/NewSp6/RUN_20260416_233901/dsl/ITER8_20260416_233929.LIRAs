@@ -1,0 +1,30 @@
+LabSampleTransport
+agents:
+	humans: Nurse, LaboratoryPersonnel
+	robots: RoboticArm, TransportRobot
+locations: PatientFloors, Laboratory, EntryModule
+resources: LabSamples, LockedDrawers, BarcodeScanner, AnalysisMachines
+
+Nurse: 
+1: moveTo PatientFloors
+2: fetch LabSamples
+3: moveTo Laboratory
+4: deliver LabSamples if possess(Nurse, LabSamples) else stop
+5: receiveFrom TransportRobot if time(10) else stop
+
+TransportRobot: 
+1: moveTo PatientFloors
+2: fetch LockedDrawers if possess(Nurse, LabSamples) else stop
+3: moveTo Laboratory
+4: deliver LockedDrawers if position(TransportRobot, Laboratory) else stop
+5: stop
+
+RoboticArm: 
+1: moveTo Laboratory
+2: pick LockedDrawers if busy(TransportRobot) else stop
+3: moveTo EntryModule
+4: deliver LabSamples if position(RoboticArm, EntryModule) else stop
+5: stop
+
+success: position(LabSamples, EntryModule) && time(30)
+failure: !position(LabSamples, EntryModule) || time(60)

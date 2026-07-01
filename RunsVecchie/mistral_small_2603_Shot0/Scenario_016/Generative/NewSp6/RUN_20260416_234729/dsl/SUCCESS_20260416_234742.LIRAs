@@ -1,0 +1,19 @@
+RobotTransporter
+
+agents:
+	humans: Human1
+	robots: Robot1
+locations: Room7002, Floor7Elevator, Floor3Elevator, Room3201, Elevator
+resources: Basket
+
+Robot1:
+	1: moveTo Room7002
+	2: receiveFrom Human1 if busy(Human1) else stop
+	3: moveTo Floor7Elevator
+	4: follow Human1(Elevator) until dist(Robot1,Human1) < 2
+	5: follow Human1 until position(Robot1,Floor3Elevator) && !busy(Human1)
+	6: moveTo Room3201
+	7: leave Basket if possess(Robot1,Basket) else stop
+	8: receiveFrom Human1 if busy(Human1) else stop
+success: position(Robot1,Room3201) && !possess(Robot1,Basket)
+failure: tired

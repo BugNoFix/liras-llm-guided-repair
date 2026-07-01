@@ -1,0 +1,18 @@
+SupermarketDelivery
+
+agents:
+	humans: Human
+	robots: Robot
+locations: room7002, elevator7002, elevator3rd, elevatorExit, room3201
+resources: object
+
+Robot:
+	1: moveTo room7002
+	2: wait 5
+	3: moveTo elevator7002
+	4: receiveFrom Human
+	5: moveTo elevator3rd
+	6: receiveFrom Human
+	7: moveTo elevatorExit
+	8: moveTo room3201
+	9: wait 5

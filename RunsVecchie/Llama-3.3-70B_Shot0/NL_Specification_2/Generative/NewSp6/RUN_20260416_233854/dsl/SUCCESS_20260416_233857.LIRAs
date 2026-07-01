@@ -1,0 +1,18 @@
+House
+agents:
+	humans: Human1
+	robots: Robot1
+locations: Bedroom, Kitchen
+resources: Object1
+
+Human1: 
+1: moveTo Bedroom
+2: moveTo Kitchen if possess(Robot1, Object1) else stop
+
+Robot1: 
+1: moveTo Bedroom
+2: pick Object1
+3: follow Human1
+
+success: position(Human1, Kitchen) && position(Robot1, Kitchen) && possess(Robot1, Object1)
+failure: !position(Human1, Kitchen) || !position(Robot1, Kitchen) || !possess(Robot1, Object1)

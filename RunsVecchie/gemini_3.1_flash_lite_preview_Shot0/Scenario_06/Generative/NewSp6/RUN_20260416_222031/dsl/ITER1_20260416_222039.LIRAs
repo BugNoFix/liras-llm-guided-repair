@@ -1,0 +1,13 @@
+HotelService
+agents:
+	robots: Butler
+locations: Storage, GuestRoom
+resources: Item
+
+Butler:
+	1: pick Item
+	2: moveTo GuestRoom
+	3: deliver Item
+
+success: position(Butler, GuestRoom)
+failure: dist(Butler, GuestRoom) > 100

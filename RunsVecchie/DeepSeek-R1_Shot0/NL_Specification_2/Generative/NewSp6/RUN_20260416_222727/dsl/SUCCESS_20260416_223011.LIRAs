@@ -1,0 +1,18 @@
+HouseTransport
+agents:
+	humans: Human
+	robots: Robot
+locations: Bedroom, Kitchen
+resources: Object
+Human:
+	1: moveTo Bedroom
+	2: stop until possess(Robot, Object)
+	3: moveTo Kitchen
+	4: stop
+Robot:
+	1: moveTo Bedroom
+	2: stop until position(Human, Bedroom)
+	3: pick Object
+	4: follow Human (Kitchen)
+success: position(Human, Kitchen) && position(Robot, Kitchen) && possess(Robot, Object)
+failure: !position(Human, Kitchen) || !position(Robot, Kitchen) || !possess(Robot, Object)

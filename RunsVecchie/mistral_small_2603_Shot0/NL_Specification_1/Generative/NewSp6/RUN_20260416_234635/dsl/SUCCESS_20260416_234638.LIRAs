@@ -1,0 +1,13 @@
+RobotCoffeeDeliverySystem
+agents:
+	humans: Employee
+	robots: Robot
+locations: CoffeeMachine, EmployeeDesk
+resources: Coffee
+
+Robot:
+	1: moveTo CoffeeMachine
+	2: pick Coffee if possess(Robot, Coffee) else fetch Coffee
+	3: leave Coffee if !possess(Robot, Coffee) else stop
+	4: moveTo EmployeeDesk
+	5: deliver Coffee

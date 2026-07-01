@@ -1,0 +1,14 @@
+CoffeeDelivery
+agents:
+	humans: Employee
+	robots: Robot
+locations: CoffeeMachine, Office
+resources: coffee
+Robot:
+	1: moveTo CoffeeMachine
+	2: pick coffee
+	3: moveTo Office
+	4: deliver coffee
+Employee:
+	1-3: moveTo Office
+	4: receiveFrom Robot

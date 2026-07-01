@@ -1,0 +1,19 @@
+DeliveryTask
+agents:
+	humans: Human1
+	robots: Robot1
+locations: Room7002, Elevator7, Elevator3, Room3201
+resources: Package
+
+Robot1:
+	1: moveTo Room7002
+	2: pick Package until possess(Robot1, Package)
+	3: moveTo Elevator7
+	4: follow Human1(Elevator3)
+	5: moveTo Elevator3
+	6: follow Human1(Room3201)
+	7: moveTo Room3201
+	8: deliver Package until !possess(Robot1, Package)
+
+success: possess(Robot1, Package) == false
+failure: dist(Robot1, Room3201) != 0

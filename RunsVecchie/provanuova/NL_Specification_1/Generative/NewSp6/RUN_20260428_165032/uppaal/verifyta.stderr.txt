@@ -1,0 +1,6 @@
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_1/Generative/NewSp6/RUN_20260428_165032/xml/ITER0_20260428_165050.xml:/nta/declaration:82: [error] Unknown identifier: CoffeeMachine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_1/Generative/NewSp6/RUN_20260428_165032/xml/ITER0_20260428_165050.xml:/nta/declaration:82: [error] Unknown identifier: Coffee.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_1/Generative/NewSp6/RUN_20260428_165032/xml/ITER0_20260428_165050.xml:/nta/declaration:83: [error] Unknown identifier: CoffeeMachine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_1/Generative/NewSp6/RUN_20260428_165032/xml/ITER0_20260428_165050.xml:/nta/declaration:83: [error] Unknown identifier: Coffee.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_1/Generative/NewSp6/RUN_20260428_165032/xml/ITER0_20260428_165050.xml:/nta/declaration:87: [error] Unknown identifier: Coffee.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_1/Generative/NewSp6/RUN_20260428_165032/xml/ITER0_20260428_165050.xml:/nta/declaration:88: [error] Unknown identifier: Coffee.

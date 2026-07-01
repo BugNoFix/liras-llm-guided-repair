@@ -1,0 +1,34 @@
+MaterialTransportSystem
+agents:
+	humans:
+	robots: RobotA, RobotB
+locations: Warehouse, TexturizationStart, TexturizationEnd, LaserStart, LaserEnd, LoadingArea
+resources: RawMaterial, ProcessedMaterial1, ProcessedMaterial2, ProcessedMaterial3
+RobotA:
+	1: moveTo Warehouse
+	2: fetch RawMaterial
+	3: moveTo TexturizationStart
+	4: deliver RawMaterial
+	5: moveTo TexturizationEnd
+	6: pick ProcessedMaterial1
+	7: moveTo LaserStart
+	8: deliver ProcessedMaterial1
+	9: moveTo LaserEnd
+	10: pick ProcessedMaterial2
+	11: moveTo LoadingArea
+	12: deposit ProcessedMaterial2
+RobotB:
+	1: moveTo Warehouse
+	2: fetch RawMaterial
+	3: moveTo TexturizationStart
+	4: deliver RawMaterial
+	5: moveTo TexturizationEnd
+	6: pick ProcessedMaterial1
+	7: moveTo LaserStart
+	8: deliver ProcessedMaterial1
+	9: moveTo LaserEnd
+	10: pick ProcessedMaterial2
+	11: moveTo LoadingArea
+	12: deposit ProcessedMaterial2
+success: position(RobotA, LoadingArea) && position(RobotB, LoadingArea)
+failure: !possess(RobotA, ProcessedMaterial2) || !possess(RobotB, ProcessedMaterial2)

@@ -1,0 +1,17 @@
+ChemotherapyWardSupport
+agents:
+	humans: Nurse
+	robots: Robot, Cart
+locations: ChemotherapyWard, TherapyArea, BookStorage
+resources: Book
+Robot:
+	1: moveTo TherapyArea
+	2: stop until busy(Nurse)
+Cart:
+	1: moveTo BookStorage
+	2: pick Book
+	3: moveTo TherapyArea
+	4: deliver Book
+	5: restart all if !busy(Nurse)
+success: position(Robot, ChemotherapyWard) && busy(Nurse)
+failure: time(100)

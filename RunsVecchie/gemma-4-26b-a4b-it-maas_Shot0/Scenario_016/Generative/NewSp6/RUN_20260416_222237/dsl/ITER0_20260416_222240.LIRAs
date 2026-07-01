@@ -1,0 +1,19 @@
+LogisticsTask
+agents:
+	humans: User
+	robots: Robot1
+locations: Room7002, Elevator7th, Elevator3rd, Room3201
+resources: Object
+Robot1:
+	1: moveTo Room7002
+	2: receiveFrom User until position(User, Room7002)
+	3: moveTo Elevator7th
+	4: follow User(Elevator7th)
+	5: moveTo Elevator7th until position(Robot1, Elevator7th)
+	6: follow User(Elevator3rd)
+	7: moveTo Elevator3rd
+	8: follow User(Elevator3rd) until position(Robot1, Elevator3rd)
+	9: moveTo Room3201
+	10: receiveFrom User until position(User, Room3201)
+success: position(Robot1, Room3201)
+failure: !position(Robot1, Room3201)

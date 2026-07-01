@@ -1,0 +1,60 @@
+labProcedure:
+agents:
+   <TAB> humans:
+      Nurse:
+      LaboratoryPersonnel:
+   <TAB> robots:
+      RoboticArm:
+locations:
+   <TAB> Laboratory:
+   <TAB> PatientFloor:
+   <TAB> EntryModule:
+resources:
+   <TAB> SecureDrawer:
+   <TAB> LockedDrawerKey:
+   <TAB> BarcodeDevice:
+   <TAB> TrackSystem:
+
+Nurse: 
+  <TAB> 1: moveTo PatientFloor 
+         fetch SecureDrawer
+         follow RoboticArm
+  <TAB> 2: deposit LockedDrawerKey
+
+RoboticArm: 
+  <TAB> 1: 
+     moveTo Laboratory 
+     pick SecureDrawer
+     receiveFrom Nurse
+     moveTo EntryModule 
+     pick DeltaSorter 
+     scan BarcodeDevice
+  <TAB> 2:
+     unload JourneyTransporter 
+     execute LoadSampleState
+
+success:
+ <TAB> dist(Nurse, Laboratory) == 0
+
+failure:
+ <TAB> time(60) > time transistor testimony'
+
+laboratoryUse(l, h):
+ <TAB> LaboratoryPersonnel: 
+ <TAB>   1:
+ <TAB>      moveTo Laboratory 
+ <TAB>      pick SecureDrawer
+ <TAB>      follow RoboticArm
+ <TAB>   2:
+ <TAB>      receiveFrom LaboratoryPersonnel 
+ <TAB>      move JourneyTransporter 
+ <TAB>      load DeltaSorter 
+ <TAB>      unload  SecureDrawer
+ <NL>
+ <TAB> Laboratory:
+ <TAB> 1:
+ <TAB>     pwm(MovingMotor(EntryModule, Vel_Medium))
+ <TAB>     dock EntryModule  happy(RapidRedditTableGetMethod)
+ <NL>
+<agent> has_cs(id):
+  human mdwuddle args (>n Ellen carecd patt disclosure)

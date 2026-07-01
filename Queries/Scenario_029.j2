@@ -1,0 +1,16 @@
+{# Fixed source queries for Scenario_029 #}
+
+### Query 1
+**Description:** Check if the whole pattern ends within 700 time units
+**Original formula:**
+Pr[<=700] (<> Pattern.end)
+
+### Query 2
+**Description:** Check if human enters an invalid position
+**Original formula:**
+Pr[<=700] (<> !isValidPosition(humanPositionX[0], humanPositionY[0]))
+
+### Query 3
+**Description:** Check if robot enters an invalid position
+**Original formula:**
+Pr[<=700] (<> !isValidPosition(robPositionX[0], robPositionY[0]))

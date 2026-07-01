@@ -74,6 +74,52 @@ def _safe_read_text(path: Any, max_chars: int | None = 120000) -> str:
         return ""
 
 
+def _first_meaningful_error_line(text: str) -> str:
+    for raw_line in (text or "").splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        lower = line.lower()
+        if "error" in lower or "exception" in lower or "failed" in lower or "cannot" in lower:
+            return line[:500]
+    for raw_line in (text or "").splitlines():
+        line = raw_line.strip()
+        if line:
+            return line[:500]
+    return ""
+
+
+def _iteration_status(it: dict[str, Any]) -> str:
+    if it.get("ended_because") == "validation_setup_error":
+        return "setup_error"
+    if it.get("is_valid") is True:
+        return "valid"
+    if it.get("validated") is True and it.get("is_valid") is False:
+        return "invalid"
+    if it.get("validated") is False:
+        return "not_validated"
+    return "unknown"
+
+
+def _iteration_error_summary(
+    it: dict[str, Any],
+    compiler_output_text: str,
+) -> str:
+    if it.get("is_valid") is True:
+        return ""
+
+    validation = it.get("validation") if isinstance(it.get("validation"), dict) else {}
+    for key in ("error", "message", "stderr", "stdout"):
+        value = validation.get(key)
+        if isinstance(value, str) and value.strip():
+            return _first_meaningful_error_line(value)
+
+    if it.get("ended_because") == "validation_setup_error":
+        return "Validation setup error"
+
+    return _first_meaningful_error_line(compiler_output_text)
+
+
 def _pick_artifacts(meta: dict[str, Any]) -> dict[str, Any]:
     iterations = meta.get("iterations")
     if not isinstance(iterations, list):
@@ -152,17 +198,28 @@ def _iteration_artifacts(
         compiler_output = it.get("compiler_output_path")
         if not isinstance(compiler_output, str):
             compiler_output = ""
+        compiler_output_text = _safe_read_text(compiler_output, max_chars=max_chars)
+        score = it.get("compiler_error_score") if isinstance(it.get("compiler_error_score"), dict) else {}
 
         options.append(
             {
                 "iteration": it.get("iteration"),
                 "is_valid": it.get("is_valid"),
+                "validated": it.get("validated"),
+                "status": _iteration_status(it),
+                "ended_because": it.get("ended_because") or "",
+                "error_lines": score.get("error_lines"),
+                "warning_lines": score.get("warning_lines"),
+                "compiler_feedback_chars": it.get("compiler_feedback_chars"),
+                "repair_returned_empty": bool(it.get("repair_returned_empty")),
+                "repair_prompt_mode": it.get("repair_prompt_mode") or "",
                 "dsl_path": _safe_rel(dsl_path),
                 "dsl_uri": _safe_uri(dsl_path),
                 "dsl_text": _safe_read_text(dsl_path, max_chars=max_chars),
                 "compiler_output_path": _safe_rel(compiler_output),
                 "compiler_output_uri": _safe_uri(compiler_output),
-                "compiler_output_text": _safe_read_text(compiler_output, max_chars=max_chars),
+                "compiler_output_text": compiler_output_text,
+                "error_summary": _iteration_error_summary(it, compiler_output_text),
             }
         )
 
@@ -201,6 +258,7 @@ def _build_record(meta: dict[str, Any], meta_path: Path, embed_all_data: bool = 
 
     artifacts = _pick_artifacts(meta)
     iteration_options, working = _iteration_artifacts(meta, embed_all_data=embed_all_data)
+    final_iteration_error = _final_iteration_error(iteration_options)
     max_chars = None if embed_all_data else 120000
     selected_dsl_path = artifacts.get("selected_dsl_path") if isinstance(artifacts.get("selected_dsl_path"), str) else ""
     selected_compiler_output_path = (
@@ -211,7 +269,7 @@ def _build_record(meta: dict[str, Any], meta_path: Path, embed_all_data: bool = 
 
     record = {
         "run_id": str(meta.get("run_id") or meta_path.parent.name),
-        "provider": str(meta.get("provider") or "unknown"),
+        "provider": str(meta.get("provider") or meta.get("generation_provider") or "unknown"),
         "generation_model": str(meta.get("generation_model") or "unknown"),
         "repair_model": str(meta.get("repair_model") or "unknown"),
         "scenario": str(meta.get("scenario") or "unknown"),
@@ -229,7 +287,8 @@ def _build_record(meta: dict[str, Any], meta_path: Path, embed_all_data: bool = 
         "prompt_tokens_est_total": summary.get("prompt_tokens_est_total", telemetry.get("prompt_tokens_est_total")),
         "response_tokens_est_total": summary.get("response_tokens_est_total", telemetry.get("response_tokens_est_total")),
         "error_type": str(breaking_error.get("type") or ""),
-        "error_message": error_message,
+        "error_message": error_message or final_iteration_error,
+        "final_iteration_error": final_iteration_error,
         "run_dir": _safe_rel(run_dir),
         "metadata_path": _safe_rel(str(meta_path)),
         "metadata_uri": _safe_uri(str(meta_path)),
@@ -243,6 +302,7 @@ def _build_record(meta: dict[str, Any], meta_path: Path, embed_all_data: bool = 
         "selected_dsl_text": _safe_read_text(selected_dsl_path, max_chars=max_chars),
         "selected_compiler_output_text": _safe_read_text(selected_compiler_output_path, max_chars=max_chars),
         "iteration_options": iteration_options,
+        "cycle_status_summary": _cycle_status_summary(iteration_options),
         "working_iteration": working.get("iteration") if isinstance(working, dict) else None,
         "working_dsl_path": working.get("dsl_path") if isinstance(working, dict) else "",
         "working_dsl_uri": working.get("dsl_uri") if isinstance(working, dict) else "",
@@ -250,6 +310,31 @@ def _build_record(meta: dict[str, Any], meta_path: Path, embed_all_data: bool = 
         "working_compiler_output_uri": working.get("compiler_output_uri") if isinstance(working, dict) else "",
     }
     return record
+
+
+def _cycle_status_summary(iterations: list[dict[str, Any]]) -> str:
+    if not iterations:
+        return "-"
+    parts = []
+    for it in iterations:
+        iteration = it.get("iteration")
+        status = it.get("status") or "unknown"
+        marker = {
+            "valid": "ok",
+            "invalid": "fail",
+            "setup_error": "setup",
+            "not_validated": "skip",
+        }.get(str(status), str(status))
+        parts.append(f"{iteration}:{marker}")
+    return " | ".join(parts)
+
+
+def _final_iteration_error(iterations: list[dict[str, Any]]) -> str:
+    for it in reversed(iterations):
+        error = it.get("error_summary")
+        if isinstance(error, str) and error.strip():
+            return error.strip()
+    return ""
 
 
 def _collect_records(runs_dir: Path) -> list[dict[str, Any]]:
@@ -559,6 +644,45 @@ def _build_html(payload: dict[str, Any]) -> str:
       color: #304057;
     }
 
+    .cycles {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      overflow: auto;
+    }
+
+    .cycles table {
+      font-size: 12px;
+      min-width: 620px;
+    }
+
+    .cycles th,
+    .cycles td {
+      padding: 6px 8px;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .cycle-pill {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 2px 7px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .cycle-pill.valid { color: var(--good); background: #eafaf1; border-color: #c7eed8; }
+    .cycle-pill.invalid { color: var(--bad); background: #fdecea; border-color: #f7c7c3; }
+    .cycle-pill.setup_error,
+    .cycle-pill.not_validated,
+    .cycle-pill.unknown { color: var(--warn); background: #fef5e7; border-color: #f8ddb0; }
+
+    .cycle-summary {
+      max-width: 210px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
@@ -580,6 +704,7 @@ def _build_html(payload: dict[str, Any]) -> str:
       <div class=\"control\"><label>Model</label><select id=\"modelFilter\"></select></div>
       <div class=\"control\"><label>Scenario</label><select id=\"scenarioFilter\"></select></div>
       <div class=\"control\"><label>Status</label><select id=\"statusFilter\"></select></div>
+      <div class=\"control\"><label>Loop cycles</label><select id=\"cycleFilter\"></select></div>
       <div class=\"control\"><label>Sort</label>
         <select id=\"sortBy\">
           <option value=\"started_desc\">Newest first</option>
@@ -605,6 +730,7 @@ def _build_html(payload: dict[str, Any]) -> str:
                 <th>Scenario</th>
                 <th>Status</th>
                 <th>Iter</th>
+                <th>Cycles</th>
                 <th>LLM</th>
                 <th>PromptTok</th>
                 <th>Error</th>
@@ -618,6 +744,7 @@ def _build_html(payload: dict[str, Any]) -> str:
       <div class=\"panel\">
         <h2>Selected Run</h2>
         <div class=\"chips\" id=\"detailChips\"></div>
+        <div class=\"cycles\" id=\"cyclePanel\"></div>
         <div class=\"detail\">
           <div id=\"detailActions\" class=\"detail-actions\"></div>
           <pre id=\"detail\">Select one row.</pre>
@@ -655,11 +782,13 @@ def _build_html(payload: dict[str, Any]) -> str:
       model: document.getElementById('modelFilter'),
       scenario: document.getElementById('scenarioFilter'),
       status: document.getElementById('statusFilter'),
+      cycle: document.getElementById('cycleFilter'),
       sortBy: document.getElementById('sortBy'),
       rows: document.getElementById('rows'),
       detail: document.getElementById('detail'),
       detailChips: document.getElementById('detailChips'),
       detailActions: document.getElementById('detailActions'),
+      cyclePanel: document.getElementById('cyclePanel'),
       rowCount: document.getElementById('rowCount'),
     };
 
@@ -687,6 +816,20 @@ def _build_html(payload: dict[str, Any]) -> str:
       const m = Math.floor(sec / 60);
       const s = Math.round(sec % 60);
       return m + 'm ' + s + 's';
+    }
+
+    function cycleStatusLabel(v) {
+      const status = String(v || 'unknown');
+      if (status === 'valid') return 'valid';
+      if (status === 'invalid') return 'invalid';
+      if (status === 'setup_error') return 'setup error';
+      if (status === 'not_validated') return 'not validated';
+      return status;
+    }
+
+    function cyclePillHtml(status) {
+      const safeStatus = String(status || 'unknown').replace(/[^a-zA-Z0-9_-]/g, '_');
+      return '<span class="cycle-pill ' + safeStatus + '">' + escapeHtml(cycleStatusLabel(status)) + '</span>';
     }
 
     function withLineNumbers(text) {
@@ -829,6 +972,43 @@ def _build_html(payload: dict[str, Any]) -> str:
       fillSelect(el.model, uniqSorted(records.map(r => r.generation_model)), 'All models');
       fillSelect(el.scenario, uniqSorted(records.map(r => r.scenario)), 'All scenarios');
       fillSelect(el.status, uniqSorted(records.map(r => r.status)), 'All statuses');
+      fillCycleSelect();
+    }
+
+    function cycleCount(r) {
+      if (Array.isArray(r.iteration_options)) return r.iteration_options.length;
+      const n = Number(r.iterations_recorded);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function fillCycleSelect() {
+      el.cycle.innerHTML = '';
+      const options = [
+        ['', 'All loop counts'],
+        ['0', '0 cycles'],
+        ['1', '1 cycle'],
+        ['2', '2 cycles'],
+        ['3', '3 cycles'],
+        ['4', '4 cycles'],
+        ['5', '5 cycles'],
+        ['6-9', '6-9 cycles'],
+        ['>=10', '10+ cycles'],
+      ];
+      for (const [value, label] of options) {
+        const opt = document.createElement('option');
+        opt.value = value;
+        opt.textContent = label;
+        el.cycle.appendChild(opt);
+      }
+    }
+
+    function matchesCycleFilter(r) {
+      const mode = el.cycle.value;
+      if (!mode) return true;
+      const count = cycleCount(r);
+      if (mode === '6-9') return count >= 6 && count <= 9;
+      if (mode === '>=10') return count >= 10;
+      return count === Number(mode);
     }
 
     function sortRows(items) {
@@ -854,6 +1034,7 @@ def _build_html(payload: dict[str, Any]) -> str:
           if (el.model.value && r.generation_model !== el.model.value) return false;
           if (el.scenario.value && r.scenario !== el.scenario.value) return false;
           if (el.status.value && r.status !== el.status.value) return false;
+          if (!matchesCycleFilter(r)) return false;
 
           if (!q) return true;
           const hay = [
@@ -862,9 +1043,11 @@ def _build_html(payload: dict[str, Any]) -> str:
             r.generation_model,
             r.scenario,
             r.status,
+            r.cycle_status_summary,
             r.error_message,
             r.error_type,
             r.run_dir,
+            ...(Array.isArray(r.iteration_options) ? r.iteration_options.map(v => v.error_summary || '') : []),
           ].join(' ').toLowerCase();
           return hay.includes(q);
         });
@@ -876,7 +1059,7 @@ def _build_html(payload: dict[str, Any]) -> str:
         el.rows.innerHTML = '';
         const tr = document.createElement('tr');
         const td = document.createElement('td');
-        td.colSpan = 10;
+        td.colSpan = 11;
         td.className = 'muted';
         td.textContent = 'Render error: ' + String(err && err.message ? err.message : err);
         tr.appendChild(td);
@@ -916,6 +1099,7 @@ def _build_html(payload: dict[str, Any]) -> str:
         tr.appendChild(statusTd);
 
         appendCell(fmtNum(r.iterations_recorded));
+        appendCell(String(r.cycle_status_summary || '-'), 'cycle-summary mono');
         appendCell(fmtNum(r.llm_calls));
         appendCell(fmtNum(r.prompt_tokens_est_total));
         appendCell(String(errShort || '-'), 'clamp muted');
@@ -931,7 +1115,7 @@ def _build_html(payload: dict[str, Any]) -> str:
 
       if (!filtered.length) {
         const tr = document.createElement('tr');
-        tr.innerHTML = '<td colspan="10" class="muted">No runs match current filters.</td>';
+        tr.innerHTML = '<td colspan="11" class="muted">No runs match current filters.</td>';
         el.rows.appendChild(tr);
         renderDetail(null);
       }
@@ -940,6 +1124,7 @@ def _build_html(payload: dict[str, Any]) -> str:
     function renderDetail(r) {
       el.detailChips.innerHTML = '';
       el.detailActions.innerHTML = '';
+      el.cyclePanel.innerHTML = '';
       if (!r) {
         el.detail.textContent = 'No run selected.';
         return;
@@ -958,6 +1143,8 @@ def _build_html(payload: dict[str, Any]) -> str:
         d.textContent = c;
         el.detailChips.appendChild(d);
       }
+
+      renderCycles(r);
 
       function addLink(label, href) {
         if (!href) return false;
@@ -1077,8 +1264,43 @@ def _build_html(payload: dict[str, Any]) -> str:
       }
     }
 
+    function renderCycles(r) {
+      const versions = Array.isArray(r.iteration_options) ? r.iteration_options : [];
+      if (!versions.length) {
+        el.cyclePanel.textContent = 'No cycle metadata available.';
+        el.cyclePanel.className = 'cycles muted';
+        return;
+      }
+      el.cyclePanel.className = 'cycles';
+      const rows = versions.map(v => {
+        const err = v.error_summary || (v.status === 'valid' ? '' : '[error not available]');
+        const counts = [
+          v.error_lines !== null && v.error_lines !== undefined ? String(v.error_lines) + ' err' : '',
+          v.warning_lines !== null && v.warning_lines !== undefined ? String(v.warning_lines) + ' warn' : '',
+        ].filter(Boolean).join(', ') || '-';
+        const repair = v.repair_returned_empty
+          ? 'repair empty'
+          : (v.repair_prompt_mode || '-');
+        return '<tr>' +
+          '<td class="mono">' + escapeHtml(String(v.iteration ?? '-')) + '</td>' +
+          '<td>' + cyclePillHtml(v.status) + '</td>' +
+          '<td>' + escapeHtml(counts) + '</td>' +
+          '<td>' + escapeHtml(repair) + '</td>' +
+          '<td class="clamp">' + escapeHtml(err || '-') + '</td>' +
+          '</tr>';
+      }).join('');
+
+      el.cyclePanel.innerHTML =
+        '<table>' +
+          '<thead><tr>' +
+            '<th>Cycle</th><th>Status</th><th>Compiler</th><th>Repair</th><th>Main error</th>' +
+          '</tr></thead>' +
+          '<tbody>' + rows + '</tbody>' +
+        '</table>';
+    }
+
     function wireEvents() {
-      const fns = [el.search, el.provider, el.model, el.scenario, el.status, el.sortBy];
+      const fns = [el.search, el.provider, el.model, el.scenario, el.status, el.cycle, el.sortBy];
       for (const x of fns) x.addEventListener('input', applyFilters);
       for (const x of fns) x.addEventListener('change', applyFilters);
     }
