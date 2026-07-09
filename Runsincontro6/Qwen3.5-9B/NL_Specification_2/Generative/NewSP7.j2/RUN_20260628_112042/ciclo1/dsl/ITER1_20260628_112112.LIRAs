@@ -1,0 +1,17 @@
+Pattern1
+agents:
+	humans: nurse
+	robots: robot1
+locations: room1, room2
+resources: item1
+
+nurse:
+	1: moveTo room1
+	2: moveTo room2
+
+robot1:
+	1: moveTo room1
+	2: moveTo room2
+
+success: time(10)
+failure: time(20)

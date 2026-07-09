@@ -1,0 +1,13 @@
+Ciclo1
+
+agents: Nurse
+locations: room1, room2, room3
+resources: item1, item2
+
+Nurse:
+	1: moveTo room2 if time(5) else stop
+	2: pick item1 until time(10)
+	3: moveTo room3
+
+success: time(20)
+failure: time(100)

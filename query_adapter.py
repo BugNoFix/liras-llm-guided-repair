@@ -316,13 +316,17 @@ def generate_adapted_queries(
                 source_queries_copy_path=source_copy_path,
                 raw_response_path=raw_response_path,
                 error="LLM returned empty adapted queries",
-                failure_type="invalid_query",
-                failure_reason="Query adaptation failed because the LLM returned no usable UPPAAL queries.",
+                failure_type="empty_query_adaptation",
+                failure_reason="EmptyQueryAdaptation",
                 failure_details={
                     "operation": "llm_query_adaptation",
+                    "error_type": "EmptyQueryAdaptation",
+                    "error_message": "Query adaptation model returned no usable UPPAAL queries.",
                     "model": model_name,
                     "provider": provider_name,
                     "raw_response_path": str(raw_response_path),
+                    "raw_response_chars": len(raw_response or ""),
+                    "adapted_query_chars": len(adapted_queries or ""),
                 },
             )
 

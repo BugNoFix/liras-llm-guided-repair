@@ -334,6 +334,32 @@ def _failure_payload(stage_record: dict) -> dict:
     }
 
 
+def _is_empty_generation_failure(metadata_or_record: dict) -> bool:
+    if not isinstance(metadata_or_record, dict):
+        return False
+    if metadata_or_record.get("failure_reason") == "EmptyResponseGeneration":
+        return True
+    failure_details = metadata_or_record.get("failure_details")
+    if isinstance(failure_details, dict) and failure_details.get("error_type") == "EmptyResponseGeneration":
+        return True
+    breaking_error = metadata_or_record.get("breaking_error")
+    return isinstance(breaking_error, dict) and breaking_error.get("type") == "EmptyResponseGeneration"
+
+
+def _is_empty_query_adaptation_failure(metadata_or_record: dict) -> bool:
+    if not isinstance(metadata_or_record, dict):
+        return False
+    if metadata_or_record.get("failure_reason") == "EmptyQueryAdaptation":
+        return True
+    if metadata_or_record.get("failure_type") == "empty_query_adaptation":
+        return True
+    failure_details = metadata_or_record.get("failure_details")
+    if isinstance(failure_details, dict) and failure_details.get("error_type") == "EmptyQueryAdaptation":
+        return True
+    breaking_error = metadata_or_record.get("breaking_error")
+    return isinstance(breaking_error, dict) and breaking_error.get("type") == "EmptyQueryAdaptation"
+
+
 def _stage_artifacts(**paths: Optional[object]) -> dict:
     return {key: str(value) for key, value in paths.items() if value is not None}
 
@@ -364,6 +390,9 @@ def _dsl_generation_stage_from_metadata(run_metadata: dict, success_liras_path: 
     elif status == "crashed":
         failure_type = "execution"
         reason = str(breaking_error.get("message") or "DSL generation crashed before producing a valid LIRAs model.")
+    elif _is_empty_generation_failure(run_metadata):
+        failure_type = "empty_generation_response"
+        reason = "EmptyResponseGeneration"
     else:
         failure_type = "missing_artifact"
         reason = "DSL generation finished without producing a valid LIRAs artifact."
@@ -381,6 +410,7 @@ def _dsl_generation_stage_from_metadata(run_metadata: dict, success_liras_path: 
                 "compiler_successes": summary.get("compiler_successes"),
                 "error_type": breaking_error.get("type"),
                 "error_message": breaking_error.get("message"),
+                "abort_entire_run": _is_empty_generation_failure(run_metadata),
             }
         ),
         details=summary or None,
@@ -619,6 +649,68 @@ def _query_context(index: int, adapted_queries: dict[int, dict], source_queries:
     }
 
 
+def _compact_verifyta_output(block: str, related_diagnostics: str = "") -> str:
+    """Keep only concise verifyta diagnostics, dropping state/trace dumps."""
+    lines: list[str] = []
+    for raw_line in (block or "").splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        lowered = line.lower()
+        keep = (
+            line.startswith("Verifying formula")
+            or line.startswith("-- Formula:")
+            or line.startswith("-- Aborted")
+            or "not satisfied" in lowered
+            or "isn't satisfied" in lowered
+            or "error" in lowered
+            or "syntax" in lowered
+            or "invalid" in lowered
+        )
+        if keep:
+            lines.append(line)
+        if line.startswith("-- Aborted"):
+            break
+
+    if related_diagnostics:
+        lines.append("Related diagnostics:")
+        lines.append(related_diagnostics.strip())
+
+    compact = "\n".join(lines).strip()
+    if len(compact) > 2000:
+        compact = compact[:2000].rstrip() + "\n...[truncated]"
+    return compact
+
+
+def _compact_verifyta_diagnostics(text: str, *, max_chars: int = 4000) -> str:
+    """Keep unique verifyta error lines once, avoiding repeated state dumps."""
+    seen: set[str] = set()
+    lines: list[str] = []
+    include_next_context = False
+    for raw_line in (text or "").splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        lowered = line.lower()
+        if "warning" in lowered:
+            continue
+        is_context_line = include_next_context and line.startswith("in ")
+        include_next_context = False
+        is_error_line = any(marker in lowered for marker in ("error", "syntax", "invalid", "exception", "abort", "failed"))
+        if not is_error_line and not is_context_line:
+            continue
+        if line in seen:
+            continue
+        seen.add(line)
+        lines.append(line)
+        if is_error_line:
+            include_next_context = True
+    compact = "\n".join(lines)
+    if len(compact) > max_chars:
+        compact = compact[:max_chars].rstrip() + "\n...[truncated]"
+    return compact
+
+
 def _parse_verifyta_failures(
     *,
     stdout_path: Optional[Path],
@@ -692,9 +784,7 @@ def _parse_verifyta_failures(
                 "failure_reason": _query_failure_reason(failure_kind or ""),
                 "probability_delta": probability_delta,
                 "probability_threshold": probability_threshold if expected_probability is not None else None,
-                "verifyta_output": "\n".join(
-                    part for part in (block[-4000:], stderr_without_warnings[-4000:]) if part
-                ).strip(),
+                "verifyta_output": _compact_verifyta_output(block),
             }
         )
 
@@ -713,6 +803,14 @@ def _parse_verifyta_failures(
                 "probability_threshold": probability_threshold if query.get("expected_probability") is not None else None,
                 "verifyta_output": stderr_without_warnings[-4000:],
             }
+        )
+
+    compact_stderr = _compact_verifyta_diagnostics(stderr_without_warnings, max_chars=1200)
+    if compact_stderr and len(failed_queries) == 1:
+        failed = failed_queries[0]
+        failed["verifyta_output"] = _compact_verifyta_output(
+            str(failed.get("verifyta_output") or ""),
+            related_diagnostics=compact_stderr,
         )
 
     return {
@@ -799,9 +897,10 @@ def _build_uppaal_feedback_text(
         for filtered in (_filter_verifyta_warning_lines(_strip_ansi(_read_text_if_exists(path))),)
         if filtered
     )
+    diagnostic_text = _compact_verifyta_diagnostics(diagnostic_text)
     if diagnostic_text:
         parts.append("### VERIFYTA DIAGNOSTICS")
-        parts.append(diagnostic_text[-12000:])
+        parts.append(diagnostic_text)
 
     wrong_liras = _read_text_if_exists(selected_liras_path)
     parts.append("### INCORRECT LIRAS CODE")
@@ -1299,6 +1398,12 @@ def _cycle_record_from_metadata(
             "continue_feedback_loop": continue_feedback_loop,
         }
     )
+    if _is_empty_generation_failure(metadata):
+        record["abort_entire_run"] = True
+        record["abort_reason"] = "EmptyResponseGeneration"
+    if _is_empty_query_adaptation_failure(metadata):
+        record["abort_entire_run"] = True
+        record["abort_reason"] = "EmptyQueryAdaptation"
     for key in ("selected_liras_path", "compiled_xml_path", "adapted_query_path", "query_source_path"):
         if metadata.get(key):
             record[key] = metadata.get(key)
@@ -1534,6 +1639,22 @@ def _run_pipeline_cycle(
         },
     )
     if query_result.status == "failed":
+        if query_result.failure_type == "empty_query_adaptation":
+            _update_pipeline_metadata(
+                metadata_path,
+                {
+                    "status": "failed",
+                    "interrupted": True,
+                    "breaking_error": {
+                        "type": "EmptyQueryAdaptation",
+                        "message": "Query adaptation model returned no usable UPPAAL queries.",
+                        "when": datetime.now().isoformat(),
+                        "where": "pipeline_runner/query_adaptation",
+                        "raw_response_path": str(query_result.raw_response_path) if query_result.raw_response_path else None,
+                    },
+                    "run_finished_at": datetime.now().isoformat(),
+                },
+            )
         return _cycle_record_from_metadata(
             cycle_index=cycle_index,
             run_dir=run_dir,
@@ -1698,6 +1819,10 @@ def _run_pipeline(config: dict) -> int:
             )
             return 0
 
+        if cycle_record.get("abort_entire_run"):
+            print(f"[PIPELINE_ABORT] reason={cycle_record.get('abort_reason') or 'pipeline_abort'}")
+            break
+
         if not cycle_record.get("continue_feedback_loop") or cycle_index >= max_cycles:
             break
 
@@ -1712,6 +1837,8 @@ def _run_pipeline(config: dict) -> int:
             "failure_type": (last_cycle_record or {}).get("failure_type"),
             "failure_reason": (last_cycle_record or {}).get("failure_reason"),
             "failure_details": (last_cycle_record or {}).get("failure_details"),
+            "aborted": bool((last_cycle_record or {}).get("abort_entire_run")),
+            "abort_reason": (last_cycle_record or {}).get("abort_reason"),
             "last_cycle_run_dir": (last_cycle_record or {}).get("run_dir"),
             "last_cycle_metadata_path": (last_cycle_record or {}).get("metadata_path"),
         },

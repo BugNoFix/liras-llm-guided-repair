@@ -2,6 +2,7 @@ import os
 import re
 import shlex
 import subprocess
+import sys
 import time
 from google import genai
 from google.genai import types
@@ -54,6 +55,8 @@ class DSLGenerator:
         service_account_key: str = None,
         *,
         generation_temperature: float = 1.0,
+        generation_max_output_tokens: Optional[int] = None,
+        llm_seed: Optional[int] = None,
         repair_temperature: float = 0.2,
         repair_max_output_tokens: int = 16384,
         provider: str = "gemini",
@@ -100,6 +103,12 @@ class DSLGenerator:
 
         # Decoding parameters (tracked as experimental variables)
         self.generation_temperature = float(generation_temperature)
+        self.generation_max_output_tokens = (
+            int(generation_max_output_tokens)
+            if generation_max_output_tokens is not None
+            else None
+        )
+        self.llm_seed = int(llm_seed) if llm_seed is not None else None
 
         # Server-side chat support (SDK/version dependent). If unavailable or errors at runtime,
         # we fall back to stateless generate_content with explicit contents history.
@@ -182,6 +191,7 @@ class DSLGenerator:
         self.run_metadata: Optional[dict] = None
         self.prompt_log_path: Optional[Path] = None
         self.response_log_path: Optional[Path] = None
+        self.hf_debug_response_log_path: Optional[Path] = None
 
         # Last validation details (populated by validate_code)
         self.last_validation = {
@@ -192,14 +202,16 @@ class DSLGenerator:
             "dsl_missing": False,
         }
 
-        # Lightweight, approximate usage telemetry (persists in result metadata).
-        # We intentionally do NOT store prompt/response text here, only sizes/estimates.
+        # Usage telemetry (persists in result metadata).
+        # We intentionally do NOT store prompt/response text here, only sizes and provider token usage.
         self.telemetry = {
             "llm_calls": 0,
             "prompt_chars_total": 0,
             "response_chars_total": 0,
-            "prompt_tokens_est_total": 0,
-            "response_tokens_est_total": 0,
+            "prompt_tokens_total": 0,
+            "completion_tokens_total": 0,
+            "total_tokens_total": 0,
+            "token_usage_available_calls": 0,
             "last_call": None,
         }
 
@@ -266,6 +278,7 @@ class DSLGenerator:
         user_message: str,
         temperature: float,
         max_output_tokens: Optional[int] = None,
+        seed: Optional[int] = None,
     ):
         """Call Groq chat completion API in OpenAI-compatible messages format."""
         messages = [{"role": "system", "content": system_instruction}]
@@ -279,6 +292,8 @@ class DSLGenerator:
         }
         if max_output_tokens is not None:
             params["max_tokens"] = int(max_output_tokens)
+        if seed is not None:
+            params["seed"] = int(seed)
 
         client = self._client_for_provider(provider or self.provider)
         return client.chat.completions.create(**params)
@@ -293,6 +308,7 @@ class DSLGenerator:
         user_message: str,
         temperature: float,
         max_output_tokens: Optional[int] = None,
+        seed: Optional[int] = None,
     ):
         """Call Mistral chat completion API using messages format."""
         messages = [{"role": "system", "content": system_instruction}]
@@ -306,6 +322,8 @@ class DSLGenerator:
         }
         if max_output_tokens is not None:
             params["max_tokens"] = int(max_output_tokens)
+        if seed is not None:
+            params["random_seed"] = int(seed)
 
         client = self._client_for_provider(provider or self.provider)
         return client.chat.complete(**params)
@@ -320,6 +338,7 @@ class DSLGenerator:
         user_message: str,
         temperature: float,
         max_output_tokens: Optional[int] = None,
+        seed: Optional[int] = None,
     ):
         provider_name = self._normalize_provider(provider or self.provider)
         if provider_name == "groq":
@@ -331,6 +350,7 @@ class DSLGenerator:
                 user_message=user_message,
                 temperature=temperature,
                 max_output_tokens=max_output_tokens,
+                seed=seed,
             )
         if provider_name == "mistral":
             return self._call_mistral_chat(
@@ -341,6 +361,7 @@ class DSLGenerator:
                 user_message=user_message,
                 temperature=temperature,
                 max_output_tokens=max_output_tokens,
+                seed=seed,
             )
         if provider_name == "openrouter":
             return self._call_groq_chat(
@@ -351,6 +372,7 @@ class DSLGenerator:
                 user_message=user_message,
                 temperature=temperature,
                 max_output_tokens=max_output_tokens,
+                seed=seed,
             )
         if provider_name == "huggingface":
             return self._call_groq_chat(
@@ -361,6 +383,7 @@ class DSLGenerator:
                 user_message=user_message,
                 temperature=temperature,
                 max_output_tokens=max_output_tokens,
+                seed=seed,
             )
         raise ValueError(f"Unsupported non-gemini provider: {provider_name}")
 
@@ -372,6 +395,8 @@ class DSLGenerator:
         system_instruction: str,
         history: list[types.Content],
         temperature: Optional[float] = None,
+        max_output_tokens: Optional[int] = None,
+        seed: Optional[int] = None,
     ):
         """Best-effort create a server-side chat session.
 
@@ -384,13 +409,19 @@ class DSLGenerator:
 
         try:
             client = self._client_for_provider(provider_name)
+            config_kwargs = {
+                "system_instruction": system_instruction,
+                "temperature": float(self.generation_temperature if temperature is None else temperature),
+            }
+            if max_output_tokens is not None:
+                config_kwargs["max_output_tokens"] = int(max_output_tokens)
+            if seed is not None:
+                config_kwargs["seed"] = int(seed)
+
             return client.chats.create(
                 model=model_name,
                 history=history,
-                config=types.GenerateContentConfig(
-                    system_instruction=system_instruction,
-                    temperature=float(self.generation_temperature if temperature is None else temperature),
-                ),
+                config=types.GenerateContentConfig(**config_kwargs),
             )
         except Exception as e:
             # Batch-friendly: fall back silently when server-side chats are unavailable.
@@ -475,15 +506,53 @@ class DSLGenerator:
 
         raise ValueError("shots must be an integer, a list of pairs, or empty")
 
-    def _estimate_tokens(self, text: str) -> int:
-        """Very rough token estimate based on character length.
+    @staticmethod
+    def _read_usage_value(usage_obj, *names):
+        """Read a token usage field from dict-like or SDK object responses."""
+        if usage_obj is None:
+            return None
+        for name in names:
+            if isinstance(usage_obj, dict):
+                value = usage_obj.get(name)
+            else:
+                value = getattr(usage_obj, name, None)
+            if value is not None:
+                try:
+                    return int(value)
+                except (TypeError, ValueError):
+                    return None
+        return None
 
-        Rule of thumb: ~4 characters per token for English-ish text.
-        This is approximate and meant only for local monitoring.
-        """
-        if not text:
-            return 0
-        return max(1, int(round(len(text) / 4)))
+    def _extract_token_usage(self, response_obj, *, provider: Optional[str] = None) -> dict:
+        """Extract real provider token usage when available."""
+        provider_name = self._normalize_provider(provider or self.provider)
+
+        if provider_name == "gemini":
+            usage_obj = getattr(response_obj, "usage_metadata", None)
+            prompt_tokens = self._read_usage_value(usage_obj, "prompt_token_count")
+            completion_tokens = self._read_usage_value(
+                usage_obj,
+                "candidates_token_count",
+                "candidate_token_count",
+                "completion_tokens",
+            )
+            total_tokens = self._read_usage_value(usage_obj, "total_token_count")
+        else:
+            usage_obj = getattr(response_obj, "usage", None)
+            prompt_tokens = self._read_usage_value(usage_obj, "prompt_tokens")
+            completion_tokens = self._read_usage_value(usage_obj, "completion_tokens")
+            total_tokens = self._read_usage_value(usage_obj, "total_tokens")
+
+        if total_tokens is None and prompt_tokens is not None and completion_tokens is not None:
+            total_tokens = prompt_tokens + completion_tokens
+
+        usage_available = any(v is not None for v in (prompt_tokens, completion_tokens, total_tokens))
+        return {
+            "prompt_tokens": prompt_tokens,
+            "completion_tokens": completion_tokens,
+            "total_tokens": total_tokens,
+            "token_usage_available": usage_available,
+        }
 
     @staticmethod
     def _strip_extension(name: str) -> str:
@@ -615,24 +684,29 @@ class DSLGenerator:
         response_text = self._extract_response_text(response_obj, provider=provider_name)
         prompt_chars = len(prompt_text or "")
         response_chars = len(response_text)
-        prompt_tokens_est = self._estimate_tokens(prompt_text or "")
-        response_tokens_est = self._estimate_tokens(response_text)
+        token_usage = self._extract_token_usage(response_obj, provider=provider_name)
 
         self.telemetry["llm_calls"] += 1
         self.telemetry["prompt_chars_total"] += prompt_chars
         self.telemetry["response_chars_total"] += response_chars
-        self.telemetry["prompt_tokens_est_total"] += prompt_tokens_est
-        self.telemetry["response_tokens_est_total"] += response_tokens_est
+        if token_usage["token_usage_available"]:
+            self.telemetry["token_usage_available_calls"] += 1
+            self.telemetry["prompt_tokens_total"] += int(token_usage["prompt_tokens"] or 0)
+            self.telemetry["completion_tokens_total"] += int(token_usage["completion_tokens"] or 0)
+            self.telemetry["total_tokens_total"] += int(token_usage["total_tokens"] or 0)
         self.telemetry["last_call"] = {
             "kind": kind,
             "provider": provider_name,
             "timestamp": datetime.now().isoformat(),
             "finish_reason": str(finish_reason),
+            "seed": self.llm_seed,
             "safety_ratings": safety_ratings,
             "prompt_chars": prompt_chars,
             "response_chars": response_chars,
-            "prompt_tokens_est": prompt_tokens_est,
-            "response_tokens_est": response_tokens_est,
+            "prompt_tokens": token_usage["prompt_tokens"],
+            "completion_tokens": token_usage["completion_tokens"],
+            "total_tokens": token_usage["total_tokens"],
+            "token_usage_available": token_usage["token_usage_available"],
         }
 
         # Log finish_reason to stdout for quick diagnosis
@@ -643,6 +717,71 @@ class DSLGenerator:
             self.run_metadata.setdefault("llm_call_history", []).append(self.telemetry["last_call"])
             self.run_metadata["telemetry"] = self.telemetry
             self._persist_run_metadata()
+
+    def _json_safe_response_payload(self, value: Any, *, depth: int = 0) -> Any:
+        """Convert SDK response objects to JSON-safe data for debug logs."""
+        if depth > 8:
+            return repr(value)
+        if value is None or isinstance(value, (str, int, float, bool)):
+            return value
+        if isinstance(value, dict):
+            return {str(k): self._json_safe_response_payload(v, depth=depth + 1) for k, v in value.items()}
+        if isinstance(value, (list, tuple, set)):
+            return [self._json_safe_response_payload(v, depth=depth + 1) for v in value]
+        if hasattr(value, "model_dump"):
+            try:
+                return self._json_safe_response_payload(value.model_dump(), depth=depth + 1)
+            except Exception:
+                pass
+        if hasattr(value, "to_dict"):
+            try:
+                return self._json_safe_response_payload(value.to_dict(), depth=depth + 1)
+            except Exception:
+                pass
+        if hasattr(value, "__dict__"):
+            try:
+                return self._json_safe_response_payload(vars(value), depth=depth + 1)
+            except Exception:
+                pass
+        return repr(value)
+
+    def _log_huggingface_debug_response(
+        self,
+        *,
+        kind: str,
+        model_name: str,
+        response_obj,
+        response_text_raw: str,
+        attempt: Optional[int] = None,
+        finish_reason: Optional[str] = None,
+        provider: Optional[str] = None,
+        request_params: Optional[dict] = None,
+    ) -> None:
+        provider_name = self._normalize_provider(provider or self._provider_for_kind(kind))
+        if provider_name != "huggingface":
+            return
+
+        if self.hf_debug_response_log_path is None:
+            fallback_dir = self.base_path / "Results" / "response_logs"
+            fallback_dir.mkdir(parents=True, exist_ok=True)
+            fallback_name = datetime.now().strftime("hf_debug_responses_%Y%m%d_%H%M%S.jsonl")
+            self.hf_debug_response_log_path = fallback_dir / fallback_name
+
+        entry = {
+            "timestamp": datetime.now().isoformat(),
+            "provider": provider_name,
+            "kind": kind,
+            "model": model_name,
+            "attempt": attempt,
+            "finish_reason": finish_reason,
+            "seed": self.llm_seed,
+            "request_params": self._json_safe_response_payload(request_params or {}),
+            "response_text_chars": len(response_text_raw or ""),
+            "response_text": response_text_raw or "",
+            "response_obj": self._json_safe_response_payload(response_obj),
+        }
+        with open(self.hf_debug_response_log_path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
     def _init_run_metadata(self, config: dict, compiler_jar_path: Path, max_iterations: int) -> None:
         """Initialize per-run directory + metadata file.
@@ -689,6 +828,7 @@ class DSLGenerator:
         self.run_queries_dir.mkdir(parents=True, exist_ok=True)
         self.prompt_log_path = self.run_dir / "llm_prompts.jsonl"
         self.response_log_path = self.run_dir / "llm_responses.jsonl"
+        self.hf_debug_response_log_path = self.run_dir / "hf_debug_responses.jsonl"
 
         self.run_metadata_path = self.run_dir / "run_metadata.json"
         use_cached_generation = bool(config.get("use_generated_dsl_cache"))
@@ -715,6 +855,8 @@ class DSLGenerator:
             "repair_prompt": str(self.repair_prompt_template_path),
             "generation_model": config.get("generation_model"),
             "generation_temperature": float(getattr(self, "generation_temperature", 1.0)),
+            "generation_max_output_tokens": self.generation_max_output_tokens,
+            "llm_seed": self.llm_seed,
             "repair_model": config.get("repair_model"),
             "repair_temperature": float(getattr(self, "repair_temperature", 0.2)),
             "repair_max_output_tokens": int(getattr(self, "repair_max_output_tokens", 16384)),
@@ -731,6 +873,11 @@ class DSLGenerator:
             "queries_dir": str(self.run_queries_dir),
             "prompt_log": str(self.prompt_log_path),
             "response_log": str(self.response_log_path),
+            "hf_debug_response_log": str(self.hf_debug_response_log_path)
+            if self.generation_provider == "huggingface"
+            or self.repair_provider == "huggingface"
+            or self.query_provider == "huggingface"
+            else None,
             "pipeline_cycle": config.get("pipeline_cycle"),
             "run_dir_override": str(run_dir_override) if run_dir_override else None,
             "uppaal_feedback_included": bool(config.get("uppaal_feedback")),
@@ -777,8 +924,10 @@ class DSLGenerator:
             "final_success_dsl_path": final_success_dsl_path,
             "total_compiler_feedback_chars": total_compiler_feedback_chars,
             "llm_calls": int((self.telemetry or {}).get("llm_calls") or 0),
-            "prompt_tokens_est_total": int((self.telemetry or {}).get("prompt_tokens_est_total") or 0),
-            "response_tokens_est_total": int((self.telemetry or {}).get("response_tokens_est_total") or 0),
+            "prompt_tokens_total": int((self.telemetry or {}).get("prompt_tokens_total") or 0),
+            "completion_tokens_total": int((self.telemetry or {}).get("completion_tokens_total") or 0),
+            "total_tokens_total": int((self.telemetry or {}).get("total_tokens_total") or 0),
+            "token_usage_available_calls": int((self.telemetry or {}).get("token_usage_available_calls") or 0),
         }
 
         self.run_metadata["updated_at"] = datetime.now().isoformat()
@@ -794,6 +943,7 @@ class DSLGenerator:
         system_prompt: Optional[str] = None,
         attempt: Optional[int] = None,
         temperature: Optional[float] = None,
+        seed: Optional[int] = None,
         provider: Optional[str] = None,
     ) -> None:
         """Append one outbound LLM prompt entry before sending it to the provider."""
@@ -810,6 +960,7 @@ class DSLGenerator:
             "model": model_name,
             "attempt": attempt,
             "temperature": temperature,
+            "seed": seed,
             "system_prompt_chars": len(system_prompt or ""),
             "prompt_chars": len(prompt_text or ""),
             "system_prompt": system_prompt,
@@ -829,6 +980,8 @@ class DSLGenerator:
         attempt: Optional[int] = None,
         finish_reason: Optional[str] = None,
         provider: Optional[str] = None,
+        response_obj=None,
+        request_params: Optional[dict] = None,
     ) -> None:
         """Append one inbound LLM response entry before any DSL cleanup/trimming."""
         if self.response_log_path is None:
@@ -857,6 +1010,18 @@ class DSLGenerator:
 
         with open(self.response_log_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+
+        if response_obj is not None:
+            self._log_huggingface_debug_response(
+                kind=kind,
+                provider=provider,
+                model_name=model_name,
+                response_obj=response_obj,
+                response_text_raw=raw_text,
+                attempt=attempt,
+                finish_reason=finish_reason,
+                request_params=request_params,
+            )
         
     def load_file(self, filepath: Path) -> str:
         """Load and return content from a text file"""
@@ -1024,6 +1189,8 @@ class DSLGenerator:
                 system_instruction=system_prompt,
                 history=self.chat_history,
                 temperature=self.generation_temperature,
+                max_output_tokens=self.generation_max_output_tokens,
+                seed=self.llm_seed,
             )
             # Backward compat alias
             self.chat = self.generation_chat
@@ -1037,6 +1204,7 @@ class DSLGenerator:
                 prompt_text=scenario_prompt_content,
                 system_prompt=system_prompt,
                 temperature=self.generation_temperature,
+                seed=self.llm_seed,
             )
             response = self._call_with_backoff(
                 lambda: self.generation_chat.send_message(scenario_prompt_content),
@@ -1054,20 +1222,26 @@ class DSLGenerator:
                 prompt_text=scenario_prompt_content,
                 system_prompt=system_prompt,
                 temperature=self.generation_temperature,
+                seed=self.llm_seed,
             )
+            config_kwargs = {
+                "system_instruction": system_prompt,
+                "temperature": self.generation_temperature,
+                "safety_settings": [
+                    types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="BLOCK_NONE"),
+                    types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="BLOCK_NONE"),
+                    types.SafetySetting(category="HARM_CATEGORY_DANGEROUS_CONTENT", threshold="BLOCK_NONE"),
+                ],
+            }
+            if self.generation_max_output_tokens is not None:
+                config_kwargs["max_output_tokens"] = int(self.generation_max_output_tokens)
+            if self.llm_seed is not None:
+                config_kwargs["seed"] = int(self.llm_seed)
             response = self._call_with_backoff(
                 lambda: self._client_for_provider(provider_name).models.generate_content(
                     model=model_name,
                     contents=current_history,
-                    config=types.GenerateContentConfig(
-                        system_instruction=system_prompt,
-                        temperature=self.generation_temperature,
-                        safety_settings=[
-                            types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="BLOCK_NONE"),
-                            types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="BLOCK_NONE"),
-                            types.SafetySetting(category="HARM_CATEGORY_DANGEROUS_CONTENT", threshold="BLOCK_NONE"),
-                        ],
-                    ),
+                    config=types.GenerateContentConfig(**config_kwargs),
                 ),
                 label="generation.generate_content",
                 provider=provider_name,
@@ -1080,6 +1254,7 @@ class DSLGenerator:
                 prompt_text=scenario_prompt_content,
                 system_prompt=system_prompt,
                 temperature=self.generation_temperature,
+                seed=self.llm_seed,
             )
             response = self._call_with_backoff(
                 lambda: self._call_non_gemini_chat(
@@ -1089,6 +1264,8 @@ class DSLGenerator:
                     history=self.chat_history,
                     user_message=scenario_prompt_content,
                     temperature=self.generation_temperature,
+                    max_output_tokens=self.generation_max_output_tokens,
+                    seed=self.llm_seed,
                 ),
                 label=f"generation.{provider_name}.chat.completions",
                 provider=provider_name,
@@ -1112,6 +1289,13 @@ class DSLGenerator:
             model_name=model_name,
             response_text_raw=response_text,
             finish_reason=finish_reason,
+            response_obj=response,
+            request_params={
+                "model": model_name,
+                "temperature": self.generation_temperature,
+                "max_tokens": self.generation_max_output_tokens,
+                "seed": self.llm_seed,
+            },
         )
 
         print(f"[GENERATE] Response received ({len(response_text)} chars)")
@@ -1305,6 +1489,8 @@ class DSLGenerator:
                 system_instruction=self.repair_system_prompt,
                 history=self.repair_chat_history,
                 temperature=self.repair_temperature,
+                max_output_tokens=self.repair_max_output_tokens,
+                seed=self.llm_seed,
             )
 
         if self.run_metadata is not None:
@@ -1315,6 +1501,7 @@ class DSLGenerator:
             self.run_metadata["repair"]["repair_stateless"] = bool(self.repair_stateless)
             self.run_metadata["repair"]["repair_uses_server_chat"] = bool(self.repair_chat is not None)
             self.run_metadata["repair"]["repair_temperature"] = float(self.repair_temperature)
+            self.run_metadata["repair"]["llm_seed"] = self.llm_seed
             self._persist_run_metadata()
 
     def repair_with_compiler_output(self, previous_dsl: str, compiler_output: str, repair_model_name: str, repair_shots) -> str:
@@ -1352,6 +1539,7 @@ class DSLGenerator:
                 system_prompt=self.repair_system_prompt,
                 attempt=attempt,
                 temperature=current_temp,
+                seed=self.llm_seed,
             )
 
             if provider_name != "gemini":
@@ -1364,6 +1552,7 @@ class DSLGenerator:
                         user_message=prompt,
                         temperature=current_temp,
                         max_output_tokens=self.repair_max_output_tokens,
+                        seed=self.llm_seed,
                     ),
                     label=f"repair.{provider_name}.chat.completions",
                     provider=provider_name,
@@ -1380,6 +1569,7 @@ class DSLGenerator:
                             system_instruction=self.repair_system_prompt,
                             temperature=current_temp,
                             max_output_tokens=self.repair_max_output_tokens,
+                            seed=self.llm_seed,
                             response_mime_type="text/plain",
                             safety_settings=[
                                 types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="BLOCK_NONE"),
@@ -1410,6 +1600,7 @@ class DSLGenerator:
                                 system_instruction=self.repair_system_prompt,
                                 temperature=current_temp,
                                 max_output_tokens=self.repair_max_output_tokens,
+                                seed=self.llm_seed,
                                 response_mime_type="text/plain",
                                 safety_settings=[
                                     types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="BLOCK_NONE"),
@@ -1442,6 +1633,13 @@ class DSLGenerator:
                 response_text_raw=repair_text_raw,
                 attempt=attempt,
                 finish_reason=finish_reason,
+                response_obj=response,
+                request_params={
+                    "model": self.repair_model_name,
+                    "temperature": current_temp,
+                    "max_tokens": self.repair_max_output_tokens,
+                    "seed": self.llm_seed,
+                },
             )
 
             repair_text = repair_text_raw.strip()
@@ -1508,6 +1706,7 @@ class DSLGenerator:
             prompt_text=user_message,
             system_prompt=system_instruction,
             temperature=float(temperature),
+            seed=self.llm_seed,
         )
 
         if provider_name == "gemini":
@@ -1522,6 +1721,8 @@ class DSLGenerator:
             }
             if max_output_tokens is not None:
                 config_kwargs["max_output_tokens"] = int(max_output_tokens)
+            if self.llm_seed is not None:
+                config_kwargs["seed"] = int(self.llm_seed)
 
             response = self._call_with_backoff(
                 lambda: self._client_for_provider(provider_name).models.generate_content(
@@ -1542,6 +1743,7 @@ class DSLGenerator:
                     user_message=user_message,
                     temperature=float(temperature),
                     max_output_tokens=max_output_tokens,
+                    seed=self.llm_seed,
                 ),
                 label=f"{kind}.{provider_name}.chat.completions",
                 provider=provider_name,
@@ -1564,6 +1766,13 @@ class DSLGenerator:
             model_name=model_name,
             response_text_raw=response_text,
             finish_reason=finish_reason,
+            response_obj=response,
+            request_params={
+                "model": model_name,
+                "temperature": float(temperature),
+                "max_tokens": max_output_tokens,
+                "seed": self.llm_seed,
+            },
         )
         self._record_llm_call(kind, user_message, response, provider=provider_name)
         return response_text
@@ -1906,6 +2115,35 @@ class DSLGenerator:
                 )
                 # Clean model output: strip any markdown fences or conversational preamble
                 dsl_code = self._extract_dsl_code(response_text)
+
+                if not (response_text or "").strip() or not (dsl_code or "").strip():
+                    print("[FAIL] Generation returned an empty response; stopping pipeline.")
+                    saved_dsl_path = self.save_result(dsl_code or "", iteration=0, success=False)
+                    if self.run_metadata is not None:
+                        self.run_metadata["status"] = "failed"
+                        self.run_metadata["failure_reason"] = "EmptyResponseGeneration"
+                        self.run_metadata["interrupted"] = True
+                        self.run_metadata["breaking_error"] = {
+                            "type": "EmptyResponseGeneration",
+                            "message": "Generation model returned an empty response.",
+                            "when": datetime.now().isoformat(),
+                            "where": "run_automated_session/generation",
+                            "response_text_chars": len(response_text or ""),
+                            "dsl_text_chars": len(dsl_code or ""),
+                        }
+                        self.run_metadata["run_finished_at"] = datetime.now().isoformat()
+                        self.run_metadata.setdefault("iterations", []).append(
+                            {
+                                "iteration": 0,
+                                "dsl_path": str(saved_dsl_path),
+                                "validated": False,
+                                "is_valid": False,
+                                "ended_because": "EmptyResponseGeneration",
+                            }
+                        )
+                        self._persist_run_metadata()
+                    return
+
                 self._save_generated_dsl_cache(dsl_code, config)
 
             self.last_dsl_code = dsl_code
@@ -2170,6 +2408,12 @@ def build_generator_from_config(config: dict) -> DSLGenerator:
     selected_providers = {generation_provider, repair_provider, query_provider}
 
     generation_temperature = float(config.get("generation_temperature", 1.0))
+    generation_max_output_tokens = config.get("generation_max_output_tokens")
+    if generation_max_output_tokens is not None:
+        generation_max_output_tokens = int(generation_max_output_tokens)
+    llm_seed = config.get("llm_seed")
+    if llm_seed is not None:
+        llm_seed = int(llm_seed)
     repair_temperature = float(config.get("repair_temperature", 0.2))
     location = str(config.get("location", "global")).strip()
 
@@ -2269,6 +2513,8 @@ def build_generator_from_config(config: dict) -> DSLGenerator:
         location=location,
         service_account_key=service_account_key,
         generation_temperature=generation_temperature,
+        generation_max_output_tokens=generation_max_output_tokens,
+        llm_seed=llm_seed,
         repair_temperature=repair_temperature,
         repair_max_output_tokens=int(config.get("repair_max_output_tokens", 16384)),
         provider=generation_provider,
@@ -2379,7 +2625,16 @@ def main():
     
     # Run automated session with configuration from config.json
     generator.run_automated_session(config)
+    run_metadata = getattr(generator, "run_metadata", None)
+    if isinstance(run_metadata, dict):
+        breaking_error = run_metadata.get("breaking_error")
+        if (
+            run_metadata.get("failure_reason") == "EmptyResponseGeneration"
+            or (isinstance(breaking_error, dict) and breaking_error.get("type") == "EmptyResponseGeneration")
+        ):
+            return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

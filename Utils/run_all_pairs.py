@@ -28,6 +28,15 @@ def _load_json(path: Path) -> dict:
         return json.load(f)
 
 
+def _empty_generation_response(metadata: Optional[dict]) -> bool:
+    if not isinstance(metadata, dict):
+        return False
+    if metadata.get("failure_reason") == "EmptyResponseGeneration":
+        return True
+    breaking_error = metadata.get("breaking_error")
+    return isinstance(breaking_error, dict) and breaking_error.get("type") == "EmptyResponseGeneration"
+
+
 def _resolve_service_account_key(config: dict) -> Optional[str]:
     cfg_key_path = (
         config.get("service_account_key_path")
@@ -352,14 +361,19 @@ def main() -> int:
         )
 
         # Fresh generator per run to avoid any cross-run chat/history leakage.
-        generator = DSLGenerator(
-            project_id=project_id,
-            location=location,
-            service_account_key=service_account_key,
-            api_key=api_key,
-            generation_temperature=generation_temperature,
-            repair_temperature=repair_temperature,
-        )
+        generator_kwargs = {
+            "project_id": project_id,
+            "location": location,
+            "service_account_key": service_account_key,
+            "api_key": api_key,
+            "generation_temperature": generation_temperature,
+            "repair_temperature": repair_temperature,
+        }
+        if not args.flash:
+            generator_kwargs["generation_max_output_tokens"] = template.get("generation_max_output_tokens")
+            generator_kwargs["llm_seed"] = template.get("llm_seed")
+            generator_kwargs["repair_max_output_tokens"] = int(template.get("repair_max_output_tokens", 16384))
+        generator = DSLGenerator(**generator_kwargs)
 
         run_config = deepcopy(template)
         run_config["scenario"] = scenario
@@ -383,6 +397,13 @@ def main() -> int:
             # Generator already tries to persist crash metadata; this is a last-resort guard.
             print(f"[{idx}/{total}] ERROR scenario={scenario} system_prompt={sp}: {type(e).__name__}: {e}")
             continue
+
+        if _empty_generation_response(getattr(generator, "run_metadata", None)):
+            print(
+                f"[{idx}/{total}] ABORT batch={batch_id} scenario={scenario} "
+                f"system_prompt={sp}: EmptyResponseGeneration"
+            )
+            return 1
 
         print(
             f"[{idx}/{total}] DONE  batch={batch_id}  scenario={scenario}  "

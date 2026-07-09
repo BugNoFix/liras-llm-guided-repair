@@ -1,0 +1,202 @@
+Pattern1
+agents:
+	humans: Nurse, Doctor
+	robots: Robot1, Robot2
+locations: room1, room2, room3, office001, coffee_room, kitchen
+resources: item1, item2, coffee, object
+Nurse:
+	default moveTo room1
+	1: moveTo room2
+	2: moveTo room3
+	3: pick item1
+	4: deposit item1 room1
+	5: moveTo room2
+	6: moveTo room3
+	7: pick item2
+	8: deposit item2 room1
+	9: moveTo room2
+	10: moveTo room3
+	11: pick item1
+	12: deposit item1 room1
+	13: moveTo room2
+	14: moveTo room3
+	15: pick item2
+	16: deposit item2 room1
+	17: moveTo room2
+	18: moveTo room3
+	19: pick item1
+	20: deposit item1 room1
+	21: moveTo room2
+	22: moveTo room3
+	23: pick item2
+	24: deposit item2 room1
+	25: moveTo room2
+	26: moveTo room3
+	27: pick item1
+	28: deposit item1 room1
+	29: moveTo room2
+	30: moveTo room3
+	31: pick item2
+	32: deposit item2 room1
+	33: moveTo room2
+	34: moveTo room3
+	35: pick item1
+	36: deposit item1 room1
+	37: moveTo room2
+	38: moveTo room3
+	39: pick item2
+	40: deposit item2 room1
+	41: moveTo room2
+	42: moveTo room3
+	43: pick item1
+	44: deposit item1 room1
+	45: moveTo room2
+	46: moveTo room3
+	47: pick item2
+	48: deposit item2 room1
+	49: moveTo room2
+	50: moveTo room3
+	51: pick item1
+	52: deposit item1 room1
+	53: moveTo room2
+	54: moveTo room3
+	55: pick item2
+	56: deposit item2 room1
+	57: moveTo room2
+	58: moveTo room3
+	59: pick item1
+	60: deposit item1 room1
+	61: moveTo room2
+	62: moveTo room3
+	63: pick item2
+	64: deposit item2 room1
+	65: moveTo room2
+	66: moveTo room3
+	67: pick item1
+	68: deposit item1 room1
+	69: moveTo room2
+	70: moveTo room3
+	71: pick item2
+	72: deposit item2 room1
+	73: moveTo room2
+	74: moveTo room3
+	75: pick item1
+	76: deposit item1 room1
+	77: moveTo room2
+	78: moveTo room3
+	79: pick item2
+	80: deposit item2 room1
+	81: moveTo room2
+	82: moveTo room3
+	83: pick item1
+	84: deposit item1 room1
+	85: moveTo room2
+	86: moveTo room3
+	87: pick item2
+	88: deposit item2 room1
+	89: moveTo room2
+	90: moveTo room3
+	91: pick item1
+	92: deposit item1 room1
+	93: moveTo room2
+	94: moveTo room3
+	95: pick item2
+	96: deposit item2 room1
+	97: moveTo room2
+	98: moveTo room3
+	99: pick item1
+	100: deposit item1 room1
+	101: moveTo room2
+	102: moveTo room3
+	103: pick item2
+	104: deposit item2 room1
+	105: moveTo room2
+	106: moveTo room3
+	107: pick item1
+	108: deposit item1 room1
+	109: moveTo room2
+	110: moveTo room3
+	111: pick item2
+	112: deposit item2 room1
+	113: moveTo room2
+	114: moveTo room3
+	115: pick item1
+	116: deposit item1 room1
+	117: moveTo room2
+	118: moveTo room3
+	119: pick item2
+	120: deposit item2 room1
+	121: moveTo room2
+	122: moveTo room3
+	123: pick item1
+	124: deposit item1 room1
+	125: moveTo room2
+	126: moveTo room3
+	127: pick item2
+	128: deposit item2 room1
+	129: moveTo room2
+	130: moveTo room3
+	131: pick item1
+	132: deposit item1 room1
+	133: moveTo room2
+	134: moveTo room3
+	135: pick item2
+	136: deposit item2 room1
+	137: moveTo room2
+	138: moveTo room3
+	139: pick item1
+	140: deposit item1 room1
+	141: moveTo room2
+	142: moveTo room3
+	143: pick item2
+	144: deposit item2 room1
+	145: moveTo room2
+	146: moveTo room3
+	147: pick item1
+	148: deposit item1 room1
+	149: moveTo room2
+	150: moveTo room3
+	151: pick item2
+	152: deposit item2 room1
+	153: moveTo room2
+	154: moveTo room3
+	155: pick item1
+	156: deposit item1 room1
+	157: moveTo room2
+	158: moveTo room3
+	159: pick item2
+	160: deposit item2 room1
+	161: moveTo room2
+	162: moveTo room3
+	163: pick item1
+	164: deposit item1 room1
+	165: moveTo room2
+	166: moveTo room3
+	167: pick item2
+	168: deposit item2 room1
+	169: moveTo room2
+	170: moveTo room3
+	171: pick item1
+	172: deposit item1 room1
+	173: moveTo room2
+	174: moveTo room3
+	175: pick item2
+	176: deposit item2 room1
+	177: moveTo room2
+	178: moveTo room3
+	179: pick item1
+	180: deposit item1 room1
+	181: moveTo room2
+	182: moveTo room3
+	183: pick item2
+	184: deposit item2 room1
+	185: moveTo room2
+	186: moveTo room3
+	187: pick item1
+	188: deposit item1 room1
+	189: moveTo room2
+	190: moveTo room3
+	191: pick item2
+	192: deposit item2 room1
+	193: moveTo room2
+	194: moveTo room

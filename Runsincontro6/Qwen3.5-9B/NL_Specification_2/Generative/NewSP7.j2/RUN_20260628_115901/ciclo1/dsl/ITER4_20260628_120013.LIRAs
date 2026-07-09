@@ -1,0 +1,19 @@
+user_guided_transport
+agents:
+	humans: Human1
+	robots: Robot1
+locations: bedroom, kitchen
+resources: object
+
+Human1:
+	default stop
+	1: moveTo bedroom
+	2: moveTo kitchen
+
+Robot1:
+	default stop
+	1: moveTo bedroom
+	2: pick object
+	3: follow Human1
+
+success: position(Human1, kitchen) && position(Robot1, kitchen) && possess(Robot1, object)

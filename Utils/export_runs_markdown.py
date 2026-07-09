@@ -97,8 +97,9 @@ def main() -> int:
     total_iterations = sum(_to_int(r.get("derived.iteration_count", "0")) for r in runs)
     avg_iterations = (total_iterations / total_runs) if total_runs else 0.0
 
-    total_prompt_tokens = sum(_to_int(r.get("summary.total_prompt_tokens_est", "0")) for r in runs)
-    total_response_tokens = sum(_to_int(r.get("summary.total_response_tokens_est", "0")) for r in runs)
+    total_prompt_tokens = sum(_to_int(r.get("summary.prompt_tokens_total", "0")) for r in runs)
+    total_completion_tokens = sum(_to_int(r.get("summary.completion_tokens_total", "0")) for r in runs)
+    total_tokens = sum(_to_int(r.get("summary.total_tokens_total", "0")) for r in runs)
     total_duration = sum(_to_float(r.get("summary.run_duration_seconds", "0")) for r in runs)
 
     lines: List[str] = []
@@ -113,8 +114,9 @@ def main() -> int:
     lines.append(f"- Success rate: {success_rate:.2%}")
     lines.append(f"- Total iterations: {total_iterations}")
     lines.append(f"- Average iterations per run: {avg_iterations:.3f}")
-    lines.append(f"- Total prompt tokens (est.): {total_prompt_tokens}")
-    lines.append(f"- Total response tokens (est.): {total_response_tokens}")
+    lines.append(f"- Total prompt tokens: {total_prompt_tokens}")
+    lines.append(f"- Total completion tokens: {total_completion_tokens}")
+    lines.append(f"- Total tokens: {total_tokens}")
     lines.append(f"- Total run duration (s): {total_duration:.3f}")
     lines.append("")
 

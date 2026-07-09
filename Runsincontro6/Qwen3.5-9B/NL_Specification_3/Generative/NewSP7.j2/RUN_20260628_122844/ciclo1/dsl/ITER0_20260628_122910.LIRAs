@@ -1,0 +1,8 @@
+Factory_Pipeline
+agents:
+	humans:
+robots: Robot1, Robot2
+locations: warehouse, surface_texturization_start, surface_texturization_end, laser_start, laser_end, loading_area
+resources: item1
+
+Robot

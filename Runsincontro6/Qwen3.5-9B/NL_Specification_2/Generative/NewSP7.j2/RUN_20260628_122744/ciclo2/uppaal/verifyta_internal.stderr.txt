@@ -1,0 +1,1 @@
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_122744/ciclo2/xml/ITER1_20260628_122951.xml:/nta/declaration/template[3]/transition[5]/label[1]:1: [error] syntax error: unexpected ')'.

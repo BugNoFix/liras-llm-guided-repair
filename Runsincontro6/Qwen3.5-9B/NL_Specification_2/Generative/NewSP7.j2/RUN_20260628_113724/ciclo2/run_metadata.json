@@ -1,0 +1,567 @@
+{
+  "run_id": "20260628_113914",
+  "run_started_at": "2026-06-28T11:39:14.222465",
+  "generation_provider": "huggingface",
+  "repair_provider": "huggingface",
+  "query_provider": "gemini",
+  "project_id": "project-6a7309b1-0165-4fa2-baf",
+  "location": "global",
+  "system_prompt": "Generative/NewSP7.j2",
+  "shots": 0,
+  "scenario": "NL_Specification_2.txt",
+  "repair_prompt": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/SPs/Repair/NewSPR7.j2",
+  "generation_model": "Qwen/Qwen3.5-9B",
+  "generation_temperature": 1.0,
+  "repair_model": "Qwen/Qwen3.5-9B",
+  "repair_temperature": 0.35,
+  "repair_max_output_tokens": 2048,
+  "repair_shots": 0,
+  "use_generated_dsl_cache": false,
+  "generated_dsl_source": "dsl_folder",
+  "generated_dsl_cache_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/GeneratedDSL/NL_Specification_2/Generative/NewSP7.j2/shots_0.LIRAs",
+  "compiler_jar": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras_compiler.jar",
+  "max_iterations": 11,
+  "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2",
+  "results_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B",
+  "dsl_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/dsl",
+  "compiler_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/compiler",
+  "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/queries",
+  "prompt_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/llm_prompts.jsonl",
+  "response_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/llm_responses.jsonl",
+  "pipeline_cycle": 2,
+  "run_dir_override": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2",
+  "uppaal_feedback_included": true,
+  "uppaal_feedback_chars": 16350,
+  "iterations": [
+    {
+      "iteration": 0,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/dsl/ITER0_20260628_113929.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/compiler/ITER0_20260628_113929.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1484,
+      "compiler_error_score": {
+        "feedback_chars": 1484,
+        "lines": 20,
+        "error_lines": 14,
+        "warning_lines": 4,
+        "score": 155
+      },
+      "repair_returned_empty": true,
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 1,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/dsl/ITER1_20260628_113951.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/compiler/ITER1_20260628_113951.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1484,
+      "compiler_error_score": {
+        "feedback_chars": 1484,
+        "lines": 20,
+        "error_lines": 14,
+        "warning_lines": 4,
+        "score": 155
+      },
+      "repair_returned_empty": true,
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 2,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/dsl/ITER2_20260628_114012.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/compiler/ITER2_20260628_114012.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1484,
+      "compiler_error_score": {
+        "feedback_chars": 1484,
+        "lines": 20,
+        "error_lines": 14,
+        "warning_lines": 4,
+        "score": 155
+      },
+      "repair_returned_empty": true,
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 3,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/dsl/ITER3_20260628_114034.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/compiler/ITER3_20260628_114034.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1484,
+      "compiler_error_score": {
+        "feedback_chars": 1484,
+        "lines": 20,
+        "error_lines": 14,
+        "warning_lines": 4,
+        "score": 155
+      },
+      "repair_returned_empty": true,
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 4,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/dsl/ITER4_20260628_114059.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/compiler/ITER4_20260628_114059.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1484,
+      "compiler_error_score": {
+        "feedback_chars": 1484,
+        "lines": 20,
+        "error_lines": 14,
+        "warning_lines": 4,
+        "score": 155
+      },
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 5,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/dsl/ITER5_20260628_114121.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/compiler/ITER5_20260628_114121.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 746,
+      "compiler_error_score": {
+        "feedback_chars": 746,
+        "lines": 9,
+        "error_lines": 3,
+        "warning_lines": 4,
+        "score": 41
+      },
+      "repair_returned_empty": true,
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 6,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/dsl/ITER6_20260628_114143.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/compiler/ITER6_20260628_114143.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 746,
+      "compiler_error_score": {
+        "feedback_chars": 746,
+        "lines": 9,
+        "error_lines": 3,
+        "warning_lines": 4,
+        "score": 41
+      },
+      "repair_returned_empty": true,
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 7,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/dsl/ITER7_20260628_114206.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/compiler/ITER7_20260628_114206.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 746,
+      "compiler_error_score": {
+        "feedback_chars": 746,
+        "lines": 9,
+        "error_lines": 3,
+        "warning_lines": 4,
+        "score": 41
+      },
+      "repair_returned_empty": true,
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 8,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/dsl/ITER8_20260628_114228.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/compiler/ITER8_20260628_114228.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 746,
+      "compiler_error_score": {
+        "feedback_chars": 746,
+        "lines": 9,
+        "error_lines": 3,
+        "warning_lines": 4,
+        "score": 41
+      },
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 9,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/dsl/ITER9_20260628_114240.LIRAs",
+      "success_artifact_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/dsl/SUCCESS_20260628_114240.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/compiler/ITER9_20260628_114240.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": true,
+      "validation": {
+        "returncode": 0,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_error_score": {
+        "feedback_chars": 625,
+        "lines": 7,
+        "error_lines": 0,
+        "warning_lines": 4,
+        "score": 11
+      }
+    }
+  ],
+  "telemetry": {
+    "llm_calls": 11,
+    "prompt_chars_total": 222815,
+    "response_chars_total": 6390,
+    "prompt_tokens_est_total": 55705,
+    "response_tokens_est_total": 1597,
+    "last_call": {
+      "kind": "query_adaptation",
+      "provider": "gemini",
+      "timestamp": "2026-06-28T11:43:37.101876",
+      "finish_reason": "FinishReason.MAX_TOKENS",
+      "safety_ratings": [
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HATE_SPEECH",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HARASSMENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        }
+      ],
+      "prompt_chars": 19024,
+      "response_chars": 0,
+      "prompt_tokens_est": 4756,
+      "response_tokens_est": 0
+    }
+  },
+  "llm_call_history": [
+    {
+      "kind": "generate",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T11:39:29.799595",
+      "finish_reason": "stop",
+      "safety_ratings": [],
+      "prompt_chars": 17117,
+      "response_chars": 3157,
+      "prompt_tokens_est": 4279,
+      "response_tokens_est": 789
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T11:39:51.286215",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 20870,
+      "response_chars": 0,
+      "prompt_tokens_est": 5218,
+      "response_tokens_est": 0
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T11:40:12.743048",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 20870,
+      "response_chars": 0,
+      "prompt_tokens_est": 5218,
+      "response_tokens_est": 0
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T11:40:34.550434",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 20870,
+      "response_chars": 0,
+      "prompt_tokens_est": 5218,
+      "response_tokens_est": 0
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T11:40:59.759051",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 20870,
+      "response_chars": 0,
+      "prompt_tokens_est": 5218,
+      "response_tokens_est": 0
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T11:41:21.210133",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 20870,
+      "response_chars": 3036,
+      "prompt_tokens_est": 5218,
+      "response_tokens_est": 759
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T11:41:43.084059",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 20581,
+      "response_chars": 0,
+      "prompt_tokens_est": 5145,
+      "response_tokens_est": 0
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T11:42:06.385782",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 20581,
+      "response_chars": 0,
+      "prompt_tokens_est": 5145,
+      "response_tokens_est": 0
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T11:42:28.738413",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 20581,
+      "response_chars": 0,
+      "prompt_tokens_est": 5145,
+      "response_tokens_est": 0
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T11:42:40.201978",
+      "finish_reason": "stop",
+      "safety_ratings": [],
+      "prompt_chars": 20581,
+      "response_chars": 197,
+      "prompt_tokens_est": 5145,
+      "response_tokens_est": 49
+    },
+    {
+      "kind": "query_adaptation",
+      "provider": "gemini",
+      "timestamp": "2026-06-28T11:43:37.101876",
+      "finish_reason": "FinishReason.MAX_TOKENS",
+      "safety_ratings": [
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HATE_SPEECH",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_HARASSMENT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        },
+        {
+          "category": "HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          "probability": "HarmProbability.NEGLIGIBLE"
+        }
+      ],
+      "prompt_chars": 19024,
+      "response_chars": 0,
+      "prompt_tokens_est": 4756,
+      "response_tokens_est": 0
+    }
+  ],
+  "status": "success",
+  "run_finished_at": "2026-06-28T11:42:40.879530",
+  "summary": {
+    "iterations_recorded": 10,
+    "validations_attempted": 10,
+    "compiler_failures": 9,
+    "compiler_successes": 1,
+    "setup_errors": 0,
+    "first_success_iteration": 9,
+    "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/dsl/ITER9_20260628_114240.LIRAs",
+    "total_compiler_feedback_chars": 10404,
+    "llm_calls": 11,
+    "prompt_tokens_est_total": 55705,
+    "response_tokens_est_total": 1597
+  },
+  "updated_at": "2026-06-28T11:43:37.107994",
+  "repair": {
+    "repair_chat_initialized_at": "2026-06-28T11:39:30.481957",
+    "repair_prompt_template_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/SPs/Repair/NewSPR7.j2",
+    "repair_system_prompt_chars": 9983,
+    "repair_stateless": true,
+    "repair_uses_server_chat": false,
+    "repair_temperature": 0.35
+  },
+  "stages": [
+    {
+      "stage": "dsl_generation",
+      "result": "ok",
+      "details": {
+        "iterations_recorded": 10,
+        "validations_attempted": 10,
+        "compiler_failures": 9,
+        "compiler_successes": 1,
+        "setup_errors": 0,
+        "first_success_iteration": 9,
+        "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/dsl/ITER9_20260628_114240.LIRAs",
+        "total_compiler_feedback_chars": 10404,
+        "llm_calls": 10,
+        "prompt_tokens_est_total": 50949,
+        "response_tokens_est_total": 1597
+      },
+      "artifacts": {
+        "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/dsl/ITER9_20260628_114240.LIRAs",
+        "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/llm_prompts.jsonl",
+        "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/llm_responses.jsonl"
+      }
+    },
+    {
+      "stage": "xml_export",
+      "result": "ok",
+      "details": {
+        "exit_code": 0
+      },
+      "artifacts": {
+        "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/dsl/ITER9_20260628_114240.LIRAs",
+        "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/xml/ITER9_20260628_114240.xml",
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/xml/lira_cli.stdout.txt",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/xml/lira_cli.stderr.txt"
+      }
+    },
+    {
+      "stage": "verifyta_internal",
+      "result": "ok",
+      "execution_result": "ok",
+      "semantic_result": "ok",
+      "details": {
+        "command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/xml/ITER9_20260628_114240.xml",
+        "exit_code": 0,
+        "verified_formula_count": 14,
+        "failed_query_count": 0,
+        "probability_threshold": 0.05,
+        "probability_checked_query_count": 0
+      },
+      "artifacts": {
+        "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/xml/ITER9_20260628_114240.xml",
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/uppaal/verifyta_internal.stdout.txt",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/uppaal/verifyta_internal.stderr.txt"
+      }
+    },
+    {
+      "stage": "query_adaptation",
+      "result": "failed",
+      "failure_type": "invalid_query",
+      "failure_reason": "Query adaptation failed because the LLM returned no usable UPPAAL queries.",
+      "failure_details": {
+        "operation": "llm_query_adaptation",
+        "model": "gemini-3.1-pro-preview",
+        "provider": "gemini",
+        "raw_response_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/queries/query_adapter_response.txt"
+      },
+      "artifacts": {
+        "source_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+        "source_queries_copy_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/queries/source_queries.txt",
+        "query_adapter_response_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/queries/query_adapter_response.txt",
+        "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/queries"
+      }
+    }
+  ],
+  "cycle_result": "failed",
+  "failed_stage": "query_adaptation",
+  "failure_type": "invalid_query",
+  "failure_reason": "Query adaptation failed because the LLM returned no usable UPPAAL queries.",
+  "failure_details": {
+    "operation": "llm_query_adaptation",
+    "model": "gemini-3.1-pro-preview",
+    "provider": "gemini",
+    "raw_response_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_113724/ciclo2/queries/query_adapter_response.txt"
+  },
+  "query_source_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+  "adapted_query_path": null
+}

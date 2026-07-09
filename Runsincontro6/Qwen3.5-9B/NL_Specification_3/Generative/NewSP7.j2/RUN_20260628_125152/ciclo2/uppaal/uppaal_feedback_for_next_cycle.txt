@@ -1,0 +1,55 @@
+### WHAT TO FIX
+Check the diagnostics below and repair the LIRAs model or generated queries accordingly.
+
+### FAILED QUERIES
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260628_125152/ciclo2/xml/ITER0_20260628_125400.xml:/nta/declaration/template[6]/declaration:145: [error] Wrong number of elements in array initialiser.
+
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260628_125152/ciclo2/xml/ITER0_20260628_125400.xml:/nta/declaration/template[6]/declaration:145: [error] Wrong number of elements in array initialiser.
+
+### VERIFYTA DIAGNOSTICS
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260628_125152/ciclo2/xml/ITER0_20260628_125400.xml:/nta/declaration/template[6]/declaration:145: [error] Wrong number of elements in array initialiser.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260628_125152/ciclo2/xml/ITER0_20260628_125400.xml:/nta/declaration/template[6]/declaration:145: [error] Wrong number of elements in array initialiser.
+### INCORRECT LIRAS CODE
+Factory_Pipeline
+agents:
+	humans: nurse
+	robots: robot1, robot2
+locations: warehouse, surface_texturization_start, surface_texturization_end, laser_start, laser_end, loading_area
+resources: raw_materials, texturized_materials, lasered_materials
+nurse:
+	1: moveTo warehouse
+	2: pick raw_materials
+	3: moveTo surface_texturization_start
+	4: moveTo surface_texturization_end
+	5: moveTo laser_start
+	6: moveTo laser_end
+	7: moveTo loading_area
+	8: deposit lasered_materials
+robot1:
+	1: moveTo warehouse
+	2: pick raw_materials
+	3: moveTo surface_texturization_start
+	4: moveTo surface_texturization_end
+	5: moveTo laser_start
+	6: moveTo laser_end
+	7: moveTo loading_area
+	8: deposit lasered_materials
+robot2:
+	1: moveTo warehouse
+	2: pick raw_materials
+	3: moveTo surface_texturization_start
+	4: moveTo surface_texturization_end
+	5: moveTo laser_start
+	6: moveTo laser_end
+	7: moveTo loading_area
+	8: deposit lasered_materials
+success: time(100)
+failure: time(500)

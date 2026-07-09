@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import itertools
 import json
 from collections import Counter, defaultdict
 from datetime import datetime
@@ -28,11 +30,6 @@ except Exception:
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_RUNS_DIR = ROOT / "Runs"
 DEFAULT_OUTPUT = ROOT / "Report" / "model_runs_analysis.html"
-EXCLUDED_CREDIT_ERROR_MARKERS = (
-    "Error code: 402",
-    "depleted your monthly included credits",
-    "Purchase pre-paid credits to continue using Inference Providers",
-)
 
 
 def _read_json(path: Path) -> dict[str, Any] | None:
@@ -41,6 +38,24 @@ def _read_json(path: Path) -> dict[str, Any] | None:
     except Exception:
         return None
     return data if isinstance(data, dict) else None
+
+
+def _read_jsonl(path: Path) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except Exception:
+        return rows
+    for line in lines:
+        if not line.strip():
+            continue
+        try:
+            item = json.loads(line)
+        except Exception:
+            continue
+        if isinstance(item, dict):
+            rows.append(item)
+    return rows
 
 
 def _safe_str(value: Any, default: str = "") -> str:
@@ -87,86 +102,6 @@ def _is_cycle_metadata(path: Path, metadata: dict[str, Any]) -> bool:
     if any(part.startswith("ciclo") for part in path.parts):
         return True
     return metadata.get("pipeline_cycle") is not None
-
-
-def _contains_text(value: Any, markers: tuple[str, ...]) -> bool:
-    if isinstance(value, str):
-        return any(marker in value for marker in markers)
-    if isinstance(value, dict):
-        return any(_contains_text(item, markers) for item in value.values())
-    if isinstance(value, list):
-        return any(_contains_text(item, markers) for item in value)
-    return False
-
-
-def _is_excluded_credit_error(metadata: dict[str, Any]) -> bool:
-    return _contains_text(metadata, EXCLUDED_CREDIT_ERROR_MARKERS)
-
-
-def _has_empty_dsl_artifact(run_dir: Path) -> bool:
-    try:
-        dsl_paths = run_dir.rglob("dsl/*.LIRAs")
-        return any(path.is_file() and path.stat().st_size == 0 for path in dsl_paths)
-    except OSError:
-        return False
-
-
-def _has_only_empty_dsl_artifacts(run_dir: Path) -> bool:
-    try:
-        dsl_paths = [path for path in run_dir.rglob("dsl/*.LIRAs") if path.is_file()]
-        return bool(dsl_paths) and all(path.stat().st_size == 0 for path in dsl_paths)
-    except OSError:
-        return False
-
-
-def _cycle_run_dir(cycle: dict[str, Any], fallback_run_dir: Path) -> Path:
-    raw_dir = _safe_str(cycle.get("run_dir"))
-    if raw_dir:
-        return Path(raw_dir)
-    raw_metadata = _safe_str(cycle.get("metadata_path"))
-    if raw_metadata:
-        return Path(raw_metadata).parent
-    cycle_number = cycle.get("cycle")
-    if cycle_number is not None:
-        return fallback_run_dir / f"ciclo{cycle_number}"
-    return fallback_run_dir
-
-
-def _is_empty_dsl_max_iteration_failure(metadata: dict[str, Any], run_dir: Path) -> bool:
-    if _safe_str(metadata.get("failure_type")).lower() != "max_iterations_reached":
-        return False
-
-    cycles = metadata.get("cycles")
-    if isinstance(cycles, list):
-        failed_dsl_cycles = [
-            cycle
-            for cycle in cycles
-            if isinstance(cycle, dict)
-            and _safe_str(cycle.get("failed_stage")).lower() == "dsl_generation"
-            and _safe_str(cycle.get("failure_type")).lower() == "max_iterations_reached"
-        ]
-        for cycle in failed_dsl_cycles:
-            cycle_dir = _cycle_run_dir(cycle, run_dir)
-            cycle_metadata = _read_json(cycle_dir / "run_metadata.json") or {}
-            summary = cycle_metadata.get("summary") if isinstance(cycle_metadata.get("summary"), dict) else {}
-            response_tokens = summary.get("response_tokens_est_total")
-            if _has_only_empty_dsl_artifacts(cycle_dir):
-                return True
-            try:
-                if int(response_tokens or 0) == 0 and int(summary.get("iterations_recorded") or 0) > 0:
-                    return True
-            except Exception:
-                pass
-        return False
-
-    summary = metadata.get("summary") if isinstance(metadata.get("summary"), dict) else {}
-    try:
-        no_response_tokens = int(summary.get("response_tokens_est_total") or 0) == 0
-        has_iterations = int(summary.get("iterations_recorded") or 0) > 0
-    except Exception:
-        no_response_tokens = False
-        has_iterations = False
-    return _has_only_empty_dsl_artifacts(run_dir) or (no_response_tokens and has_iterations)
 
 
 def _model_label(metadata: dict[str, Any], meta_path: Path, runs_dir: Path) -> str:
@@ -329,6 +264,274 @@ def _cycle_failure_summaries(metadata: dict[str, Any]) -> list[dict[str, Any]]:
     return rows
 
 
+def _dsl_token_totals(metadata: dict[str, Any]) -> dict[str, int | None]:
+    totals = {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0,
+        "available_calls": 0,
+    }
+    found = False
+    cycles = metadata.get("cycles")
+    if isinstance(cycles, list):
+        for cycle in cycles:
+            if not isinstance(cycle, dict):
+                continue
+            stages = cycle.get("stages") if isinstance(cycle.get("stages"), list) else []
+            for stage in stages:
+                if not isinstance(stage, dict) or stage.get("stage") != "dsl_generation":
+                    continue
+                details = stage.get("details") if isinstance(stage.get("details"), dict) else {}
+                found = True
+                totals["prompt_tokens"] += int(details.get("prompt_tokens_total") or 0)
+                totals["completion_tokens"] += int(details.get("completion_tokens_total") or 0)
+                totals["total_tokens"] += int(details.get("total_tokens_total") or 0)
+                totals["available_calls"] += int(details.get("token_usage_available_calls") or 0)
+
+    summary = metadata.get("summary") if isinstance(metadata.get("summary"), dict) else {}
+    if not found and summary:
+        found = True
+        totals["prompt_tokens"] = int(summary.get("prompt_tokens_total") or 0)
+        totals["completion_tokens"] = int(summary.get("completion_tokens_total") or 0)
+        totals["total_tokens"] = int(summary.get("total_tokens_total") or 0)
+        totals["available_calls"] = int(summary.get("token_usage_available_calls") or 0)
+
+    if not found or int(totals["available_calls"] or 0) <= 0:
+        return {
+            "prompt_tokens": None,
+            "completion_tokens": None,
+            "total_tokens": None,
+            "available_calls": 0,
+        }
+    return totals
+
+
+def _dsl_generation_llm_durations_for_cycle(cycle_dir: Path) -> list[float]:
+    durations: list[float] = []
+    allowed_kinds = {"generate", "repair"}
+    prompt_path = cycle_dir / "llm_prompts.jsonl"
+    response_path = cycle_dir / "llm_responses.jsonl"
+    prompts = [
+        row for row in _read_jsonl(prompt_path)
+        if _safe_str(row.get("kind")) in allowed_kinds
+    ]
+    responses = [
+        row for row in _read_jsonl(response_path)
+        if _safe_str(row.get("kind")) in allowed_kinds
+    ]
+    used_response_indexes: set[int] = set()
+    for prompt in prompts:
+        prompt_dt = _parse_dt(prompt.get("timestamp"))
+        if not prompt_dt:
+            continue
+        prompt_kind = _safe_str(prompt.get("kind"))
+        best_index: int | None = None
+        best_dt: datetime | None = None
+        for index, response in enumerate(responses):
+            if index in used_response_indexes or _safe_str(response.get("kind")) != prompt_kind:
+                continue
+            response_dt = _parse_dt(response.get("timestamp"))
+            if not response_dt or response_dt < prompt_dt:
+                continue
+            if best_dt is None or response_dt < best_dt:
+                best_index = index
+                best_dt = response_dt
+        if best_index is None or best_dt is None:
+            continue
+        used_response_indexes.add(best_index)
+        durations.append(max((best_dt - prompt_dt).total_seconds(), 0.0))
+    return durations
+
+
+def _dsl_generation_llm_durations(run_dir: Path) -> list[float]:
+    durations: list[float] = []
+    for cycle_dir in sorted(run_dir.glob("ciclo*")):
+        if cycle_dir.is_dir():
+            durations.extend(_dsl_generation_llm_durations_for_cycle(cycle_dir))
+    return durations
+
+
+def _dsl_generation_llm_duration_for_cycle(cycle_dir: Path) -> float | None:
+    durations = _dsl_generation_llm_durations_for_cycle(cycle_dir)
+    return round(sum(durations), 3) if durations else None
+
+
+def _dsl_generation_llm_token_samples_for_cycle(cycle_dir: Path) -> dict[str, list[int]]:
+    samples = {
+        "completion_tokens": [],
+        "total_tokens": [],
+    }
+    for row in _read_jsonl(cycle_dir / "hf_debug_responses.jsonl"):
+        if _safe_str(row.get("kind")) not in {"generate", "repair"}:
+            continue
+        response_obj = row.get("response_obj") if isinstance(row.get("response_obj"), dict) else {}
+        usage = response_obj.get("usage") if isinstance(response_obj.get("usage"), dict) else {}
+        if usage.get("completion_tokens") is not None:
+            samples["completion_tokens"].append(int(usage.get("completion_tokens") or 0))
+        if usage.get("total_tokens") is not None:
+            samples["total_tokens"].append(int(usage.get("total_tokens") or 0))
+    return samples
+
+
+def _dsl_generation_llm_token_samples(run_dir: Path) -> dict[str, list[int]]:
+    samples = {
+        "completion_tokens": [],
+        "total_tokens": [],
+    }
+    for cycle_dir in sorted(run_dir.glob("ciclo*")):
+        if not cycle_dir.is_dir():
+            continue
+        cycle_samples = _dsl_generation_llm_token_samples_for_cycle(cycle_dir)
+        samples["completion_tokens"].extend(cycle_samples["completion_tokens"])
+        samples["total_tokens"].extend(cycle_samples["total_tokens"])
+    return samples
+
+
+def _hf_debug_token_totals_for_dir(run_dir: Path) -> dict[str, int | None]:
+    prompt_tokens = 0
+    output_tokens = 0
+    total_tokens = 0
+    reasoning_tokens = 0
+    found_output = False
+    found_reasoning = False
+
+    for debug_path in sorted(run_dir.glob("hf_debug_responses.jsonl")):
+        for row in _read_jsonl(debug_path):
+            response_obj = row.get("response_obj") if isinstance(row.get("response_obj"), dict) else {}
+            usage = response_obj.get("usage") if isinstance(response_obj.get("usage"), dict) else {}
+            if not usage:
+                continue
+            if usage.get("prompt_tokens") is not None:
+                prompt_tokens += int(usage.get("prompt_tokens") or 0)
+            if usage.get("completion_tokens") is not None:
+                output_tokens += int(usage.get("completion_tokens") or 0)
+                found_output = True
+            if usage.get("total_tokens") is not None:
+                total_tokens += int(usage.get("total_tokens") or 0)
+            details = usage.get("completion_tokens_details")
+            if isinstance(details, dict) and details.get("reasoning_tokens") is not None:
+                reasoning_tokens += int(details.get("reasoning_tokens") or 0)
+                found_reasoning = True
+
+    return {
+        "prompt_tokens": prompt_tokens if found_output else None,
+        "output_tokens": output_tokens if found_output else None,
+        "total_tokens": total_tokens if found_output else None,
+        "reasoning_tokens": reasoning_tokens if found_reasoning else None,
+    }
+
+
+def _all_llm_token_totals(metadata: dict[str, Any], run_dir: Path) -> dict[str, int | None]:
+    totals = {
+        "prompt_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "reasoning_tokens": 0,
+    }
+    found_output = False
+    found_reasoning = False
+
+    for cycle_dir in sorted(run_dir.glob("ciclo*")):
+        if not cycle_dir.is_dir():
+            continue
+        debug_totals = _hf_debug_token_totals_for_dir(cycle_dir)
+        if debug_totals["output_tokens"] is not None:
+            found_output = True
+            totals["prompt_tokens"] += int(debug_totals["prompt_tokens"] or 0)
+            totals["output_tokens"] += int(debug_totals["output_tokens"] or 0)
+            totals["total_tokens"] += int(debug_totals["total_tokens"] or 0)
+        if debug_totals["reasoning_tokens"] is not None:
+            found_reasoning = True
+            totals["reasoning_tokens"] += int(debug_totals["reasoning_tokens"] or 0)
+
+    if not found_output:
+        cycles = metadata.get("cycles")
+        if isinstance(cycles, list):
+            for cycle in cycles:
+                cycle_metadata = _read_json(Path(_safe_str(cycle.get("metadata_path")))) if isinstance(cycle, dict) else None
+                telemetry = cycle_metadata.get("telemetry") if isinstance(cycle_metadata, dict) and isinstance(cycle_metadata.get("telemetry"), dict) else {}
+                if telemetry.get("completion_tokens_total") is None:
+                    continue
+                found_output = True
+                totals["prompt_tokens"] += int(telemetry.get("prompt_tokens_total") or 0)
+                totals["output_tokens"] += int(telemetry.get("completion_tokens_total") or 0)
+                totals["total_tokens"] += int(telemetry.get("total_tokens_total") or 0)
+
+    return {
+        "prompt_tokens": totals["prompt_tokens"] if found_output else None,
+        "output_tokens": totals["output_tokens"] if found_output else None,
+        "total_tokens": totals["total_tokens"] if found_output else None,
+        "reasoning_tokens": totals["reasoning_tokens"] if found_reasoning else None,
+    }
+
+
+def _cycle_dir_from_metadata(cycle: dict[str, Any], fallback_run_dir: Path, cycle_index: int) -> Path:
+    raw_dir = _safe_str(cycle.get("run_dir"))
+    if raw_dir:
+        return Path(raw_dir)
+    raw_metadata = _safe_str(cycle.get("metadata_path"))
+    if raw_metadata:
+        return Path(raw_metadata).parent
+    cycle_number = cycle.get("cycle")
+    if cycle_number is not None:
+        return fallback_run_dir / f"ciclo{cycle_number}"
+    return fallback_run_dir / f"ciclo{cycle_index + 1}"
+
+
+def _per_cycle_metrics(metadata: dict[str, Any], run_dir: Path) -> list[dict[str, Any]]:
+    cycles = metadata.get("cycles")
+    if not isinstance(cycles, list):
+        return []
+
+    rows: list[dict[str, Any]] = []
+    for cycle_index, cycle in enumerate(cycles):
+        if not isinstance(cycle, dict):
+            continue
+        dsl_iterations: int | None = None
+        prompt_tokens: int | None = None
+        completion_tokens: int | None = None
+        total_tokens: int | None = None
+        token_usage_available_calls = 0
+
+        stages = cycle.get("stages") if isinstance(cycle.get("stages"), list) else []
+        for stage in stages:
+            if not isinstance(stage, dict) or stage.get("stage") != "dsl_generation":
+                continue
+            details = stage.get("details") if isinstance(stage.get("details"), dict) else {}
+            samples = _dsl_generation_iteration_samples({"summary": details})
+            if samples:
+                dsl_iterations = samples[0]
+            token_usage_available_calls = int(details.get("token_usage_available_calls") or 0)
+            if token_usage_available_calls > 0:
+                prompt_tokens = int(details.get("prompt_tokens_total") or 0)
+                completion_tokens = int(details.get("completion_tokens_total") or 0)
+                total_tokens = int(details.get("total_tokens_total") or 0)
+
+        cycle_dir = _cycle_dir_from_metadata(cycle, run_dir, cycle_index)
+        debug_token_totals = _hf_debug_token_totals_for_dir(cycle_dir)
+        dsl_token_samples = _dsl_generation_llm_token_samples_for_cycle(cycle_dir)
+        dsl_generation_time_samples = _dsl_generation_llm_durations_for_cycle(cycle_dir)
+        rows.append(
+            {
+                "cycle_index": cycle_index,
+                "cycle": cycle.get("cycle", cycle_index + 1),
+                "label": f"Ciclo {cycle_index}",
+                "dsl_iterations": dsl_iterations,
+                "dsl_generation_time_seconds": round(sum(dsl_generation_time_samples), 3) if dsl_generation_time_samples else None,
+                "dsl_generation_time_samples": [round(value, 3) for value in dsl_generation_time_samples],
+                "dsl_prompt_tokens": prompt_tokens,
+                "dsl_completion_tokens": completion_tokens,
+                "dsl_total_tokens": total_tokens,
+                "dsl_token_usage_available_calls": token_usage_available_calls,
+                "dsl_completion_token_samples": dsl_token_samples["completion_tokens"],
+                "dsl_total_token_samples": dsl_token_samples["total_tokens"],
+                "llm_output_tokens": debug_token_totals["output_tokens"],
+                "llm_reasoning_tokens": debug_token_totals["reasoning_tokens"],
+            }
+        )
+    return rows
+
+
 def _last_iteration(metadata: dict[str, Any]) -> dict[str, Any]:
     iterations = metadata.get("iterations")
     if not isinstance(iterations, list):
@@ -463,6 +666,16 @@ def _build_record(metadata: dict[str, Any], meta_path: Path, runs_dir: Path) -> 
     cycle_count = _cycle_count(metadata)
     dsl_generation_iterations = _dsl_generation_iteration_samples(metadata)
     cycle_failures = _cycle_failure_summaries(metadata)
+    dsl_tokens = _dsl_token_totals(metadata)
+    dsl_generation_time_samples = _dsl_generation_llm_durations(meta_path.parent)
+    dsl_generation_time = (
+        round(sum(dsl_generation_time_samples), 3)
+        if dsl_generation_time_samples
+        else None
+    )
+    per_cycle_metrics = _per_cycle_metrics(metadata, meta_path.parent)
+    llm_tokens = _all_llm_token_totals(metadata, meta_path.parent)
+    dsl_token_samples = _dsl_generation_llm_token_samples(meta_path.parent)
 
     return {
         "run_id": _safe_str(metadata.get("run_id") or meta_path.parent.name),
@@ -473,10 +686,24 @@ def _build_record(metadata: dict[str, Any], meta_path: Path, runs_dir: Path) -> 
         "repair_prompt": _safe_str(metadata.get("repair_prompt"), "unknown"),
         "shots": metadata.get("shots"),
         "repair_shots": metadata.get("repair_shots"),
+        "llm_seed": metadata.get("llm_seed"),
         "started_at": metadata.get("run_started_at"),
         "finished_at": metadata.get("run_finished_at"),
         "duration_seconds": duration,
         "dsl_generation_iterations": dsl_generation_iterations,
+        "dsl_generation_time_seconds": dsl_generation_time,
+        "dsl_generation_time_samples": [round(value, 3) for value in dsl_generation_time_samples],
+        "dsl_prompt_tokens": dsl_tokens["prompt_tokens"],
+        "dsl_completion_tokens": dsl_tokens["completion_tokens"],
+        "dsl_total_tokens": dsl_tokens["total_tokens"],
+        "dsl_token_usage_available_calls": dsl_tokens["available_calls"],
+        "dsl_completion_token_samples": dsl_token_samples["completion_tokens"],
+        "dsl_total_token_samples": dsl_token_samples["total_tokens"],
+        "llm_prompt_tokens": llm_tokens["prompt_tokens"],
+        "llm_output_tokens": llm_tokens["output_tokens"],
+        "llm_total_tokens": llm_tokens["total_tokens"],
+        "llm_reasoning_tokens": llm_tokens["reasoning_tokens"],
+        "per_cycle_metrics": per_cycle_metrics,
         "cycle_failures": cycle_failures,
         "pipeline_state": _state_label(metadata),
         "failed_stage": _safe_str(metadata.get("failed_stage"), "none"),
@@ -498,10 +725,6 @@ def _collect_records(runs_dir: Path) -> list[dict[str, Any]]:
     for meta_path in sorted(runs_dir.rglob("run_metadata.json")):
         metadata = _read_json(meta_path)
         if not metadata or _is_cycle_metadata(meta_path, metadata):
-            continue
-        if _is_excluded_credit_error(metadata):
-            continue
-        if _is_empty_dsl_max_iteration_failure(metadata, meta_path.parent):
             continue
         records.append(_build_record(metadata, meta_path, runs_dir))
     return records
@@ -535,6 +758,31 @@ def _build_summary(records: list[dict[str, Any]]) -> dict[str, Any]:
             for r in model_records
             if r.get("duration_seconds") is not None
         ]
+        dsl_generation_times = [
+            float(value)
+            for r in model_records
+            for value in (r.get("dsl_generation_time_samples") or [])
+        ]
+        dsl_total_tokens = [
+            float(r["dsl_total_tokens"])
+            for r in model_records
+            if r.get("dsl_total_tokens") is not None
+        ]
+        dsl_completion_token_samples = [
+            float(value)
+            for r in model_records
+            for value in (r.get("dsl_completion_token_samples") or [])
+        ]
+        llm_output_tokens = [
+            float(r["llm_output_tokens"])
+            for r in model_records
+            if r.get("llm_output_tokens") is not None
+        ]
+        llm_reasoning_tokens = [
+            float(r["llm_reasoning_tokens"])
+            for r in model_records
+            if r.get("llm_reasoning_tokens") is not None
+        ]
         dsl_generation_iterations = [
             float(v)
             for r in model_records
@@ -561,8 +809,35 @@ def _build_summary(records: list[dict[str, Any]]) -> dict[str, Any]:
             "avg_cycles": round(sum(cycles) / len(cycles), 2) if cycles else 0,
             "max_cycles": max(cycles) if cycles else 0,
             "avg_duration_seconds": round(sum(durations) / len(durations), 2) if durations else None,
+            "avg_dsl_generation_time_seconds": (
+                round(sum(dsl_generation_times) / len(dsl_generation_times), 2)
+                if dsl_generation_times
+                else None
+            ),
+            "avg_dsl_total_tokens": (
+                round(sum(dsl_total_tokens) / len(dsl_total_tokens), 2)
+                if dsl_total_tokens
+                else None
+            ),
+            "avg_dsl_completion_tokens_per_generated_dsl": (
+                round(sum(dsl_completion_token_samples) / len(dsl_completion_token_samples), 2)
+                if dsl_completion_token_samples
+                else None
+            ),
+            "avg_llm_output_tokens": (
+                round(sum(llm_output_tokens) / len(llm_output_tokens), 2)
+                if llm_output_tokens
+                else None
+            ),
+            "avg_llm_reasoning_tokens": (
+                round(sum(llm_reasoning_tokens) / len(llm_reasoning_tokens), 2)
+                if llm_reasoning_tokens
+                else None
+            ),
             "cycle_box": _box_stats([float(v) for v in cycles]),
             "dsl_generation_iteration_box": _box_stats(dsl_generation_iterations),
+            "dsl_generation_time_box": _box_stats(dsl_generation_times),
+            "dsl_total_tokens_box": _box_stats(dsl_total_tokens),
             "success_count_box": _box_stats([float(v) for v in success_counts_by_scenario]),
             "outcomes": dict(outcomes),
             "reasons": dict(reasons),
@@ -628,29 +903,155 @@ def _short_model_label(model: str) -> str:
     return text
 
 
-def _write_boxplot_figures(records: list[dict[str, Any]], output_html: Path) -> dict[str, str]:
+def _filter_key(
+    model: str = "",
+    scenario: str = "",
+    outcome: str = "",
+    reason: str = "",
+    cycle_index: str = "",
+) -> str:
+    return json.dumps([model, scenario, outcome, reason, cycle_index], ensure_ascii=False, separators=(",", ":"))
+
+
+def _filter_records(
+    records: list[dict[str, Any]],
+    *,
+    model: str = "",
+    scenario: str = "",
+    outcome: str = "",
+    reason: str = "",
+    cycle_index: str = "",
+) -> list[dict[str, Any]]:
+    rows = []
+    for record in records:
+        if model and record.get("model") != model:
+            continue
+        if scenario and record.get("scenario") != scenario:
+            continue
+        if outcome and record.get("outcome") != outcome:
+            continue
+        if reason and record.get("failure_category") != reason:
+            continue
+        if cycle_index:
+            try:
+                selected_cycle = int(cycle_index)
+            except Exception:
+                selected_cycle = -1
+            per_cycle = record.get("per_cycle_metrics") if isinstance(record.get("per_cycle_metrics"), list) else []
+            if not any(isinstance(cycle, dict) and cycle.get("cycle_index") == selected_cycle for cycle in per_cycle):
+                continue
+        rows.append(record)
+    return rows
+
+
+def _write_boxplot_figures(records: list[dict[str, Any]], output_html: Path) -> dict[str, Any]:
     if not _HAS_MATPLOTLIB or plt is None:
         return {}
 
-    grouped = _group_by(records, "model")
-    if not grouped:
+    if not records:
         return {}
 
     asset_dir = output_html.with_suffix("")
-    asset_dir = asset_dir.parent / f"{asset_dir.name}_assets"
+    asset_dir = asset_dir.parent / f"{asset_dir.name}_assets" / "boxplots"
     asset_dir.mkdir(parents=True, exist_ok=True)
 
-    model_names = sorted(grouped.keys(), key=lambda m: (-len(grouped[m]), m))
-    labels = [_short_model_label(m) for m in model_names]
+    def clean_values(values: list[Any]) -> list[float]:
+        cleaned: list[float] = []
+        for value in values:
+            try:
+                if value is None:
+                    continue
+                cleaned.append(float(value))
+            except Exception:
+                continue
+        return cleaned
 
-    def save_boxplot(
-        filename: str,
-        title: str,
-        xlabel: str,
-        values_by_model: list[list[float]],
-    ) -> str:
-        height = max(4.2, 0.62 * len(values_by_model) + 1.8)
-        fig, ax = plt.subplots(figsize=(10.5, height))
+    def cycle_metric_values(model_records: list[dict[str, Any]], cycle_index: str, field: str) -> list[float]:
+        if not cycle_index:
+            return []
+        try:
+            selected_cycle = int(cycle_index)
+        except Exception:
+            return []
+        return clean_values([
+            cycle.get(field)
+            for record in model_records
+            for cycle in (record.get("per_cycle_metrics") or [])
+            if isinstance(cycle, dict) and cycle.get("cycle_index") == selected_cycle
+        ])
+
+    def per_generated_dsl_token_values(model_records: list[dict[str, Any]], cycle_index: str = "") -> list[float]:
+        if cycle_index:
+            try:
+                selected_cycle = int(cycle_index)
+            except Exception:
+                return []
+            return clean_values([
+                value
+                for record in model_records
+                for cycle in (record.get("per_cycle_metrics") or [])
+                for value in (cycle.get("dsl_completion_token_samples") or [])
+                if isinstance(cycle, dict) and cycle.get("cycle_index") == selected_cycle
+            ])
+        return clean_values([
+            value
+            for record in model_records
+            for value in (record.get("dsl_completion_token_samples") or [])
+        ])
+
+    def metric_values(grouped: dict[str, list[dict[str, Any]]], model: str, metric: str, cycle_index: str = "") -> list[float]:
+        model_records = grouped[model]
+        if metric == "cycles":
+            return clean_values([r.get("cycles") for r in model_records])
+        if metric == "dsl_iterations":
+            if cycle_index:
+                return cycle_metric_values(model_records, cycle_index, "dsl_iterations")
+            return clean_values([
+                value
+                for r in model_records
+                for value in (r.get("dsl_generation_iterations") or [])
+            ])
+        if metric == "dsl_generation_time":
+            if cycle_index:
+                try:
+                    selected_cycle = int(cycle_index)
+                except Exception:
+                    return []
+                return clean_values([
+                    value
+                    for record in model_records
+                    for cycle in (record.get("per_cycle_metrics") or [])
+                    for value in (cycle.get("dsl_generation_time_samples") or [])
+                    if isinstance(cycle, dict) and cycle.get("cycle_index") == selected_cycle
+                ])
+            return clean_values([
+                value
+                for r in model_records
+                for value in (r.get("dsl_generation_time_samples") or [])
+            ])
+        if metric == "dsl_tokens_per_generated_dsl":
+            return per_generated_dsl_token_values(model_records, cycle_index)
+        return []
+
+    metrics = [
+        ("cycles", "Cicli pipeline per run", "Cicli nella run"),
+        ("dsl_iterations", "DSL generati per ciclo", "Numero di DSL generati"),
+        ("dsl_generation_time", "Tempo per singola chiamata DSL", "Secondi per generate/repair"),
+        ("dsl_tokens_per_generated_dsl", "Output token per singolo DSL", "completion_tokens"),
+    ]
+
+    def draw_metric(ax: Any, rows: list[dict[str, Any]], metric: str, title: str, xlabel: str, cycle_index: str = "") -> None:
+        grouped = _group_by(rows, "model")
+        model_names = [
+            model for model in sorted(grouped.keys(), key=lambda m: (-len(grouped[m]), m))
+            if metric_values(grouped, model, metric, cycle_index)
+        ]
+        if not model_names:
+            ax.axis("off")
+            ax.text(0.5, 0.5, f"{title}\nNessun dato disponibile", ha="center", va="center", fontsize=11)
+            return
+        labels = [_short_model_label(model) for model in model_names]
+        values_by_model = [metric_values(grouped, model, metric, cycle_index) for model in model_names]
         ax.boxplot(
             values_by_model,
             vert=False,
@@ -658,83 +1059,90 @@ def _write_boxplot_figures(records: list[dict[str, Any]], output_html: Path) -> 
             patch_artist=True,
             showmeans=True,
             meanline=False,
-            boxprops={"facecolor": "#bfdbfe", "edgecolor": "#1d4ed8", "linewidth": 1.4},
-            medianprops={"color": "#172554", "linewidth": 2},
-            whiskerprops={"color": "#475569", "linewidth": 1.2},
-            capprops={"color": "#475569", "linewidth": 1.2},
-            meanprops={"marker": "D", "markerfacecolor": "#f59e0b", "markeredgecolor": "#b45309", "markersize": 5},
-            flierprops={"marker": "o", "markerfacecolor": "#fee2e2", "markeredgecolor": "#ef4444", "markersize": 4, "alpha": 0.8},
+            boxprops={"facecolor": "#bfdbfe", "edgecolor": "#1d4ed8", "linewidth": 1.2},
+            medianprops={"color": "#172554", "linewidth": 1.8},
+            whiskerprops={"color": "#475569", "linewidth": 1.1},
+            capprops={"color": "#475569", "linewidth": 1.1},
+            meanprops={"marker": "D", "markerfacecolor": "#f59e0b", "markeredgecolor": "#b45309", "markersize": 4},
+            flierprops={"marker": "o", "markerfacecolor": "#fee2e2", "markeredgecolor": "#ef4444", "markersize": 3, "alpha": 0.8},
         )
-        ax.set_title(title, pad=12, fontsize=14, fontweight="bold")
+        ax.set_title(title, pad=8, fontsize=12, fontweight="bold")
         ax.set_xlabel(xlabel)
         ax.set_ylabel("Modello")
-        ax.grid(axis="x", linestyle="--", alpha=0.35)
+        ax.grid(axis="x", linestyle="--", alpha=0.3)
         ax.set_axisbelow(True)
+
+    def save_filtered_boxplots(rows: list[dict[str, Any]], key: str, title_suffix: str, cycle_index: str = "") -> str:
+        grouped = _group_by(rows, "model")
+        model_count = max(len(grouped), 1)
+        panel_height = max(2.8, 0.34 * model_count + 1.35)
+        fig_height = panel_height * len(metrics) + 1.0
+        fig, axes = plt.subplots(len(metrics), 1, figsize=(11.6, fig_height))
+        if len(metrics) == 1:
+            axes = [axes]
+        fig.suptitle(f"Boxplot per modello - {title_suffix}", fontsize=15, fontweight="bold", y=0.995)
+        for ax, (metric, title, xlabel) in zip(axes, metrics):
+            draw_metric(ax, rows, metric, title, xlabel, cycle_index)
         if Patch is not None and Line2D is not None:
             legend_handles = [
                 Patch(facecolor="#bfdbfe", edgecolor="#1d4ed8", label="Box Q1-Q3"),
                 Line2D([0], [0], color="#172554", linewidth=2, label="Mediana"),
-                Line2D([0], [0], color="#475569", linewidth=1.2, label="Baffi min/max"),
                 Line2D([0], [0], marker="D", color="none", markerfacecolor="#f59e0b", markeredgecolor="#b45309", markersize=5, label="Media"),
                 Line2D([0], [0], marker="o", color="none", markerfacecolor="#fee2e2", markeredgecolor="#ef4444", markersize=4, label="Outlier"),
             ]
-            ax.legend(
-                handles=legend_handles,
-                loc="lower right",
-                frameon=True,
-                framealpha=0.92,
-                fontsize=9,
-            )
-        fig.tight_layout()
-        path = asset_dir / filename
-        fig.savefig(path, dpi=180, bbox_inches="tight")
+            fig.legend(handles=legend_handles, loc="lower center", ncol=4, frameon=True, fontsize=9)
+        fig.tight_layout(rect=(0, 0.025, 1, 0.985))
+        digest = hashlib.md5(key.encode("utf-8")).hexdigest()[:12]
+        path = asset_dir / f"boxplots_{digest}.png"
+        fig.savefig(path, dpi=170, bbox_inches="tight")
         plt.close(fig)
         try:
             return str(path.relative_to(output_html.parent))
         except Exception:
             return _safe_rel(path)
 
-    cycle_values = [
-        [float(r.get("cycles") or 0) for r in grouped[model]]
-        for model in model_names
-    ]
-    dsl_generation_iteration_values = [
-        [
-            float(v)
-            for r in grouped[model]
-            for v in (r.get("dsl_generation_iterations") or [])
+    values = {
+        "model": [""] + sorted({_safe_str(r.get("model")) for r in records if _safe_str(r.get("model"))}),
+        "scenario": [""] + sorted({_safe_str(r.get("scenario")) for r in records if _safe_str(r.get("scenario"))}),
+        "outcome": [""] + sorted({_safe_str(r.get("outcome")) for r in records if _safe_str(r.get("outcome"))}),
+        "reason": [""] + sorted({_safe_str(r.get("failure_category")) for r in records if _safe_str(r.get("failure_category"))}),
+        "cycle_index": [""] + [
+            str(value)
+            for value in sorted({
+                int(cycle.get("cycle_index"))
+                for record in records
+                for cycle in (record.get("per_cycle_metrics") or [])
+                if isinstance(cycle, dict) and cycle.get("cycle_index") is not None
+            })
+        ],
+    }
+    filter_boxplots: dict[str, str] = {}
+    for model, scenario, outcome, reason, cycle_index in itertools.product(
+        values["model"],
+        values["scenario"],
+        values["outcome"],
+        values["reason"],
+        values["cycle_index"],
+    ):
+        if model:
+            continue
+        rows = _filter_records(records, model=model, scenario=scenario, outcome=outcome, reason=reason, cycle_index=cycle_index)
+        if not rows:
+            continue
+        key = _filter_key(model, scenario, outcome, reason, cycle_index)
+        suffix_parts = [
+            f"modello={model or 'tutti'}",
+            f"scenario={scenario or 'tutti'}",
+            f"esito={outcome or 'tutti'}",
+            f"motivo={reason or 'tutti'}",
+            f"ciclo={cycle_index if cycle_index else 'tutti'}",
         ]
-        or [0.0]
-        for model in model_names
-    ]
-    success_count_values = [
-        [
-            float(sum(1 for r in scenario_records if r.get("outcome") == "success"))
-            for scenario_records in _group_by(grouped[model], "scenario").values()
-        ]
-        or [0.0]
-        for model in model_names
-    ]
+        filter_boxplots[key] = save_filtered_boxplots(rows, key, ", ".join(suffix_parts), cycle_index)
 
     return {
-        "cycles_boxplot": save_boxplot(
-            "boxplot_cicli_per_modello.png",
-            "Distribuzione cicli/iterazioni per modello",
-            "Numero di cicli/iterazioni",
-            cycle_values,
-        ),
-        "dsl_generation_iterations_boxplot": save_boxplot(
-            "boxplot_iterazioni_dsl_per_modello.png",
-            "Iterazioni necessarie per generare il DSL per modello",
-            "Numero di tentativi/iterazioni DSL",
-            dsl_generation_iteration_values,
-        ),
-        "success_count_boxplot": save_boxplot(
-            "boxplot_successi_per_modello.png",
-            "Distribuzione del numero di successi per modello",
-            "Numero di run riuscite per scenario",
-            success_count_values,
-        ),
+        "filter_boxplots": filter_boxplots,
+        "default_filter_key": _filter_key(),
+        "filter_dimensions": values,
     }
 
 
@@ -956,7 +1364,7 @@ def _build_html(payload: dict[str, Any]) -> str:
       <div class="control"><label>Scenario</label><select id="scenario"></select></div>
       <div class="control"><label>Esito</label><select id="outcome"></select></div>
       <div class="control"><label>Motivo fallimento</label><select id="reason"></select></div>
-      <div class="control"><label>Modalità grafici</label><select id="chartMode"><option value="static">Attuale</option><option value="dynamic">Interattiva</option></select></div>
+      <div class="control"><label>Ciclo</label><select id="cycle"></select></div>
     </section>
 
     <section class="main-grid">
@@ -971,6 +1379,7 @@ def _build_html(payload: dict[str, Any]) -> str:
                 <th>Scenario</th>
                 <th>Esito</th>
                 <th>Motivo</th>
+                <th>Seed</th>
                 <th>Cicli</th>
                 <th>Durata</th>
                 <th>Dettaglio</th>
@@ -1002,7 +1411,7 @@ def _build_html(payload: dict[str, Any]) -> str:
       scenario: document.getElementById('scenario'),
       outcome: document.getElementById('outcome'),
       reason: document.getElementById('reason'),
-      chartMode: document.getElementById('chartMode'),
+      cycle: document.getElementById('cycle'),
       rows: document.getElementById('rows'),
       rowCount: document.getElementById('rowCount'),
       detail: document.getElementById('detail'),
@@ -1025,22 +1434,39 @@ def _build_html(payload: dict[str, Any]) -> str:
     function fillSelect(node, values, label) {{
       node.innerHTML = '<option value="">' + esc(label) + '</option>' + values.map(v => '<option value="' + esc(v) + '">' + esc(v) + '</option>').join('');
     }}
+    function fillCycleSelect() {{
+      const values = ((figures.filter_dimensions || {{}}).cycle_index || [])
+        .filter(v => v !== '')
+        .sort((a, b) => Number(a) - Number(b));
+      el.cycle.innerHTML = '<option value="">Tutti</option>' +
+        values.map(v => '<option value="' + esc(v) + '">Ciclo ' + esc(v) + '</option>').join('');
+    }}
     function card(label, value) {{
       const div = document.createElement('div');
       div.className = 'card';
       div.innerHTML = '<div class="label">' + esc(label) + '</div><div class="value">' + esc(value) + '</div>';
       el.cards.appendChild(div);
     }}
-    function modelSummaries() {{
-      return Object.values(summary.models || {{}})
-        .sort((a, b) => Number(b.total || 0) - Number(a.total || 0));
+    const modelDisplayOrder = new Map([
+      ['Qwen/Qwen3.5-9B', 0],
+      ['zai-org/GLM-5.2', 1],
+      ['openai/gpt-oss-20b', 2],
+      ['Qwen/Qwen3.6-35B-A3B', 3],
+      ['google/gemma-4-31B-it', 4],
+    ]);
+    function compareModels(a, b) {{
+      const ai = modelDisplayOrder.has(a.model) ? modelDisplayOrder.get(a.model) : 999;
+      const bi = modelDisplayOrder.has(b.model) ? modelDisplayOrder.get(b.model) : 999;
+      if (ai !== bi) return ai - bi;
+      return String(a.model || '').localeCompare(String(b.model || ''));
     }}
     function summarizeRecords(rows) {{
       const byModel = new Map();
+      const selectedCycle = el.cycle && el.cycle.value !== '' ? Number(el.cycle.value) : null;
       for (const r of rows) {{
         const key = r.model || 'unknown';
         if (!byModel.has(key)) {{
-          byModel.set(key, {{model: key, total: 0, success: 0, failed: 0, running: 0, unknown: 0, cycles: []}});
+          byModel.set(key, {{model: key, total: 0, success: 0, failed: 0, running: 0, unknown: 0, cycles: [], dslTimes: [], completionTokenSamples: [], feedbackCycleErrors: {{}}}});
         }}
         const item = byModel.get(key);
         item.total += 1;
@@ -1050,6 +1476,41 @@ def _build_html(payload: dict[str, Any]) -> str:
         else item.unknown += 1;
         const cycles = Number(r.cycles);
         if (Number.isFinite(cycles)) item.cycles.push(cycles);
+        const cycleFailures = Array.isArray(r.cycle_failures) ? r.cycle_failures : [];
+        for (const cycle of cycleFailures) {{
+          if (!cycle || String(cycle.result || '').toLowerCase() !== 'failed') continue;
+          if (selectedCycle !== null && Number(cycle.cycle) - 1 !== selectedCycle) continue;
+          let error = String(cycle.failure_type || 'unknown');
+          if (!error || error === 'none' || error === 'unknown') error = String(cycle.failed_stage || 'unknown');
+          item.feedbackCycleErrors[error] = (item.feedbackCycleErrors[error] || 0) + 1;
+        }}
+        if (selectedCycle !== null) {{
+          const perCycle = Array.isArray(r.per_cycle_metrics) ? r.per_cycle_metrics : [];
+          for (const cycle of perCycle) {{
+            if (Number(cycle.cycle_index) !== selectedCycle) continue;
+            const timeSamples = Array.isArray(cycle.dsl_generation_time_samples) ? cycle.dsl_generation_time_samples : [];
+            for (const value of timeSamples) {{
+              const sample = Number(value);
+              if (Number.isFinite(sample)) item.dslTimes.push(sample);
+            }}
+            const completionSamples = Array.isArray(cycle.dsl_completion_token_samples) ? cycle.dsl_completion_token_samples : [];
+            for (const value of completionSamples) {{
+              const sample = Number(value);
+              if (Number.isFinite(sample)) item.completionTokenSamples.push(sample);
+            }}
+          }}
+        }} else {{
+          const timeSamples = Array.isArray(r.dsl_generation_time_samples) ? r.dsl_generation_time_samples : [];
+          for (const value of timeSamples) {{
+            const sample = Number(value);
+            if (Number.isFinite(sample)) item.dslTimes.push(sample);
+          }}
+          const completionSamples = Array.isArray(r.dsl_completion_token_samples) ? r.dsl_completion_token_samples : [];
+          for (const value of completionSamples) {{
+            const sample = Number(value);
+            if (Number.isFinite(sample)) item.completionTokenSamples.push(sample);
+          }}
+        }}
       }}
       return [...byModel.values()].map(item => ({{
         model: item.model,
@@ -1059,8 +1520,12 @@ def _build_html(payload: dict[str, Any]) -> str:
         running: item.running,
         unknown: item.unknown,
         success_rate: item.success / Math.max(item.total, 1),
+        total_cycles: item.cycles.reduce((a, b) => a + b, 0),
+        feedback_cycle_errors: item.feedbackCycleErrors,
         avg_cycles: item.cycles.length ? item.cycles.reduce((a, b) => a + b, 0) / item.cycles.length : 0,
-      }})).sort((a, b) => Number(b.total || 0) - Number(a.total || 0));
+        avg_dsl_generation_time_seconds: item.dslTimes.length ? item.dslTimes.reduce((a, b) => a + b, 0) / item.dslTimes.length : null,
+        avg_dsl_completion_tokens_per_generated_dsl: item.completionTokenSamples.length ? item.completionTokenSamples.reduce((a, b) => a + b, 0) / item.completionTokenSamples.length : null,
+      }})).sort(compareModels);
     }}
     function modelSummaryTable(rows) {{
       const body = rows.map(row => {{
@@ -1071,83 +1536,15 @@ def _build_html(payload: dict[str, Any]) -> str:
           '<td>' + fmtNum(row.success) + '/' + fmtNum(denom) + '</td>' +
           '<td>' + fmtNum(row.failed) + '/' + fmtNum(denom) + '</td>' +
           '<td>' + Number(row.avg_cycles || 0).toFixed(2) + '</td>' +
+          '<td>' + fmtDuration(row.avg_dsl_generation_time_seconds) + '</td>' +
+          '<td>' + (row.avg_dsl_completion_tokens_per_generated_dsl === null || row.avg_dsl_completion_tokens_per_generated_dsl === undefined ? '-' : fmtNum(Math.round(row.avg_dsl_completion_tokens_per_generated_dsl))) + '</td>' +
         '</tr>';
       }}).join('');
       return '<article class="panel chart model-summary"><h2>Riepilogo per modello</h2>' +
-        '<div class="chart-note">Sintesi numerica delle run: valori espressi come numero/totale del modello, senza barre.</div>' +
+        '<div class="chart-note">Sintesi numerica delle run: completion_tokens medio calcolato sui singoli DSL generati.</div>' +
         '<div class="summary-table"><table><thead><tr>' +
-        '<th>Modello</th><th>Successi</th><th>Falliti</th><th>Cicli medi</th>' +
+        '<th>Modello</th><th>Successi</th><th>Falliti</th><th>Cicli medi/run</th><th>Tempo medio/chiamata DSL</th><th>Output token medi/DSL</th>' +
         '</tr></thead><tbody>' + body + '</tbody></table></div></article>';
-    }}
-    function quantile(sortedValues, q) {{
-      if (!sortedValues.length) return 0;
-      const pos = (sortedValues.length - 1) * q;
-      const base = Math.floor(pos);
-      const rest = pos - base;
-      const next = sortedValues[base + 1];
-      return next === undefined ? sortedValues[base] : sortedValues[base] + rest * (next - sortedValues[base]);
-    }}
-    function boxStats(values) {{
-      const sorted = values.map(Number).filter(Number.isFinite).sort((a, b) => a - b);
-      if (!sorted.length) return null;
-      return {{
-        count: sorted.length,
-        min: sorted[0],
-        q1: quantile(sorted, 0.25),
-        median: quantile(sorted, 0.5),
-        q3: quantile(sorted, 0.75),
-        max: sorted[sorted.length - 1],
-      }};
-    }}
-    function dynamicBoxplotChart(title, note, rows, valueFn) {{
-      const grouped = new Map();
-      for (const r of rows) {{
-        const key = r.model || 'unknown';
-        const rawValues = valueFn(r);
-        const values = Array.isArray(rawValues) ? rawValues : [rawValues];
-        const clean = values.map(Number).filter(Number.isFinite);
-        if (!clean.length) continue;
-        if (!grouped.has(key)) grouped.set(key, []);
-        grouped.get(key).push(...clean);
-      }}
-      const statsRows = [...grouped.entries()]
-        .map(([model, values]) => [model, boxStats(values)])
-        .filter(([, stats]) => stats)
-        .sort((a, b) => b[1].count - a[1].count);
-      if (!statsRows.length) {{
-        return '<article class="panel chart"><h2>' + esc(title) + '</h2>' +
-          '<div class="chart-note">' + esc(note) + '</div><div class="muted">Nessun dato per i filtri correnti.</div></article>';
-      }}
-      const minValue = Math.min(...statsRows.map(([, s]) => s.min));
-      const maxValue = Math.max(...statsRows.map(([, s]) => s.max));
-      const span = Math.max(maxValue - minValue, 1);
-      const pct = value => Math.max(0, Math.min(100, ((value - minValue) / span) * 100));
-      const axisScale = value => {{
-        const rounded = Math.abs(value) >= 10 ? value.toFixed(1) : value.toFixed(2);
-        return rounded.replace(/\\.0+$/, '').replace(/(\\.\\d*?)0+$/, '$1');
-      }};
-      const scaleTicks = [0, 0.25, 0.5, 0.75, 1].map(step => minValue + span * step);
-      const scaleHtml = '<div class="boxplot-x-axis"><span></span><div class="boxplot-scale">' +
-        scaleTicks.map(value => '<span>' + axisScale(value) + '</span>').join('') +
-      '</div><span></span></div>';
-      const body = statsRows.map(([model, s]) => {{
-        const left = pct(s.min);
-        const right = pct(s.max);
-        const q1 = pct(s.q1);
-        const q3 = pct(s.q3);
-        const median = pct(s.median);
-        return '<div class="boxplot-row">' +
-          '<div class="boxplot-label" title="' + esc(model) + '">' + esc(model) + '</div>' +
-          '<div class="boxplot-axis" title="min ' + s.min.toFixed(2) + ', q1 ' + s.q1.toFixed(2) + ', mediana ' + s.median.toFixed(2) + ', q3 ' + s.q3.toFixed(2) + ', max ' + s.max.toFixed(2) + '">' +
-            '<div class="boxplot-whisker" style="left:' + left + '%; width:' + Math.max(right - left, 0.5) + '%"></div>' +
-            '<div class="boxplot-box" style="left:' + q1 + '%; width:' + Math.max(q3 - q1, 0.5) + '%"></div>' +
-            '<div class="boxplot-median" style="left:' + median + '%"></div>' +
-          '</div>' +
-          '<div class="boxplot-value">n=' + fmtNum(s.count) + ' · med ' + s.median.toFixed(2) + '</div>' +
-        '</div>';
-      }}).join('');
-      return '<article class="panel chart"><h2>' + esc(title) + '</h2>' +
-        '<div class="chart-note">' + esc(note) + '</div><div>' + body + scaleHtml + '</div></article>';
     }}
     function figureChart(title, note, path) {{
       if (!path) return '';
@@ -1156,31 +1553,48 @@ def _build_html(payload: dict[str, Any]) -> str:
         '<img src="' + esc(path) + '" alt="' + esc(title) + '" />' +
         '</article>';
     }}
+    function filterFigureKey() {{
+      return JSON.stringify([el.model.value || '', el.scenario.value || '', el.outcome.value || '', el.reason.value || '', el.cycle.value || '']);
+    }}
+    function boxplotFigureForCurrentFilters() {{
+      const plots = figures.filter_boxplots || {{}};
+      return plots[filterFigureKey()] || plots[figures.default_filter_key] || '';
+    }}
     function renderCharts() {{
-      if (el.chartMode.value === 'dynamic') {{
-        const rows = filteredRows();
-        const summaries = summarizeRecords(rows);
-        el.charts.innerHTML = [
-          modelSummaryTable(summaries),
-          dynamicBoxplotChart('Boxplot cicli per modello', 'Modalità interattiva: cicli delle run visibili con i filtri correnti.', rows, r => r.cycles),
-          dynamicBoxplotChart('Boxplot iterazioni DSL per modello', 'Modalità interattiva: iterazioni DSL delle run visibili con i filtri correnti.', rows, r => r.dsl_generation_iterations || []),
-        ].join('');
-        return;
+      const rows = filteredRows();
+      const searchNote = el.search.value.trim()
+        ? ' Il campo Cerca filtra tabella e riepilogo; i boxplot Matplotlib seguono i filtri a tendina pre-generati.'
+        : '';
+      const chartBlocks = [
+        modelSummaryTable(summarizeRecords(rows)),
+      ];
+      if (!el.model.value) {{
+        chartBlocks.push(
+          figureChart(
+            'Distribuzioni per modello',
+            'Ogni boxplot usa i datapoint reali: cicli per run, DSL generati per ciclo, tempo di ogni chiamata generate/repair, e completion_tokens di ogni DSL generato. Query adaptation escluse.' + searchNote,
+            boxplotFigureForCurrentFilters()
+          ) || '<article class="panel chart figure-card"><h2>Distribuzioni per modello</h2><div class="muted">Nessun grafico disponibile per i filtri correnti.</div></article>'
+        );
       }}
-      const rows = modelSummaries();
-      el.charts.innerHTML = [
-        modelSummaryTable(rows),
-        figureChart('Boxplot cicli per modello', 'Grafico Matplotlib: box, mediana, media e outlier dei cicli/iterazioni.', figures.cycles_boxplot),
-        figureChart('Boxplot iterazioni DSL per modello', 'Grafico Matplotlib: tentativi necessari per ottenere il DSL accettato dal compilatore.', figures.dsl_generation_iterations_boxplot),
-      ].join('');
+      el.charts.innerHTML = chartBlocks.join('');
     }}
     function renderTop() {{
-      card('Run totali', fmtNum(summary.total_runs));
-      card('Riuscite', fmtNum(summary.success));
-      card('Fallite', fmtNum(summary.failed));
-      card('In corso', fmtNum(summary.running));
-      card('Success rate', fmtPct((summary.success || 0) / Math.max(summary.total_runs || 0, 1)));
-      const models = modelSummaries();
+      const rows = filteredRows();
+      const models = summarizeRecords(rows);
+      const counts = rows.reduce((acc, r) => {{
+        if (r.outcome === 'success') acc.success += 1;
+        else if (r.outcome === 'failed') acc.failed += 1;
+        else if (r.outcome === 'running') acc.running += 1;
+        else acc.unknown += 1;
+        return acc;
+      }}, {{success: 0, failed: 0, running: 0, unknown: 0}});
+      el.cards.innerHTML = '';
+      card('Run totali', fmtNum(rows.length));
+      card('Riuscite', fmtNum(counts.success));
+      card('Fallite', fmtNum(counts.failed));
+      card('In corso', fmtNum(counts.running));
+      card('Success rate', fmtPct(counts.success / Math.max(rows.length, 1)));
       el.modelCards.innerHTML = models.map(m => {{
         const cycleErrors = Object.entries(m.feedback_cycle_errors || {{}})
           .sort((a, b) => b[1] - a[1])
@@ -1192,7 +1606,6 @@ def _build_html(payload: dict[str, Any]) -> str:
         const totalCycles = Number(m.total_cycles || 0);
         return '<article class="model-card">' +
           '<div class="model-head"><div class="model-name">' + esc(m.model) + '</div><div class="rate">' + fmtNum(success) + '/' + fmtNum(total) + '</div></div>' +
-          '<div>Pipeline: <b>' + fmtNum(success) + '</b> riuscite / <b>' + fmtNum(failed) + '</b> non riuscite su ' + fmtNum(total) + '</div>' +
           '<div>Cicli totali: <b>' + fmtNum(totalCycles) + '</b></div>' +
           '<div class="label">Errori cicli feedback</div>' +
           '<div class="reason-list">' + (cycleErrors || '<span class="chip">nessun ciclo fallito</span>') + '</div>' +
@@ -1204,6 +1617,7 @@ def _build_html(payload: dict[str, Any]) -> str:
       fillSelect(el.scenario, uniq(records.map(r => r.scenario)), 'Tutti');
       fillSelect(el.outcome, uniq(records.map(r => r.outcome)), 'Tutti');
       fillSelect(el.reason, uniq(records.map(r => r.failure_category)), 'Tutti');
+      fillCycleSelect();
     }}
     function filteredRows() {{
       const q = el.search.value.trim().toLowerCase();
@@ -1212,8 +1626,13 @@ def _build_html(payload: dict[str, Any]) -> str:
         if (el.scenario.value && r.scenario !== el.scenario.value) return false;
         if (el.outcome.value && r.outcome !== el.outcome.value) return false;
         if (el.reason.value && r.failure_category !== el.reason.value) return false;
+        if (el.cycle.value) {{
+          const selectedCycle = Number(el.cycle.value);
+          const perCycle = Array.isArray(r.per_cycle_metrics) ? r.per_cycle_metrics : [];
+          if (!perCycle.some(c => Number(c.cycle_index) === selectedCycle)) return false;
+        }}
         if (!q) return true;
-        return [r.run_id, r.model, r.scenario, r.outcome, r.failure_category, r.failure_detail, r.metadata_path]
+        return [r.run_id, r.model, r.scenario, r.outcome, r.failure_category, r.failure_detail, r.llm_seed, r.metadata_path]
           .join(' ').toLowerCase().includes(q);
       }}).sort((a, b) => String(b.started_at || '').localeCompare(String(a.started_at || '')));
     }}
@@ -1228,11 +1647,12 @@ def _build_html(payload: dict[str, Any]) -> str:
           '<td>' + esc(r.scenario) + '</td>' +
           '<td><span class="status ' + esc(r.outcome) + '">' + esc(r.outcome) + '</span></td>' +
           '<td>' + esc(r.failure_category) + '</td>' +
+          '<td class="mono">' + esc(r.llm_seed ?? '-') + '</td>' +
           '<td>' + fmtNum(r.cycles) + '</td>' +
           '<td>' + fmtDuration(r.duration_seconds) + '</td>' +
           '<td class="clamp muted">' + esc(r.failure_detail || '-') + '</td>' +
           '</tr>';
-      }}).join('') || '<tr><td colspan="8" class="muted">Nessuna run trovata.</td></tr>';
+      }}).join('') || '<tr><td colspan="9" class="muted">Nessuna run trovata.</td></tr>';
       for (const tr of el.rows.querySelectorAll('tr[data-run]')) {{
         tr.addEventListener('click', () => {{
           selected = records.find(r => r.run_id === tr.dataset.run);
@@ -1283,11 +1703,14 @@ def _build_html(payload: dict[str, Any]) -> str:
         '<div class="kv"><b>Run</b><span class="mono">' + esc(r.run_id) + '</span></div>' +
         '<div class="kv"><b>Modello</b><span>' + esc(r.model) + '</span></div>' +
         '<div class="kv"><b>Scenario</b><span>' + esc(r.scenario) + '</span></div>' +
+        '<div class="kv"><b>Seed</b><span class="mono">' + esc(r.llm_seed ?? '-') + '</span></div>' +
         '<div class="kv"><b>Esito</b><span>' + esc(r.outcome) + '</span></div>' +
         '<div class="kv"><b>Motivo</b><span>' + esc(r.failure_category) + '</span></div>' +
         '<div class="kv"><b>Dettaglio</b><span>' + esc(r.failure_detail) + '</span></div>' +
         '<div class="kv"><b>Cicli</b><span>' + fmtNum(r.cycles) + '</span></div>' +
         '<div class="kv"><b>Durata</b><span>' + fmtDuration(r.duration_seconds) + '</span></div>' +
+        '<div class="kv"><b>Tempo gen.</b><span>' + fmtDuration(r.dsl_generation_time_seconds) + '</span></div>' +
+        '<div class="kv"><b>Token DSL</b><span>' + (r.dsl_total_tokens === null || r.dsl_total_tokens === undefined ? '-' : fmtNum(r.dsl_total_tokens)) + '</span></div>' +
         '<div class="kv"><b>Metadata</b><span class="mono">' + esc(r.metadata_path) + '</span></div>' +
         '</div>' +
         cycleSection +
@@ -1295,13 +1718,14 @@ def _build_html(payload: dict[str, Any]) -> str:
     }}
     function update() {{
       if (selected && !filteredRows().some(r => r.run_id === selected.run_id)) selected = null;
+      renderTop();
       renderCharts();
       renderRows();
     }}
+    setupFilters();
     renderTop();
     renderCharts();
-    setupFilters();
-    [el.search, el.model, el.scenario, el.outcome, el.reason, el.chartMode].forEach(node => {{
+    [el.search, el.model, el.scenario, el.outcome, el.reason, el.cycle].forEach(node => {{
       node.addEventListener('input', update);
       node.addEventListener('change', update);
     }});

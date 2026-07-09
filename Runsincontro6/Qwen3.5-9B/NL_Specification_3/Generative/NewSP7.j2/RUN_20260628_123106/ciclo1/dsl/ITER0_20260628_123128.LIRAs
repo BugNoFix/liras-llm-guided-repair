@@ -1,0 +1,24 @@
+Factory_Pipeline
+agents:
+	robots: Robot1, Robot2
+locations: warehouse, surface_texturization_start, surface_texturization_end, laser_start, laser_end, loading_area
+resources: raw_materials
+Robot1:
+	1: moveTo warehouse
+	2: pick raw_materials
+	3: moveTo surface_texturization_start
+	4: moveTo surface_texturization_end
+	5: moveTo laser_start
+	6: moveTo laser_end
+	7: moveTo loading_area
+	8: deposit raw_materials
+Robot2:
+	1: moveTo warehouse
+	2: pick raw_materials
+	3: moveTo surface_texturization_start
+	4: moveTo surface_texturization_end
+	5: moveTo laser_start
+	6: moveTo laser_end
+	7: moveTo loading_area
+	8: deposit raw_materials
+success: possess(Robot1, raw_materials) || possess(Robot2, raw_materials)

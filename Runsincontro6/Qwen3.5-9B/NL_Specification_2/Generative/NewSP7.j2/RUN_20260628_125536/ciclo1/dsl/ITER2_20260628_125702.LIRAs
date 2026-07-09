@@ -1,0 +1,11 @@
+RobotPat1
+agents:
+	robots: robot1
+locations: room1, room2, room3
+resources: item1, item2
+robot1:
+	default moveTo room1
+1: moveTo room2
+2: moveTo room3
+success: time(10)
+failure: time(60)

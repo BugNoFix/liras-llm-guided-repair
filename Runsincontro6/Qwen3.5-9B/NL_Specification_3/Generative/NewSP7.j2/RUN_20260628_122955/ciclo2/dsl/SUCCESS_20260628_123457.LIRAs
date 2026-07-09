@@ -1,0 +1,19 @@
+Pattern1
+agents:
+	humans: Nurse
+	robots: Robot1
+locations: room1, room2
+resources: item1, item2
+
+Nurse:
+	1: moveTo room1
+	2: moveTo room2
+
+Robot1:
+	1: pick item1 if time(10) else stop
+	2: moveTo room1
+	3: moveTo room2
+	4: deposit item2 if time(10) else stop
+
+success: time(10)
+failure: time(20)

@@ -1,0 +1,12 @@
+Coffee_Delivery
+agents:
+	humans: human1
+	robots: robot1
+locations: office001, coffee_room
+resources: coffee
+human1:
+	1: moveTo coffee_room
+robot1:
+	1: moveTo coffee_room
+success: time(10)
+failure: time(20)

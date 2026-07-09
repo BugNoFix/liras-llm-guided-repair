@@ -1,0 +1,9 @@
+Pattern1
+agents:
+	humans: Nurse
+	robots: Robot1
+locations: room1, room2
+sequence Nurse:
+	1: moveTo room1
+success: true
+failure: false

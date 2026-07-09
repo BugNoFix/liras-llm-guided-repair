@@ -1,0 +1,12 @@
+PatternName
+agents:
+	humans: Nurse
+	robots: Robot1
+locations: room1, room2, room3, coffee_room
+resources: item1, item2
+Nurse:
+	1: moveTo coffee_room
+Robot1:
+	1: moveTo coffee_room
+success: time(10)
+failure: time(20)

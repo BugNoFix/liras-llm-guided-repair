@@ -144,8 +144,9 @@ def _aggregate_table(run_rows: List[Dict[str, Any]], group_keys: List[str]) -> L
         success_count = sum(1 for r in rows if str(r.get("derived.success")).lower() == "true")
         iterations = [_to_int(r.get("derived.iteration_count"), 0) for r in rows]
         durations = [_to_float(r.get("summary.run_duration_seconds"), 0.0) for r in rows]
-        prompt_tokens = [_to_int(r.get("summary.total_prompt_tokens_est"), 0) for r in rows]
-        response_tokens = [_to_int(r.get("summary.total_response_tokens_est"), 0) for r in rows]
+        prompt_tokens = [_to_int(r.get("summary.prompt_tokens_total"), 0) for r in rows]
+        completion_tokens = [_to_int(r.get("summary.completion_tokens_total"), 0) for r in rows]
+        total_tokens = [_to_int(r.get("summary.total_tokens_total"), 0) for r in rows]
 
         base: Dict[str, Any] = {k: v for k, v in zip(group_keys, key)}
         base.update(
@@ -158,7 +159,8 @@ def _aggregate_table(run_rows: List[Dict[str, Any]], group_keys: List[str]) -> L
                 "iterations_max": max(iterations) if iterations else 0,
                 "duration_seconds_avg": round(sum(durations) / runs, 3) if runs else 0.0,
                 "prompt_tokens_total": sum(prompt_tokens),
-                "response_tokens_total": sum(response_tokens),
+                "completion_tokens_total": sum(completion_tokens),
+                "total_tokens_total": sum(total_tokens),
             }
         )
         out.append(base)

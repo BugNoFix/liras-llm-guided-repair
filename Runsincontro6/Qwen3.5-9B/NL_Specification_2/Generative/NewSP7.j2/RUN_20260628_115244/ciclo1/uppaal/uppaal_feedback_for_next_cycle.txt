@@ -1,0 +1,30 @@
+### WHAT TO FIX
+The adapted queries reference names that do not exist in the generated UPPAAL XML. Regenerate the LIRAs model so exported XML names match the intended scenario, or adapt the queries to the actual XML identifiers.
+
+### FAILED QUERIES
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_115244/ciclo1/xml/ITER1_20260628_115308.xml::35: [error] has no member named idle.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_115244/ciclo1/xml/ITER1_20260628_115308.xml::35: [error] Type error.
+
+### VERIFYTA DIAGNOSTICS
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_115244/ciclo1/xml/ITER1_20260628_115308.xml::35: [error] has no member named idle.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_115244/ciclo1/xml/ITER1_20260628_115308.xml::35: [error] Type error.
+### INCORRECT LIRAS CODE
+Pattern1
+agents:
+	humans: Nurse
+	robots: Robot1
+locations: room1, room2
+resources: item1
+
+Nurse:
+	1: moveTo room1
+
+Robot1:
+	1: moveTo room2
+
+success: time(10)
+failure: time(5)

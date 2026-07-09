@@ -1,0 +1,16 @@
+Coffee_Delivery
+agents:
+	humans: Nurse
+	robots: Robot1
+locations: room1, room2, room3, coffee_room, warehouse
+resources: coffee, item1
+Nurse:
+	1: moveTo coffee_room
+	2: moveTo warehouse
+Robot1:
+	1: moveTo coffee_room
+	2: pick coffee
+	3: moveTo warehouse
+	4: deposit coffee
+success: position(Nurse, warehouse) && position(Robot1, warehouse)
+failure: time(100)

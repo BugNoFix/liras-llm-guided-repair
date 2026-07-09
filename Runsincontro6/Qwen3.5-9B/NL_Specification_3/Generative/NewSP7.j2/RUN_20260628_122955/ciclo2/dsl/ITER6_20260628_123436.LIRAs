@@ -1,0 +1,26 @@
+Factory_Pipeline
+agents:
+	robots: Robot1, Robot2
+locations: warehouse, surface_texturization_start, surface_texturization_end, laser_start, laser_end, loading_area
+resources: raw_materials, texturized_materials, lasered_materials, item1
+
+Robot1:
+	1: pick raw_materials if true else stop
+	2: moveTo surface_texturization_start
+	3: moveTo surface_texturization_end
+	4: moveTo laser_start
+	5: moveTo laser_end
+	6: moveTo loading_area
+	7: deposit lasered_materials if true else stop
+
+Robot2:
+	1: pick raw_materials if true else stop
+	2: moveTo surface_texturization_start
+	3: moveTo surface_texturization_end
+	4: moveTo laser_start
+	5: moveTo laser_end
+	6: moveTo loading_area
+	7: deposit lasered_materials if true else stop
+
+success: timedelivery == Robot1 && dist(Robot1, loading_area) == 0 && time(20) <= 30
+failure: time(60) < time(20)

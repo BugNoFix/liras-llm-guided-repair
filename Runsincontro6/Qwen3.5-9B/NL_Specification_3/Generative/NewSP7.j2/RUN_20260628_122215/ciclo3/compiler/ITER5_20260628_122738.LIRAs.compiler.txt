@@ -1,0 +1,45 @@
+Validating: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260628_122215/ciclo3/dsl/ITER5_20260628_122738.LIRAs
+FAILURE: Validation errors found.
+
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (rsrc:com.google.inject_7.0.0.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[ERROR] Line 7: mismatched input 'else' expecting RULE_NL
+[ERROR] Line 9: mismatched input 'else' expecting RULE_NL
+[ERROR] Line 9: missing ':' at '\n\t'
+[ERROR] Line 11: mismatched input 'else' expecting RULE_NL
+[ERROR] Line 11: missing ':' at '\n\t'
+[ERROR] Line 13: mismatched input 'else' expecting RULE_NL
+[ERROR] Line 13: missing ':' at '\n\t'
+[ERROR] Line 15: mismatched input 'else' expecting RULE_NL
+[ERROR] Line 17: mismatched input 'else' expecting RULE_NL
+[ERROR] Line 19: mismatched input 'else' expecting RULE_NL
+[ERROR] Line 19: missing ':' at '\n\t'
+[ERROR] Line 21: mismatched input 'else' expecting RULE_NL
+[ERROR] Line 21: missing ':' at '\n\t'
+[ERROR] Line 23: mismatched input 'else' expecting RULE_NL
+[ERROR] Line 23: missing ':' at '\n\t'
+[ERROR] Line 25: mismatched input 'else' expecting RULE_NL
+[ERROR] Line 8: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 9: The same agent cannot be used in more than one sequence..
+[ERROR] Line 9: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 9: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 11: The same agent cannot be used in more than one sequence..
+[ERROR] Line 11: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 11: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 12: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 13: The same agent cannot be used in more than one sequence..
+[ERROR] Line 13: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 13: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 18: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 19: The same agent cannot be used in more than one sequence..
+[ERROR] Line 19: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 19: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 21: The same agent cannot be used in more than one sequence..
+[ERROR] Line 21: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 21: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 22: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 23: The same agent cannot be used in more than one sequence..
+[ERROR] Line 23: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 23: Agent name must be one of the names specified in the pattern.

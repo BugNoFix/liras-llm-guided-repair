@@ -1,0 +1,12 @@
+Coffee_Delivery
+agents:
+\trobots: CoffeeRobot
+locations: coffee_room, office001
+resources: coffee
+CoffeeRobot: default stop
+\t1: moveTo coffee_room
+\t2: pick coffee
+\t3: moveTo office001
+\t4: deposit coffee
+success: !possess(CoffeeRobot, coffee)
+failure: time(20)

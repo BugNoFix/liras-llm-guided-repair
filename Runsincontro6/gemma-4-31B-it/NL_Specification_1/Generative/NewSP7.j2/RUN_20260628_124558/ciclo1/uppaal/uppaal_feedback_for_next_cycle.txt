@@ -1,0 +1,37 @@
+### WHAT TO FIX
+UPPAAL ran successfully, but at least one property/query did not match the expected behavior. Repair the LIRAs model behavior, not just query syntax.
+
+### FAILED QUERIES
+Query 13
+Failure kind: probability_delta
+Reason: The obtained probability differs from the expected probability by more than the configured threshold.
+Description: The robot must guarantee task completion.
+Original formula: Pr[<=700] (<> Coffee_Delivery.end)
+Adapted formula: Pr[<=700] (<> Coffee_Delivery.end)
+Expected probability: 0.975028
+Obtained probability: 0.02497205
+Probability delta: 0.95005595
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 13 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_124558/ciclo1/queries/adapted.q:38
+ -- Throughput: 264057 runs/sec, Load: 362 runs
+ -- Throughput: 266411 runs/sec, Load: 334 runs
+ -- Formula is satisfied.
+(0/72 runs) Pr(<> …) in [0,0.0499441] (95% CI)
+
+### INCORRECT LIRAS CODE
+Coffee_Delivery
+agents:
+	humans: Employee1
+	robots: Robot1
+locations: coffee_room, office001
+resources: coffee
+Robot1:
+	1: moveTo coffee_room
+	2: pick coffee
+	3: moveTo office001
+	4: deposit coffee
+Employee1:
+	1-4: stop
+success: possess(Employee1, coffee)
+failure: time(100)

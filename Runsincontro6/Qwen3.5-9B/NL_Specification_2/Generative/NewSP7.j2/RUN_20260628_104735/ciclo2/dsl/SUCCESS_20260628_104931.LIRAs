@@ -1,0 +1,17 @@
+user_guided_transport
+agents:
+	humans: Nurse
+	robots: Robot1
+locations: room1, room2, kitchen
+resources: item1
+resources: object
+Nurse:
+	1-4: moveTo room1
+	5: stop
+Robot1:
+	1-4: moveTo room1
+	5: pick object
+	6-10: moveTo kitchen
+	11: stop
+success: position(Nurse, kitchen) && position(Robot1, kitchen) && possess(Robot1, object)
+failure: time(700)

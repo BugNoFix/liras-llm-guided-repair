@@ -1,0 +1,12 @@
+user_guided_transport
+
+agents: 
+	robots: Robot
+	humans: Human
+	locations: bedroom, kitchen
+	resources: object
+
+Human: default moveTo bedroom
+1:
+2: skip
+3:

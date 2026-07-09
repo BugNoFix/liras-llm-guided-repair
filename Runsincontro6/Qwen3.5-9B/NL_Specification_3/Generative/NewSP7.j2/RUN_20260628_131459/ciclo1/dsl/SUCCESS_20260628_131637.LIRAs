@@ -1,0 +1,12 @@
+Pattern1
+agents:
+	humans: Nurse
+	robots: Robot1
+locations: room1, room2, room3, office001, office004, coffee_room, bedroom, kitchen, warehouse
+resources: item1, item2, item3, coffee, object, raw_materials, texturized_materials, diffused_materials, lasered_materials, etched_materials, annealed_materials, perc_cells, pasted_cells, slotted_cells
+Nurse:
+	1: moveTo room1
+Robot1:
+	1: moveTo room2
+success: time(100)
+failure: time(0)

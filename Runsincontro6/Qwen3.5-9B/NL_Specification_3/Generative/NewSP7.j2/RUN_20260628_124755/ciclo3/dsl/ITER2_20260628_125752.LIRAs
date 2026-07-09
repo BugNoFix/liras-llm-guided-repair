@@ -1,0 +1,17 @@
+Factory_Pipeline
+agents:
+	humans: Nurse
+	robots: Robot1
+locations: room1, room2, room3
+resources: item1
+Nurse:
+	1: moveTo room1
+Robot1:
+	1: moveTo room1
+	2: pick item1 if position(Robot1, room1) else stop
+	3: moveTo room2
+	4: deposit item1 if position(Robot1, room2) else stop
+	5: moveTo room3
+	6: deposit item1 if position(Robot1, room3) else stop
+success: position(Robot1, room3)
+failure: time(10)

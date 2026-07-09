@@ -28,6 +28,15 @@ def _load_json(path: Path) -> dict:
         return json.load(f)
 
 
+def _empty_generation_response(metadata: Optional[dict]) -> bool:
+    if not isinstance(metadata, dict):
+        return False
+    if metadata.get("failure_reason") == "EmptyResponseGeneration":
+        return True
+    breaking_error = metadata.get("breaking_error")
+    return isinstance(breaking_error, dict) and breaking_error.get("type") == "EmptyResponseGeneration"
+
+
 def _resolve_service_account_key(config: dict) -> Optional[str]:
     cfg_key_path = (
         config.get("service_account_key_path")
@@ -307,16 +316,20 @@ def main() -> int:
     for idx, scenario in enumerate(scenarios, start=1):
         print(f"[{idx}/{total}] START batch={batch_id} scenario={scenario}")
 
-        generator = DSLGenerator(
-            project_id=project_id,
-            location=location,
-            service_account_key=service_account_key,
-            generation_temperature=generation_temperature,
-            repair_temperature=repair_temperature,
-            repair_max_output_tokens=int(template.get("repair_max_output_tokens", 16384)),
-            provider=provider,
-            api_key=provider_api_key,
-        )
+        generator_kwargs = {
+            "project_id": project_id,
+            "location": location,
+            "service_account_key": service_account_key,
+            "generation_temperature": generation_temperature,
+            "repair_temperature": repair_temperature,
+            "repair_max_output_tokens": int(template.get("repair_max_output_tokens", 16384)),
+            "provider": provider,
+            "api_key": provider_api_key,
+        }
+        if not args.flash:
+            generator_kwargs["generation_max_output_tokens"] = template.get("generation_max_output_tokens")
+            generator_kwargs["llm_seed"] = template.get("llm_seed")
+        generator = DSLGenerator(**generator_kwargs)
 
         run_config = deepcopy(template)
         run_config["scenario"] = scenario
@@ -337,6 +350,10 @@ def main() -> int:
         except Exception as e:
             print(f"[{idx}/{total}] ERROR scenario={scenario}: {type(e).__name__}: {e}")
             continue
+
+        if _empty_generation_response(getattr(generator, "run_metadata", None)):
+            print(f"[{idx}/{total}] ABORT batch={batch_id} scenario={scenario}: EmptyResponseGeneration")
+            return 1
 
         print(f"[{idx}/{total}] DONE  batch={batch_id} scenario={scenario}")
 

@@ -284,8 +284,9 @@ def _build_record(meta: dict[str, Any], meta_path: Path, embed_all_data: bool = 
         "compiler_failures": summary.get("compiler_failures"),
         "compiler_successes": summary.get("compiler_successes"),
         "llm_calls": summary.get("llm_calls", telemetry.get("llm_calls")),
-        "prompt_tokens_est_total": summary.get("prompt_tokens_est_total", telemetry.get("prompt_tokens_est_total")),
-        "response_tokens_est_total": summary.get("response_tokens_est_total", telemetry.get("response_tokens_est_total")),
+        "prompt_tokens_total": summary.get("prompt_tokens_total", telemetry.get("prompt_tokens_total")),
+        "completion_tokens_total": summary.get("completion_tokens_total", telemetry.get("completion_tokens_total")),
+        "total_tokens_total": summary.get("total_tokens_total", telemetry.get("total_tokens_total")),
         "error_type": str(breaking_error.get("type") or ""),
         "error_message": error_message or final_iteration_error,
         "final_iteration_error": final_iteration_error,
@@ -368,8 +369,9 @@ def _build_summary(records: list[dict[str, Any]]) -> dict[str, Any]:
 
     total_duration = sum(_to_number(r.get("duration_seconds"), 0.0) for r in records)
     total_calls = sum(_to_number(r.get("llm_calls"), 0.0) for r in records)
-    total_prompt_tokens = sum(_to_number(r.get("prompt_tokens_est_total"), 0.0) for r in records)
-    total_response_tokens = sum(_to_number(r.get("response_tokens_est_total"), 0.0) for r in records)
+    total_prompt_tokens = sum(_to_number(r.get("prompt_tokens_total"), 0.0) for r in records)
+    total_completion_tokens = sum(_to_number(r.get("completion_tokens_total"), 0.0) for r in records)
+    total_tokens = sum(_to_number(r.get("total_tokens_total"), 0.0) for r in records)
 
     latest_ts: datetime | None = None
     for r in records:
@@ -385,8 +387,9 @@ def _build_summary(records: list[dict[str, Any]]) -> dict[str, Any]:
         "scenario_counts": dict(scenarios),
         "total_duration_seconds": round(total_duration, 2),
         "total_llm_calls": int(total_calls),
-        "total_prompt_tokens_est": int(total_prompt_tokens),
-        "total_response_tokens_est": int(total_response_tokens),
+        "total_prompt_tokens": int(total_prompt_tokens),
+        "total_completion_tokens": int(total_completion_tokens),
+        "total_tokens": int(total_tokens),
         "latest_run_started_at": latest_ts.isoformat() if latest_ts else None,
     }
 
@@ -949,7 +952,8 @@ def _build_html(payload: dict[str, Any]) -> str:
       el.cards.appendChild(card('Success', fmtNum(status.success || 0)));
       el.cards.appendChild(card('Crashed', fmtNum(status.crashed || 0)));
       el.cards.appendChild(card('LLM Calls', fmtNum(summary.total_llm_calls || 0)));
-      el.cards.appendChild(card('Prompt Tokens (est)', fmtNum(summary.total_prompt_tokens_est || 0)));
+      el.cards.appendChild(card('Prompt Tokens', fmtNum(summary.total_prompt_tokens || 0)));
+      el.cards.appendChild(card('Completion Tokens', fmtNum(summary.total_completion_tokens || 0)));
       el.cards.appendChild(card('Latest Start', summary.latest_run_started_at ? fmtDate(summary.latest_run_started_at) : '-'));
     }
 
@@ -1019,7 +1023,7 @@ def _build_html(payload: dict[str, Any]) -> str:
         if (mode === 'started_desc') return String(b.run_started_at || '').localeCompare(String(a.run_started_at || ''));
         if (mode === 'duration_asc') return Number(a.duration_seconds || 0) - Number(b.duration_seconds || 0);
         if (mode === 'duration_desc') return Number(b.duration_seconds || 0) - Number(a.duration_seconds || 0);
-        if (mode === 'tokens_desc') return Number(b.prompt_tokens_est_total || 0) - Number(a.prompt_tokens_est_total || 0);
+        if (mode === 'tokens_desc') return Number(b.total_tokens_total || 0) - Number(a.total_tokens_total || 0);
         return 0;
       });
       return arr;
@@ -1101,7 +1105,7 @@ def _build_html(payload: dict[str, Any]) -> str:
         appendCell(fmtNum(r.iterations_recorded));
         appendCell(String(r.cycle_status_summary || '-'), 'cycle-summary mono');
         appendCell(fmtNum(r.llm_calls));
-        appendCell(fmtNum(r.prompt_tokens_est_total));
+        appendCell(fmtNum(r.total_tokens_total));
         appendCell(String(errShort || '-'), 'clamp muted');
 
         tr.addEventListener('click', () => {
@@ -1134,8 +1138,9 @@ def _build_html(payload: dict[str, Any]) -> str:
         'Status: ' + (r.status || '-'),
         'Duration: ' + fmtDuration(r.duration_seconds),
         'LLM calls: ' + fmtNum(r.llm_calls),
-        'Prompt tokens: ' + fmtNum(r.prompt_tokens_est_total),
-        'Response tokens: ' + fmtNum(r.response_tokens_est_total),
+        'Prompt tokens: ' + fmtNum(r.prompt_tokens_total),
+        'Completion tokens: ' + fmtNum(r.completion_tokens_total),
+        'Total tokens: ' + fmtNum(r.total_tokens_total),
       ];
       for (const c of chips) {
         const d = document.createElement('div');

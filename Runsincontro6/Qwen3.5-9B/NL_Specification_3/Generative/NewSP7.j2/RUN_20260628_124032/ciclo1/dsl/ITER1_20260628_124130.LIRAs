@@ -1,0 +1,31 @@
+Factory_Pipeline
+	pattern: Factory_Pipeline
+	agents: robots: Robot1, Robot2
+	
+	locations: warehouse, surface_texturization_start, surface_texturization_end, laser_start, laser_end, loading_area
+	
+	resources: raw_materials, texturized_materials, lasered_materials
+
+Robot1:
+	1: moveTo warehouse pick raw_materials
+	
+	2: moveTo surface_texturization_start pick raw_materials moveTo surface_texturization_end
+    
+	3: moveTo laser_start pick texturized_materials moveTo laser_end
+	
+	4: moveTo loading_area deposit lasered_materials
+
+Robot2:
+	1: moveTo warehouse pick raw_materials
+	
+	2: moveTo surface_texturization_start pick raw_materials moveTo surface_texturization_end
+    
+	3: moveTo laser_start pick texturized_materials moveTo laser_end
+	
+	4: moveTo loading_area deposit lasered_materials
+
+Robot3:
+	default moveTo warehouse
+
+success: position(Robot1, loading_area) == true && position(Robot2, loading_area) == true
+failure: time(300)

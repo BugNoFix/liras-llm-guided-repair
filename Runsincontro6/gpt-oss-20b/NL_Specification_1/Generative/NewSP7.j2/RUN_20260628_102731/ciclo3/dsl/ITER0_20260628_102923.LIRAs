@@ -1,0 +1,15 @@
+Coffee_Delivery
+agents:
+	humans: Employee1
+	robots: Robot1, rm_1, rf_1, rp_1, rd_1
+locations: coffee_room, office001
+resources: coffee
+Robot1:
+	1: moveTo coffee_room until position(Robot1, coffee_room)
+	2: pick coffee until possess(Robot1, coffee)
+	3: moveTo office001 until position(Robot1, office001)
+	4: deposit coffee until !possess(Robot1, coffee)
+rm_1: default stop
+rf_1: default stop
+rp_1: default stop
+rd_1: default stop

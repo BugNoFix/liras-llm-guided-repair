@@ -1,0 +1,15 @@
+user_guided_transport
+agents: human, robot
+locations: bedroom, kitchen
+resources: object
+
+human:
+1: moveTo bedroom
+3: moveTo kitchen
+
+robot:
+1: moveTo bedroom
+2: pick object
+3: follow human (kitchen)
+
+success: position (human, kitchen) && position (robot, kitchen) && possess (robot, object)

@@ -1,0 +1,12 @@
+Nurse_Pattern
+agents:
+	humans: Nurse
+	robots:
+locations: coffee_room, office001
+resources: coffee
+Nurse: default moveTo office001
+1: moveTo coffee_room
+2: pick coffee
+3: moveTo office001
+success: time(10)
+failure: position(Nurse, office001)

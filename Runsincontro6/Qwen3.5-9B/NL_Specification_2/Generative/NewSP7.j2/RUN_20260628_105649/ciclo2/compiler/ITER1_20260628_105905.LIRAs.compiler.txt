@@ -1,0 +1,25 @@
+Validating: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_105649/ciclo2/dsl/ITER1_20260628_105905.LIRAs
+FAILURE: Validation errors found.
+
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (rsrc:com.google.inject_7.0.0.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[ERROR] Line 9: required (...)+ loop did not match anything at input 'if'
+[ERROR] Line 9: mismatched input 'è' expecting ':'
+[ERROR] Line 9: mismatched input 'then' expecting ':'
+[ERROR] Line 9: mismatched input 'moveTo' expecting ':'
+[ERROR] Line 9: mismatched input 'else' expecting ':'
+[ERROR] Line 10: missing ':' at '\n'
+[ERROR] Line 15: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
+[ERROR] Line 9: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 9: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 9: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 9: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 9: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 9: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 9: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 9: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 10: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 10: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 15: Resource name must be one of the names specified in the pattern.

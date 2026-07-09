@@ -1,0 +1,32 @@
+### WHAT TO FIX
+UPPAAL ran successfully, but at least one property/query did not match the expected behavior. Repair the LIRAs model behavior, not just query syntax.
+
+### FAILED QUERIES
+Query 7
+Failure kind: probability_delta
+Reason: The obtained probability differs from the expected probability by more than the configured threshold.
+Description: The robot must not continue performing actions indefinitely once the delivery is completed.
+Original formula: Pr[<=700]([] (Coffee_Delivery.end imply (rm_1.idle && rf_1.idle && rp_1.idle && rd_1.idle)))
+Adapted formula: Pr[<=700]([] (Coffee_Delivery.end imply (rm_1.idle && rf_1.idle && rp_1.idle && rd_1.idle)))
+Expected probability: 0.975028
+Obtained probability: 0.02497205
+Probability delta: 0.95005595
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 7 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_102731/ciclo2/queries/adapted.q:20
+ -- Formula is satisfied.
+(0/72 runs) Pr([] …) in [0,0.0499441] (95% CI)
+Values in [135.256,135.256] mean=135.256 steps=2.22045e-16: 72
+
+### INCORRECT LIRAS CODE
+Coffee_Delivery
+agents:
+	humans: Employee1
+	robots: Robot1
+locations: coffee_room, office001
+resources: coffee
+Robot1:
+	1: moveTo coffee_room until position(Robot1, coffee_room)
+	2: pick coffee until possess(Robot1, coffee)
+	3: moveTo office001 until position(Robot1, office001)
+	4: deposit coffee until !possess(Robot1, coffee)

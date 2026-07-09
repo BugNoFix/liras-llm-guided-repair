@@ -1,0 +1,74 @@
+// Upon mission initialization, the robot shall transition from 'Idle' to an 'Active' mode.
+Pr[<=1]([] Ciclo1_robot1_def.init_robot1)
+
+// Upon mission initialization, the human shall transition from 'Idle' to an 'Active' mode.
+Pr[<=1]([] Ciclo1_nurse_def.init_nurse)
+
+// The human shall navigate from the initial location to the bedroom.
+Pr[<=700] (<> pow(humanPositionX[0] - bedroom[0], 2) + pow(humanPositionY[0] - bedroom[1], 2) <= 900 )
+
+// The robot shall navigate from the initial location to the bedroom.
+Pr[<=700] (<> pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900 )
+
+// The robot must not attempt to pick up the object before reaching the bedroom.
+Pr[<=700] (<> !rp_1.idle && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )
+
+// The robot must not attempt to pick up the object before reaching the bedroom.
+Pr[<=700] (<> !rp_1.idle && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )
+
+// The robot must not attempt to pick up the object unless the human is also present in the bedroom.
+Pr[<=700] (<> !rp_1.idle && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )
+
+// The robot must not attempt to pick up the object unless the human is also present in the bedroom.
+Pr[<=700] (<> !rp_1.idle && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )
+
+// The robot must successfully grasp exactly one object in the bedroom.
+Pr[<=700](<> (pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) && robot_inventory[0][0] == 1)
+
+// The robot must successfully grasp exactly one object in the bedroom.
+Pr[<=700]([] (pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) imply robot_inventory[0][0] <= 1)
+
+// The robot must not drop or release the object before reaching the kitchen.
+Pr[<=700](<> (pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900) && robot_inventory[0][0] == 0)
+
+// After the object is grasped, the human shall navigate to the kitchen.
+Pr[<=700](<>  robot_inventory[0][0] == 1 imply (!hm_1.idle))
+
+// The robot shall follow the human to the kitchen while carrying the object.
+Pr[<=700]([] !rf_1.idle imply robot_inventory[0][0] == 1)
+
+// The robot must not navigate to the kitchen unless the object is in its possession.
+Pr[<=700]([] !rf_1.idle imply robot_inventory[0][0] == 1)
+
+// The robot must avoid collisions with obstacles during navigation.
+Pr[<=700] (<> pow(robPositionX[0] - object[0], 2) + pow(robPositionY[0] - object[1], 2) <= 0 )
+
+// The robot must avoid collisions with the human during navigation.
+Pr[<=700] (<> pow(robPositionX[0] - humanPositionX[0], 2) + pow(robPositionY[0] - humanPositionY[0], 2) <= 0 )
+
+// The human must avoid collisions with obstacles during navigation.
+Pr[<=700] (<> pow(humanPositionX[0] - object[0], 2) + pow(humanPositionY[0] - object[1], 2) <= 0 )
+
+// The human must avoid collisions with the robot during navigation.
+Pr[<=700] (<> pow(robPositionX[0] - humanPositionX[0], 2) + pow(robPositionY[0] - humanPositionY[0], 2) <= 0 )
+
+// The robot must not enter forbidden areas of the environment.
+Pr[<=700] (<> !isValidPosition(robPositionX[0], robPositionY[0]))
+
+// The human must not enter forbidden areas of the environment.
+Pr[<=700] (<> !isValidPosition(humanPositionX[0], humanPositionY[0]))
+
+// The mission shall consist of exactly one execution cycle (no repetitions and no skipped steps).
+Pr[<=700] (<> currP > 2)
+
+// The mission shall terminate once both agents are in the kitchen and the robot is holding the object.
+Pr[<=700] ([] ( pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900  && pow(humanPositionX[0] - bedroom[0], 2) + pow(humanPositionY[0] - bedroom[1], 2) <= 900 && robot_inventory[0][0] == 1) imply (Ciclo1.end) )
+
+// The agents must not continue performing actions indefinitely after mission completion.
+Pr[<=700]([] (Ciclo1.end imply (rm_1.idle && rf_1.idle && rp_1.idle && rd_1.idle && hi_1.idle)))
+
+// The state of charge of the robot does not reach zero during the pattern.
+Pr[<=700](<>batteryCharge[0]<=0)
+
+// The fatigue of the human does not reach the maximum during the pattern.
+Pr[<=700](<>humanFatigue[0]>=100)

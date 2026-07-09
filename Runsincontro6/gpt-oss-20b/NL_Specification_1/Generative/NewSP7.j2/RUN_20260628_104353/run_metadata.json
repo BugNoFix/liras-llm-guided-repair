@@ -1,0 +1,97 @@
+{
+  "run_id": "20260628_104353",
+  "run_started_at": "2026-06-28T10:43:53.109887",
+  "pipeline_runner_version": "v3_structured_stage_metadata",
+  "overall_result": "failed",
+  "failed_stage": "xml_export",
+  "failure_type": "execution",
+  "failure_reason": "LIRAs-to-XML export failed, so UPPAAL verification could not run.",
+  "failure_details": {
+    "step": "lira_cli",
+    "command": "java -jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/dsl/ITER1_20260628_104358.LIRAs /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/xml/ITER1_20260628_104358.xml",
+    "exit_code": 1,
+    "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/xml/lira_cli.stdout.txt",
+    "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/xml/lira_cli.stderr.txt",
+    "stderr_preview": "WARNING: A terminally deprecated method in sun.misc.Unsafe has been called\nWARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar)\nWARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper\nWARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release\nException in thread \"main\" java.util.NoSuchElementException\n\tat com.google.common.collect.Iterators$ConcatenatedIterator.next(Iterators.java:1460)\n\tat com.google.common.collect.TransformedIterator.next(TransformedIterator.java:52)\n\tat org.eclipse.xtext.xbase.lib.IteratorExtensions.max(IteratorExtensions.java:1075)\n\tat org.eclipse.xtext.xbase.lib.IteratorExtensions.max(IteratorExtensions.java:1033)\n\tat org.eclipse.xtext.xbase.lib.IterableExtensions.max(IterableExtensions.java:964)\n\tat it.polimi.generator.LIRAsGenerator.ssChan(LIRAsGenerator.java:191)\n\tat it.polimi.generator.LIRAsGenerator.lambda$doGenerate$0(LIRAsGenerator.java:114)\n\tat org.eclipse.xtext.xbase.lib.IteratorExtensions.forEach(IteratorExtensions.java:446)\n\tat it.polimi.generator.LIRAsGenerator.doGenerate(LIRAsGenerator.java:130)\n\tat it.polimi.Main.main(Main.java:71)"
+  },
+  "generation_provider": "huggingface",
+  "repair_provider": "huggingface",
+  "query_provider": "gemini",
+  "system_prompt": "Generative/NewSP7.j2",
+  "repair_prompt": "Repair/NewSPR7.j2",
+  "scenario": "NL_Specification_1.txt",
+  "generation_model": "openai/gpt-oss-20b:groq",
+  "repair_model": "openai/gpt-oss-20b:groq",
+  "shots": 0,
+  "repair_shots": 0,
+  "max_iterations": 11,
+  "max_uppaal_feedback_cycles": 3,
+  "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353",
+  "cycles": [
+    {
+      "cycle": 1,
+      "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1",
+      "metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/run_metadata.json",
+      "uppaal_feedback_included": false,
+      "uppaal_feedback_chars": 0,
+      "verifyta_probability_delta_threshold": 0.05,
+      "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/dsl/ITER1_20260628_104358.LIRAs",
+      "cycle_result": "failed",
+      "failed_stage": "xml_export",
+      "failure_type": "execution",
+      "failure_reason": "LIRAs-to-XML export failed, so UPPAAL verification could not run.",
+      "failure_details": {
+        "step": "lira_cli",
+        "command": "java -jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/dsl/ITER1_20260628_104358.LIRAs /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/xml/ITER1_20260628_104358.xml",
+        "exit_code": 1,
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/xml/lira_cli.stdout.txt",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/xml/lira_cli.stderr.txt",
+        "stderr_preview": "WARNING: A terminally deprecated method in sun.misc.Unsafe has been called\nWARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar)\nWARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper\nWARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release\nException in thread \"main\" java.util.NoSuchElementException\n\tat com.google.common.collect.Iterators$ConcatenatedIterator.next(Iterators.java:1460)\n\tat com.google.common.collect.TransformedIterator.next(TransformedIterator.java:52)\n\tat org.eclipse.xtext.xbase.lib.IteratorExtensions.max(IteratorExtensions.java:1075)\n\tat org.eclipse.xtext.xbase.lib.IteratorExtensions.max(IteratorExtensions.java:1033)\n\tat org.eclipse.xtext.xbase.lib.IterableExtensions.max(IterableExtensions.java:964)\n\tat it.polimi.generator.LIRAsGenerator.ssChan(LIRAsGenerator.java:191)\n\tat it.polimi.generator.LIRAsGenerator.lambda$doGenerate$0(LIRAsGenerator.java:114)\n\tat org.eclipse.xtext.xbase.lib.IteratorExtensions.forEach(IteratorExtensions.java:446)\n\tat it.polimi.generator.LIRAsGenerator.doGenerate(LIRAsGenerator.java:130)\n\tat it.polimi.Main.main(Main.java:71)"
+      },
+      "stages": [
+        {
+          "stage": "dsl_generation",
+          "result": "ok",
+          "details": {
+            "iterations_recorded": 2,
+            "validations_attempted": 2,
+            "compiler_failures": 1,
+            "compiler_successes": 1,
+            "setup_errors": 0,
+            "first_success_iteration": 1,
+            "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/dsl/ITER1_20260628_104358.LIRAs",
+            "total_compiler_feedback_chars": 694,
+            "llm_calls": 2,
+            "prompt_tokens_est_total": 326,
+            "response_tokens_est_total": 2
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/dsl/ITER1_20260628_104358.LIRAs",
+            "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/llm_prompts.jsonl",
+            "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/llm_responses.jsonl"
+          }
+        },
+        {
+          "stage": "xml_export",
+          "result": "failed",
+          "failure_type": "execution",
+          "failure_reason": "LIRAs-to-XML export failed, so UPPAAL verification could not run.",
+          "failure_details": {
+            "step": "lira_cli",
+            "command": "java -jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/dsl/ITER1_20260628_104358.LIRAs /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/xml/ITER1_20260628_104358.xml",
+            "exit_code": 1,
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/xml/lira_cli.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/xml/lira_cli.stderr.txt",
+            "stderr_preview": "WARNING: A terminally deprecated method in sun.misc.Unsafe has been called\nWARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar)\nWARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper\nWARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release\nException in thread \"main\" java.util.NoSuchElementException\n\tat com.google.common.collect.Iterators$ConcatenatedIterator.next(Iterators.java:1460)\n\tat com.google.common.collect.TransformedIterator.next(TransformedIterator.java:52)\n\tat org.eclipse.xtext.xbase.lib.IteratorExtensions.max(IteratorExtensions.java:1075)\n\tat org.eclipse.xtext.xbase.lib.IteratorExtensions.max(IteratorExtensions.java:1033)\n\tat org.eclipse.xtext.xbase.lib.IterableExtensions.max(IterableExtensions.java:964)\n\tat it.polimi.generator.LIRAsGenerator.ssChan(LIRAsGenerator.java:191)\n\tat it.polimi.generator.LIRAsGenerator.lambda$doGenerate$0(LIRAsGenerator.java:114)\n\tat org.eclipse.xtext.xbase.lib.IteratorExtensions.forEach(IteratorExtensions.java:446)\n\tat it.polimi.generator.LIRAsGenerator.doGenerate(LIRAsGenerator.java:130)\n\tat it.polimi.Main.main(Main.java:71)"
+          }
+        }
+      ],
+      "exit_code": 1,
+      "continue_feedback_loop": false
+    }
+  ],
+  "run_finished_at": "2026-06-28T10:43:59.471288",
+  "updated_at": "2026-06-28T10:43:59.471290",
+  "last_cycle_run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1",
+  "last_cycle_metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_104353/ciclo1/run_metadata.json"
+}

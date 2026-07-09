@@ -1,0 +1,17 @@
+user_guided_transport
+agents:
+	humans: Nurse
+	robots: Robot1
+locations: bedroom, kitchen
+resources: object
+Nurse:
+	1: moveTo bedroom
+	2: moveTo kitchen if position(Nurse, bedroom) else stop
+	3: success
+Robot1:
+	1: moveTo bedroom
+	2: pick object if position(Robot1, bedroom) else stop
+	3: follow Nurse (kitchen) if possess(Robot1, object) else stop
+	4: success
+success: position(Nurse, kitchen) && position(Robot1, kitchen) && possess(Robot1, object)
+failure: time(200)

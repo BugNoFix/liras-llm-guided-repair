@@ -1,0 +1,35 @@
+### WHAT TO FIX
+Check the diagnostics below and repair the LIRAs model or generated queries accordingly.
+
+### FAILED QUERIES
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260628_130110/ciclo1/xml/ITER1_20260628_130210.xml:/nta/declaration/template[5]/declaration:145: [error] Wrong number of elements in array initialiser.
+
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260628_130110/ciclo1/xml/ITER1_20260628_130210.xml:/nta/declaration/template[5]/declaration:145: [error] Wrong number of elements in array initialiser.
+
+### VERIFYTA DIAGNOSTICS
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260628_130110/ciclo1/xml/ITER1_20260628_130210.xml:/nta/declaration/template[5]/declaration:145: [error] Wrong number of elements in array initialiser.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260628_130110/ciclo1/xml/ITER1_20260628_130210.xml:/nta/declaration/template[5]/declaration:145: [error] Wrong number of elements in array initialiser.
+### INCORRECT LIRAS CODE
+PatternName
+agents:
+	humans: Nurse
+	robots: Robot1
+locations: room1, room2, office001
+resources: item1, item2
+Nurse:
+	1: moveTo room1
+	2: pick item1
+	3: moveTo room2
+Robot1:
+	1: moveTo room1
+	2: deposit item1
+success: time(10)
+failure: time(100)

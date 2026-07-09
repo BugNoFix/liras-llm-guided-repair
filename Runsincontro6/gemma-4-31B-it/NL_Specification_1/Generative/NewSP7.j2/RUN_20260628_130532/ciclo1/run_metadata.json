@@ -1,0 +1,515 @@
+{
+  "run_id": "20260628_130532",
+  "run_started_at": "2026-06-28T13:05:32.690163",
+  "generation_provider": "huggingface",
+  "repair_provider": "huggingface",
+  "query_provider": "gemini",
+  "project_id": "project-6a7309b1-0165-4fa2-baf",
+  "location": "global",
+  "system_prompt": "Generative/NewSP7.j2",
+  "shots": 0,
+  "scenario": "NL_Specification_1.txt",
+  "repair_prompt": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/SPs/Repair/NewSPR7.j2",
+  "generation_model": "google/gemma-4-31B-it",
+  "generation_temperature": 1.0,
+  "repair_model": "google/gemma-4-31B-it",
+  "repair_temperature": 0.35,
+  "repair_max_output_tokens": 2048,
+  "repair_shots": 0,
+  "use_generated_dsl_cache": false,
+  "generated_dsl_source": "dsl_folder",
+  "generated_dsl_cache_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/GeneratedDSL/NL_Specification_1/Generative/NewSP7.j2/shots_0.LIRAs",
+  "compiler_jar": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras_compiler.jar",
+  "max_iterations": 11,
+  "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1",
+  "results_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it",
+  "dsl_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/dsl",
+  "compiler_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/compiler",
+  "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/queries",
+  "prompt_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/llm_prompts.jsonl",
+  "response_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/llm_responses.jsonl",
+  "pipeline_cycle": 1,
+  "run_dir_override": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1",
+  "uppaal_feedback_included": false,
+  "uppaal_feedback_chars": 0,
+  "iterations": [
+    {
+      "iteration": 0,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/dsl/ITER0_20260628_130603.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/compiler/ITER0_20260628_130603.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 697,
+      "compiler_error_score": {
+        "feedback_chars": 697,
+        "lines": 8,
+        "error_lines": 2,
+        "warning_lines": 4,
+        "score": 31
+      },
+      "repair_returned_empty": true,
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 1,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/dsl/ITER1_20260628_130650.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/compiler/ITER1_20260628_130650.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 697,
+      "compiler_error_score": {
+        "feedback_chars": 697,
+        "lines": 8,
+        "error_lines": 2,
+        "warning_lines": 4,
+        "score": 31
+      },
+      "repair_returned_empty": true,
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 2,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/dsl/ITER2_20260628_130950.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/compiler/ITER2_20260628_130950.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 697,
+      "compiler_error_score": {
+        "feedback_chars": 697,
+        "lines": 8,
+        "error_lines": 2,
+        "warning_lines": 4,
+        "score": 31
+      },
+      "repair_returned_empty": true,
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 3,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/dsl/ITER3_20260628_131040.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/compiler/ITER3_20260628_131040.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 697,
+      "compiler_error_score": {
+        "feedback_chars": 697,
+        "lines": 8,
+        "error_lines": 2,
+        "warning_lines": 4,
+        "score": 31
+      },
+      "repair_returned_empty": true,
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 4,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/dsl/ITER4_20260628_131134.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/compiler/ITER4_20260628_131134.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 697,
+      "compiler_error_score": {
+        "feedback_chars": 697,
+        "lines": 8,
+        "error_lines": 2,
+        "warning_lines": 4,
+        "score": 31
+      },
+      "repair_returned_empty": true,
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 5,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/dsl/ITER5_20260628_131223.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/compiler/ITER5_20260628_131223.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 697,
+      "compiler_error_score": {
+        "feedback_chars": 697,
+        "lines": 8,
+        "error_lines": 2,
+        "warning_lines": 4,
+        "score": 31
+      },
+      "repair_returned_empty": true,
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 6,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/dsl/ITER6_20260628_131316.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/compiler/ITER6_20260628_131316.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 697,
+      "compiler_error_score": {
+        "feedback_chars": 697,
+        "lines": 8,
+        "error_lines": 2,
+        "warning_lines": 4,
+        "score": 31
+      },
+      "repair_returned_empty": true,
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 7,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/dsl/ITER7_20260628_131531.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/compiler/ITER7_20260628_131531.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 697,
+      "compiler_error_score": {
+        "feedback_chars": 697,
+        "lines": 8,
+        "error_lines": 2,
+        "warning_lines": 4,
+        "score": 31
+      },
+      "repair_returned_empty": true,
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 8,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/dsl/ITER8_20260628_131634.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/compiler/ITER8_20260628_131634.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 697,
+      "compiler_error_score": {
+        "feedback_chars": 697,
+        "lines": 8,
+        "error_lines": 2,
+        "warning_lines": 4,
+        "score": 31
+      },
+      "repair_returned_empty": true,
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 9,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/dsl/ITER9_20260628_131722.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/compiler/ITER9_20260628_131722.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 697,
+      "compiler_error_score": {
+        "feedback_chars": 697,
+        "lines": 8,
+        "error_lines": 2,
+        "warning_lines": 4,
+        "score": 31
+      },
+      "repair_returned_empty": true,
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 10,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/dsl/ITER10_20260628_131819.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/compiler/ITER10_20260628_131819.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 698,
+      "compiler_error_score": {
+        "feedback_chars": 698,
+        "lines": 8,
+        "error_lines": 2,
+        "warning_lines": 4,
+        "score": 31
+      }
+    }
+  ],
+  "telemetry": {
+    "llm_calls": 11,
+    "prompt_chars_total": 10972,
+    "response_chars_total": 0,
+    "prompt_tokens_est_total": 2738,
+    "response_tokens_est_total": 0,
+    "last_call": {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T13:18:19.325168",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 1074,
+      "response_chars": 0,
+      "prompt_tokens_est": 268,
+      "response_tokens_est": 0
+    }
+  },
+  "llm_call_history": [
+    {
+      "kind": "generate",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T13:06:03.014538",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 232,
+      "response_chars": 0,
+      "prompt_tokens_est": 58,
+      "response_tokens_est": 0
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T13:06:50.821846",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 1074,
+      "response_chars": 0,
+      "prompt_tokens_est": 268,
+      "response_tokens_est": 0
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T13:09:50.683628",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 1074,
+      "response_chars": 0,
+      "prompt_tokens_est": 268,
+      "response_tokens_est": 0
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T13:10:40.348674",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 1074,
+      "response_chars": 0,
+      "prompt_tokens_est": 268,
+      "response_tokens_est": 0
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T13:11:34.015828",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 1074,
+      "response_chars": 0,
+      "prompt_tokens_est": 268,
+      "response_tokens_est": 0
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T13:12:23.938422",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 1074,
+      "response_chars": 0,
+      "prompt_tokens_est": 268,
+      "response_tokens_est": 0
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T13:13:16.778006",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 1074,
+      "response_chars": 0,
+      "prompt_tokens_est": 268,
+      "response_tokens_est": 0
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T13:15:31.477478",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 1074,
+      "response_chars": 0,
+      "prompt_tokens_est": 268,
+      "response_tokens_est": 0
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T13:16:34.293432",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 1074,
+      "response_chars": 0,
+      "prompt_tokens_est": 268,
+      "response_tokens_est": 0
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T13:17:22.388800",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 1074,
+      "response_chars": 0,
+      "prompt_tokens_est": 268,
+      "response_tokens_est": 0
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-06-28T13:18:19.325168",
+      "finish_reason": "length",
+      "safety_ratings": [],
+      "prompt_chars": 1074,
+      "response_chars": 0,
+      "prompt_tokens_est": 268,
+      "response_tokens_est": 0
+    }
+  ],
+  "status": "max_iterations_reached",
+  "run_finished_at": "2026-06-28T13:18:19.948369",
+  "summary": {
+    "iterations_recorded": 11,
+    "validations_attempted": 11,
+    "compiler_failures": 11,
+    "compiler_successes": 0,
+    "setup_errors": 0,
+    "first_success_iteration": null,
+    "final_success_dsl_path": null,
+    "total_compiler_feedback_chars": 7668,
+    "llm_calls": 11,
+    "prompt_tokens_est_total": 2738,
+    "response_tokens_est_total": 0
+  },
+  "updated_at": "2026-06-28T13:18:19.949408",
+  "repair": {
+    "repair_chat_initialized_at": "2026-06-28T13:06:03.665327",
+    "repair_prompt_template_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/SPs/Repair/NewSPR7.j2",
+    "repair_system_prompt_chars": 9983,
+    "repair_stateless": true,
+    "repair_uses_server_chat": false,
+    "repair_temperature": 0.35
+  },
+  "stages": [
+    {
+      "stage": "dsl_generation",
+      "result": "failed",
+      "failure_type": "max_iterations_reached",
+      "failure_reason": "DSL generation reached the maximum number of repair iterations without producing a valid LIRAs model.",
+      "failure_details": {
+        "generator_status": "max_iterations_reached",
+        "max_iterations": 11,
+        "compiler_failures": 11,
+        "compiler_successes": 0
+      },
+      "details": {
+        "iterations_recorded": 11,
+        "validations_attempted": 11,
+        "compiler_failures": 11,
+        "compiler_successes": 0,
+        "setup_errors": 0,
+        "first_success_iteration": null,
+        "final_success_dsl_path": null,
+        "total_compiler_feedback_chars": 7668,
+        "llm_calls": 11,
+        "prompt_tokens_est_total": 2738,
+        "response_tokens_est_total": 0
+      },
+      "artifacts": {
+        "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/llm_prompts.jsonl",
+        "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_130532/ciclo1/llm_responses.jsonl"
+      }
+    }
+  ],
+  "cycle_result": "failed",
+  "failed_stage": "dsl_generation",
+  "failure_type": "max_iterations_reached",
+  "failure_reason": "DSL generation reached the maximum number of repair iterations without producing a valid LIRAs model.",
+  "failure_details": {
+    "generator_status": "max_iterations_reached",
+    "max_iterations": 11,
+    "compiler_failures": 11,
+    "compiler_successes": 0
+  }
+}

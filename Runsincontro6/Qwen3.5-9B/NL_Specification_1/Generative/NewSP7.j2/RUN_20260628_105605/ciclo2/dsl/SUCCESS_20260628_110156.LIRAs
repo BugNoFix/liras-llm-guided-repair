@@ -1,0 +1,11 @@
+Robot1
+agents:
+	robots: Robot1
+locations: room1, room2, room3
+resources: item1, item2
+Robot1:
+	1: moveTo room2
+	2: pick item1
+	3: moveTo room3
+	success: time(10)
+	failure: time(0)

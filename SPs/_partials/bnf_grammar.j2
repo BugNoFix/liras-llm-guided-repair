@@ -9,20 +9,15 @@
               ( 'locations:' <Location> (',' <Location>)* <NL> )?
               ( 'resources:' <Resource> (',' <Resource>)* <NL> )*
 
-<Sequence> ::= <Agent> ('default' <Action>)? ':' <NL> 
+<Sequence> ::= <Agent> ':' <NL> 
                <SubSequence>*
 
 <SubSequence> ::= <TAB> <INT> ('-' <INT>)? ':' ( <Loop> | <ActionC> )? <NL>
 
-<Conclusion> ::= 'success:' <Condition> <NL>
-                 'failure:' <Condition> <NL>
-
-<Loop> ::= ('skip' | 'restart') ('all')? 'if' <Condition>
-
 <ConditionalStatement> ::= 'until' <Condition>
-                         | 'if' <Condition> 'else' <Action>
+                         | 'if' <Condition> 'else' <ActionForConditionalStatement>
 
-<Action> ::= 'stop'
+<ActionForConditionalStatement> ::= 'stop'
 
 <ActionC> ::= ('moveTo' <Target> 
               | ('pick' | 'deposit') <Resource> 
@@ -31,12 +26,8 @@
 
 <Condition> ::= <AtomicPredicate> ( ('&&' | '||') <AtomicPredicate> )*
 
-<AtomicPredicate> ::= ('!')? ( 'tired' 
-                             | 'time' '(' <INT> ')' 
-                             | 'position' '(' <Agent> ',' <Location> ')'
-                             | 'possess' '(' <Agent> ',' <Resource> ')'
-                             | 'busy' '(' <Agent> ')'
-                             | 'still' '(' <Agent> ')'
+<AtomicPredicate> ::= ('!')? ( 
+                             'position' '(' <Agent> ',' <Location> ')'
                              | <Relation> 
                              )
 

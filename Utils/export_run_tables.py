@@ -63,7 +63,7 @@ def _load(csv_paths: list[Path]):
         "derived_first_success_iteration", "derived_run_duration_seconds",
         "derived_best_error_score", "derived_final_error_score",
         "derived_initial_error_score", "derived_monotonicity_ratio",
-        "summary_prompt_tokens_est_total", "summary_response_tokens_est_total",
+        "summary_prompt_tokens_total", "summary_completion_tokens_total", "summary_total_tokens_total",
         "compiler_error_score", "compiler_error_lines",
     ]
     for col in numeric_cols:
@@ -98,10 +98,13 @@ def _load(csv_paths: list[Path]):
         run_df["success_bool"] = False
 
     # Total tokens
-    run_df["tokens_total"] = (
-        run_df.get("summary_prompt_tokens_est_total", 0).fillna(0)
-        + run_df.get("summary_response_tokens_est_total", 0).fillna(0)
-    )
+    if "summary_total_tokens_total" in run_df.columns:
+        run_df["tokens_total"] = run_df["summary_total_tokens_total"].fillna(0)
+    else:
+        run_df["tokens_total"] = (
+            run_df.get("summary_prompt_tokens_total", 0).fillna(0)
+            + run_df.get("summary_completion_tokens_total", 0).fillna(0)
+        )
 
     # Derive unified 'few_shots' (Yes/No) if not already present (backward compat)
     for frame in (df, run_df):

@@ -1,0 +1,39 @@
+### WHAT TO FIX
+The adapted UPPAAL queries are not valid for this XML model. Check syntax, types, and referenced identifiers.
+
+### FAILED QUERIES
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_110124/ciclo3/xml/ITER0_20260628_110528.xml:/nta/declaration/template[2]/transition[2]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_110124/ciclo3/xml/ITER0_20260628_110528.xml:/nta/declaration/template[2]/transition[6]/label[1]:1: [error] syntax error: unexpected ')'.
+
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_110124/ciclo3/xml/ITER0_20260628_110528.xml:/nta/declaration/template[2]/transition[2]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_110124/ciclo3/xml/ITER0_20260628_110528.xml:/nta/declaration/template[2]/transition[6]/label[1]:1: [error] syntax error: unexpected ')'.
+
+### VERIFYTA DIAGNOSTICS
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_110124/ciclo3/xml/ITER0_20260628_110528.xml:/nta/declaration/template[2]/transition[2]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_110124/ciclo3/xml/ITER0_20260628_110528.xml:/nta/declaration/template[2]/transition[6]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_110124/ciclo3/xml/ITER0_20260628_110528.xml:/nta/declaration/template[2]/transition[2]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_1/Generative/NewSP7.j2/RUN_20260628_110124/ciclo3/xml/ITER0_20260628_110528.xml:/nta/declaration/template[2]/transition[6]/label[1]:1: [error] syntax error: unexpected ')'.
+### INCORRECT LIRAS CODE
+Coffee_Delivery
+agents:
+	humans: Employee1
+	robots: Robot1
+locations: coffee_room, office001
+resources: coffee
+
+Robot1:
+	1: moveTo coffee_room
+	2: pick coffee if !possess(Robot1, coffee) else stop
+	3: moveTo office001
+	4: deposit coffee if possess(Robot1, coffee) else stop
+
+Employee1:
+	1: stop
