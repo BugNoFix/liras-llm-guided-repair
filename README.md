@@ -1,257 +1,333 @@
-# LLM-Guided DSL Generation and Repair
+# LIRAs LLM-Guided Repair Pipeline
 
-A comparative study of LLM-guided code generation and iterative compiler-feedback repair for a domain-specific language (LIRAs DSL), with support for Google Gemini (Vertex AI), Groq, Mistral, OpenRouter, and Hugging Face models.
+This repository runs an end-to-end pipeline for generating and validating LIRAs models with LLMs.
 
-## Overview
+Pipeline overview:
 
-This repository contains the experimental pipeline and analysis artifacts for a factorial study evaluating how **model choice**, **system prompt design**, **few-shot examples**, and **repair prompting strategies** affect the ability of large language models to generate compilable DSL code.
+![LIRAs pipeline overview](Img/PipelineImage.svg)
 
-The pipeline implements a generate–compile–repair loop:
+Retry behavior:
 
-1. **Generate** — An LLM produces DSL code from a natural-language scenario description, guided by a system prompt and optional few-shot examples.
-2. **Compile** — The generated code is validated locally by a Java-based LIRAs compiler.
-3. **Repair** — If compilation fails, compiler output is fed into a dedicated repair chat session that iteratively fixes the code.
-4. **Repeat** — Steps 2–3 repeat up to a configurable `max_iterations` limit.
+- compiler errors trigger an internal LLM repair loop;
+- UPPAAL failures trigger a new feedback cycle, up to `max_uppaal_feedback_cycles`.
 
-### Experimental Design
+## 1. Setup
 
-The study uses a 2³ full-factorial design across 8 pipeline configurations:
-
-| Config | Model                | Repair Prompt | Few-Shot |
-| ------ | -------------------- | ------------- | -------- |
-| C1     | Gemini 2.5 Flash     | SPR1          | No       |
-| C2     | Gemini 2.5 Flash     | SPR1          | Yes      |
-| C3     | Gemini 2.5 Flash     | SPR2          | No       |
-| C4     | Gemini 2.5 Flash     | SPR2          | Yes      |
-| C5     | Gemini 3 Pro Preview | SPR1          | No       |
-| C6     | Gemini 3 Pro Preview | SPR1          | Yes      |
-| C7     | Gemini 3 Pro Preview | SPR2          | No       |
-| C8     | Gemini 3 Pro Preview | SPR2          | Yes      |
-
-Each configuration is run against 4 scenarios × 5 generation prompts × 3 shot levels = 60 runs, totaling 480 runs across all configurations.
-
-## Repository Structure
-
-```
-├── dsl_generator.py              # Main generation + repair pipeline
-├── dsl_generator_flash.py        # Lightweight fork optimized for Gemini 2.5 Flash
-├── config.json                   # Runtime configuration (single-run entry point)
-├── requirements.txt              # Python dependencies
-├── SPs/
-│   ├── Generative/               # Generation-stage system prompts (SP1–SP5)
-│   └── Repair/                   # Repair-stage system prompts (SPR1, SPR2)
-├── Shots/
-│   ├── Generative/               # Few-shot examples for generation
-│   │   ├── UserScenario_1.txt / AssistantScenario_1.txt
-│   │   └── UserScenario_2.txt / AssistantScenario_2.txt
-│   └── Repair/                   # Few-shot examples for repair
-│       └── UserScenario_3–5.txt / AssistantScenario_3–5.txt
-├── Scenarios/                    # Natural-language scenario descriptions
-│   ├── Scenario_011.txt
-│   ├── Scenario_016.txt
-│   ├── Scenario_029.txt
-│   └── Scenario_06.txt
-├── DSL/                          # Pre-generated DSL baselines (per scenario/prompt/shot)
-├── Runs/                         # Raw run outputs organized by configuration (C1–C8)
-│   └── C<n>/<Scenario>/<SP>/RUN_<timestamp>/
-│       ├── dsl/                  # Generated .LIRAs files per iteration
-│       ├── compiler/             # Compiler output per iteration
-│       └── run_metadata.json     # Full run telemetry and iteration log
-├── Report/
-│   ├── configs.csv               # Configuration factor matrix
-│   ├── Histories/                # Per-config run history CSVs (c1.csv–c8.csv)
-│   ├── Tables/                   # Summary tables (CSV + rendered PNG images)
-│   └── Figures/                  # Publication figures
-└── Utils/
-    ├── run_all_pairs.py          # Batch runner for all scenario/prompt combinations
-    ├── collect_run_history.py    # Extract run metadata into analysis-ready CSVs
-    ├── compile_run_histories.py  # Merge per-config CSVs into a combined dataset
-    ├── render_figures.py         # Generate publication figures from combined data
-    ├── render_tables.py          # Render CSV tables as formatted PNG images
-    ├── export_run_tables.py      # Export summary tables from combined data
-    ├── run_factorial_analysis.py # Statistical analysis (main effects, interactions)
-    └── run_SC_failure.py         # Supplementary failure analysis
-```
-
-## Prerequisites
-
-- **Python 3.9+**
-- **Java runtime** on `PATH` (required to run the LIRAs compiler JAR)
-- **Google Cloud** project with Vertex AI API enabled (if using `provider: "gemini"`)
-- **Groq API key** (if using `provider: "groq"`)
-- **Mistral API key** (if using `provider: "mistral"`)
-- **OpenRouter API key** (if using `provider: "openrouter"`)
-- **Hugging Face API key/token** (if using `provider: "huggingface"`)
-
-## Setup
-
-1. **Install Python dependencies:**
-
-   ```bash
-   python -m venv venv
-   source venv/bin/activate    # Linux/macOS
-   venv\Scripts\activate       # Windows
-   pip install -r requirements.txt
-   ```
-
-2. **Configure credentials:**
-
-   - Gemini: place a Vertex AI service account JSON key at `keys/key.json` (gitignored), or use ADC with `gcloud auth application-default login`.
-   - Groq: export `GROQ_API_KEY` (or set `groq_api_key` in `config.json`).
-   - Mistral: export `MISTRAL_API_KEY` (or set `mistral_api_key` in `config.json`).
-   - OpenRouter: export `OPENROUTER_API_KEY` (or set `openrouter_api_key` in `config.json`).
-   - Hugging Face: export `HUGGINGFACE_API_KEY` or `HF_TOKEN` (or set `huggingface_api_key` in `config.json`).
-
-3. **Verify Java is available:**
-
-   ```bash
-   java -version
-   ```
-
-## Usage
-
-### Single Run
-
-Edit `config.json` and run:
+Create and activate a Python environment:
 
 ```bash
-python dsl_generator.py
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
-**`config.json` reference:**
+Make sure Java is installed, because the pipeline uses:
 
-| Key                       | Type        | Description                                                              |
-| ------------------------- | ----------- | ------------------------------------------------------------------------ |
-| `system_prompt`           | string      | Generation prompt from `SPs/Generative/` (e.g., `"Generative/SP3.txt"`)  |
-| `provider`                | string      | Model backend: `"gemini"`, `"groq"`, `"mistral"`, `"openrouter"`, or `"huggingface"` |
-| `groq_api_key`            | string      | Optional Groq key in config (recommended: env var instead)                |
-| `mistral_api_key`         | string      | Optional Mistral key in config (recommended: env var instead)             |
-| `openrouter_api_key`      | string      | Optional OpenRouter key in config (recommended: env var instead)          |
-| `huggingface_api_key`     | string      | Optional Hugging Face key/token in config (recommended: env var instead)  |
-| `generation_model`        | string      | Vertex AI model for generation (e.g., `"gemini-3-pro-preview"`)          |
-| `repair_model`            | string      | Vertex AI model for repair iterations                                    |
-| `shots`                   | int \| list | Few-shot example count (0, 1, 2) or explicit `[{user, assistant}]` pairs |
-| `scenario`                | string      | Scenario file from `Scenarios/`                                          |
-| `repair_prompt`           | string      | Repair system prompt from `SPs/Repair/` (e.g., `"Repair/SPR1.txt"`)      |
-| `repair_shots`            | int \| list | Few-shot examples for the repair chat (default: 0)                       |
-| `compiler_jar`            | string      | Path to the LIRAs compiler JAR                                           |
-| `max_iterations`          | int         | Maximum generate→compile→repair attempts                                 |
-| `generation_temperature`  | float       | Sampling temperature for generation (default: 1.0)                       |
-| `repair_temperature`      | float       | Sampling temperature for repair (default: 0.2)                           |
-| `generation_only`         | bool        | Skip compile/repair, only save generated DSL                             |
-| `use_generated_dsl_cache` | bool        | Load DSL from cache instead of generating                                |
-| `generated_dsl_source`    | string      | Cache source: `"generated_cache"` or `"dsl_folder"`                      |
-| `results_dir`             | string      | Override output directory (e.g., `"Runs/C5"`)                            |
+```text
+liras_compiler.jar
+liras-cli.jar
+liras-cli-layout2.jar
+```
 
-Example for Groq in `config.json`:
+If UPPAAL validation is enabled, also make sure `verifyta` exists and that `verifyta_bin` in `config.json` points to the correct executable.
+
+## 2. Set The API Key
+
+If you use Hugging Face, export your token before running the pipeline:
+
+```bash
+export HF_TOKEN="your_huggingface_token"
+```
+
+The current `config.json` uses Hugging Face providers, so this is the command you normally need.
+
+## 3. Configure `config.json`
+
+The pipeline reads all settings from `config.json`.
+
+Run command:
+
+```bash
+python3 pipeline_runner.py --config config.json
+```
+
+### Main Model Settings
+
+| Field | Meaning |
+| --- | --- |
+| `generation_provider` | Provider used to generate the first LIRAs model. |
+| `repair_provider` | Provider used to repair invalid LIRAs code. |
+| `query_provider` | Provider used to adapt queries to the generated XML model. |
+| `generation_model` | Model used for the first LIRAs generation. |
+| `repair_model` | Model used during repair. |
+| `query_model` | Model used for query adaptation. |
+| `llm_seed` | Seed used for reproducibility, when supported by the provider. |
+
+Supported providers are:
+
+```text
+gemini
+groq
+mistral
+openrouter
+huggingface
+```
+
+### Generation Settings
+
+| Field | Meaning |
+| --- | --- |
+| `system_prompt` | Generation prompt template under `SPs/`. Example: `Generative/NewSP7.j2`. |
+| `scenario` | Natural-language scenario under `Scenarios/`. Example: `NL_Specification_1.txt`. |
+| `generation_temperature` | Sampling temperature for generation. |
+| `generation_max_output_tokens` | Maximum output tokens for generation. |
+| `shots` | Number of few-shot examples for generation. Usually `0`, `1`, or `2`. |
+| `generation_only` | If `true`, only generate LIRAs code and stop. |
+| `use_generated_dsl_cache` | If `true`, load existing LIRAs code instead of generating it. |
+| `generated_dsl_root` | Root folder for generated DSL cache. Usually `GeneratedDSL`. |
+| `dsl_source_root` | Root folder for manual/baseline DSL files. Usually `DSL`. |
+
+### Repair And Compilation Settings
+
+| Field | Meaning |
+| --- | --- |
+| `compiler_jar` | LIRAs compiler JAR. Usually `liras_compiler.jar`. |
+| `compiler_timeout` | Compiler timeout in seconds. |
+| `max_iterations` | Maximum generation/repair attempts inside one feedback cycle. |
+| `repair_prompt` | Repair prompt template under `SPs/`. Example: `Repair/NewSPR7.j2`. |
+| `repair_shots` | Number of few-shot examples for repair. |
+| `repair_temperature` | Sampling temperature for repair. |
+| `repair_max_output_tokens` | Maximum output tokens for repair. |
+| `repair_stateless` | If `true`, each repair call is stateless. |
+
+### XML, Query, And UPPAAL Settings
+
+| Field | Meaning |
+| --- | --- |
+| `enable_xml_export` | If `true`, export the valid LIRAs model to XML. |
+| `lira_cli_jar` | CLI JAR used for XML export. Usually `liras-cli.jar`. |
+| `lira_cli_timeout` | XML export timeout in seconds. |
+| `enable_query_adaptation` | If `true`, adapt source queries to the generated XML model. |
+| `query_system_prompt` | System prompt for query adaptation. |
+| `query_user_prompt` | User prompt template for query adaptation. |
+| `query_source_root` | Folder containing source queries. Usually `Queries`. |
+| `enable_uppaal` | If `true`, run UPPAAL/verifyta validation. |
+| `verifyta_bin` | Path to the `verifyta` executable. |
+| `verifyta_timeout` | verifyta timeout in seconds. |
+| `verifyta_probability_delta_threshold` | Maximum allowed probability delta. Example: `0.05`. |
+| `max_uppaal_feedback_cycles` | Maximum number of full UPPAAL feedback cycles. |
+
+Important difference:
+
+```text
+max_iterations = repair attempts inside one cycle
+max_uppaal_feedback_cycles = full pipeline retries after UPPAAL feedback
+```
+
+### Output Setting
+
+| Field | Meaning |
+| --- | --- |
+| `results_dir` | Base output folder for runs. Example: `Runs/Qwen3.5-9B`. |
+
+## 4. Run The Pipeline
+
+After editing `config.json`, run:
+
+```bash
+python3 pipeline_runner.py --config config.json
+```
+
+A new run folder is created under:
+
+```text
+<results_dir>/<scenario>/<system_prompt>/RUN_<timestamp>/
+```
+
+Example:
+
+```text
+Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP7.j2/RUN_20260706_212813/
+```
+
+## 5. Understand The Run Output
+
+A run contains one or more feedback cycles:
+
+```text
+RUN_20260706_212813/
+├── run_metadata.json
+├── ciclo1/
+│   ├── run_metadata.json
+│   ├── dsl/
+│   ├── compiler/
+│   ├── xml/
+│   ├── queries/
+│   ├── uppaal/
+│   ├── llm_prompts.jsonl
+│   ├── llm_responses.jsonl
+│   └── hf_debug_responses.jsonl
+└── ciclo2/
+```
+
+Useful files:
+
+| File | Meaning |
+| --- | --- |
+| `run_metadata.json` | Global run result and cycle summary. |
+| `cicloN/run_metadata.json` | Metadata for one cycle. |
+| `dsl/SUCCESS_*.LIRAs` | Valid LIRAs file accepted by the compiler. |
+| `compiler/*.compiler.txt` | Compiler output. |
+| `xml/*.xml` | XML exported from the LIRAs model. |
+| `queries/adapted.q` | Adapted UPPAAL queries. |
+| `uppaal/*` | verifyta stdout/stderr files. |
+| `hf_debug_responses.jsonl` | Hugging Face response/debug/token information. |
+
+## 6. Generate The HTML Dashboard
+
+Standard dashboard:
+
+```bash
+python3 Utils/build_model_runs_analysis.py \
+  --runs-dir Runs \
+  --output Report/model_runs_analysis.html \
+  --summary
+```
+
+Dashboard with the LIRAs code shown when clicking a run:
+
+```bash
+python3 Utils/build_model_runs_analysis.py \
+  --runs-dir Runs \
+  --output Report/model_runs_analysis_with_liras.html \
+  --include-liras-code
+```
+
+Open the generated HTML file in a browser:
+
+```text
+Report/model_runs_analysis.html
+```
+
+The dashboard reads directly from `Runs/`. No intermediate CSV files are required.
+
+## 7. Re-run An Existing Run
+
+To repeat a run with the same settings and seed:
+
+```bash
+python3 Utils/rerun_same_run.py 20260706_212813
+```
+
+You can also pass the full run path:
+
+```bash
+python3 Utils/rerun_same_run.py Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_212813
+```
+
+By default, the script:
+
+1. reads settings and seed from the old run;
+2. launches a new run;
+3. deletes the old run after the new run is created.
+
+Useful options:
+
+```bash
+--dry-run                 # print recovered settings without running
+--keep-old                # keep the old run
+--delete-only-on-success  # delete the old run only if the new one succeeds
+--lira-cli-jar PATH       # override the XML export JAR
+```
+
+## Project Structure
+
+```text
+Scenarios/       # natural-language scenario files
+SPs/             # Jinja prompt templates
+SPs/Generative/  # generation prompts
+SPs/Repair/      # repair prompts
+SPs/Queries/     # query adaptation prompts
+SPs/_partials/   # reusable prompt fragments
+Queries/         # source queries
+Shots/           # few-shot examples
+Runs/            # all generated experimental runs
+Report/          # generated dashboards and assets
+GeneratedDSL/    # generated DSL cache
+DSL/             # manual/baseline DSL files
+Utils/           # dashboard and rerun utilities
+```
+
+Core files:
+
+```text
+pipeline_runner.py
+dsl_generator.py
+query_adapter.py
+config.json
+Utils/build_model_runs_analysis.py
+Utils/rerun_same_run.py
+```
+
+## Common Issues
+
+### Hugging Face key missing
+
+Run:
+
+```bash
+export HF_TOKEN="your_huggingface_token"
+```
+
+### `verifyta` not found
+
+Check this field in `config.json`:
 
 ```json
-{
-   "provider": "groq",
-   "generation_model": "llama-4-scout-17b-16e-instruct-maas",
-   "repair_model": "llama-4-scout-17b-16e-instruct-maas"
-}
+"verifyta_bin": "/path/to/verifyta"
 ```
 
-### Batch Runs
+### Java or JAR error
 
-Run all scenario × prompt × shot combinations:
+Check that Java works and that these files exist:
+
+```text
+liras_compiler.jar
+liras-cli.jar
+liras-cli-layout2.jar
+```
+
+### Dashboard has missing charts
+
+Regenerate the dashboard. Chart assets are written under:
+
+```text
+Report/model_runs_analysis_assets/
+```
+
+## Recommended Workflow
+
+1. Edit `config.json`.
+2. Export the Hugging Face token if needed:
 
 ```bash
-python Utils/run_all_pairs.py
-python Utils/run_all_pairs.py --shots 0,1,2
-python Utils/run_all_pairs.py --generation-only
-python Utils/run_all_pairs.py --disable-generation --shots 0,1,2
-python Utils/run_all_pairs.py --list-only
+export HF_TOKEN="your_huggingface_token"
 ```
 
-Run all scenarios using the single prompt/model settings already defined in `config.json`:
+3. Run the pipeline:
 
 ```bash
-python Utils/run_all_scenarios.py
-python Utils/run_all_scenarios.py --list-only
-python Utils/run_all_scenarios.py --shots 0,1,2
+python3 pipeline_runner.py --config config.json
 ```
 
-| Flag                   | Description                                          |
-| ---------------------- | ---------------------------------------------------- |
-| `--generation-only`    | Save generated DSL without compiling                 |
-| `--disable-generation` | Load DSL from cache and run compile/repair only      |
-| `--compiler-timeout`   | Override compiler timeout (seconds)                  |
-| `--inter-run-delay`    | Pause between runs to reduce API rate-limit pressure |
-| `--list-only`          | List planned runs without executing                  |
-
-## Analysis Pipeline
-
-### 1. Collect Run Histories
-
-Extract structured CSVs from raw `run_metadata.json` files:
+4. Regenerate the dashboard:
 
 ```bash
-python Utils/collect_run_history.py --out Report/Histories/c1.csv
+python3 Utils/build_model_runs_analysis.py --runs-dir Runs --output Report/model_runs_analysis.html --summary
 ```
 
-### 2. Combine Configurations
+5. Open:
 
-Merge all per-config CSVs into a single comparative dataset:
-
-```bash
-python Utils/compile_run_histories.py \
-  --input-glob "Report/Histories/c*.csv" \
-  --outcsv Report/Histories/combined_run_histories.csv
+```text
+Report/model_runs_analysis.html
 ```
-
-### 3. Generate Tables and Figures
-
-```bash
-python Utils/export_run_tables.py
-python Utils/render_figures.py
-python Utils/render_tables.py
-python Utils/run_factorial_analysis.py
-```
-
-### Output Artifacts
-
-**Tables** (`Report/Tables/`):
-
-| File                                     | Description                                           |
-| ---------------------------------------- | ----------------------------------------------------- |
-| `table00_study_summary.csv`              | Overall study design and run counts                   |
-| `table01_config_scorecard.csv`           | Per-config success rate, iteration stats, token usage |
-| `table02_prompt_scenario_matrix.csv`     | Prompt × scenario success breakdown                   |
-| `table03_time_to_success.csv`            | Iterations-to-first-success distribution              |
-| `table04_parameter_effects.csv`          | Main-effect sizes per experimental factor             |
-| `table05_failure_by_prompt_scenario.csv` | Failure analysis by prompt and scenario               |
-| `table06_status_breakdown.csv`           | Run outcome status distribution                       |
-
-**Figures** (`Report/Figures/`):
-
-| Figure                              | Description                                        |
-| ----------------------------------- | -------------------------------------------------- |
-| `fig01_success_rate_ci.png`         | Success rate per configuration with 95% Wilson CI  |
-| `fig02_main_effect_forest.png`      | Main-effect forest plot                            |
-| `fig03_factor_interaction.png`      | Model × few-shot × repair prompt interaction       |
-| `fig04_prompt_scenario_heatmap.png` | Prompt × scenario success-rate heatmap             |
-| `fig05_iterations_box_strip.png`    | Iterations to success distribution                 |
-| `fig06_error_convergence.png`       | Error-score convergence by configuration           |
-| `fig07_error_flow.png`              | Error-category flow from generation to post-repair |
-| `fig08_scenario_difficulty.png`     | Scenario difficulty profile                        |
-
-## Architecture
-
-### Generation Phase
-
-The generation model receives a **system prompt** (one of SP1–SP5), optional **few-shot examples** (user/assistant scenario pairs injected as chat history), and the **target scenario** as a user message. The model produces raw DSL code, which is extracted by stripping markdown fences and preamble.
-
-### Repair Phase
-
-A **separate chat session** is created with a repair-specific system prompt (SPR1 or SPR2). Each repair turn sends the failed DSL plus compiler output as a single user message. The repair chat is **stateful** by default — prior repair attempts accumulate in the conversation context, with a sliding window of the last 3 attempts to prevent regression. Repair uses lower temperature (0.2) to favor deterministic fixes.
-
-### Telemetry
-
-Every run produces a `run_metadata.json` file capturing:
-
-- Configuration parameters and model identifiers
-- Per-iteration DSL paths, compiler output, error scores, and validation results
-- Approximate token usage and timing
-- Final status (`success`, `max_iterations_reached`, `setup_error`, `crashed`)

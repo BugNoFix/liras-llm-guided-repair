@@ -439,7 +439,7 @@ def main() -> int:
     parser.add_argument(
         "--csv",
         default="Report/Histories/combined_run_histories.csv",
-        help="Combined run history CSV (output of compile_run_histories.py)",
+        help="Combined run history CSV",
     )
     parser.add_argument(
         "--csv-glob",
