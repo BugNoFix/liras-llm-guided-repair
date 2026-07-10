@@ -1,0 +1,68 @@
+### WHAT TO FIX
+The adapted UPPAAL queries are not valid for this XML model. Check syntax, types, and referenced identifiers.
+
+### FAILED QUERIES
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[5]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[9]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[13]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[17]/label[1]:1: [error] syntax error: unexpected ')'.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[5]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[9]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[13]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml
+...[truncated]
+
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[5]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[9]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[13]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[17]/label[1]:1: [error] syntax error: unexpected ')'.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[5]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[9]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[13]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml
+...[truncated]
+
+### VERIFYTA DIAGNOSTICS
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[5]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[9]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[13]/label[1]:1: [error] syntax error: unexpected ')'.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260705_134849/ciclo1/xml/ITER3_20260705_140502.xml:/nta/declaration/template[3]/transition[17]/label[1]:1: [error] syntax error: unexpected ')'.
+### INCORRECT LIRAS CODE
+Factory_Pipeline
+agents:
+	robots: Robot1, Robot2
+locations: warehouse, surface_texturization_start, surface_texturization_end, laser_start, laser_end, loading_area
+resources: raw_materials
+
+Robot1:
+	1: moveTo warehouse
+	2: pick raw_materials
+	3: moveTo surface_texturization_start
+	4: moveTo surface_texturization_end
+	5: moveTo laser_start
+	6: moveTo laser_end
+	7: moveTo loading_area
+	8: deposit raw_materials
+
+Robot2:
+	1: moveTo warehouse
+	2: pick raw_materials
+	3: moveTo surface_texturization_start
+	4: moveTo surface_texturization_end
+	5: moveTo laser_start if dist(Robot1, Robot2) > 5 else stop
+	6: moveTo laser_start
+	7: moveTo laser_start if dist(Robot1, Robot2) > 5 else stop
+	8: moveTo laser_end
+	9: moveTo laser_end if dist(Robot1, Robot2) > 5 else stop
+	10: moveTo loading_area
+	11: moveTo loading_area if dist(Robot1, Robot2) > 5 else stop

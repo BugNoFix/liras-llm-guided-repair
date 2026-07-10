@@ -1,0 +1,30 @@
+### WHAT TO FIX
+Check the diagnostics below and repair the LIRAs model or generated queries accordingly.
+
+### FAILED QUERIES
+Query 2
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 2 at /nta/queries/query[2]/formula
+-- Formula: Pr[<=700] (<> Coffee_Delivery.end)
+-- Aborted.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP7.j2/RUN_20260704_233909/ciclo3/xml/ITER0_20260704_234157.xml:/nta/queries/query[13]/formula:1: [error] Time-lock error:
+in rm_1.turning
+
+### VERIFYTA DIAGNOSTICS
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP7.j2/RUN_20260704_233909/ciclo3/xml/ITER0_20260704_234157.xml:/nta/queries/query[13]/formula:1: [error] Time-lock error:
+in rm_1.turning
+### INCORRECT LIRAS CODE
+Coffee_Delivery
+agents:
+	humans: Employee1
+	robots: Robot1
+locations: coffee_room, office001
+resources: coffee
+Robot1:
+	1: moveTo coffee_room
+	2: pick coffee
+	3: moveTo office001
+	4: deposit coffee

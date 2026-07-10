@@ -1,2 +1,0 @@
-Generation completed in 27 ms
-Generated: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_2/Generative/NewSP6.j2/RUN_20260501_164220/xml/ITER2_20260501_164230.xml

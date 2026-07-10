@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import itertools
 import json
+import re
 from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -658,7 +659,43 @@ def _failure_info(metadata: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _build_record(metadata: dict[str, Any], meta_path: Path, runs_dir: Path) -> dict[str, Any]:
+def _cycle_number_from_dir(path: Path) -> int:
+    match = re.search(r"ciclo(\d+)", str(path))
+    return int(match.group(1)) if match else -1
+
+
+def _liras_artifact(metadata: dict[str, Any], run_dir: Path) -> dict[str, str]:
+    successful_cycle = metadata.get("successful_cycle")
+    candidates: list[Path] = []
+    if successful_cycle is not None:
+        cycle_dir = run_dir / f"ciclo{successful_cycle}" / "dsl"
+        candidates.extend(sorted(cycle_dir.glob("SUCCESS_*.LIRAs")))
+
+    if not candidates:
+        candidates.extend(sorted(run_dir.glob("ciclo*/dsl/SUCCESS_*.LIRAs")))
+    if not candidates:
+        candidates.extend(sorted(run_dir.glob("ciclo*/dsl/*.LIRAs")))
+
+    if not candidates:
+        return {"path": "", "code": ""}
+
+    def sort_key(path: Path) -> tuple[int, float, str]:
+        return (_cycle_number_from_dir(path), path.stat().st_mtime, path.name)
+
+    selected = sorted(candidates, key=sort_key)[-1]
+    try:
+        code = selected.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        code = ""
+    return {"path": _safe_rel(selected), "code": code}
+
+
+def _build_record(
+    metadata: dict[str, Any],
+    meta_path: Path,
+    runs_dir: Path,
+    include_liras_code: bool = False,
+) -> dict[str, Any]:
     cycles = metadata.get("cycles") if isinstance(metadata.get("cycles"), list) else []
     failure = _failure_info(metadata)
     duration = _duration_seconds(metadata.get("run_started_at"), metadata.get("run_finished_at"))
@@ -676,6 +713,7 @@ def _build_record(metadata: dict[str, Any], meta_path: Path, runs_dir: Path) -> 
     per_cycle_metrics = _per_cycle_metrics(metadata, meta_path.parent)
     llm_tokens = _all_llm_token_totals(metadata, meta_path.parent)
     dsl_token_samples = _dsl_generation_llm_token_samples(meta_path.parent)
+    liras_artifact = _liras_artifact(metadata, meta_path.parent) if include_liras_code else {"path": "", "code": ""}
 
     return {
         "run_id": _safe_str(metadata.get("run_id") or meta_path.parent.name),
@@ -715,18 +753,20 @@ def _build_record(metadata: dict[str, Any], meta_path: Path, runs_dir: Path) -> 
         "failed_queries": failure["failed_queries"],
         "failed_query_examples": failure["failed_query_examples"],
         "failure_kinds": failure["failure_kinds"],
+        "liras_path": liras_artifact["path"],
+        "liras_code": liras_artifact["code"],
         "metadata_path": _safe_rel(meta_path),
         "run_dir": _safe_rel(meta_path.parent),
     }
 
 
-def _collect_records(runs_dir: Path) -> list[dict[str, Any]]:
+def _collect_records(runs_dir: Path, include_liras_code: bool = False) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
     for meta_path in sorted(runs_dir.rglob("run_metadata.json")):
         metadata = _read_json(meta_path)
         if not metadata or _is_cycle_metadata(meta_path, metadata):
             continue
-        records.append(_build_record(metadata, meta_path, runs_dir))
+        records.append(_build_record(metadata, meta_path, runs_dir, include_liras_code=include_liras_code))
     return records
 
 
@@ -1344,6 +1384,15 @@ def _build_html(payload: dict[str, Any]) -> str:
       white-space: pre-wrap;
       font-size: 12px;
     }}
+    .liras-code pre {{
+      max-height: 520px;
+      white-space: pre;
+    }}
+    .liras-path {{
+      margin-bottom: 6px;
+      color: var(--muted);
+      overflow-wrap: anywhere;
+    }}
     a {{ color: var(--accent); }}
   </style>
 </head>
@@ -1402,6 +1451,7 @@ def _build_html(payload: dict[str, Any]) -> str:
     const records = Array.isArray(payload.records) ? payload.records : [];
     const summary = payload.summary || {{}};
     const figures = payload.figures || {{}};
+    const includeLirasCode = Boolean(payload.include_liras_code);
     const el = {{
       cards: document.getElementById('cards'),
       charts: document.getElementById('charts'),
@@ -1466,7 +1516,7 @@ def _build_html(payload: dict[str, Any]) -> str:
       for (const r of rows) {{
         const key = r.model || 'unknown';
         if (!byModel.has(key)) {{
-          byModel.set(key, {{model: key, total: 0, success: 0, failed: 0, running: 0, unknown: 0, cycles: [], dslTimes: [], completionTokenSamples: [], feedbackCycleErrors: {{}}}});
+          byModel.set(key, {{model: key, total: 0, success: 0, failed: 0, running: 0, unknown: 0, cycles: [], totalTokens: 0, dslTimes: [], completionTokenSamples: [], feedbackCycleErrors: {{}}}});
         }}
         const item = byModel.get(key);
         item.total += 1;
@@ -1476,6 +1526,8 @@ def _build_html(payload: dict[str, Any]) -> str:
         else item.unknown += 1;
         const cycles = Number(r.cycles);
         if (Number.isFinite(cycles)) item.cycles.push(cycles);
+        const totalTokens = Number(r.llm_total_tokens ?? r.dsl_total_tokens);
+        if (Number.isFinite(totalTokens) && totalTokens > 0) item.totalTokens += totalTokens;
         const cycleFailures = Array.isArray(r.cycle_failures) ? r.cycle_failures : [];
         for (const cycle of cycleFailures) {{
           if (!cycle || String(cycle.result || '').toLowerCase() !== 'failed') continue;
@@ -1521,6 +1573,9 @@ def _build_html(payload: dict[str, Any]) -> str:
         unknown: item.unknown,
         success_rate: item.success / Math.max(item.total, 1),
         total_cycles: item.cycles.reduce((a, b) => a + b, 0),
+        total_tokens_spent: item.totalTokens,
+        efficiency_metric: item.totalTokens > 0 ? item.success / item.totalTokens : null,
+        efficiency_per_100k_tokens: item.totalTokens > 0 ? item.success / (item.totalTokens / 100000) : null,
         feedback_cycle_errors: item.feedbackCycleErrors,
         avg_cycles: item.cycles.length ? item.cycles.reduce((a, b) => a + b, 0) / item.cycles.length : 0,
         avg_dsl_generation_time_seconds: item.dslTimes.length ? item.dslTimes.reduce((a, b) => a + b, 0) / item.dslTimes.length : null,
@@ -1538,12 +1593,13 @@ def _build_html(payload: dict[str, Any]) -> str:
           '<td>' + Number(row.avg_cycles || 0).toFixed(2) + '</td>' +
           '<td>' + fmtDuration(row.avg_dsl_generation_time_seconds) + '</td>' +
           '<td>' + (row.avg_dsl_completion_tokens_per_generated_dsl === null || row.avg_dsl_completion_tokens_per_generated_dsl === undefined ? '-' : fmtNum(Math.round(row.avg_dsl_completion_tokens_per_generated_dsl))) + '</td>' +
+          '<td>' + (row.efficiency_per_100k_tokens === null || row.efficiency_per_100k_tokens === undefined ? '-' : Number(row.efficiency_per_100k_tokens).toFixed(2)) + '</td>' +
         '</tr>';
       }}).join('');
       return '<article class="panel chart model-summary"><h2>Riepilogo per modello</h2>' +
-        '<div class="chart-note">Sintesi numerica delle run: completion_tokens medio calcolato sui singoli DSL generati.</div>' +
+        '<div class="chart-note">Sintesi numerica delle run: completion_tokens medio calcolato sui singoli DSL generati. Efficienza token = successi / token LLM totali consumati dalle run visibili; le run fallite contribuiscono al denominatore quando incluse dai filtri.</div>' +
         '<div class="summary-table"><table><thead><tr>' +
-        '<th>Modello</th><th>Successi</th><th>Falliti</th><th>Cicli medi/run</th><th>Tempo medio/chiamata DSL</th><th>Output token medi/DSL</th>' +
+        '<th>Modello</th><th>Successi</th><th>Falliti</th><th>Cicli medi/run</th><th>Tempo medio/chiamata DSL</th><th>Output token medi/DSL</th><th>Eff. successi/100k token</th>' +
         '</tr></thead><tbody>' + body + '</tbody></table></div></article>';
     }}
     function figureChart(title, note, path) {{
@@ -1604,9 +1660,11 @@ def _build_html(payload: dict[str, Any]) -> str:
         const success = Number(m.success || 0);
         const total = Number(m.total || 0);
         const totalCycles = Number(m.total_cycles || 0);
+        const tokenEfficiency = m.efficiency_per_100k_tokens === null || m.efficiency_per_100k_tokens === undefined ? '-' : Number(m.efficiency_per_100k_tokens).toFixed(2);
         return '<article class="model-card">' +
           '<div class="model-head"><div class="model-name">' + esc(m.model) + '</div><div class="rate">' + fmtNum(success) + '/' + fmtNum(total) + '</div></div>' +
           '<div>Cicli totali: <b>' + fmtNum(totalCycles) + '</b></div>' +
+          '<div>Efficienza token: <b>' + esc(tokenEfficiency) + '</b> successi/100k token</div>' +
           '<div class="label">Errori cicli feedback</div>' +
           '<div class="reason-list">' + (cycleErrors || '<span class="chip">nessun ciclo fallito</span>') + '</div>' +
           '</article>';
@@ -1632,7 +1690,7 @@ def _build_html(payload: dict[str, Any]) -> str:
           if (!perCycle.some(c => Number(c.cycle_index) === selectedCycle)) return false;
         }}
         if (!q) return true;
-        return [r.run_id, r.model, r.scenario, r.outcome, r.failure_category, r.failure_detail, r.llm_seed, r.metadata_path]
+        return [r.run_id, r.model, r.scenario, r.outcome, r.failure_category, r.failure_detail, r.llm_seed, r.metadata_path, includeLirasCode ? r.liras_path : '']
           .join(' ').toLowerCase().includes(q);
       }}).sort((a, b) => String(b.started_at || '').localeCompare(String(a.started_at || '')));
     }}
@@ -1698,6 +1756,16 @@ def _build_html(payload: dict[str, Any]) -> str:
           '<table><thead><tr><th>Ciclo</th><th>Risultato</th><th>Iter DSL</th><th>Failed stage</th><th>Tipo</th><th>Motivo ciclo</th><th>Stage falliti</th></tr></thead>' +
           '<tbody>' + cycleRows + '</tbody></table></div>'
         : '<div><div class="label">Motivo di fail per ciclo</div><span class="muted">Questa run non contiene metadata pipeline per ciclo.</span></div>';
+      const lirasSection = includeLirasCode
+        ? (r.liras_code
+          ? '<div class="liras-code"><div class="label">Codice LIRAs</div>' +
+            '<div class="mono liras-path">' + esc(r.liras_path || '-') + '</div>' +
+            '<pre>' + esc(r.liras_code) + '</pre></div>'
+          : '<div><div class="label">Codice LIRAs</div><span class="muted">Nessun file .LIRAs trovato per questa run.</span></div>')
+        : '';
+      const lirasPathRow = includeLirasCode
+        ? '<div class="kv"><b>LIRAs</b><span class="mono">' + esc(r.liras_path || '-') + '</span></div>'
+        : '';
       el.detail.innerHTML =
         '<div class="detail-grid">' +
         '<div class="kv"><b>Run</b><span class="mono">' + esc(r.run_id) + '</span></div>' +
@@ -1711,10 +1779,12 @@ def _build_html(payload: dict[str, Any]) -> str:
         '<div class="kv"><b>Durata</b><span>' + fmtDuration(r.duration_seconds) + '</span></div>' +
         '<div class="kv"><b>Tempo gen.</b><span>' + fmtDuration(r.dsl_generation_time_seconds) + '</span></div>' +
         '<div class="kv"><b>Token DSL</b><span>' + (r.dsl_total_tokens === null || r.dsl_total_tokens === undefined ? '-' : fmtNum(r.dsl_total_tokens)) + '</span></div>' +
+        lirasPathRow +
         '<div class="kv"><b>Metadata</b><span class="mono">' + esc(r.metadata_path) + '</span></div>' +
         '</div>' +
         cycleSection +
-        '<div><div class="label">Esempi query fallite</div>' + examples + '</div>';
+        '<div><div class="label">Esempi query fallite</div>' + examples + '</div>' +
+        lirasSection;
     }}
     function update() {{
       if (selected && !filteredRows().some(r => r.run_id === selected.run_id)) selected = null;
@@ -1736,8 +1806,13 @@ def _build_html(payload: dict[str, Any]) -> str:
 """
 
 
-def build_site(runs_dir: Path, output_html: Path, print_summary: bool = False) -> None:
-    records = _collect_records(runs_dir)
+def build_site(
+    runs_dir: Path,
+    output_html: Path,
+    print_summary: bool = False,
+    include_liras_code: bool = False,
+) -> None:
+    records = _collect_records(runs_dir, include_liras_code=include_liras_code)
     output_html.parent.mkdir(parents=True, exist_ok=True)
     figures = _write_boxplot_figures(records, output_html)
     payload = {
@@ -1745,6 +1820,7 @@ def build_site(runs_dir: Path, output_html: Path, print_summary: bool = False) -
         "runs_dir": _safe_rel(runs_dir),
         "summary": _build_summary(records),
         "figures": figures,
+        "include_liras_code": include_liras_code,
         "records": records,
     }
     output_html.write_text(_build_html(payload), encoding="utf-8")
@@ -1760,6 +1836,11 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--runs-dir", default=str(DEFAULT_RUNS_DIR), help="Runs directory to scan")
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT), help="Output HTML path")
     parser.add_argument("--summary", action="store_true", help="Print JSON summary to stdout")
+    parser.add_argument(
+        "--include-liras-code",
+        action="store_true",
+        help="Embed the selected .LIRAs artifact for each run in the HTML detail panel",
+    )
     return parser.parse_args()
 
 
@@ -1773,7 +1854,7 @@ def main() -> int:
         output = ROOT / output
     if not runs_dir.exists():
         raise FileNotFoundError(f"Runs directory not found: {runs_dir}")
-    build_site(runs_dir, output, print_summary=args.summary)
+    build_site(runs_dir, output, print_summary=args.summary, include_liras_code=args.include_liras_code)
     return 0
 
 

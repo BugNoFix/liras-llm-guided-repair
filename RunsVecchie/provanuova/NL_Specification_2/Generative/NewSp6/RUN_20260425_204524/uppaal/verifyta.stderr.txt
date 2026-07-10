@@ -1,1 +1,0 @@
-Executable 'verifyta' not found on PATH

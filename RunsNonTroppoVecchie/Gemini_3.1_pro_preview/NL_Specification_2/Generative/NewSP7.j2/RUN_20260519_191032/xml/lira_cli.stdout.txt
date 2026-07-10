@@ -1,2 +1,0 @@
-Generation completed in 39 ms
-Generated: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Gemini_3.1_pro_preview/NL_Specification_2/Generative/NewSP7.j2/RUN_20260519_191032/xml/ITER0_20260519_191114.xml

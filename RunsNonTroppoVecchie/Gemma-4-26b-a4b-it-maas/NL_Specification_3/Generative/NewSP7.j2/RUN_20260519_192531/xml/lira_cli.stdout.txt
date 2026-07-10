@@ -1,2 +1,0 @@
-Generation completed in 33 ms
-Generated: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Gemma-4-26b-a4b-it-maas/NL_Specification_3/Generative/NewSP7.j2/RUN_20260519_192531/xml/ITER1_20260519_192537.xml

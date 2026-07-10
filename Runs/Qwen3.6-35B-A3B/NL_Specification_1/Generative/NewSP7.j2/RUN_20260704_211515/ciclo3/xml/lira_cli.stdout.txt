@@ -1,0 +1,2 @@
+Generation completed in 31 ms
+Generated: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_1/Generative/NewSP7.j2/RUN_20260704_211515/ciclo3/xml/ITER0_20260704_211807.xml

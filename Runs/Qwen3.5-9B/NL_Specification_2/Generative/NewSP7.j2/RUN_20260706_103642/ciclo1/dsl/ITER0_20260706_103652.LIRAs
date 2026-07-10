@@ -1,0 +1,13 @@
+user_guided_transport
+humans: Human1
+robots: Robot1
+locations: bedroom, kitchen
+resources: object
+
+Human1:
+	1: moveTo bedroom
+	3: moveTo kitchen
+Robot1:
+	1: moveTo bedroom
+	2: pick object
+	3: follow Human1

@@ -1,6 +1,0 @@
-Pattern1
-agents:
-	humans: Nurse
-	robots: Robot1
-locations: room1, room2
-success: time(10)

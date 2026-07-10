@@ -1,4 +1,0 @@
-Generation completed in 82 ms
-Generation completed.
-Input:  /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/Scenario_06/Generative/NewSp6/RUN_20260428_162854/dsl/ITER1_20260428_162923.LIRAs
-Output: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/Scenario_06/Generative/NewSp6/RUN_20260428_162854/xml/ITER1_20260428_162923.xml

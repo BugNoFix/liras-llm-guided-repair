@@ -1,1 +1,0 @@
-{"timestamp": "2026-06-28T11:28:02.374997", "provider": "huggingface", "kind": "generate", "model": "google/gemma-4-31B-it", "attempt": null, "finish_reason": "length", "response_raw_chars": 91, "response_clean_chars": null, "response_raw": "Coffee_Delivery\nagents:\n\thumans: Employee1\n\trobots: Robot1\nlocations: coffee_room, office00", "response_clean": null}

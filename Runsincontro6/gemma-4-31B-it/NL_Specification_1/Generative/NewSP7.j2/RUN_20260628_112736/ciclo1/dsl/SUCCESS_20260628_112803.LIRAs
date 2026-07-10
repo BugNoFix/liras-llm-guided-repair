@@ -1,5 +1,0 @@
-Coffee_Delivery
-agents:
-	humans: Employee1
-	robots: Robot1
-locations: coffee_room, office00

@@ -1,2 +1,0 @@
-/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_1/Generative/NewSp6/RUN_20260428_165236/xml/ITER0_20260428_165254.xml:/nta/declaration:84: [error] Unknown identifier: Office.
-/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/provanuova/NL_Specification_1/Generative/NewSp6/RUN_20260428_165236/xml/ITER0_20260428_165254.xml:/nta/declaration:85: [error] Unknown identifier: Office.

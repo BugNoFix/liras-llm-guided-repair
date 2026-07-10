@@ -1,9 +1,0 @@
-Validating: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260628_112525/ciclo2/dsl/ITER2_20260628_112809.LIRAs
-FAILURE: Validation errors found.
-
-WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
-WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (rsrc:com.google.inject_7.0.0.jar)
-WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
-WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
-[ERROR] Line 16: extraneous input '(' expecting RULE_ID
-[ERROR] Line 16: extraneous input ')' expecting RULE_NL

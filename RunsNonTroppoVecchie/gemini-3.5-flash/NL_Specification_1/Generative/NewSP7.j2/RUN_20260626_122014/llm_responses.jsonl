@@ -1,1 +1,0 @@
-{"timestamp": "2026-06-26T12:20:33.521420", "provider": "gemini", "kind": "query_adaptation", "model": "gemini-3.5-flash", "attempt": null, "finish_reason": "FinishReason.MAX_TOKENS", "response_raw_chars": 0, "response_clean_chars": null, "response_raw": "", "response_clean": null}

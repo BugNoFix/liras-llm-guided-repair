@@ -1,9 +1,0 @@
-BasicRobotPattern
-agents:
-	robots: BasicRobot
-locations: room1, room2, room3
-resources: item1, item2
-BasicRobot:
-	1: moveTo room1
-success: time(10)
-failure: time(20)
