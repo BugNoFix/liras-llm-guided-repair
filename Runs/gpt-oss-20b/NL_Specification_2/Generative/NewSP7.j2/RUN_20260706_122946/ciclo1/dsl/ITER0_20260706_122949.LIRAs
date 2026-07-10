@@ -1,0 +1,16 @@
+user_guided_transport
+agents:
+\thumans: Human1
+\trobots: Robot1
+locations: bedroom, kitchen
+resources: object
+
+Human1:
+\t1: moveTo bedroom
+\t2:
+\t3: moveTo kitchen
+
+Robot1:
+\t1: moveTo bedroom
+\t2: pick object
+\t3: moveTo kitchen
