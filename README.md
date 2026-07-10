@@ -211,35 +211,6 @@ Report/model_runs_analysis.html
 
 The dashboard reads directly from `Runs/`. No intermediate CSV files are required.
 
-## 7. Re-run An Existing Run
-
-To repeat a run with the same settings and seed:
-
-```bash
-python3 Utils/rerun_same_run.py 20260706_212813
-```
-
-You can also pass the full run path:
-
-```bash
-python3 Utils/rerun_same_run.py Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_212813
-```
-
-By default, the script:
-
-1. reads settings and seed from the old run;
-2. launches a new run;
-3. deletes the old run after the new run is created.
-
-Useful options:
-
-```bash
---dry-run                 # print recovered settings without running
---keep-old                # keep the old run
---delete-only-on-success  # delete the old run only if the new one succeeds
---lira-cli-jar PATH       # override the XML export JAR
-```
-
 ## Project Structure
 
 ```text
