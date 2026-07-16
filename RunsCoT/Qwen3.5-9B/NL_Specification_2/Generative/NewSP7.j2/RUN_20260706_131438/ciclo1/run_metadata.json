@@ -1,0 +1,186 @@
+{
+  "run_id": "20260706_131439",
+  "run_started_at": "2026-07-06T13:14:39.418848",
+  "generation_provider": "huggingface",
+  "repair_provider": "huggingface",
+  "query_provider": "huggingface",
+  "project_id": null,
+  "location": "global",
+  "system_prompt": "Generative/NewSP7.j2",
+  "shots": 0,
+  "scenario": "NL_Specification_2.txt",
+  "repair_prompt": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/SPs/Repair/NewSPR7.j2",
+  "generation_model": "Qwen/Qwen3.5-9B",
+  "generation_temperature": 1.0,
+  "generation_max_output_tokens": 25000,
+  "llm_seed": 10000,
+  "repair_model": "Qwen/Qwen3.5-9B",
+  "repair_temperature": 0.35,
+  "repair_max_output_tokens": 25000,
+  "repair_shots": 0,
+  "use_generated_dsl_cache": false,
+  "generated_dsl_source": "dsl_folder",
+  "generated_dsl_cache_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/GeneratedDSL/NL_Specification_2/Generative/NewSP7.j2/shots_0.LIRAs",
+  "compiler_jar": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras_compiler.jar",
+  "max_iterations": 11,
+  "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1",
+  "results_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B",
+  "dsl_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/dsl",
+  "compiler_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/compiler",
+  "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/queries",
+  "prompt_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/llm_prompts.jsonl",
+  "response_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/llm_responses.jsonl",
+  "hf_debug_response_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/hf_debug_responses.jsonl",
+  "pipeline_cycle": 1,
+  "run_dir_override": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1",
+  "uppaal_feedback_included": false,
+  "uppaal_feedback_chars": 0,
+  "iterations": [
+    {
+      "iteration": 0,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/dsl/ITER0_20260706_131615.LIRAs",
+      "success_artifact_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/dsl/SUCCESS_20260706_131616.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/compiler/ITER0_20260706_131615.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": true,
+      "validation": {
+        "returncode": 0,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_error_score": {
+        "feedback_chars": 625,
+        "lines": 7,
+        "error_lines": 0,
+        "warning_lines": 4,
+        "score": 11
+      }
+    }
+  ],
+  "telemetry": {
+    "llm_calls": 1,
+    "prompt_chars_total": 510,
+    "response_chars_total": 216,
+    "prompt_tokens_total": 2146,
+    "completion_tokens_total": 5572,
+    "total_tokens_total": 7718,
+    "token_usage_available_calls": 1,
+    "last_call": {
+      "kind": "generate",
+      "provider": "huggingface",
+      "timestamp": "2026-07-06T13:16:15.346454",
+      "finish_reason": "stop",
+      "seed": 10000,
+      "safety_ratings": [],
+      "prompt_chars": 510,
+      "response_chars": 216,
+      "prompt_tokens": 2146,
+      "completion_tokens": 5572,
+      "total_tokens": 7718,
+      "token_usage_available": true
+    }
+  },
+  "llm_call_history": [
+    {
+      "kind": "generate",
+      "provider": "huggingface",
+      "timestamp": "2026-07-06T13:16:15.346454",
+      "finish_reason": "stop",
+      "seed": 10000,
+      "safety_ratings": [],
+      "prompt_chars": 510,
+      "response_chars": 216,
+      "prompt_tokens": 2146,
+      "completion_tokens": 5572,
+      "total_tokens": 7718,
+      "token_usage_available": true
+    }
+  ],
+  "status": "success",
+  "run_finished_at": "2026-07-06T13:16:16.070835",
+  "summary": {
+    "iterations_recorded": 1,
+    "validations_attempted": 1,
+    "compiler_failures": 0,
+    "compiler_successes": 1,
+    "setup_errors": 0,
+    "first_success_iteration": 0,
+    "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/dsl/ITER0_20260706_131615.LIRAs",
+    "total_compiler_feedback_chars": 0,
+    "llm_calls": 1,
+    "prompt_tokens_total": 2146,
+    "completion_tokens_total": 5572,
+    "total_tokens_total": 7718,
+    "token_usage_available_calls": 1
+  },
+  "updated_at": "2026-07-06T13:16:16.454990",
+  "repair": {
+    "repair_chat_initialized_at": "2026-07-06T13:16:16.070387",
+    "repair_prompt_template_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/SPs/Repair/NewSPR7.j2",
+    "repair_system_prompt_chars": 8005,
+    "repair_stateless": true,
+    "repair_uses_server_chat": false,
+    "repair_temperature": 0.35,
+    "llm_seed": 10000
+  },
+  "stages": [
+    {
+      "stage": "dsl_generation",
+      "result": "ok",
+      "details": {
+        "iterations_recorded": 1,
+        "validations_attempted": 1,
+        "compiler_failures": 0,
+        "compiler_successes": 1,
+        "setup_errors": 0,
+        "first_success_iteration": 0,
+        "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/dsl/ITER0_20260706_131615.LIRAs",
+        "total_compiler_feedback_chars": 0,
+        "llm_calls": 1,
+        "prompt_tokens_total": 2146,
+        "completion_tokens_total": 5572,
+        "total_tokens_total": 7718,
+        "token_usage_available_calls": 1
+      },
+      "artifacts": {
+        "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/dsl/ITER0_20260706_131615.LIRAs",
+        "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/llm_prompts.jsonl",
+        "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/llm_responses.jsonl"
+      }
+    },
+    {
+      "stage": "xml_export",
+      "result": "failed",
+      "failure_type": "execution",
+      "failure_reason": "LIRAs-to-XML export failed, so UPPAAL verification could not run.",
+      "failure_details": {
+        "step": "lira_cli",
+        "command": "java -jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/dsl/ITER0_20260706_131615.LIRAs /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/xml/ITER0_20260706_131615.xml",
+        "exit_code": 1,
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/xml/lira_cli.stdout.txt",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/xml/lira_cli.stderr.txt",
+        "stderr_preview": "WARNING: A terminally deprecated method in sun.misc.Unsafe has been called\nWARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar)\nWARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper\nWARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release\nException in thread \"main\" java.lang.NullPointerException: Cannot invoke \"it.polimi.lIRAs.Target.getName()\" because the return value of \"it.polimi.lIRAs.ActionC.getTarget()\" is null\n\tat it.polimi.generator.LIRAsGenerator.getActionUpdate(LIRAsGenerator.java:1687)\n\tat it.polimi.generator.LIRAsGenerator.seqOrch(LIRAsGenerator.java:1410)\n\tat it.polimi.generator.LIRAsGenerator.lambda$doGenerate$0(LIRAsGenerator.java:125)\n\tat org.eclipse.xtext.xbase.lib.IteratorExtensions.forEach(IteratorExtensions.java:446)\n\tat it.polimi.generator.LIRAsGenerator.doGenerate(LIRAsGenerator.java:130)\n\tat it.polimi.Main.main(Main.java:71)"
+      }
+    }
+  ],
+  "pipeline_runner_version": "v3_structured_stage_metadata",
+  "cycle_result": "failed",
+  "failed_stage": "xml_export",
+  "failure_type": "execution",
+  "failure_reason": "LIRAs-to-XML export failed, so UPPAAL verification could not run.",
+  "failure_details": {
+    "step": "lira_cli",
+    "command": "java -jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/dsl/ITER0_20260706_131615.LIRAs /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/xml/ITER0_20260706_131615.xml",
+    "exit_code": 1,
+    "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/xml/lira_cli.stdout.txt",
+    "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/xml/lira_cli.stderr.txt",
+    "stderr_preview": "WARNING: A terminally deprecated method in sun.misc.Unsafe has been called\nWARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar)\nWARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper\nWARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release\nException in thread \"main\" java.lang.NullPointerException: Cannot invoke \"it.polimi.lIRAs.Target.getName()\" because the return value of \"it.polimi.lIRAs.ActionC.getTarget()\" is null\n\tat it.polimi.generator.LIRAsGenerator.getActionUpdate(LIRAsGenerator.java:1687)\n\tat it.polimi.generator.LIRAsGenerator.seqOrch(LIRAsGenerator.java:1410)\n\tat it.polimi.generator.LIRAsGenerator.lambda$doGenerate$0(LIRAsGenerator.java:125)\n\tat org.eclipse.xtext.xbase.lib.IteratorExtensions.forEach(IteratorExtensions.java:446)\n\tat it.polimi.generator.LIRAsGenerator.doGenerate(LIRAsGenerator.java:130)\n\tat it.polimi.Main.main(Main.java:71)"
+  },
+  "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/dsl/ITER0_20260706_131615.LIRAs",
+  "last_command": "java -jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/dsl/ITER0_20260706_131615.LIRAs /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/xml/ITER0_20260706_131615.xml",
+  "last_exit_code": 1,
+  "last_stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/xml/lira_cli.stdout.txt",
+  "last_stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_131438/ciclo1/xml/lira_cli.stderr.txt"
+}

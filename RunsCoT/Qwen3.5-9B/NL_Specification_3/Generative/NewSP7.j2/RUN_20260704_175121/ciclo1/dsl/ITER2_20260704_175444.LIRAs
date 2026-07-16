@@ -1,0 +1,22 @@
+Factory_Pipeline
+agents: Robot1, Robot2
+	humans:
+	robots: Robot1, Robot2
+	locations: warehouse, surface_texturization_start, surface_texturization_end, laser_start, laser_end, loading_area
+	resources: raw_materials
+
+Robot1:
+	1: moveTo warehouse if position(Robot1,warehouse) else stop
+	2: moveTo surface_texturization_start if position(Robot1,surface_texturization_start) else stop
+	3: moveTo surface_texturization_end if position(Robot1,surface_texturization_end) else stop
+	4: moveTo laser_start if position(Robot1,laser_start) else stop
+	5: moveTo laser_end if position(Robot1,laser_end) else stop
+	6: moveTo loading_area if position(Robot1,loading_area) else stop
+
+Robot2:
+	1: moveTo warehouse if position(Robot2,warehouse) else stop
+	2: moveTo surface_texturization_start if position(Robot2,surface_texturization_start) else stop
+	3: moveTo surface_texturization_end if position(Robot2,surface_texturization_end) else stop
+	4: moveTo laser_start if position(Robot2,laser_start) else stop
+	5: moveTo laser_end if position(Robot2,laser_end) else stop
+	6: moveTo loading_area if position(Robot2,loading_area) else stop

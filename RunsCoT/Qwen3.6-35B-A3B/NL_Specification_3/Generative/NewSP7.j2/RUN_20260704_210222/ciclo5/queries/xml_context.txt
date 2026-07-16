@@ -1,0 +1,282 @@
+### GLOBAL DECLARATION
+/**
+*** GLOBAL DECLARATIONS
+*/
+
+// Pigreco
+const double PI = 3.1415926535;
+clock global_clock;
+const int Tpoll = 1;
+
+// Locations (Layout 1)
+const double room1[2] = {400, 150};
+const double room2[2] = {1200, 750};
+const double room3[2] = {500, 400};
+const double office001[2] = {100, 200};
+const double office004[2] = {100, 765};
+const double coffee_room[2] = {1450, 500};
+const double bedroom[2] = {100, 200};
+const double kitchen[2] = {4400, 765};
+
+// Recources (Layout 1)
+const double item1[2] = {415, 165};
+const double item2[2] = {1215, 765};
+const double item3[2] = {515, 415};
+const double coffee[2] = {1450, 500};
+const double object[2] = {100, 200};
+
+// Locations (Layout 2)
+const double warehouse[2] = {6550,3250}; // Where there is the dispenser
+
+const double surface_texturization_start[2] = {6200.0, 3900.0};
+const double surface_texturization_end[2] = {6200.0, 100.0};
+
+const double diffusion_start[2] = {5500.0, 3900.0};
+const double diffusion_end[2] = {5500.0, 100.0};
+
+const double laser_start[2] = {4800.0, 3900.0};
+const double laser_end[2] = {4800.0, 100.0};
+
+const double etching_start[2] = {4100.0, 3900.0};
+const double etching_end[2]   = {4100.0, 100.0};
+
+const double annealing_start[2] = {3400.0, 3900.0};
+const double annealing_end[2]   = {3400.0, 100.0};
+
+const double perc_start[2] = {2700.0, 3900.0};
+const double perc_end[2]   = {2700.0, 100.0};
+
+const double rear_top_paste_start[2] = {2000.0, 3900.0};
+const double rear_top_paste_end[2]   = {2000.0, 100.0};
+
+const double laser_slotting_start[2] = {600.0, 3900.0};
+const double laser_slotting_end[2]   = {600.0, 100.0};
+
+const double loading_area[2] = {250, 250};
+
+// Recources (Layout 2)
+const double raw_materials[2]           = {6550.0, 3250.0};
+const double texturized_materials[2]    = {6200.0, 100.0};
+const double diffused_materials[2]      = {5500.0, 100.0};
+const double lasered_materials[2]       = {4800.0, 100.0};
+const double etched_materials[2]        = {4100.0, 100.0};
+const double annealed_materials[2]      = {3400.0, 100.0};
+const double perc_cells[2]              = {2700.0, 100.0};
+const double pasted_cells[2]            = {2000.0, 100.0};
+const double slotted_cells[2]           = {600.0, 100.0};
+
+
+
+/**
+*** STUFF TO BE GENERATED AUTOMATICALLY
+*/
+
+// Sub-sequence Stages
+urgent broadcast chan s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19, s20, s21, s22, s23, s24, s25, s26, s27, s28, s29, s30, s31, s32, s33, s34, s35, s36, s37, s38, s39, s40, s41, s42, s43, s44, s45, s46, s47, s48, s49, s50, s51, s52, s53, s54, s55, s56, s57, s58, s59, s60, s61, s62, s63, s64, s65, s66, s67, s68, s69, s70, s71, s72, s73, s74, s75, s76, s77, s78, s79, s80, s81, s82, s83, s84, s85, s86, s87, s88, s89, s90, s91, s92, s93, s94, s95, s96, s97, s98, s99, s100, s101, s102, s103, s104, s105, s106, s107, s108, s109, s110, s111, e;
+
+// Sequence status (one for each agent)
+bool robot1_stat = true;
+bool robot2_stat = true;
+
+
+// Declared Locations
+double location_X[7] = {warehouse[0], surface_texturization_start[0], surface_texturization_end[0], laser_start[0], laser_end[0], loading_area[0], raw_materials[0]};
+double location_Y[7] = {warehouse[1], surface_texturization_start[1], surface_texturization_end[1], laser_start[1], laser_end[1], loading_area[1], raw_materials[1]};
+
+
+// Declared Resources
+double resources_X[1] = {raw_materials[0]};
+double resources_Y[1] = {raw_materials[1]};
+
+
+// Quantity of agents and resouces
+// There are no Humans in the pattern Input
+const int N_R = 2; // Number of robots in the pattern
+const int N_ITEMS = 1; // Number of resources in the pattern
+
+// No humans declared: declare dummy arrays to prevent compilation errors
+double humanPositionX[1] = {0.0};
+double humanPositionY[1] = {0.0};
+
+
+// Robot initialization
+double batteryCharge[N_R] = {100.0, 100.0};
+// The robots will start from the first N_R intersections
+const int R_start_nodes[N_R] = {0, 1};
+double robPositionX[N_R] = {0.0, 0.0};
+double robPositionY[N_R] = {0.0, 0.0};
+
+
+
+/**
+*** GLOBAL VARIABLES
+*/
+
+// ACTIONs synchronization management and variables
+
+urgent broadcast chan start_r_moveTo[N_R], stop_r_moveTo[N_R];
+broadcast chan rm_still;
+urgent broadcast chan start_r_follow[N_R], stop_r_follow[N_R];
+broadcast chan rf_still;
+urgent broadcast chan start_r_pick[N_R], stop_r_pick[N_R];
+urgent broadcast chan start_r_deposit[N_R], stop_r_deposit[N_R];
+
+int robot_loc_target[N_R];
+// Who I have to follow (agent id)?
+int human_to_be_followed[N_R];
+int robot_to_be_followed[N_R];
+int f_loc_target[N_R];
+int robot_res_to_pick[N_R];
+int robot_inventory[N_R][N_ITEMS];
+int old_inventory[N_R][N_ITEMS];
+int robot_res_to_deposit[N_R];
+
+
+
+/**
+*** VARIABLES
+**/
+
+const int MAX_BUFF_SIZE = 10;
+
+// Pattern execution flow
+int currP = 1;
+
+
+/**
+*** FLOOR PLAN
+**/
+
+
+// Layout 2
+
+const int N_A = 15; // Number of Areas
+const int N_P = 10; // Number of points in a trajectory
+const int N_I = 20; // Number of intersections
+
+typedef double point[2];
+typedef point area[4];
+typedef area layout[N_A];
+typedef point trajectory[N_P];
+
+const layout FLOOR = {{{500.0, 0.0}, {500.0, 200}, {6300.0, 200.0}, {6300.0, 0.0}}, {{500.0, 3800.0}, {500.0, 4000}, {6300.0, 4000.0}, {6300.0, 3800.0}}, {{500.0, 0.0}, {500.0, 4000}, {700.0, 4000.0}, {700.0, 0.0}}, {{1200.0, 0.0}, {1200.0, 4000}, {1400.0, 4000.0}, {1400.0, 0.0}}, {{1900.0, 0.0}, {1900.0, 4000}, {2100.0, 4000.0}, {2100.0, 0.0}}, {{2600.0, 0.0}, {2600.0, 4000}, {2800.0, 4000.0}, {2800.0, 0.0}}, {{3300.0, 0.0}, {3300.0, 4000}, {3500.0, 4000.0}, {3500.0, 0.0}}, {{4000.0, 0.0}, {4000.0, 4000}, {4200.0, 4000.0}, {4200.0, 0.0}}, {{4700.0, 0.0}, {4700.0, 4000}, {4900.0, 4000.0}, {4900.0, 0.0}}, {{5400.0, 0.0}, {5400.0, 4000}, {5600.0, 4000.0}, {5600.0, 0.0}}, {{6100.0, 0.0}, {6100.0, 4000}, {6300.0, 4000.0}, {6300.0, 0.0}}, {{6300.0, 4000.0}, {6300.0, 2500}, {6800.0, 2500.0}, {6800.0, 4000.0}}, {{0.0, 0.0}, {0.0, 500.0}, {500.0, 500.0}, {500.0, 0.0}}, {{300.0, 0.0}, {300.0, 200.0}, {700.0, 200.0}, {700.0, 0.0} }, {{6500.0, 4000.0}, {6100.0, 4000}, {6100.0, 3800.0}, {6500.0, 3800.0}}};
+
+
+const point INTERSECTIONS[N_I] = {{400.0, 100.0}, {600.0, 3900.0}, {600.0, 100.0}, {1300.0, 100.0}, {1300.0, 3900.0}, {2000.0, 100.0}, {2000.0, 3900.0}, {2700.0, 100.0}, {2700.0, 3900.0}, {3400.0, 100.0}, {3400.0, 3900.0}, {4100.0, 100.0}, {4100.0, 3900.0}, {4800.0, 100.0}, {4800.0, 3900.0}, {5500.0, 100.0}, {5500.0, 3900.0}, {6400.0, 3900.0}, {6200.0, 3900.0}, {6200.0, 100.0}};
+
+// used in all the actions
+bool same_area(double sx, double sy, double dx, double dy) {
+    int i;
+    bool x_s_in, y_s_in, x_d_in, y_d_in;
+    double x_min, x_max, y_min, y_max;
+
+    for (i = 0; i &lt; N_A; i++)
+    {
+        x_min = FLOOR[i][0][0] &lt; FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
+        x_max = FLOOR[i][0][0] &gt; FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
+        y_min = FLOOR[i][0][1] &lt; FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
+        y_max = FLOOR[i][0][1] &gt; FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
+
+        x_s_in = (sx &gt;= x_min - 1.0) &amp;&amp; (sx &lt;= x_max + 1.0);
+        y_s_in = (sy &gt;= y_min - 1.0) &amp;&amp; (sy &lt;= y_max + 1.0);
+        x_d_in = (dx &gt;= x_min - 1.0) &amp;&amp; (dx &lt;= x_max + 1.0);
+        y_d_in = (dy &gt;= y_min - 1.0) &amp;&amp; (dy &lt;= y_max + 1.0);
+
+        if ((x_s_in &amp;&amp; y_s_in) &amp;&amp; (x_d_in &amp;&amp; y_d_in)) // start and dest in same area
+            return true;
+    }
+    return false;
+}
+
+double pt_dist(double x1, double x2, double y1, double y2) {
+    double xdifference = x2-x1;
+    double ydifference = y2-y1;
+    return sqrt((xdifference*xdifference)+(ydifference*ydifference));
+}
+
+/**
+ * Checks if the given coordinates (x, y) are inside ANY of the valid floor areas.
+ * Returns true if the position is valid, false if it is in a forbidden area.
+ */
+const double EPSILON = 1.0;
+
+bool isValidPosition(double x, double y) {
+    int i;
+    double x_min, x_max, y_min, y_max;
+    
+    for (i = 0; i &lt; N_A; i++) {
+        x_min = FLOOR[i][0][0] &lt; FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
+        x_max = FLOOR[i][0][0] &gt; FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
+        y_min = FLOOR[i][0][1] &lt; FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
+        y_max = FLOOR[i][0][1] &gt; FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
+        
+        if (x &gt;= x_min - 1.0 &amp;&amp; x &lt;= x_max + 1.0 &amp;&amp; y &gt;= y_min - 1.0 &amp;&amp; y &lt;= y_max + 1.0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+	<template>
+		<name>Factory_Pipeline_orchestrator</name>
+		<parameter>int p</parameter>
+		<declaration>// Place local declarations here.
+
+### SYSTEM INSTANCES
+// Mission Definition
+
+rm_1 = Robot_moveTo(1, 26.0, 26.0);
+rm_2 = Robot_moveTo(2, 26.0, 26.0);
+rf_1 = Robot_follow(1, 26.0, 26.0);
+rf_2 = Robot_follow(2, 26.0, 26.0);
+rp_1 = Robot_pick(1);
+rp_2 = Robot_pick(2);
+rd_1 = Robot_deposit(1);
+rd_2 = Robot_deposit(2);
+
+
+// Pattern Definition
+
+Factory_Pipeline = Factory_Pipeline_orchestrator(1);
+Factory_Pipeline_robot1_def = Factory_Pipeline_robot1(1, 1);
+Factory_Pipeline_robot2_def = Factory_Pipeline_robot2(1, 2);
+
+
+// ======================================================
+
+system
+
+rm_1,
+rm_2,
+rf_1,
+rf_2,
+rp_1,
+rp_2,
+rd_1,
+rd_2,
+
+
+Factory_Pipeline,
+Factory_Pipeline_robot1_def,
+Factory_Pipeline_robot2_def
+
+;
+
+### TEMPLATE NAMES
+- Factory_Pipeline_orchestrator
+- Factory_Pipeline_robot1
+- Factory_Pipeline_robot2
+- Robot_moveTo
+- Robot_follow
+- Robot_pick
+- Robot_deposit
+
+### PATTERN LOCATIONS
+Factory_Pipeline_orchestrator: Init, sub_seq_s1, sub_seq_s2, sub_seq_s3, sub_seq_s4, sub_seq_s5, sub_seq_s6, sub_seq_s7, sub_seq_s8, sub_seq_s9, sub_seq_s10, sub_seq_s11, sub_seq_s12, sub_seq_s13, sub_seq_s14, sub_seq_s15, sub_seq_s16, sub_seq_s17, sub_seq_s18, sub_seq_s19, sub_seq_s20, sub_seq_s21, sub_seq_s22, sub_seq_s23, sub_seq_s24, sub_seq_s25, sub_seq_s26, sub_seq_s27, sub_seq_s28, sub_seq_s29, sub_seq_s30, sub_seq_s31, sub_seq_s32, sub_seq_s33, sub_seq_s34, sub_seq_s35, sub_seq_s36, sub_seq_s37, sub_seq_s38, sub_seq_s39, sub_seq_s40, sub_seq_s41, sub_seq_s42, sub_seq_s43, sub_seq_s44, sub_seq_s45, sub_seq_s46, sub_seq_s47, sub_seq_s48, sub_seq_s49, sub_seq_s50, sub_seq_s51, sub_seq_s52, sub_seq_s53, sub_seq_s54, sub_seq_s55, sub_seq_s56, sub_seq_s57, sub_seq_s58, sub_seq_s59, sub_seq_s60, sub_seq_s61, sub_seq_s62, sub_seq_s63, sub_seq_s64, sub_seq_s65, sub_seq_s66, sub_seq_s67, sub_seq_s68, sub_seq_s69, sub_seq_s70, sub_seq_s71, sub_seq_s72, sub_seq_s73, sub_seq_s74, sub_seq_s75, sub_seq_s76, sub_seq_s77, sub_seq_s78, sub_seq_s79, sub_seq_s80, sub_seq_s81, sub_seq_s82, sub_seq_s83, sub_seq_s84, sub_seq_s85, sub_seq_s86, sub_seq_s87, sub_seq_s88, sub_seq_s89, sub_seq_s90, sub_seq_s91, sub_seq_s92, sub_seq_s93, sub_seq_s94, sub_seq_s95, sub_seq_s96, sub_seq_s97, sub_seq_s98, sub_seq_s99, sub_seq_s100, sub_seq_s101, sub_seq_s102, sub_seq_s103, sub_seq_s104, sub_seq_s105, sub_seq_s106, sub_seq_s107, sub_seq_s108, sub_seq_s109, sub_seq_s110, sub_seq_s111, end
+Factory_Pipeline_robot1: init_robot1, s1_start, s2_start, s3_start, s4_start, s5_start, s6_start, s7_start, s8_start, s9_start, s10_start, s11_start, s12_start, s13_start, s14_start, s15_start, s16_start, s17_start, s18_start, s19_start, s20_start, s21_start, s22_start, s23_start, s24_start, s25_start, s26_start, s27_start, s28_start, s29_start, s30_start, s31_start, s32_start, s33_start, s34_start, s35_start, s36_start, s37_start, s38_start, s39_start, s40_start, s41_start, s42_start, s43_start, s44_start, s45_start, s46_start, s47_start, s48_start, s49_start, s50_start, s51_start, s52_start, s53_start, s54_start, s55_start, s56_start, s57_start, s58_start, s59_start, s60_start, s61_start, s62_start, s63_start, s64_start, s65_start, s66_start, s67_start, s68_start, s69_start, s70_start, s71_start, s72_start, s73_start, s74_start, s75_start, s76_start, s77_start, s78_start, s79_start, s80_start, s81_start, s82_start, s83_start, s84_start, s85_start, s86_start, s87_start, s88_start, s89_start, s90_start, s91_start, s92_start, s93_start, s94_start, s95_start, s96_start, s97_start, s98_start, s99_start, s100_start, s101_start, s102_start, s103_start, s104_start, s105_start, s106_start, s107_start, s108_start, s109_start, s110_start, s111_start, end_robot1, A1_a1_pick_busy, A1_a1_pick_complete, s1_end, A1_a2_moveTo_busy, A1_a2_moveTo_complete, s2_end, A1_a3_deposit_busy, A1_a3_deposit_complete, s3_end, A1_a4_moveTo_busy, A1_a4_moveTo_complete, s4_end, A1_a5_pick_busy, A1_a5_pick_complete, s5_end, A1_a6_moveTo_busy, A1_a6_moveTo_complete, s6_end, A1_a7_deposit_busy, A1_a7_deposit_complete, s7_end, A1_a8_moveTo_busy, A1_a8_moveTo_complete, s8_end, A1_a9_pick_busy, A1_a9_pick_complete, s9_end, A1_a10_moveTo_busy, A1_a10_moveTo_complete, s10_end, A1_a11_deposit_busy, A1_a11_deposit_complete, s11_end, s12_idle, s13_idle, s14_idle, s15_idle, s16_idle, s17_idle, s18_idle, s19_idle, s20_idle, s21_idle, s22_idle, s23_idle, s24_idle, s25_idle, s26_idle, s27_idle, s28_idle, s29_idle, s30_idle, s31_idle, s32_idle, s33_idle, s34_idle, s35_idle, s36_idle, s37_idle, s38_idle, s39_idle, s40_idle, s41_idle, s42_idle, s43_idle, s44_idle, s45_idle, s46_idle, s47_idle, s48_idle, s49_idle, s50_idle, s51_idle, s52_idle, s53_idle, s54_idle, s55_idle, s56_idle, s57_idle, s58_idle, s59_idle, s60_idle, s61_idle, s62_idle, s63_idle, s64_idle, s65_idle, s66_idle, s67_idle, s68_idle, s69_idle, s70_idle, s71_idle, s72_idle, s73_idle, s74_idle, s75_idle, s76_idle, s77_idle, s78_idle, s79_idle, s80_idle, s81_idle, s82_idle, s83_idle, s84_idle, s85_idle, s86_idle, s87_idle, s88_idle, s89_idle, s90_idle, s91_idle, s92_idle, s93_idle, s94_idle, s95_idle, s96_idle, s97_idle, s98_idle, s99_idle, s100_idle, s101_idle, s102_idle, s103_idle, s104_idle, s105_idle, s106_idle, s107_idle, s108_idle, s109_idle, s110_idle, s111_idle
+Factory_Pipeline_robot2: init_robot2, s1_start, s2_start, s3_start, s4_start, s5_start, s6_start, s7_start, s8_start, s9_start, s10_start, s11_start, s12_start, s13_start, s14_start, s15_start, s16_start, s17_start, s18_start, s19_start, s20_start, s21_start, s22_start, s23_start, s24_start, s25_start, s26_start, s27_start, s28_start, s29_start, s30_start, s31_start, s32_start, s33_start, s34_start, s35_start, s36_start, s37_start, s38_start, s39_start, s40_start, s41_start, s42_start, s43_start, s44_start, s45_start, s46_start, s47_start, s48_start, s49_start, s50_start, s51_start, s52_start, s53_start, s54_start, s55_start, s56_start, s57_start, s58_start, s59_start, s60_start, s61_start, s62_start, s63_start, s64_start, s65_start, s66_start, s67_start, s68_start, s69_start, s70_start, s71_start, s72_start, s73_start, s74_start, s75_start, s76_start, s77_start, s78_start, s79_start, s80_start, s81_start, s82_start, s83_start, s84_start, s85_start, s86_start, s87_start, s88_start, s89_start, s90_start, s91_start, s92_start, s93_start, s94_start, s95_start, s96_start, s97_start, s98_start, s99_start, s100_start, s101_start, s102_start, s103_start, s104_start, s105_start, s106_start, s107_start, s108_start, s109_start, s110_start, s111_start, end_robot2, A2_a1_pick_busy, A2_a1_pick_complete, s101_end, A2_a2_moveTo_busy, A2_a2_moveTo_complete, s102_end, A2_a3_deposit_busy, A2_a3_deposit_complete, s103_end, A2_a4_moveTo_busy, A2_a4_moveTo_complete, s104_end, A2_a5_pick_busy, A2_a5_pick_complete, s105_end, A2_a6_moveTo_busy, A2_a6_moveTo_complete, s106_end, A2_a7_deposit_busy, A2_a7_deposit_complete, s107_end, A2_a8_moveTo_busy, A2_a8_moveTo_complete, s108_end, A2_a9_pick_busy, A2_a9_pick_complete, s109_end, A2_a10_moveTo_busy, A2_a10_moveTo_complete, s110_end, A2_a11_deposit_busy, A2_a11_deposit_complete, s111_end, s1_idle, s2_idle, s3_idle, s4_idle, s5_idle, s6_idle, s7_idle, s8_idle, s9_idle, s10_idle, s11_idle, s12_idle, s13_idle, s14_idle, s15_idle, s16_idle, s17_idle, s18_idle, s19_idle, s20_idle, s21_idle, s22_idle, s23_idle, s24_idle, s25_idle, s26_idle, s27_idle, s28_idle, s29_idle, s30_idle, s31_idle, s32_idle, s33_idle, s34_idle, s35_idle, s36_idle, s37_idle, s38_idle, s39_idle, s40_idle, s41_idle, s42_idle, s43_idle, s44_idle, s45_idle, s46_idle, s47_idle, s48_idle, s49_idle, s50_idle, s51_idle, s52_idle, s53_idle, s54_idle, s55_idle, s56_idle, s57_idle, s58_idle, s59_idle, s60_idle, s61_idle, s62_idle, s63_idle, s64_idle, s65_idle, s66_idle, s67_idle, s68_idle, s69_idle, s70_idle, s71_idle, s72_idle, s73_idle, s74_idle, s75_idle, s76_idle, s77_idle, s78_idle, s79_idle, s80_idle, s81_idle, s82_idle, s83_idle, s84_idle, s85_idle, s86_idle, s87_idle, s88_idle, s89_idle, s90_idle, s91_idle, s92_idle, s93_idle, s94_idle, s95_idle, s96_idle, s97_idle, s98_idle, s99_idle, s100_idle
+
+### EMBEDDED XML QUERIES (reference naming in this model)
+simulate[<=700]{Factory_Pipeline_robot1_def.s1_start, Factory_Pipeline_robot1_def.s1_end, Factory_Pipeline_robot1_def.s2_start, Factory_Pipeline_robot1_def.s2_end, Factory_Pipeline_robot1_def.s3_start, Factory_Pipeline_robot1_def.s3_end, Factory_Pipeline_robot1_def.s4_start, Factory_Pipeline_robot1_def.s4_end, Factory_Pipeline_robot1_def.s5_start, Factory_Pipeline_robot1_def.s5_end, Factory_Pipeline_robot1_def.s6_start, Factory_Pipeline_robot1_def.s6_end, Factory_Pipeline_robot1_def.s7_start, Factory_Pipeline_robot1_def.s7_end, Factory_Pipeline_robot1_def.s8_start, Factory_Pipeline_robot1_def.s8_end, Factory_Pipeline_robot1_def.s9_start, Factory_Pipeline_robot1_def.s9_end, Factory_Pipeline_robot1_def.s10_start, Factory_Pipeline_robot1_def.s10_end, Factory_Pipeline_robot1_def.s11_start, Factory_Pipeline_robot1_def.s11_end, Factory_Pipeline_robot1_def.s12_start, Factory_Pipeline_robot1_def.s12_idle, Factory_Pipeline_robot1_def.s13_start, Factory_Pipeline_robot1_def.s13_idle, Factory_Pipeline_robot1_def.s14_start, Factory_Pipeline_robot1_def.s14_idle, Factory_Pipeline_robot1_def.s15_start, Factory_Pipeline_robot1_def.s15_idle, Factory_Pipeline_robot1_def.s16_start, Factory_Pipeline_robot1_def.s16_idle, Factory_Pipeline_robot1_def.s17_start, Factory_Pipeline_robot1_def.s17_idle, Factory_Pipeline_robot1_def.s18_start, Factory_Pipeline_robot1_def.s18_idle, Factory_Pipeline_robot1_def.s19_start, Factory_Pipeline_robot1_def.s19_idle, Factory_Pipeline_robot1_def.s20_start, Factory_Pipeline_robot1_def.s20_idle, Factory_Pipeline_robot1_def.s21_start, Factory_Pipeline_robot1_def.s21_idle, Factory_Pipeline_robot1_def.s22_start, Factory_Pipeline_robot1_def.s22_idle, Factory_Pipeline_robot1_def.s23_start, Factory_Pipeline_robot1_def.s23_idle, Factory_Pipeline_robot1_def.s24_start, Factory_Pipeline_robot1_def.s24_idle, Factory_Pipeline_robot1_def.s25_start, Factory_Pipeline_robot1_def.s25_idle, Factory_Pipeline_robot1_def.s26_start, Factory_Pipeline_robot1_def.s26_idle, Factory_Pipeline_robot1_def.s27_start, Factory_Pipeline_robot1_def.s27_idle, Factory_Pipeline_robot1_def.s28_start, Factory_Pipeline_robot1_def.s28_idle, Factory_Pipeline_robot1_def.s29_start, Factory_Pipeline_robot1_def.s29_idle, Factory_Pipeline_robot1_def.s30_start, Factory_Pipeline_robot1_def.s30_idle, Factory_Pipeline_robot1_def.s31_start, Factory_Pipeline_robot1_def.s31_idle, Factory_Pipeline_robot1_def.s32_start, Factory_Pipeline_robot1_def.s32_idle, Factory_Pipeline_robot1_def.s33_start, Factory_Pipeline_robot1_def.s33_idle, Factory_Pipeline_robot1_def.s34_start, Factory_Pipeline_robot1_def.s34_idle, Factory_Pipeline_robot1_def.s35_start, Factory_Pipeline_robot1_def.s35_idle, Factory_Pipeline_robot1_def.s36_start, Factory_Pipeline_robot1_def.s36_idle, Factory_Pipeline_robot1_def.s37_start, Factory_Pipeline_robot1_def.s37_idle, Factory_Pipeline_robot1_def.s38_start, Factory_Pipeline_robot1_def.s38_idle, Factory_Pipeline_robot1_def.s39_start, Factory_Pipeline_robot1_def.s39_idle, Factory_Pipeline_robot1_def.s40_start, Factory_Pipeline_robot1_def.s40_idle, Factory_Pipeline_robot1_def.s41_start, Factory_Pipeline_robot1_def.s41_idle, Factory_Pipeline_robot1_def.s42_start, Factory_Pipeline_robot1_def.s42_idle, Factory_Pipeline_robot1_def.s43_start, Factory_Pipeline_robot1_def.s43_idle, Factory_Pipeline_robot1_def.s44_start, Factory_Pipeline_robot1_def.s44_idle, Factory_Pipeline_robot1_def.s45_start, Factory_Pipeline_robot1_def.s45_idle, Factory_Pipeline_robot1_def.s46_start, Factory_Pipeline_robot1_def.s46_idle, Factory_Pipeline_robot1_def.s47_start, Factory_Pipeline_robot1_def.s47_idle, Factory_Pipeline_robot1_def.s48_start, Factory_Pipeline_robot1_def.s48_idle, Factory_Pipeline_robot1_def.s49_start, Factory_Pipeline_robot1_def.s49_idle, Factory_Pipeline_robot1_def.s50_start, Factory_Pipeline_robot1_def.s50_idle, Factory_Pipeline_robot1_def.s51_start, Factory_Pipeline_robot1_def.s51_idle, Factory_Pipeline_robot1_def.s52_start, Factory_Pipeline_robot1_def.s52_idle, Factory_Pipeline_robot1_def.s53_start, Factory_Pipeline_robot1_def.s53_idle, Factory_Pipeline_robot1_def.s54_start, Factory_Pipeline_robot1_def.s54_idle, Factory_Pipeline_robot1_def.s55_start, Factory_Pipeline_robot1_def.s55_idle, Factory_Pipeline_robot1_def.s56_start, Factory_Pipeline_robot1_def.s56_idle, Factory_Pipeline_robot1_def.s57_start, Factory_Pipeline_robot1_def.s57_idle, Factory_Pipeline_robot1_def.s58_start, Factory_Pipeline_robot1_def.s58_idle, Factory_Pipeline_robot1_def.s59_start, Factory_Pipeline_robot1_def.s59_idle, Factory_Pipeline_robot1_def.s60_start, Factory_Pipeline_robot1_def.s60_idle, Factory_Pipeline_robot1_def.s61_start, Factory_Pipeline_robot1_def.s61_idle, Factory_Pipeline_robot1_def.s62_start, Factory_Pipeline_robot1_def.s62_idle, Factory_Pipeline_robot1_def.s63_start, Factory_Pipeline_robot1_def.s63_idle, Factory_Pipeline_robot1_def.s64_start, Factory_Pipeline_robot1_def.s64_idle, Factory_Pipeline_robot1_def.s65_start, Factory_Pipeline_robot1_def.s65_idle, Factory_Pipeline_robot1_def.s66_start, Factory_Pipeline_robot1_def.s66_idle, Factory_Pipeline_robot1_def.s67_start, Factory_Pipeline_robot1_def.s67_idle, Factory_Pipeline_robot1_def.s68_start, Factory_Pipeline_robot1_def.s68_idle, Factory_Pipeline_robot1_def.s69_start, Factory_Pipeline_robot1_def.s69_idle, Factory_Pipeline_robot1_def.s70_start, Factory_Pipeline_robot1_def.s70_idle, Factory_Pipeline_robot1_def.s71_start, Factory_Pipeline_robot1_def.s71_idle, Factory_Pipeline_robot1_def.s72_start, Factory_Pipeline_robot1_def.s72_idle, Factory_Pipeline_robot1_def.s73_start, Factory_Pipeline_robot1_def.s73_idle, Factory_Pipeline_robot1_def.s74_start, Factory_Pipeline_robot1_def.s74_idle, Factory_Pipeline_robot1_def.s75_start, Factory_Pipeline_robot1_def.s75_idle, Factory_Pipeline_robot1_def.s76_start, Factory_Pipeline_robot1_def.s76_idle, Factory_Pipeline_robot1_def.s77_start, Factory_Pipeline_robot1_def.s77_idle, Factory_Pipeline_robot1_def.s78_start, Factory_Pipeline_robot1_def.s78_idle, Factory_Pipeline_robot1_def.s79_start, Factory_Pipeline_robot1_def.s79_idle, Factory_Pipeline_robot1_def.s80_start, Factory_Pipeline_robot1_def.s80_idle, Factory_Pipeline_robot1_def.s81_start, Factory_Pipeline_robot1_def.s81_idle, Factory_Pipeline_robot1_def.s82_start, Factory_Pipeline_robot1_def.s82_idle, Factory_Pipeline_robot1_def.s83_start, Factory_Pipeline_robot1_def.s83_idle, Factory_Pipeline_robot1_def.s84_start, Factory_Pipeline_robot1_def.s84_idle, Factory_Pipeline_robot1_def.s85_start, Factory_Pipeline_robot1_def.s85_idle, Factory_Pipeline_robot1_def.s86_start, Factory_Pipeline_robot1_def.s86_idle, Factory_Pipeline_robot1_def.s87_start, Factory_Pipeline_robot1_def.s87_idle, Factory_Pipeline_robot1_def.s88_start, Factory_Pipeline_robot1_def.s88_idle, Factory_Pipeline_robot1_def.s89_start, Factory_Pipeline_robot1_def.s89_idle, Factory_Pipeline_robot1_def.s90_start, Factory_Pipeline_robot1_def.s90_idle, Factory_Pipeline_robot1_def.s91_start, Factory_Pipeline_robot1_def.s91_idle, Factory_Pipeline_robot1_def.s92_start, Factory_Pipeline_robot1_def.s92_idle, Factory_Pipeline_robot1_def.s93_start, Factory_Pipeline_robot1_def.s93_idle, Factory_Pipeline_robot1_def.s94_start, Factory_Pipeline_robot1_de
+... [xml context truncated] ...
