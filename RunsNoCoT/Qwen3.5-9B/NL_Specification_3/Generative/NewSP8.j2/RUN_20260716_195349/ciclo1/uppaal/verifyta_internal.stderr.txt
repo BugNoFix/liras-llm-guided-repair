@@ -1,0 +1,6 @@
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:82: [error] Unknown identifier: diff_start.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:82: [error] Unknown identifier: diff_end.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:82: [error] Unknown identifier: load_area.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:83: [error] Unknown identifier: diff_start.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:83: [error] Unknown identifier: diff_end.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:83: [error] Unknown identifier: load_area.

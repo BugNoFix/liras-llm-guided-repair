@@ -1,0 +1,62 @@
+### WHAT TO FIX
+UPPAAL ran successfully, but at least one property/query did not match the expected behavior. Repair the LIRAs model behavior, not just query syntax.
+
+### FAILED QUERIES
+Query 6
+Failure kind: probability_delta
+Reason: The obtained probability differs from the expected probability by more than the configured threshold.
+Description: Upon receiving a transport order, Robot2 shall transition from 'Idle' to 'Active' mode.
+Original formula: Pr[<=1] ([] Factory_Pipeline_robot2_def.init_robot2)
+Adapted formula: Pr[<=1] ([] Factory_Pipeline_robot2_def.init_robot2)
+Expected probability: 0.02497205
+Obtained probability: 0.975028
+Probability delta: 0.95005595
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 6 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_210809/ciclo5/queries/adapted.q:17
+
+### INCORRECT LIRAS CODE
+Factory_Pipeline
+agents:
+	robots: Robot1, Robot2
+locations: warehouse, surface_texturization_start, surface_texturization_end, laser_start, laser_end, loading_area
+resources: raw_materials, texturized_materials, lasered_materials
+Robot1:
+	1: moveTo warehouse
+	2: pick raw_materials
+	3: stop
+	4: moveTo surface_texturization_start
+	5: deposit texturized_materials
+	6: stop
+	7: moveTo surface_texturization_end
+	8: pick texturized_materials
+	9: stop
+	10: moveTo laser_start
+	11: deposit lasered_materials
+	12: stop
+	13: moveTo laser_end
+	14: pick lasered_materials
+	15: stop
+	16: moveTo loading_area
+	17: deposit lasered_materials
+	18: stop
+Robot2:
+	1: stop
+	2: moveTo warehouse
+	3: pick raw_materials
+	4: stop
+	5: moveTo surface_texturization_start
+	6: deposit texturized_materials
+	7: stop
+	8: moveTo surface_texturization_end
+	9: pick texturized_materials
+	10: stop
+	11: moveTo laser_start
+	12: deposit lasered_materials
+	13: stop
+	14: moveTo laser_end
+	15: pick lasered_materials
+	16: stop
+	17: moveTo loading_area
+	18: deposit lasered_materials
+	19: stop
