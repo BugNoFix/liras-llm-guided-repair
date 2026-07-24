@@ -1,0 +1,548 @@
+{
+  "run_id": "20260724_113925",
+  "run_started_at": "2026-07-24T11:39:25.668566",
+  "pipeline_runner_version": "v3_structured_stage_metadata",
+  "overall_result": "ok",
+  "failed_stage": null,
+  "failure_type": null,
+  "failure_reason": null,
+  "failure_details": null,
+  "generation_provider": "huggingface",
+  "repair_provider": "huggingface",
+  "query_provider": "huggingface",
+  "system_prompt": "Generative/NewSP8.j2",
+  "repair_prompt": "Repair/NewSPR8.j2",
+  "scenario": "NL_Specification_2.txt",
+  "generation_model": "google/gemma-4-31B-it",
+  "repair_model": "google/gemma-4-31B-it",
+  "shots": "leave_one_spec_out",
+  "repair_shots": 2,
+  "max_iterations": 11,
+  "max_uppaal_feedback_cycles": 5,
+  "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925",
+  "cycles": [
+    {
+      "cycle": 1,
+      "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1",
+      "metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/run_metadata.json",
+      "uppaal_feedback_included": false,
+      "uppaal_feedback_chars": 1710,
+      "verifyta_probability_delta_threshold": 0.05,
+      "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/dsl/ITER0_20260724_113929.LIRAs",
+      "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/xml/ITER0_20260724_113929.xml",
+      "query_source_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+      "uppaal_feedback_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/uppaal/uppaal_feedback_for_next_cycle.txt",
+      "cycle_result": "failed",
+      "failed_stage": "verifyta_adapted",
+      "failure_type": "execution",
+      "failure_reason": "UPPAAL verifyta failed during adapted-query verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/xml/ITER0_20260724_113929.xml::75: [error] Time-lock error:",
+      "failure_details": {
+        "exit_code": 1,
+        "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/xml/ITER0_20260724_113929.xml::75: [error] Time-lock error:",
+        "stderr_preview": "ded_transport_human_def.s3_idle user_guided_transport_robot_def.A2_a3_follow_busy ) human_stat=1 robot_stat=0 location_X[0]=100 location_X[1]=4400 location_X[2]=100 location_Y[0]=200 location_Y[1]=765 location_Y[2]=200 resources_X[0]=100 resources_Y[0]=200 humanFatigue[0]=0 humanPositionX[0]=4400 humanPositionY[0]=735 batteryCharge[0]=100 robPositionX[0]=4361 robPositionY[0]=447 human_loc_target[0]=1 robot_loc_target[0]=0 human_to_be_followed[0]=1 robot_to_be_followed[0]=0 f_loc_target[0]=1 robot_res_to_pick[0]=0 robot_inventory[0][0]=1 old_inventory[0][0]=0 robot_res_to_deposit[0]=0 currP=1 hi_1.id=1 hi_1.FW_max=100 hi_1.Fp=0 hi_1.lambda=0 hi_1.mi=0 hi_1.obey=100 hi_1.disobey=0 hi_1.freeWillTh=101 hi_1.fw=97 hi_1.TE=0 hi_1.lambda_crit=0 hi_1.hs=0 hi_1.crit=0 hi_1.non_crit=100 hi_1.FS=100 hi_1.ONCE_FTG=1 hi_1.ONCE_POS=1 hi_1.is_crit=0 hi_1.ignore_crit=0 hi_1.collisions=0 hi_1.e_obey=100 hi_1.e_disobey=0 hi_1.e_FW_th=101 hi_1.e_delta_x100=9999 hi_1.e_lambda_inv=9999 hi_1.e_crit=0 hm_1.id=1 hm_1._v=26 hm_1.FW_max=100 hm_1.Fp=0 hm_1.lambda=0 hm_1.mi=0 hm_1.obey=100 hm_1.disobey=0 hm_1.freeWillTh=101 hm_1.fw=58 hm_1.TE=0 hm_1.lambda_crit=0 hm_1.hs=0 hm_1.crit=0 hm_1.non_crit=100 hm_1.FS=100 hm_1.ONCE_FTG=1 hm_1.ONCE_POS=1 hm_1.traj[0][0]=1452 hm_1.traj[0][1]=163 hm_1.traj[1][0]=3062 hm_1.traj[1][1]=163 hm_1.traj[2][0]=4417 hm_1.traj[2][1]=163 hm_1.traj[3][0]=4400 hm_1.traj[3][1]=765 hm_1.traj[4][0]=0 hm_1.traj[4][1]=0 hm_1.traj[5][0]=0 hm_1.traj[5][1]=0 hm_1.traj[6][0]=0 hm_1.traj[6][1]=0 hm_1.traj[7][0]=0 hm_1.traj[7][1]=0 hm_1.traj[8][0]=0 hm_1.traj[8][1]=0 hm_1.traj[9][0]=0 hm_1.traj[9][1]=0 hm_1.ort=91 hm_1.curr_traj=3 hm_1.curr[0]=4417 hm_1.curr[1]=163 hm_1.dest[0]=4400 hm_1.dest[1]=765 hm_1.is_crit=0 hm_1.ignore_crit=0 hm_1.crit_prob=0 hm_1.e_obey=100 hm_1.e_disobey=0 hm_1.e_FW_th=101 hm_1.e_delta_x100=9999 hm_1.e_lambda_inv=9999 hm_1.e_crit=0 rm_1.id=1 rm_1._v_max=26 rm_1._a_max=26 rm_1.turn_limit=1 rm_1.traj[0][0]=100 rm_1.traj[0][1]=200 rm_1.traj[1][0]=0 rm_1.traj[1][1]=0 rm_1.traj[2][0]=0 rm_1.traj[2][1]=0 rm_1.traj[3][0]=0 rm_1.traj[3][1]=0 rm_1.traj[4][0]=0 rm_1.traj[4][1]=0 rm_1.traj[5][0]=0 rm_1.traj[5][1]=0 rm_1.traj[6][0]=0 rm_1.traj[6][1]=0 rm_1.traj[7][0]=0 rm_1.traj[7][1]=0 rm_1.traj[8][0]=0 rm_1.traj[8][1]=0 rm_1.traj[9][0]=0 rm_1.traj[9][1]=0 rm_1.ort=78 rm_1.curr_traj=0 rm_1.t=0 rm_1.v_max=26 rm_1.a_max=26 rm_1.needsTurning=1 rm_1.curr[0]=92 rm_1.curr[1]=163 rm_1.dest[0]=100 rm_1.dest[1]=200 rf_1.id=1 rf_1._v_max=26 rf_1._a_max=26 rf_1.turn_limit=1 rf_1.traj[0][0]=4400 rf_1.traj[0][1]=735 rf_1.traj[1][0]=0 rf_1.traj[1][1]=0 rf_1.traj[2][0]=0 rf_1.traj[2][1]=0 rf_1.traj[3][0]=0 rf_1.traj[3][1]=0 rf_1.traj[4][0]=0 rf_1.traj[4][1]=0 rf_1.traj[5][0]=0 rf_1.traj[5][1]=0 rf_1.traj[6][0]=0 rf_1.traj[6][1]=0 rf_1.traj[7][0]=0 rf_1.traj[7][1]=0 rf_1.traj[8][0]=0 rf_1.traj[8][1]=0 rf_1.traj[9][0]=0 rf_1.traj[9][1]=0 rf_1.ort=82 rf_1.curr_traj=0 rf_1.t=1 rf_1.v_max=26 rf_1.a_max=26 rf_1.needsTurning=1 rf_1.curr[0]=4361 rf_1.curr[1]=447 rf_1.dest[0]=4400 rf_1.dest[1]=735 rp_1.id=1 rd_1.id=1 user_guided_transport.p=1 user_guided_transport_human_def.p=1 user_guided_transport_human_def.H=1 user_guided_transport_robot_def.p=1 user_guided_transport_robot_def.R=1#t(0)=0#time=388.716585701552446607820456848 global_clock=388.716585701552446607820456848 hi_1.t=1 hi_1.F=0.181943369787682884819446371694 hi_1.tUpd=200.716585701552219234145013615 hi_1.tExp=1 hm_1.t=386.716585701552446607820456848 hm_1.F=201.899452966801874254088033922 hm_1.tUpd=201.716585701552219234145013615 hm_1.tExp=386.716585701552446607820456848 rm_1.V=0 rm_1.Th=386.716585701552446607820456848 rm_1.tUpd=0 rf_1.V=26 rf_1.Th=1.43617452879459017722751923429 rf_1.tUpd=1.43617452879459017722751923429 rp_1.t=386.716585701552446607820456848 rd_1.t=388.716585701552446607820456848 user_guided_transport.end_c=388.716585701552446607820456848 user_guided_transport_human_def.t=201.716585701552219234145013615 user_guided_transport_robot_def.t=388.716585701552446607820456848\n.",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/uppaal/verifyta_adapted.stderr.txt",
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/uppaal/verifyta_adapted.stdout.txt"
+      },
+      "stages": [
+        {
+          "stage": "dsl_generation",
+          "result": "ok",
+          "details": {
+            "iterations_recorded": 1,
+            "validations_attempted": 1,
+            "compiler_failures": 0,
+            "compiler_successes": 1,
+            "setup_errors": 0,
+            "first_success_iteration": 0,
+            "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/dsl/ITER0_20260724_113929.LIRAs",
+            "total_compiler_feedback_chars": 0,
+            "llm_calls": 1,
+            "prompt_tokens_total": 2809,
+            "completion_tokens_total": 68,
+            "total_tokens_total": 2877,
+            "token_usage_available_calls": 1
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/dsl/ITER0_20260724_113929.LIRAs",
+            "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/llm_prompts.jsonl",
+            "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/llm_responses.jsonl"
+          }
+        },
+        {
+          "stage": "xml_export",
+          "result": "ok",
+          "details": {
+            "exit_code": 0
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/dsl/ITER0_20260724_113929.LIRAs",
+            "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/xml/ITER0_20260724_113929.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/xml/lira_cli.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/xml/lira_cli.stderr.txt"
+          }
+        },
+        {
+          "stage": "verifyta_internal",
+          "result": "ok",
+          "execution_result": "ok",
+          "semantic_result": "ok",
+          "details": {
+            "command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/xml/ITER0_20260724_113929.xml",
+            "exit_code": 0,
+            "verified_formula_count": 15,
+            "failed_query_count": 0,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 0
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/xml/ITER0_20260724_113929.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/uppaal/verifyta_internal.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/uppaal/verifyta_internal.stderr.txt"
+          }
+        },
+        {
+          "stage": "query_adaptation",
+          "result": "ok",
+          "artifacts": {
+            "source_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+            "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/queries/adapted.q",
+            "source_queries_copy_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/queries/source_queries.txt",
+            "query_adapter_response_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/queries/query_adapter_response.txt",
+            "query_adapter_attempts_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/queries/query_adapter_attempts.jsonl",
+            "query_xml_context_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/queries/xml_context.txt",
+            "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/queries"
+          }
+        },
+        {
+          "stage": "verifyta_adapted",
+          "result": "failed",
+          "execution_result": "failed",
+          "semantic_result": "not_evaluated",
+          "failure_type": "execution",
+          "failure_reason": "UPPAAL verifyta failed during adapted-query verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/xml/ITER0_20260724_113929.xml::75: [error] Time-lock error:",
+          "failure_details": {
+            "exit_code": 1,
+            "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/xml/ITER0_20260724_113929.xml::75: [error] Time-lock error:",
+            "stderr_preview": "ded_transport_human_def.s3_idle user_guided_transport_robot_def.A2_a3_follow_busy ) human_stat=1 robot_stat=0 location_X[0]=100 location_X[1]=4400 location_X[2]=100 location_Y[0]=200 location_Y[1]=765 location_Y[2]=200 resources_X[0]=100 resources_Y[0]=200 humanFatigue[0]=0 humanPositionX[0]=4400 humanPositionY[0]=735 batteryCharge[0]=100 robPositionX[0]=4361 robPositionY[0]=447 human_loc_target[0]=1 robot_loc_target[0]=0 human_to_be_followed[0]=1 robot_to_be_followed[0]=0 f_loc_target[0]=1 robot_res_to_pick[0]=0 robot_inventory[0][0]=1 old_inventory[0][0]=0 robot_res_to_deposit[0]=0 currP=1 hi_1.id=1 hi_1.FW_max=100 hi_1.Fp=0 hi_1.lambda=0 hi_1.mi=0 hi_1.obey=100 hi_1.disobey=0 hi_1.freeWillTh=101 hi_1.fw=97 hi_1.TE=0 hi_1.lambda_crit=0 hi_1.hs=0 hi_1.crit=0 hi_1.non_crit=100 hi_1.FS=100 hi_1.ONCE_FTG=1 hi_1.ONCE_POS=1 hi_1.is_crit=0 hi_1.ignore_crit=0 hi_1.collisions=0 hi_1.e_obey=100 hi_1.e_disobey=0 hi_1.e_FW_th=101 hi_1.e_delta_x100=9999 hi_1.e_lambda_inv=9999 hi_1.e_crit=0 hm_1.id=1 hm_1._v=26 hm_1.FW_max=100 hm_1.Fp=0 hm_1.lambda=0 hm_1.mi=0 hm_1.obey=100 hm_1.disobey=0 hm_1.freeWillTh=101 hm_1.fw=58 hm_1.TE=0 hm_1.lambda_crit=0 hm_1.hs=0 hm_1.crit=0 hm_1.non_crit=100 hm_1.FS=100 hm_1.ONCE_FTG=1 hm_1.ONCE_POS=1 hm_1.traj[0][0]=1452 hm_1.traj[0][1]=163 hm_1.traj[1][0]=3062 hm_1.traj[1][1]=163 hm_1.traj[2][0]=4417 hm_1.traj[2][1]=163 hm_1.traj[3][0]=4400 hm_1.traj[3][1]=765 hm_1.traj[4][0]=0 hm_1.traj[4][1]=0 hm_1.traj[5][0]=0 hm_1.traj[5][1]=0 hm_1.traj[6][0]=0 hm_1.traj[6][1]=0 hm_1.traj[7][0]=0 hm_1.traj[7][1]=0 hm_1.traj[8][0]=0 hm_1.traj[8][1]=0 hm_1.traj[9][0]=0 hm_1.traj[9][1]=0 hm_1.ort=91 hm_1.curr_traj=3 hm_1.curr[0]=4417 hm_1.curr[1]=163 hm_1.dest[0]=4400 hm_1.dest[1]=765 hm_1.is_crit=0 hm_1.ignore_crit=0 hm_1.crit_prob=0 hm_1.e_obey=100 hm_1.e_disobey=0 hm_1.e_FW_th=101 hm_1.e_delta_x100=9999 hm_1.e_lambda_inv=9999 hm_1.e_crit=0 rm_1.id=1 rm_1._v_max=26 rm_1._a_max=26 rm_1.turn_limit=1 rm_1.traj[0][0]=100 rm_1.traj[0][1]=200 rm_1.traj[1][0]=0 rm_1.traj[1][1]=0 rm_1.traj[2][0]=0 rm_1.traj[2][1]=0 rm_1.traj[3][0]=0 rm_1.traj[3][1]=0 rm_1.traj[4][0]=0 rm_1.traj[4][1]=0 rm_1.traj[5][0]=0 rm_1.traj[5][1]=0 rm_1.traj[6][0]=0 rm_1.traj[6][1]=0 rm_1.traj[7][0]=0 rm_1.traj[7][1]=0 rm_1.traj[8][0]=0 rm_1.traj[8][1]=0 rm_1.traj[9][0]=0 rm_1.traj[9][1]=0 rm_1.ort=78 rm_1.curr_traj=0 rm_1.t=0 rm_1.v_max=26 rm_1.a_max=26 rm_1.needsTurning=1 rm_1.curr[0]=92 rm_1.curr[1]=163 rm_1.dest[0]=100 rm_1.dest[1]=200 rf_1.id=1 rf_1._v_max=26 rf_1._a_max=26 rf_1.turn_limit=1 rf_1.traj[0][0]=4400 rf_1.traj[0][1]=735 rf_1.traj[1][0]=0 rf_1.traj[1][1]=0 rf_1.traj[2][0]=0 rf_1.traj[2][1]=0 rf_1.traj[3][0]=0 rf_1.traj[3][1]=0 rf_1.traj[4][0]=0 rf_1.traj[4][1]=0 rf_1.traj[5][0]=0 rf_1.traj[5][1]=0 rf_1.traj[6][0]=0 rf_1.traj[6][1]=0 rf_1.traj[7][0]=0 rf_1.traj[7][1]=0 rf_1.traj[8][0]=0 rf_1.traj[8][1]=0 rf_1.traj[9][0]=0 rf_1.traj[9][1]=0 rf_1.ort=82 rf_1.curr_traj=0 rf_1.t=1 rf_1.v_max=26 rf_1.a_max=26 rf_1.needsTurning=1 rf_1.curr[0]=4361 rf_1.curr[1]=447 rf_1.dest[0]=4400 rf_1.dest[1]=735 rp_1.id=1 rd_1.id=1 user_guided_transport.p=1 user_guided_transport_human_def.p=1 user_guided_transport_human_def.H=1 user_guided_transport_robot_def.p=1 user_guided_transport_robot_def.R=1#t(0)=0#time=388.716585701552446607820456848 global_clock=388.716585701552446607820456848 hi_1.t=1 hi_1.F=0.181943369787682884819446371694 hi_1.tUpd=200.716585701552219234145013615 hi_1.tExp=1 hm_1.t=386.716585701552446607820456848 hm_1.F=201.899452966801874254088033922 hm_1.tUpd=201.716585701552219234145013615 hm_1.tExp=386.716585701552446607820456848 rm_1.V=0 rm_1.Th=386.716585701552446607820456848 rm_1.tUpd=0 rf_1.V=26 rf_1.Th=1.43617452879459017722751923429 rf_1.tUpd=1.43617452879459017722751923429 rp_1.t=386.716585701552446607820456848 rd_1.t=388.716585701552446607820456848 user_guided_transport.end_c=388.716585701552446607820456848 user_guided_transport_human_def.t=201.716585701552219234145013615 user_guided_transport_robot_def.t=388.716585701552446607820456848\n.",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/uppaal/verifyta_adapted.stderr.txt",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/uppaal/verifyta_adapted.stdout.txt"
+          },
+          "details": {
+            "verified_formula_count": 25,
+            "failed_query_count": 1,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 24
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/xml/ITER0_20260724_113929.xml",
+            "query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/queries/adapted.q",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/uppaal/verifyta_adapted.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/uppaal/verifyta_adapted.stderr.txt"
+          }
+        }
+      ],
+      "exit_code": 1,
+      "continue_feedback_loop": true,
+      "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo1/queries/adapted.q"
+    },
+    {
+      "cycle": 2,
+      "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2",
+      "metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/run_metadata.json",
+      "uppaal_feedback_included": true,
+      "uppaal_feedback_chars": 1332,
+      "verifyta_probability_delta_threshold": 0.05,
+      "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/dsl/ITER0_20260724_114111.LIRAs",
+      "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/xml/ITER0_20260724_114111.xml",
+      "query_source_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+      "uppaal_feedback_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/uppaal/uppaal_feedback_for_next_cycle.txt",
+      "cycle_result": "failed",
+      "failed_stage": "verifyta_adapted",
+      "failure_type": "semantic",
+      "failure_reason": "adapted-query UPPAAL verification completed, but 1 property/query was not satisfied.",
+      "failure_details": {
+        "failed_query_count": 1,
+        "failure_kinds": {
+          "probability_delta": 1
+        },
+        "failed_queries": [
+          {
+            "index": 9,
+            "query_line": 26,
+            "description": "The robot must successfully grasp exactly one object in the bedroom.",
+            "source_formula": "Pr[<=700](<> (pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) && robot_inventory[0][0] == 1)",
+            "adapted_formula": "Pr[<=700](<> (pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) && robot_inventory[0][0] == 1)",
+            "expected_probability": 0.975028,
+            "obtained_probability": 0.02497205,
+            "probability_interval_lower": 0.0,
+            "probability_interval_upper": 0.0499441,
+            "failure_kind": "probability_delta",
+            "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+            "probability_delta": 0.95005595,
+            "probability_threshold": 0.05,
+            "verifyta_output": "Verifying formula 9 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/queries/adapted.q:26"
+          }
+        ]
+      },
+      "stages": [
+        {
+          "stage": "dsl_generation",
+          "result": "ok",
+          "details": {
+            "iterations_recorded": 1,
+            "validations_attempted": 1,
+            "compiler_failures": 0,
+            "compiler_successes": 1,
+            "setup_errors": 0,
+            "first_success_iteration": 0,
+            "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/dsl/ITER0_20260724_114111.LIRAs",
+            "total_compiler_feedback_chars": 0,
+            "llm_calls": 1,
+            "prompt_tokens_total": 3544,
+            "completion_tokens_total": 77,
+            "total_tokens_total": 3621,
+            "token_usage_available_calls": 1
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/dsl/ITER0_20260724_114111.LIRAs",
+            "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/llm_prompts.jsonl",
+            "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/llm_responses.jsonl"
+          }
+        },
+        {
+          "stage": "xml_export",
+          "result": "ok",
+          "details": {
+            "exit_code": 0
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/dsl/ITER0_20260724_114111.LIRAs",
+            "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/xml/ITER0_20260724_114111.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/xml/lira_cli.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/xml/lira_cli.stderr.txt"
+          }
+        },
+        {
+          "stage": "verifyta_internal",
+          "result": "ok",
+          "execution_result": "ok",
+          "semantic_result": "ok",
+          "details": {
+            "command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/xml/ITER0_20260724_114111.xml",
+            "exit_code": 0,
+            "verified_formula_count": 15,
+            "failed_query_count": 0,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 0
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/xml/ITER0_20260724_114111.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/uppaal/verifyta_internal.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/uppaal/verifyta_internal.stderr.txt"
+          }
+        },
+        {
+          "stage": "query_adaptation",
+          "result": "ok",
+          "artifacts": {
+            "source_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+            "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/queries/adapted.q",
+            "source_queries_copy_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/queries/source_queries.txt",
+            "query_adapter_response_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/queries/query_adapter_response.txt",
+            "query_adapter_attempts_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/queries/query_adapter_attempts.jsonl",
+            "query_xml_context_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/queries/xml_context.txt",
+            "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/queries"
+          }
+        },
+        {
+          "stage": "verifyta_adapted",
+          "result": "failed",
+          "execution_result": "ok",
+          "semantic_result": "failed",
+          "failure_type": "semantic",
+          "failure_reason": "adapted-query UPPAAL verification completed, but 1 property/query was not satisfied.",
+          "failure_details": {
+            "failed_query_count": 1,
+            "failure_kinds": {
+              "probability_delta": 1
+            },
+            "failed_queries": [
+              {
+                "index": 9,
+                "query_line": 26,
+                "description": "The robot must successfully grasp exactly one object in the bedroom.",
+                "source_formula": "Pr[<=700](<> (pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) && robot_inventory[0][0] == 1)",
+                "adapted_formula": "Pr[<=700](<> (pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) && robot_inventory[0][0] == 1)",
+                "expected_probability": 0.975028,
+                "obtained_probability": 0.02497205,
+                "probability_interval_lower": 0.0,
+                "probability_interval_upper": 0.0499441,
+                "failure_kind": "probability_delta",
+                "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+                "probability_delta": 0.95005595,
+                "probability_threshold": 0.05,
+                "verifyta_output": "Verifying formula 9 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/queries/adapted.q:26"
+              }
+            ]
+          },
+          "details": {
+            "command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/xml/ITER0_20260724_114111.xml /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/queries/adapted.q",
+            "exit_code": 0,
+            "verified_formula_count": 25,
+            "failed_query_count": 1,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 25
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/xml/ITER0_20260724_114111.xml",
+            "query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/queries/adapted.q",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/uppaal/verifyta_adapted.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/uppaal/verifyta_adapted.stderr.txt"
+          }
+        }
+      ],
+      "exit_code": 1,
+      "continue_feedback_loop": true,
+      "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo2/queries/adapted.q"
+    },
+    {
+      "cycle": 3,
+      "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3",
+      "metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/run_metadata.json",
+      "uppaal_feedback_included": true,
+      "uppaal_feedback_chars": 1930,
+      "verifyta_probability_delta_threshold": 0.05,
+      "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/dsl/ITER0_20260724_114258.LIRAs",
+      "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/xml/ITER0_20260724_114258.xml",
+      "query_source_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+      "uppaal_feedback_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/uppaal/uppaal_feedback_for_next_cycle.txt",
+      "cycle_result": "failed",
+      "failed_stage": "verifyta_adapted",
+      "failure_type": "execution",
+      "failure_reason": "UPPAAL verifyta failed during adapted-query verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/xml/ITER0_20260724_114258.xml::75: [error] Time-lock error:",
+      "failure_details": {
+        "exit_code": 1,
+        "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/xml/ITER0_20260724_114258.xml::75: [error] Time-lock error:",
+        "stderr_preview": "uided_transport_human_def.s3_idle user_guided_transport_robot_def.A2_a3_follow_busy ) human_stat=1 robot_stat=0 location_X[0]=100 location_X[1]=4400 location_X[2]=100 location_Y[0]=200 location_Y[1]=765 location_Y[2]=200 resources_X[0]=100 resources_Y[0]=200 humanFatigue[0]=0 humanPositionX[0]=4400 humanPositionY[0]=735 batteryCharge[0]=100 robPositionX[0]=4379 robPositionY[0]=576 human_loc_target[0]=1 robot_loc_target[0]=0 human_to_be_followed[0]=1 robot_to_be_followed[0]=0 f_loc_target[0]=1 robot_res_to_pick[0]=0 robot_inventory[0][0]=1 old_inventory[0][0]=0 robot_res_to_deposit[0]=0 currP=1 hi_1.id=1 hi_1.FW_max=100 hi_1.Fp=0 hi_1.lambda=0 hi_1.mi=0 hi_1.obey=100 hi_1.disobey=0 hi_1.freeWillTh=101 hi_1.fw=53 hi_1.TE=0 hi_1.lambda_crit=0 hi_1.hs=0 hi_1.crit=0 hi_1.non_crit=100 hi_1.FS=100 hi_1.ONCE_FTG=1 hi_1.ONCE_POS=1 hi_1.is_crit=0 hi_1.ignore_crit=0 hi_1.collisions=0 hi_1.e_obey=100 hi_1.e_disobey=0 hi_1.e_FW_th=101 hi_1.e_delta_x100=9999 hi_1.e_lambda_inv=9999 hi_1.e_crit=0 hm_1.id=1 hm_1._v=26 hm_1.FW_max=100 hm_1.Fp=0 hm_1.lambda=0 hm_1.mi=0 hm_1.obey=100 hm_1.disobey=0 hm_1.freeWillTh=101 hm_1.fw=68 hm_1.TE=0 hm_1.lambda_crit=0 hm_1.hs=0 hm_1.crit=0 hm_1.non_crit=100 hm_1.FS=100 hm_1.ONCE_FTG=1 hm_1.ONCE_POS=1 hm_1.traj[0][0]=1452 hm_1.traj[0][1]=163 hm_1.traj[1][0]=3062 hm_1.traj[1][1]=163 hm_1.traj[2][0]=4417 hm_1.traj[2][1]=163 hm_1.traj[3][0]=4400 hm_1.traj[3][1]=765 hm_1.traj[4][0]=0 hm_1.traj[4][1]=0 hm_1.traj[5][0]=0 hm_1.traj[5][1]=0 hm_1.traj[6][0]=0 hm_1.traj[6][1]=0 hm_1.traj[7][0]=0 hm_1.traj[7][1]=0 hm_1.traj[8][0]=0 hm_1.traj[8][1]=0 hm_1.traj[9][0]=0 hm_1.traj[9][1]=0 hm_1.ort=91 hm_1.curr_traj=3 hm_1.curr[0]=4417 hm_1.curr[1]=163 hm_1.dest[0]=4400 hm_1.dest[1]=765 hm_1.is_crit=0 hm_1.ignore_crit=0 hm_1.crit_prob=0 hm_1.e_obey=100 hm_1.e_disobey=0 hm_1.e_FW_th=101 hm_1.e_delta_x100=9999 hm_1.e_lambda_inv=9999 hm_1.e_crit=0 rm_1.id=1 rm_1._v_max=26 rm_1._a_max=26 rm_1.turn_limit=1 rm_1.traj[0][0]=100 rm_1.traj[0][1]=200 rm_1.traj[1][0]=0 rm_1.traj[1][1]=0 rm_1.traj[2][0]=0 rm_1.traj[2][1]=0 rm_1.traj[3][0]=0 rm_1.traj[3][1]=0 rm_1.traj[4][0]=0 rm_1.traj[4][1]=0 rm_1.traj[5][0]=0 rm_1.traj[5][1]=0 rm_1.traj[6][0]=0 rm_1.traj[6][1]=0 rm_1.traj[7][0]=0 rm_1.traj[7][1]=0 rm_1.traj[8][0]=0 rm_1.traj[8][1]=0 rm_1.traj[9][0]=0 rm_1.traj[9][1]=0 rm_1.ort=78 rm_1.curr_traj=0 rm_1.t=0 rm_1.v_max=26 rm_1.a_max=26 rm_1.needsTurning=1 rm_1.curr[0]=92 rm_1.curr[1]=163 rm_1.dest[0]=100 rm_1.dest[1]=200 rf_1.id=1 rf_1._v_max=26 rf_1._a_max=26 rf_1.turn_limit=1 rf_1.traj[0][0]=4400 rf_1.traj[0][1]=735 rf_1.traj[1][0]=0 rf_1.traj[1][1]=0 rf_1.traj[2][0]=0 rf_1.traj[2][1]=0 rf_1.traj[3][0]=0 rf_1.traj[3][1]=0 rf_1.traj[4][0]=0 rf_1.traj[4][1]=0 rf_1.traj[5][0]=0 rf_1.traj[5][1]=0 rf_1.traj[6][0]=0 rf_1.traj[6][1]=0 rf_1.traj[7][0]=0 rf_1.traj[7][1]=0 rf_1.traj[8][0]=0 rf_1.traj[8][1]=0 rf_1.traj[9][0]=0 rf_1.traj[9][1]=0 rf_1.ort=82 rf_1.curr_traj=0 rf_1.t=1 rf_1.v_max=26 rf_1.a_max=26 rf_1.needsTurning=1 rf_1.curr[0]=4379 rf_1.curr[1]=576 rf_1.dest[0]=4400 rf_1.dest[1]=735 rp_1.id=1 rd_1.id=1 user_guided_transport.p=1 user_guided_transport_human_def.p=1 user_guided_transport_human_def.H=1 user_guided_transport_robot_def.p=1 user_guided_transport_robot_def.R=1#t(0)=0#time=400.897458345525592449121177197 global_clock=400.897458345525592449121177197 hi_1.t=1 hi_1.F=0.110924168206114504009462962131 hi_1.tUpd=212.897458345525080858351429924 hi_1.tExp=1 hm_1.t=398.897458345525535605702316388 hm_1.F=214.008947877308884244484943338 hm_1.tUpd=213.89745834552505243664199952 hm_1.tExp=398.897458345525535605702316388 rm_1.V=0 rm_1.Th=398.897458345525535605702316388 rm_1.tUpd=0 rf_1.V=26 rf_1.Th=1.43617452879459639447645713517 rf_1.tUpd=1.43617452879459639447645713517 rp_1.t=398.897458345525535605702316388 rd_1.t=400.897458345525592449121177197 user_guided_transport.end_c=400.897458345525592449121177197 user_guided_transport_human_def.t=213.89745834552505243664199952 user_guided_transport_robot_def.t=400.897458345525592449121177197\n.",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/uppaal/verifyta_adapted.stderr.txt",
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/uppaal/verifyta_adapted.stdout.txt"
+      },
+      "stages": [
+        {
+          "stage": "dsl_generation",
+          "result": "ok",
+          "details": {
+            "iterations_recorded": 1,
+            "validations_attempted": 1,
+            "compiler_failures": 0,
+            "compiler_successes": 1,
+            "setup_errors": 0,
+            "first_success_iteration": 0,
+            "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/dsl/ITER0_20260724_114258.LIRAs",
+            "total_compiler_feedback_chars": 0,
+            "llm_calls": 1,
+            "prompt_tokens_total": 3319,
+            "completion_tokens_total": 68,
+            "total_tokens_total": 3387,
+            "token_usage_available_calls": 1
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/dsl/ITER0_20260724_114258.LIRAs",
+            "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/llm_prompts.jsonl",
+            "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/llm_responses.jsonl"
+          }
+        },
+        {
+          "stage": "xml_export",
+          "result": "ok",
+          "details": {
+            "exit_code": 0
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/dsl/ITER0_20260724_114258.LIRAs",
+            "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/xml/ITER0_20260724_114258.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/xml/lira_cli.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/xml/lira_cli.stderr.txt"
+          }
+        },
+        {
+          "stage": "verifyta_internal",
+          "result": "ok",
+          "execution_result": "ok",
+          "semantic_result": "ok",
+          "details": {
+            "command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/xml/ITER0_20260724_114258.xml",
+            "exit_code": 0,
+            "verified_formula_count": 15,
+            "failed_query_count": 0,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 0
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/xml/ITER0_20260724_114258.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/uppaal/verifyta_internal.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/uppaal/verifyta_internal.stderr.txt"
+          }
+        },
+        {
+          "stage": "query_adaptation",
+          "result": "ok",
+          "artifacts": {
+            "source_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+            "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/queries/adapted.q",
+            "source_queries_copy_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/queries/source_queries.txt",
+            "query_adapter_response_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/queries/query_adapter_response.txt",
+            "query_adapter_attempts_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/queries/query_adapter_attempts.jsonl",
+            "query_xml_context_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/queries/xml_context.txt",
+            "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/queries"
+          }
+        },
+        {
+          "stage": "verifyta_adapted",
+          "result": "failed",
+          "execution_result": "failed",
+          "semantic_result": "not_evaluated",
+          "failure_type": "execution",
+          "failure_reason": "UPPAAL verifyta failed during adapted-query verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/xml/ITER0_20260724_114258.xml::75: [error] Time-lock error:",
+          "failure_details": {
+            "exit_code": 1,
+            "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/xml/ITER0_20260724_114258.xml::75: [error] Time-lock error:",
+            "stderr_preview": "uided_transport_human_def.s3_idle user_guided_transport_robot_def.A2_a3_follow_busy ) human_stat=1 robot_stat=0 location_X[0]=100 location_X[1]=4400 location_X[2]=100 location_Y[0]=200 location_Y[1]=765 location_Y[2]=200 resources_X[0]=100 resources_Y[0]=200 humanFatigue[0]=0 humanPositionX[0]=4400 humanPositionY[0]=735 batteryCharge[0]=100 robPositionX[0]=4379 robPositionY[0]=576 human_loc_target[0]=1 robot_loc_target[0]=0 human_to_be_followed[0]=1 robot_to_be_followed[0]=0 f_loc_target[0]=1 robot_res_to_pick[0]=0 robot_inventory[0][0]=1 old_inventory[0][0]=0 robot_res_to_deposit[0]=0 currP=1 hi_1.id=1 hi_1.FW_max=100 hi_1.Fp=0 hi_1.lambda=0 hi_1.mi=0 hi_1.obey=100 hi_1.disobey=0 hi_1.freeWillTh=101 hi_1.fw=53 hi_1.TE=0 hi_1.lambda_crit=0 hi_1.hs=0 hi_1.crit=0 hi_1.non_crit=100 hi_1.FS=100 hi_1.ONCE_FTG=1 hi_1.ONCE_POS=1 hi_1.is_crit=0 hi_1.ignore_crit=0 hi_1.collisions=0 hi_1.e_obey=100 hi_1.e_disobey=0 hi_1.e_FW_th=101 hi_1.e_delta_x100=9999 hi_1.e_lambda_inv=9999 hi_1.e_crit=0 hm_1.id=1 hm_1._v=26 hm_1.FW_max=100 hm_1.Fp=0 hm_1.lambda=0 hm_1.mi=0 hm_1.obey=100 hm_1.disobey=0 hm_1.freeWillTh=101 hm_1.fw=68 hm_1.TE=0 hm_1.lambda_crit=0 hm_1.hs=0 hm_1.crit=0 hm_1.non_crit=100 hm_1.FS=100 hm_1.ONCE_FTG=1 hm_1.ONCE_POS=1 hm_1.traj[0][0]=1452 hm_1.traj[0][1]=163 hm_1.traj[1][0]=3062 hm_1.traj[1][1]=163 hm_1.traj[2][0]=4417 hm_1.traj[2][1]=163 hm_1.traj[3][0]=4400 hm_1.traj[3][1]=765 hm_1.traj[4][0]=0 hm_1.traj[4][1]=0 hm_1.traj[5][0]=0 hm_1.traj[5][1]=0 hm_1.traj[6][0]=0 hm_1.traj[6][1]=0 hm_1.traj[7][0]=0 hm_1.traj[7][1]=0 hm_1.traj[8][0]=0 hm_1.traj[8][1]=0 hm_1.traj[9][0]=0 hm_1.traj[9][1]=0 hm_1.ort=91 hm_1.curr_traj=3 hm_1.curr[0]=4417 hm_1.curr[1]=163 hm_1.dest[0]=4400 hm_1.dest[1]=765 hm_1.is_crit=0 hm_1.ignore_crit=0 hm_1.crit_prob=0 hm_1.e_obey=100 hm_1.e_disobey=0 hm_1.e_FW_th=101 hm_1.e_delta_x100=9999 hm_1.e_lambda_inv=9999 hm_1.e_crit=0 rm_1.id=1 rm_1._v_max=26 rm_1._a_max=26 rm_1.turn_limit=1 rm_1.traj[0][0]=100 rm_1.traj[0][1]=200 rm_1.traj[1][0]=0 rm_1.traj[1][1]=0 rm_1.traj[2][0]=0 rm_1.traj[2][1]=0 rm_1.traj[3][0]=0 rm_1.traj[3][1]=0 rm_1.traj[4][0]=0 rm_1.traj[4][1]=0 rm_1.traj[5][0]=0 rm_1.traj[5][1]=0 rm_1.traj[6][0]=0 rm_1.traj[6][1]=0 rm_1.traj[7][0]=0 rm_1.traj[7][1]=0 rm_1.traj[8][0]=0 rm_1.traj[8][1]=0 rm_1.traj[9][0]=0 rm_1.traj[9][1]=0 rm_1.ort=78 rm_1.curr_traj=0 rm_1.t=0 rm_1.v_max=26 rm_1.a_max=26 rm_1.needsTurning=1 rm_1.curr[0]=92 rm_1.curr[1]=163 rm_1.dest[0]=100 rm_1.dest[1]=200 rf_1.id=1 rf_1._v_max=26 rf_1._a_max=26 rf_1.turn_limit=1 rf_1.traj[0][0]=4400 rf_1.traj[0][1]=735 rf_1.traj[1][0]=0 rf_1.traj[1][1]=0 rf_1.traj[2][0]=0 rf_1.traj[2][1]=0 rf_1.traj[3][0]=0 rf_1.traj[3][1]=0 rf_1.traj[4][0]=0 rf_1.traj[4][1]=0 rf_1.traj[5][0]=0 rf_1.traj[5][1]=0 rf_1.traj[6][0]=0 rf_1.traj[6][1]=0 rf_1.traj[7][0]=0 rf_1.traj[7][1]=0 rf_1.traj[8][0]=0 rf_1.traj[8][1]=0 rf_1.traj[9][0]=0 rf_1.traj[9][1]=0 rf_1.ort=82 rf_1.curr_traj=0 rf_1.t=1 rf_1.v_max=26 rf_1.a_max=26 rf_1.needsTurning=1 rf_1.curr[0]=4379 rf_1.curr[1]=576 rf_1.dest[0]=4400 rf_1.dest[1]=735 rp_1.id=1 rd_1.id=1 user_guided_transport.p=1 user_guided_transport_human_def.p=1 user_guided_transport_human_def.H=1 user_guided_transport_robot_def.p=1 user_guided_transport_robot_def.R=1#t(0)=0#time=400.897458345525592449121177197 global_clock=400.897458345525592449121177197 hi_1.t=1 hi_1.F=0.110924168206114504009462962131 hi_1.tUpd=212.897458345525080858351429924 hi_1.tExp=1 hm_1.t=398.897458345525535605702316388 hm_1.F=214.008947877308884244484943338 hm_1.tUpd=213.89745834552505243664199952 hm_1.tExp=398.897458345525535605702316388 rm_1.V=0 rm_1.Th=398.897458345525535605702316388 rm_1.tUpd=0 rf_1.V=26 rf_1.Th=1.43617452879459639447645713517 rf_1.tUpd=1.43617452879459639447645713517 rp_1.t=398.897458345525535605702316388 rd_1.t=400.897458345525592449121177197 user_guided_transport.end_c=400.897458345525592449121177197 user_guided_transport_human_def.t=213.89745834552505243664199952 user_guided_transport_robot_def.t=400.897458345525592449121177197\n.",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/uppaal/verifyta_adapted.stderr.txt",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/uppaal/verifyta_adapted.stdout.txt"
+          },
+          "details": {
+            "verified_formula_count": 25,
+            "failed_query_count": 2,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 23
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/xml/ITER0_20260724_114258.xml",
+            "query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/queries/adapted.q",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/uppaal/verifyta_adapted.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/uppaal/verifyta_adapted.stderr.txt"
+          }
+        }
+      ],
+      "exit_code": 1,
+      "continue_feedback_loop": true,
+      "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo3/queries/adapted.q"
+    },
+    {
+      "cycle": 4,
+      "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4",
+      "metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/run_metadata.json",
+      "uppaal_feedback_included": true,
+      "uppaal_feedback_chars": 1930,
+      "verifyta_probability_delta_threshold": 0.05,
+      "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/dsl/ITER0_20260724_114459.LIRAs",
+      "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/xml/ITER0_20260724_114459.xml",
+      "query_source_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+      "cycle_result": "ok",
+      "failed_stage": null,
+      "failure_type": null,
+      "failure_reason": null,
+      "failure_details": null,
+      "stages": [
+        {
+          "stage": "dsl_generation",
+          "result": "ok",
+          "details": {
+            "iterations_recorded": 1,
+            "validations_attempted": 1,
+            "compiler_failures": 0,
+            "compiler_successes": 1,
+            "setup_errors": 0,
+            "first_success_iteration": 0,
+            "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/dsl/ITER0_20260724_114459.LIRAs",
+            "total_compiler_feedback_chars": 0,
+            "llm_calls": 1,
+            "prompt_tokens_total": 3577,
+            "completion_tokens_total": 68,
+            "total_tokens_total": 3645,
+            "token_usage_available_calls": 1
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/dsl/ITER0_20260724_114459.LIRAs",
+            "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/llm_prompts.jsonl",
+            "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/llm_responses.jsonl"
+          }
+        },
+        {
+          "stage": "xml_export",
+          "result": "ok",
+          "details": {
+            "exit_code": 0
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/dsl/ITER0_20260724_114459.LIRAs",
+            "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/xml/ITER0_20260724_114459.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/xml/lira_cli.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/xml/lira_cli.stderr.txt"
+          }
+        },
+        {
+          "stage": "verifyta_internal",
+          "result": "ok",
+          "execution_result": "ok",
+          "semantic_result": "ok",
+          "details": {
+            "command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/xml/ITER0_20260724_114459.xml",
+            "exit_code": 0,
+            "verified_formula_count": 15,
+            "failed_query_count": 0,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 0
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/xml/ITER0_20260724_114459.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/uppaal/verifyta_internal.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/uppaal/verifyta_internal.stderr.txt"
+          }
+        },
+        {
+          "stage": "query_adaptation",
+          "result": "ok",
+          "artifacts": {
+            "source_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+            "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/queries/adapted.q",
+            "source_queries_copy_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/queries/source_queries.txt",
+            "query_adapter_response_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/queries/query_adapter_response.txt",
+            "query_adapter_attempts_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/queries/query_adapter_attempts.jsonl",
+            "query_xml_context_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/queries/xml_context.txt",
+            "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/queries"
+          }
+        },
+        {
+          "stage": "verifyta_adapted",
+          "result": "ok",
+          "execution_result": "ok",
+          "semantic_result": "ok",
+          "details": {
+            "command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/xml/ITER0_20260724_114459.xml /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/queries/adapted.q",
+            "exit_code": 0,
+            "verified_formula_count": 25,
+            "failed_query_count": 0,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 25
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/xml/ITER0_20260724_114459.xml",
+            "query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/queries/adapted.q",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/uppaal/verifyta_adapted.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/uppaal/verifyta_adapted.stderr.txt"
+          }
+        }
+      ],
+      "exit_code": 0,
+      "continue_feedback_loop": false,
+      "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/queries/adapted.q"
+    }
+  ],
+  "run_finished_at": "2026-07-24T11:47:32.710126",
+  "updated_at": "2026-07-24T11:47:32.710128",
+  "successful_cycle": 4,
+  "last_cycle_run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4",
+  "last_cycle_metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_113925/ciclo4/run_metadata.json"
+}
