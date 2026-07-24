@@ -1,0 +1,10 @@
+Coffee_Delivery
+agents: 
+	robots: Robot1
+	locations: kitchen, bedroom
+	resources: coffee
+Robot1:
+	1: moveTo kitchen until 1+1==2 else stop:
+	1: setTime0 1
+	2: moveTo bedroom until 1+1==2 else stop:
+	1: setTime0 2

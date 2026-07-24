@@ -1,0 +1,47 @@
+Validating: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_210802/ciclo1/dsl/ITER0_20260716_210805.LIRAs
+FAILURE: Validation errors found.
+
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (rsrc:com.google.inject_7.0.0.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[ERROR] Line 8: missing RULE_NL at 'from'
+[ERROR] Line 8: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
+[ERROR] Line 10: missing RULE_NL at 'at'
+[ERROR] Line 10: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
+[ERROR] Line 12: missing RULE_NL at 'from'
+[ERROR] Line 12: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
+[ERROR] Line 14: missing RULE_NL at 'at'
+[ERROR] Line 14: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
+[ERROR] Line 16: missing RULE_NL at 'from'
+[ERROR] Line 16: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
+[ERROR] Line 18: missing RULE_NL at 'at'
+[ERROR] Line 18: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
+[ERROR] Line 21: missing RULE_NL at 'from'
+[ERROR] Line 21: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
+[ERROR] Line 23: missing RULE_NL at 'at'
+[ERROR] Line 23: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
+[ERROR] Line 25: missing RULE_NL at 'from'
+[ERROR] Line 25: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
+[ERROR] Line 27: missing RULE_NL at 'at'
+[ERROR] Line 27: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
+[ERROR] Line 29: missing RULE_NL at 'from'
+[ERROR] Line 29: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
+[ERROR] Line 31: missing RULE_NL at 'at'
+[ERROR] Line 31: rule ruleActionC failed predicate: {getUnorderedGroupHelper().canLeave(grammarAccess.getActionCAccess().getUnorderedGroup_0_2())}?
+[ERROR] Line 8: Resource name must be one of the names specified in the pattern.
+[ERROR] Line 10: Resource name must be one of the names specified in the pattern.
+[ERROR] Line 12: Resource name must be one of the names specified in the pattern.
+[ERROR] Line 14: Resource name must be one of the names specified in the pattern.
+[ERROR] Line 16: Resource name must be one of the names specified in the pattern.
+[ERROR] Line 16: Resource name must be one of the names specified in the pattern.
+[ERROR] Line 18: Resource name must be one of the names specified in the pattern.
+[ERROR] Line 18: Resource name must be one of the names specified in the pattern.
+[ERROR] Line 21: Resource name must be one of the names specified in the pattern.
+[ERROR] Line 23: Resource name must be one of the names specified in the pattern.
+[ERROR] Line 25: Resource name must be one of the names specified in the pattern.
+[ERROR] Line 27: Resource name must be one of the names specified in the pattern.
+[ERROR] Line 29: Resource name must be one of the names specified in the pattern.
+[ERROR] Line 29: Resource name must be one of the names specified in the pattern.
+[ERROR] Line 31: Resource name must be one of the names specified in the pattern.
+[ERROR] Line 31: Resource name must be one of the names specified in the pattern.

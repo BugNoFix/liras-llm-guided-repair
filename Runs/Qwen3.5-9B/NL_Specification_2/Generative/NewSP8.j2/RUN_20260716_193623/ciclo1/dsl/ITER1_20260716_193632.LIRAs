@@ -1,0 +1,16 @@
+user_guided_transport
+agents:
+	humans: Human1
+	robots: Robot1
+	locations: bedroom, kitchen
+	resources: object
+Human1:
+	1: moveTo bedroom
+Robot1:
+	1: moveTo bedroom
+	2: pick object
+	3: moveTo kitchen
+Human2:
+	1: moveTo kitchen if position(Robot1,kitchen) else stop
+Robot3:
+	2: follow Human1

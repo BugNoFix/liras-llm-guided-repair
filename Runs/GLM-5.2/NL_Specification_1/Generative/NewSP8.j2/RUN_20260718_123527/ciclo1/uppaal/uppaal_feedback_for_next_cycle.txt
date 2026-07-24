@@ -1,0 +1,39 @@
+### WHAT TO FIX
+Check the diagnostics below and repair the LIRAs model or generated queries accordingly.
+
+### FAILED QUERIES
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_123527/ciclo1/xml/ITER0_20260718_123528.xml:/nta/declaration:81: [error] Unknown identifier: office002.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_123527/ciclo1/xml/ITER0_20260718_123528.xml:/nta/declaration:82: [error] Unknown identifier: office002.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_123527/ciclo1/xml/ITER0_20260718_123528.xml:/nta/declaration:81: [error] Unknown identifier: office002.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_123527/ciclo1/xml/ITER0_20260718_123528.xml:/nta/declaration:82: [error] Unknown identifier: office002.
+
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_123527/ciclo1/xml/ITER0_20260718_123528.xml:/nta/declaration:81: [error] Unknown identifier: office002.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_123527/ciclo1/xml/ITER0_20260718_123528.xml:/nta/declaration:82: [error] Unknown identifier: office002.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_123527/ciclo1/xml/ITER0_20260718_123528.xml:/nta/declaration:81: [error] Unknown identifier: office002.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_123527/ciclo1/xml/ITER0_20260718_123528.xml:/nta/declaration:82: [error] Unknown identifier: office002.
+
+### VERIFYTA DIAGNOSTICS
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_123527/ciclo1/xml/ITER0_20260718_123528.xml:/nta/declaration:81: [error] Unknown identifier: office002.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_123527/ciclo1/xml/ITER0_20260718_123528.xml:/nta/declaration:82: [error] Unknown identifier: office002.
+### INCORRECT LIRAS CODE
+Coffee_Delivery
+agents:
+	robots: Robot1
+locations: kitchen, office001, office002
+resources: coffee
+Robot1:
+	1: moveTo kitchen
+	2: pick coffee
+	3: moveTo office001
+	4: deposit coffee
+	5: moveTo office002

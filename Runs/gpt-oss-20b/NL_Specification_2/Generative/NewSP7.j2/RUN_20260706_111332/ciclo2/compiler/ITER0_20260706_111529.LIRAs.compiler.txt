@@ -1,7 +1,0 @@
-Validating: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_2/Generative/NewSP7.j2/RUN_20260706_111332/ciclo2/dsl/ITER0_20260706_111529.LIRAs
-SUCCESS: Model is valid.
-
-WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
-WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (rsrc:com.google.inject_7.0.0.jar)
-WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
-WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release

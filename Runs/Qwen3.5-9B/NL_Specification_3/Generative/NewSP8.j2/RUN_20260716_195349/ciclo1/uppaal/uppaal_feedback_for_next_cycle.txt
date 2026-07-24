@@ -1,0 +1,113 @@
+### WHAT TO FIX
+Check the diagnostics below and repair the LIRAs model or generated queries accordingly.
+
+### FAILED QUERIES
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:82: [error] Unknown identifier: diff_start.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:82: [error] Unknown identifier: diff_end.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:82: [error] Unknown identifier: load_area.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:83: [error] Unknown identifier: diff_start.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:83: [error] Unknown identifier: diff_end.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:83: [error] Unknown identifier: load_area.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:82: [error] Unknown identifier: diff_start.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:82: [error] Unknown identifier: diff_end.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER
+...[truncated]
+
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:82: [error] Unknown identifier: diff_start.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:82: [error] Unknown identifier: diff_end.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:82: [error] Unknown identifier: load_area.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:83: [error] Unknown identifier: diff_start.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:83: [error] Unknown identifier: diff_end.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:83: [error] Unknown identifier: load_area.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:82: [error] Unknown identifier: diff_start.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:82: [error] Unknown identifier: diff_end.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER
+...[truncated]
+
+### VERIFYTA DIAGNOSTICS
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:82: [error] Unknown identifier: diff_start.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:82: [error] Unknown identifier: diff_end.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:82: [error] Unknown identifier: load_area.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:83: [error] Unknown identifier: diff_start.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:83: [error] Unknown identifier: diff_end.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP8.j2/RUN_20260716_195349/ciclo1/xml/ITER3_20260716_195501.xml:/nta/declaration:83: [error] Unknown identifier: load_area.
+### INCORRECT LIRAS CODE
+Factory_Pipeline
+agents:
+	robots: Robot1, Robot2
+locations: warehouse, surface_texturization_start, surface_texturization_end, diff_start, diff_end, laser_start, laser_end, load_area
+resources: raw_materials
+Robot1:
+	1:
+		2:
+			pick raw_materials
+		3:
+			moveTo surface_texturization_start
+		4:
+			pick raw_materials
+		5:
+			moveTo surface_texturization_end
+		6:
+			deposit raw_materials
+		7:
+			moveTo diff_start
+		8:
+			pick raw_materials
+		9:
+			moveTo diff_end
+		10:
+			deposit raw_materials
+		11:
+			moveTo laser_start
+		12:
+			pick raw_materials
+		13:
+			moveTo laser_end
+		14:
+			deposit raw_materials
+		15:
+			moveTo load_area
+		16:
+			deposit raw_materials
+Robot2:
+	1:
+		2:
+			pick raw_materials
+		3:
+			moveTo surface_texturization_start
+		4:
+			pick raw_materials
+		5:
+			moveTo surface_texturization_end
+		6:
+			deposit raw_materials
+		7:
+			moveTo diff_start
+		8:
+			pick raw_materials
+		9:
+			moveTo diff_end
+		10:
+			deposit raw_materials
+		11:
+			moveTo laser_start
+		12:
+			pick raw_materials
+		13:
+			moveTo laser_end
+		14:
+			deposit raw_materials
+		15:
+			moveTo load_area
+		16:
+			deposit raw_materials

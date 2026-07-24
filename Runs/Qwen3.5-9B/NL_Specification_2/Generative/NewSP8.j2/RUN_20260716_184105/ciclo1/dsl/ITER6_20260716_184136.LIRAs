@@ -1,0 +1,14 @@
+user_guided_transport
+agents:
+	humans: Alice
+	robots: Robot1
+	locations: bedroom, kitchen
+	resources: object
+1: moveTo bedroom
+2: pick object else stop
+3: moveTo kitchen if position(Robot1,kitchen) else stop
+4: moveTo bedroom if position(Robot1,bedroom) else stop
+5: moveTo kitchen if position(Robot1,kitchen) else stop
+6: moveTo kitchen if position(Robot1,kitchen) else stop
+7: stop
+8: moveTo bedroom

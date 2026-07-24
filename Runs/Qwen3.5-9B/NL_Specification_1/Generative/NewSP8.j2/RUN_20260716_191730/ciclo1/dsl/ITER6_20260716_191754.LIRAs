@@ -1,0 +1,10 @@
+Coffee_Delivery
+agents:
+	robots: Robot1
+	robots: Employee1
+locations: kitchen, bedroom
+resources: coffee
+1: moveTo kitchen
+2: pick coffee
+3: moveTo bedroom
+4: deposit coffee
