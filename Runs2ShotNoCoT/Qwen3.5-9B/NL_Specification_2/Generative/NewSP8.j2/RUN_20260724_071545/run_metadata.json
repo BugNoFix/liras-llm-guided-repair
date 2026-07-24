@@ -1,0 +1,573 @@
+{
+  "run_id": "20260724_071545",
+  "run_started_at": "2026-07-24T07:15:45.749434",
+  "pipeline_runner_version": "v3_structured_stage_metadata",
+  "overall_result": "failed",
+  "failed_stage": "xml_export",
+  "failure_type": "execution",
+  "failure_reason": "LIRAs-to-XML export failed, so UPPAAL verification could not run.",
+  "failure_details": {
+    "step": "lira_cli",
+    "command": "java -jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/dsl/ITER0_20260724_072507.LIRAs /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/xml/ITER0_20260724_072507.xml",
+    "exit_code": 1,
+    "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/xml/lira_cli.stdout.txt",
+    "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/xml/lira_cli.stderr.txt",
+    "stderr_preview": "WARNING: A terminally deprecated method in sun.misc.Unsafe has been called\nWARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar)\nWARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper\nWARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release\nException in thread \"main\" java.lang.NullPointerException: Cannot invoke \"it.polimi.lIRAs.Target.getName()\" because the return value of \"it.polimi.lIRAs.ActionC.getTarget()\" is null\n\tat it.polimi.generator.LIRAsGenerator.getActionUpdate(LIRAsGenerator.java:1687)\n\tat it.polimi.generator.LIRAsGenerator.seqOrch(LIRAsGenerator.java:1410)\n\tat it.polimi.generator.LIRAsGenerator.lambda$doGenerate$0(LIRAsGenerator.java:125)\n\tat org.eclipse.xtext.xbase.lib.IteratorExtensions.forEach(IteratorExtensions.java:446)\n\tat it.polimi.generator.LIRAsGenerator.doGenerate(LIRAsGenerator.java:130)\n\tat it.polimi.Main.main(Main.java:71)"
+  },
+  "generation_provider": "huggingface",
+  "repair_provider": "huggingface",
+  "query_provider": "huggingface",
+  "system_prompt": "Generative/NewSP8.j2",
+  "repair_prompt": "Repair/NewSPR8.j2",
+  "scenario": "NL_Specification_2.txt",
+  "generation_model": "Qwen/Qwen3.5-9B",
+  "repair_model": "Qwen/Qwen3.5-9B",
+  "shots": "leave_one_spec_out",
+  "repair_shots": 2,
+  "max_iterations": 11,
+  "max_uppaal_feedback_cycles": 5,
+  "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545",
+  "cycles": [
+    {
+      "cycle": 1,
+      "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1",
+      "metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/run_metadata.json",
+      "uppaal_feedback_included": false,
+      "uppaal_feedback_chars": 1951,
+      "verifyta_probability_delta_threshold": 0.05,
+      "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/dsl/ITER0_20260724_071547.LIRAs",
+      "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/xml/ITER0_20260724_071547.xml",
+      "query_source_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+      "uppaal_feedback_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/uppaal/uppaal_feedback_for_next_cycle.txt",
+      "cycle_result": "failed",
+      "failed_stage": "verifyta_adapted",
+      "failure_type": "invalid_model_reference",
+      "failure_reason": "UPPAAL verifyta failed during adapted-query verification because a query references a model member that does not exist.",
+      "failure_details": {
+        "exit_code": 1,
+        "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/xml/ITER0_20260724_071547.xml::35: [error] has no member named A1_a2_moveTo_busy.",
+        "stderr_preview": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/xml/ITER0_20260724_071547.xml::35: [error] has no member named A1_a2_moveTo_busy.\n/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/xml/ITER0_20260724_071547.xml::35: [error] Type error.",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/uppaal/verifyta_adapted.stderr.txt",
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/uppaal/verifyta_adapted.stdout.txt"
+      },
+      "stages": [
+        {
+          "stage": "dsl_generation",
+          "result": "ok",
+          "details": {
+            "iterations_recorded": 1,
+            "validations_attempted": 1,
+            "compiler_failures": 0,
+            "compiler_successes": 1,
+            "setup_errors": 0,
+            "first_success_iteration": 0,
+            "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/dsl/ITER0_20260724_071547.LIRAs",
+            "total_compiler_feedback_chars": 0,
+            "llm_calls": 1,
+            "prompt_tokens_total": 2754,
+            "completion_tokens_total": 77,
+            "total_tokens_total": 2831,
+            "token_usage_available_calls": 1
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/dsl/ITER0_20260724_071547.LIRAs",
+            "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/llm_prompts.jsonl",
+            "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/llm_responses.jsonl"
+          }
+        },
+        {
+          "stage": "xml_export",
+          "result": "ok",
+          "details": {
+            "exit_code": 0
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/dsl/ITER0_20260724_071547.LIRAs",
+            "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/xml/ITER0_20260724_071547.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/xml/lira_cli.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/xml/lira_cli.stderr.txt"
+          }
+        },
+        {
+          "stage": "verifyta_internal",
+          "result": "ok",
+          "execution_result": "ok",
+          "semantic_result": "ok",
+          "details": {
+            "command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/xml/ITER0_20260724_071547.xml",
+            "exit_code": 0,
+            "verified_formula_count": 15,
+            "failed_query_count": 0,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 0
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/xml/ITER0_20260724_071547.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/uppaal/verifyta_internal.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/uppaal/verifyta_internal.stderr.txt"
+          }
+        },
+        {
+          "stage": "query_adaptation",
+          "result": "ok",
+          "artifacts": {
+            "source_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+            "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/queries/adapted.q",
+            "source_queries_copy_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/queries/source_queries.txt",
+            "query_adapter_response_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/queries/query_adapter_response.txt",
+            "query_adapter_attempts_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/queries/query_adapter_attempts.jsonl",
+            "query_xml_context_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/queries/xml_context.txt",
+            "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/queries"
+          }
+        },
+        {
+          "stage": "verifyta_adapted",
+          "result": "failed",
+          "execution_result": "failed",
+          "semantic_result": "not_evaluated",
+          "failure_type": "invalid_model_reference",
+          "failure_reason": "UPPAAL verifyta failed during adapted-query verification because a query references a model member that does not exist.",
+          "failure_details": {
+            "exit_code": 1,
+            "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/xml/ITER0_20260724_071547.xml::35: [error] has no member named A1_a2_moveTo_busy.",
+            "stderr_preview": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/xml/ITER0_20260724_071547.xml::35: [error] has no member named A1_a2_moveTo_busy.\n/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/xml/ITER0_20260724_071547.xml::35: [error] Type error.",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/uppaal/verifyta_adapted.stderr.txt",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/uppaal/verifyta_adapted.stdout.txt"
+          },
+          "details": {
+            "verified_formula_count": 0,
+            "failed_query_count": 1,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 0
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/xml/ITER0_20260724_071547.xml",
+            "query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/queries/adapted.q",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/uppaal/verifyta_adapted.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/uppaal/verifyta_adapted.stderr.txt"
+          }
+        }
+      ],
+      "exit_code": 1,
+      "continue_feedback_loop": true,
+      "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo1/queries/adapted.q"
+    },
+    {
+      "cycle": 2,
+      "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2",
+      "metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/run_metadata.json",
+      "uppaal_feedback_included": true,
+      "uppaal_feedback_chars": 2928,
+      "verifyta_probability_delta_threshold": 0.05,
+      "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/dsl/ITER0_20260724_071651.LIRAs",
+      "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/xml/ITER0_20260724_071651.xml",
+      "query_source_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+      "uppaal_feedback_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/uppaal/uppaal_feedback_for_next_cycle.txt",
+      "cycle_result": "failed",
+      "failed_stage": "verifyta_adapted",
+      "failure_type": "semantic",
+      "failure_reason": "adapted-query UPPAAL verification completed, but 3 properties/queries were not satisfied.",
+      "failure_details": {
+        "failed_query_count": 3,
+        "failure_kinds": {
+          "probability_delta": 3
+        },
+        "failed_queries": [
+          {
+            "index": 11,
+            "query_line": 32,
+            "description": "The robot must not drop or release the object before reaching the kitchen.",
+            "source_formula": "Pr[<=700](<> (pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900) && robot_inventory[0][0] == 0)",
+            "adapted_formula": "Pr[<=700](<> (pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900) && robot_inventory[0][0] == 0)",
+            "expected_probability": 0.02497205,
+            "obtained_probability": 0.975028,
+            "probability_interval_lower": 0.950056,
+            "probability_interval_upper": 1.0,
+            "failure_kind": "probability_delta",
+            "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+            "probability_delta": 0.95005595,
+            "probability_threshold": 0.05,
+            "verifyta_output": "Verifying formula 11 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries/adapted.q:32"
+          },
+          {
+            "index": 13,
+            "query_line": 38,
+            "description": "The robot shall follow the human to the kitchen while carrying the object.",
+            "source_formula": "Pr[<=700]([] user_guided_transport_robot_def.A2_a3_follow_busy imply robot_inventory[0][0] == 1)",
+            "adapted_formula": "Pr[<=700]([] !rf_1.idle imply robot_inventory[0][0] == 1)",
+            "expected_probability": 0.975028,
+            "obtained_probability": 0.02497205,
+            "probability_interval_lower": 0.0,
+            "probability_interval_upper": 0.0499441,
+            "failure_kind": "probability_delta",
+            "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+            "probability_delta": 0.95005595,
+            "probability_threshold": 0.05,
+            "verifyta_output": "Verifying formula 13 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries/adapted.q:38"
+          },
+          {
+            "index": 14,
+            "query_line": 41,
+            "description": "The robot must not navigate to the kitchen unless the object is in its possession.",
+            "source_formula": "Pr[<=700]([] user_guided_transport_robot_def.A2_a3_follow_busy imply robot_inventory[0][0] == 1)",
+            "adapted_formula": "Pr[<=700]([] !rf_1.idle imply robot_inventory[0][0] == 1)",
+            "expected_probability": 0.975028,
+            "obtained_probability": 0.02497205,
+            "probability_interval_lower": 0.0,
+            "probability_interval_upper": 0.0499441,
+            "failure_kind": "probability_delta",
+            "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+            "probability_delta": 0.95005595,
+            "probability_threshold": 0.05,
+            "verifyta_output": "Verifying formula 14 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries/adapted.q:41"
+          }
+        ]
+      },
+      "stages": [
+        {
+          "stage": "dsl_generation",
+          "result": "ok",
+          "details": {
+            "iterations_recorded": 1,
+            "validations_attempted": 1,
+            "compiler_failures": 0,
+            "compiler_successes": 1,
+            "setup_errors": 0,
+            "first_success_iteration": 0,
+            "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/dsl/ITER0_20260724_071651.LIRAs",
+            "total_compiler_feedback_chars": 0,
+            "llm_calls": 1,
+            "prompt_tokens_total": 3602,
+            "completion_tokens_total": 97,
+            "total_tokens_total": 3699,
+            "token_usage_available_calls": 1
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/dsl/ITER0_20260724_071651.LIRAs",
+            "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/llm_prompts.jsonl",
+            "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/llm_responses.jsonl"
+          }
+        },
+        {
+          "stage": "xml_export",
+          "result": "ok",
+          "details": {
+            "exit_code": 0
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/dsl/ITER0_20260724_071651.LIRAs",
+            "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/xml/ITER0_20260724_071651.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/xml/lira_cli.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/xml/lira_cli.stderr.txt"
+          }
+        },
+        {
+          "stage": "verifyta_internal",
+          "result": "ok",
+          "execution_result": "ok",
+          "semantic_result": "ok",
+          "details": {
+            "command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/xml/ITER0_20260724_071651.xml",
+            "exit_code": 0,
+            "verified_formula_count": 16,
+            "failed_query_count": 0,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 0
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/xml/ITER0_20260724_071651.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/uppaal/verifyta_internal.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/uppaal/verifyta_internal.stderr.txt"
+          }
+        },
+        {
+          "stage": "query_adaptation",
+          "result": "ok",
+          "artifacts": {
+            "source_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+            "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries/adapted.q",
+            "source_queries_copy_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries/source_queries.txt",
+            "query_adapter_response_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries/query_adapter_response.txt",
+            "query_adapter_attempts_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries/query_adapter_attempts.jsonl",
+            "query_xml_context_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries/xml_context.txt",
+            "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries"
+          }
+        },
+        {
+          "stage": "verifyta_adapted",
+          "result": "failed",
+          "execution_result": "ok",
+          "semantic_result": "failed",
+          "failure_type": "semantic",
+          "failure_reason": "adapted-query UPPAAL verification completed, but 3 properties/queries were not satisfied.",
+          "failure_details": {
+            "failed_query_count": 3,
+            "failure_kinds": {
+              "probability_delta": 3
+            },
+            "failed_queries": [
+              {
+                "index": 11,
+                "query_line": 32,
+                "description": "The robot must not drop or release the object before reaching the kitchen.",
+                "source_formula": "Pr[<=700](<> (pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900) && robot_inventory[0][0] == 0)",
+                "adapted_formula": "Pr[<=700](<> (pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900) && robot_inventory[0][0] == 0)",
+                "expected_probability": 0.02497205,
+                "obtained_probability": 0.975028,
+                "probability_interval_lower": 0.950056,
+                "probability_interval_upper": 1.0,
+                "failure_kind": "probability_delta",
+                "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+                "probability_delta": 0.95005595,
+                "probability_threshold": 0.05,
+                "verifyta_output": "Verifying formula 11 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries/adapted.q:32"
+              },
+              {
+                "index": 13,
+                "query_line": 38,
+                "description": "The robot shall follow the human to the kitchen while carrying the object.",
+                "source_formula": "Pr[<=700]([] user_guided_transport_robot_def.A2_a3_follow_busy imply robot_inventory[0][0] == 1)",
+                "adapted_formula": "Pr[<=700]([] !rf_1.idle imply robot_inventory[0][0] == 1)",
+                "expected_probability": 0.975028,
+                "obtained_probability": 0.02497205,
+                "probability_interval_lower": 0.0,
+                "probability_interval_upper": 0.0499441,
+                "failure_kind": "probability_delta",
+                "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+                "probability_delta": 0.95005595,
+                "probability_threshold": 0.05,
+                "verifyta_output": "Verifying formula 13 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries/adapted.q:38"
+              },
+              {
+                "index": 14,
+                "query_line": 41,
+                "description": "The robot must not navigate to the kitchen unless the object is in its possession.",
+                "source_formula": "Pr[<=700]([] user_guided_transport_robot_def.A2_a3_follow_busy imply robot_inventory[0][0] == 1)",
+                "adapted_formula": "Pr[<=700]([] !rf_1.idle imply robot_inventory[0][0] == 1)",
+                "expected_probability": 0.975028,
+                "obtained_probability": 0.02497205,
+                "probability_interval_lower": 0.0,
+                "probability_interval_upper": 0.0499441,
+                "failure_kind": "probability_delta",
+                "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+                "probability_delta": 0.95005595,
+                "probability_threshold": 0.05,
+                "verifyta_output": "Verifying formula 14 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries/adapted.q:41"
+              }
+            ]
+          },
+          "details": {
+            "command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/xml/ITER0_20260724_071651.xml /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries/adapted.q",
+            "exit_code": 0,
+            "verified_formula_count": 25,
+            "failed_query_count": 3,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 25
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/xml/ITER0_20260724_071651.xml",
+            "query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries/adapted.q",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/uppaal/verifyta_adapted.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/uppaal/verifyta_adapted.stderr.txt"
+          }
+        }
+      ],
+      "exit_code": 1,
+      "continue_feedback_loop": true,
+      "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries/adapted.q"
+    },
+    {
+      "cycle": 3,
+      "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3",
+      "metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/run_metadata.json",
+      "uppaal_feedback_included": true,
+      "uppaal_feedback_chars": 2081,
+      "verifyta_probability_delta_threshold": 0.05,
+      "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/dsl/ITER0_20260724_071908.LIRAs",
+      "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/xml/ITER0_20260724_071908.xml",
+      "query_source_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+      "uppaal_feedback_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/uppaal/uppaal_feedback_for_next_cycle.txt",
+      "cycle_result": "failed",
+      "failed_stage": "verifyta_adapted",
+      "failure_type": "invalid_model_reference",
+      "failure_reason": "UPPAAL verifyta failed during adapted-query verification because a query references a model member that does not exist.",
+      "failure_details": {
+        "exit_code": 1,
+        "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/xml/ITER0_20260724_071908.xml::35: [error] has no member named A1_a3_moveTo_busy.",
+        "stderr_preview": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/xml/ITER0_20260724_071908.xml::35: [error] has no member named A1_a3_moveTo_busy.\n/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/xml/ITER0_20260724_071908.xml::35: [error] Type error.",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/uppaal/verifyta_adapted.stderr.txt",
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/uppaal/verifyta_adapted.stdout.txt"
+      },
+      "stages": [
+        {
+          "stage": "dsl_generation",
+          "result": "ok",
+          "details": {
+            "iterations_recorded": 1,
+            "validations_attempted": 1,
+            "compiler_failures": 0,
+            "compiler_successes": 1,
+            "setup_errors": 0,
+            "first_success_iteration": 0,
+            "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/dsl/ITER0_20260724_071908.LIRAs",
+            "total_compiler_feedback_chars": 0,
+            "llm_calls": 1,
+            "prompt_tokens_total": 3801,
+            "completion_tokens_total": 109,
+            "total_tokens_total": 3910,
+            "token_usage_available_calls": 1
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/dsl/ITER0_20260724_071908.LIRAs",
+            "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/llm_prompts.jsonl",
+            "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/llm_responses.jsonl"
+          }
+        },
+        {
+          "stage": "xml_export",
+          "result": "ok",
+          "details": {
+            "exit_code": 0
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/dsl/ITER0_20260724_071908.LIRAs",
+            "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/xml/ITER0_20260724_071908.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/xml/lira_cli.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/xml/lira_cli.stderr.txt"
+          }
+        },
+        {
+          "stage": "verifyta_internal",
+          "result": "ok",
+          "execution_result": "ok",
+          "semantic_result": "ok",
+          "details": {
+            "command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/xml/ITER0_20260724_071908.xml",
+            "exit_code": 0,
+            "verified_formula_count": 16,
+            "failed_query_count": 0,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 0
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/xml/ITER0_20260724_071908.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/uppaal/verifyta_internal.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/uppaal/verifyta_internal.stderr.txt"
+          }
+        },
+        {
+          "stage": "query_adaptation",
+          "result": "ok",
+          "artifacts": {
+            "source_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+            "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/queries/adapted.q",
+            "source_queries_copy_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/queries/source_queries.txt",
+            "query_adapter_response_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/queries/query_adapter_response.txt",
+            "query_adapter_attempts_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/queries/query_adapter_attempts.jsonl",
+            "query_xml_context_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/queries/xml_context.txt",
+            "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/queries"
+          }
+        },
+        {
+          "stage": "verifyta_adapted",
+          "result": "failed",
+          "execution_result": "failed",
+          "semantic_result": "not_evaluated",
+          "failure_type": "invalid_model_reference",
+          "failure_reason": "UPPAAL verifyta failed during adapted-query verification because a query references a model member that does not exist.",
+          "failure_details": {
+            "exit_code": 1,
+            "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/xml/ITER0_20260724_071908.xml::35: [error] has no member named A1_a3_moveTo_busy.",
+            "stderr_preview": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/xml/ITER0_20260724_071908.xml::35: [error] has no member named A1_a3_moveTo_busy.\n/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/xml/ITER0_20260724_071908.xml::35: [error] Type error.",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/uppaal/verifyta_adapted.stderr.txt",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/uppaal/verifyta_adapted.stdout.txt"
+          },
+          "details": {
+            "verified_formula_count": 0,
+            "failed_query_count": 1,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 0
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/xml/ITER0_20260724_071908.xml",
+            "query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/queries/adapted.q",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/uppaal/verifyta_adapted.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/uppaal/verifyta_adapted.stderr.txt"
+          }
+        }
+      ],
+      "exit_code": 1,
+      "continue_feedback_loop": true,
+      "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo3/queries/adapted.q"
+    },
+    {
+      "cycle": 4,
+      "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4",
+      "metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/run_metadata.json",
+      "uppaal_feedback_included": true,
+      "uppaal_feedback_chars": 2081,
+      "verifyta_probability_delta_threshold": 0.05,
+      "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/dsl/ITER0_20260724_072507.LIRAs",
+      "cycle_result": "failed",
+      "failed_stage": "xml_export",
+      "failure_type": "execution",
+      "failure_reason": "LIRAs-to-XML export failed, so UPPAAL verification could not run.",
+      "failure_details": {
+        "step": "lira_cli",
+        "command": "java -jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/dsl/ITER0_20260724_072507.LIRAs /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/xml/ITER0_20260724_072507.xml",
+        "exit_code": 1,
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/xml/lira_cli.stdout.txt",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/xml/lira_cli.stderr.txt",
+        "stderr_preview": "WARNING: A terminally deprecated method in sun.misc.Unsafe has been called\nWARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar)\nWARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper\nWARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release\nException in thread \"main\" java.lang.NullPointerException: Cannot invoke \"it.polimi.lIRAs.Target.getName()\" because the return value of \"it.polimi.lIRAs.ActionC.getTarget()\" is null\n\tat it.polimi.generator.LIRAsGenerator.getActionUpdate(LIRAsGenerator.java:1687)\n\tat it.polimi.generator.LIRAsGenerator.seqOrch(LIRAsGenerator.java:1410)\n\tat it.polimi.generator.LIRAsGenerator.lambda$doGenerate$0(LIRAsGenerator.java:125)\n\tat org.eclipse.xtext.xbase.lib.IteratorExtensions.forEach(IteratorExtensions.java:446)\n\tat it.polimi.generator.LIRAsGenerator.doGenerate(LIRAsGenerator.java:130)\n\tat it.polimi.Main.main(Main.java:71)"
+      },
+      "stages": [
+        {
+          "stage": "dsl_generation",
+          "result": "ok",
+          "details": {
+            "iterations_recorded": 1,
+            "validations_attempted": 1,
+            "compiler_failures": 0,
+            "compiler_successes": 1,
+            "setup_errors": 0,
+            "first_success_iteration": 0,
+            "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/dsl/ITER0_20260724_072507.LIRAs",
+            "total_compiler_feedback_chars": 0,
+            "llm_calls": 1,
+            "prompt_tokens_total": 3634,
+            "completion_tokens_total": 100,
+            "total_tokens_total": 3734,
+            "token_usage_available_calls": 1
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/dsl/ITER0_20260724_072507.LIRAs",
+            "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/llm_prompts.jsonl",
+            "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/llm_responses.jsonl"
+          }
+        },
+        {
+          "stage": "xml_export",
+          "result": "failed",
+          "failure_type": "execution",
+          "failure_reason": "LIRAs-to-XML export failed, so UPPAAL verification could not run.",
+          "failure_details": {
+            "step": "lira_cli",
+            "command": "java -jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/dsl/ITER0_20260724_072507.LIRAs /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/xml/ITER0_20260724_072507.xml",
+            "exit_code": 1,
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/xml/lira_cli.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/xml/lira_cli.stderr.txt",
+            "stderr_preview": "WARNING: A terminally deprecated method in sun.misc.Unsafe has been called\nWARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar)\nWARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper\nWARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release\nException in thread \"main\" java.lang.NullPointerException: Cannot invoke \"it.polimi.lIRAs.Target.getName()\" because the return value of \"it.polimi.lIRAs.ActionC.getTarget()\" is null\n\tat it.polimi.generator.LIRAsGenerator.getActionUpdate(LIRAsGenerator.java:1687)\n\tat it.polimi.generator.LIRAsGenerator.seqOrch(LIRAsGenerator.java:1410)\n\tat it.polimi.generator.LIRAsGenerator.lambda$doGenerate$0(LIRAsGenerator.java:125)\n\tat org.eclipse.xtext.xbase.lib.IteratorExtensions.forEach(IteratorExtensions.java:446)\n\tat it.polimi.generator.LIRAsGenerator.doGenerate(LIRAsGenerator.java:130)\n\tat it.polimi.Main.main(Main.java:71)"
+          }
+        }
+      ],
+      "exit_code": 1,
+      "continue_feedback_loop": false
+    }
+  ],
+  "run_finished_at": "2026-07-24T07:25:09.070484",
+  "updated_at": "2026-07-24T07:25:09.070486",
+  "aborted": false,
+  "abort_reason": null,
+  "last_cycle_run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4",
+  "last_cycle_metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo4/run_metadata.json"
+}

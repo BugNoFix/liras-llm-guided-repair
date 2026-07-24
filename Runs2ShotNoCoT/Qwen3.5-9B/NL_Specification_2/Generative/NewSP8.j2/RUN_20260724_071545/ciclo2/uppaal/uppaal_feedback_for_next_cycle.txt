@@ -1,0 +1,67 @@
+### WHAT TO FIX
+UPPAAL ran successfully, but at least one property/query did not match the expected behavior. Repair the LIRAs model behavior, not just query syntax.
+
+### FAILED QUERIES
+Query 11
+Failure kind: probability_delta
+Reason: The obtained probability differs from the expected probability by more than the configured threshold.
+Description: The robot must not drop or release the object before reaching the kitchen.
+Original formula: Pr[<=700](<> (pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900) && robot_inventory[0][0] == 0)
+Adapted formula: Pr[<=700](<> (pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900) && robot_inventory[0][0] == 0)
+Expected probability: 0.02497205
+Obtained probability: 0.975028
+Probability delta: 0.95005595
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 11 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries/adapted.q:32
+
+Query 13
+Failure kind: probability_delta
+Reason: The obtained probability differs from the expected probability by more than the configured threshold.
+Description: The robot shall follow the human to the kitchen while carrying the object.
+Original formula: Pr[<=700]([] user_guided_transport_robot_def.A2_a3_follow_busy imply robot_inventory[0][0] == 1)
+Adapted formula: Pr[<=700]([] !rf_1.idle imply robot_inventory[0][0] == 1)
+Expected probability: 0.975028
+Obtained probability: 0.02497205
+Probability delta: 0.95005595
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 13 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries/adapted.q:38
+
+Query 14
+Failure kind: probability_delta
+Reason: The obtained probability differs from the expected probability by more than the configured threshold.
+Description: The robot must not navigate to the kitchen unless the object is in its possession.
+Original formula: Pr[<=700]([] user_guided_transport_robot_def.A2_a3_follow_busy imply robot_inventory[0][0] == 1)
+Adapted formula: Pr[<=700]([] !rf_1.idle imply robot_inventory[0][0] == 1)
+Expected probability: 0.975028
+Obtained probability: 0.02497205
+Probability delta: 0.95005595
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 14 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_071545/ciclo2/queries/adapted.q:41
+
+### INCORRECT LIRAS CODE
+user_guided_transport
+
+agents: 
+	humans: Human
+	robots: Robot1
+
+locations: bedroom, kitchen
+
+resources: object
+
+Human:
+	1: moveTo bedroom
+	2: moveTo kitchen
+
+Robot1:
+	1: moveTo bedroom
+	2: pick object
+	3: moveTo kitchen
+	4: deposit object
+	5: moveTo bedroom
+	6: pick object
+	7: moveTo kitchen
+	8: deposit object

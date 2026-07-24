@@ -1,0 +1,16 @@
+user_guided_transport
+agents:
+	humans: Human
+	robots: Robot
+locations: bedroom, kitchen
+resources: object
+Human:
+	1: moveTo kitchen
+	2: moveTo bedroom
+Robot:
+	1: moveTo bedroom
+	2: moveTo kitchen
+	3: moveTo bedroom
+	pick object
+	4: moveTo kitchen
+	follow Robot(kitchen)

@@ -1,0 +1,295 @@
+### WHAT TO FIX
+Check the diagnostics below and repair the LIRAs model or generated queries accordingly.
+
+### FAILED QUERIES
+Query 1
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 1 at /nta/queries/query[1]/formula
+-- Formula: simulate[<=700]{user_guided_transport_human1_def.s1_start, user_guided_transport_human1_def.s1_end, user_guided_transport_human1_def.s2_start, user_guided_transport_human1_def.s2_end, user_guided_transport_human1_def.s3_start, user_guided_transport_human1_def.s3_idle, user_guided_transport.end}
+-- Aborted.
+
+Query 2
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 2 at /nta/queries/query[2]/formula
+-- Formula: simulate[<=700]{user_guided_transport_robot1_def.s1_start, user_guided_transport_robot1_def.s1_end, user_guided_transport_robot1_def.s2_start, user_guided_transport_robot1_def.s2_end, user_guided_transport_robot1_def.s3_start, user_guided_transport_robot1_def.s3_end, user_guided_transport.end}
+-- Aborted.
+
+Query 3
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 3 at /nta/queries/query[3]/formula
+-- Formula: Pr[<=700] (<> user_guided_transport.end)
+-- Aborted.
+
+Query 4
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 4 at /nta/queries/query[4]/formula
+-- Formula: simulate[<=700]{humanPositionX[0], humanPositionY[0], robPositionX[0], robPositionY[0], batteryCharge[0], user_guided_transport.end}
+-- Aborted.
+
+Query 5
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 5 at /nta/queries/query[5]/formula
+-- Formula: simulate[<=700]{robot_inventory[0][0], user_guided_transport.end*2}
+-- Aborted.
+
+Query 6
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 6 at /nta/queries/query[6]/formula
+-- Formula: simulate[<=700]{bedroom[0], bedroom[1], kitchen[0], kitchen[1]}
+-- Aborted.
+
+Query 7
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 7 at /nta/queries/query[7]/formula
+-- Formula: simulate[<=700]{rm_1.idle, rf_1.idle, rp_1.idle, rd_1.idle}
+-- Aborted.
+
+Query 9
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 9 at /nta/queries/query[9]/formula
+-- Formula: Pr[<=700]([] (user_guided_transport.end imply (rm_1.idle && rf_1.idle && rp_1.idle && rd_1.idle)))
+-- Aborted.
+
+Query 10
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 10 at /nta/queries/query[10]/formula
+-- Formula: Pr[<=700] (<> pow(humanPositionX[0] - kitchen[0], 2) + pow(humanPositionY[0] - kitchen[1], 2) <= 900 )
+-- Aborted.
+
+Query 12
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 12 at /nta/queries/query[12]/formula
+-- Formula: Pr[<=700] (<> pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900 )
+-- Aborted.
+
+Query 16
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 16 at /nta/queries/query[16]/formula
+-- Formula: Pr[<=700] (<> currP > 2)
+-- Aborted.
+
+Query 6
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The robot must not attempt to pick up the object before reaching the bedroom.
+Original formula: Pr[<=700] (<> user_guided_transport_robot_def.A2_a2_pick_busy && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )
+Adapted formula: Pr[<=700] (<> user_guided_transport_robot1_def.A2_a2_pick_busy && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )
+Expected probability: 0.02497205
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 6 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo5/queries/adapted.q:17
+-- Aborted.
+
+Query 8
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The robot must not attempt to pick up the object unless the human is also present in the bedroom.
+Original formula: Pr[<=700] (<> user_guided_transport_robot_def.A2_a2_pick_busy && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )
+Adapted formula: Pr[<=700] (<> user_guided_transport_robot1_def.A2_a2_pick_busy && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )
+Expected probability: 0.02497205
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 8 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo5/queries/adapted.q:23
+-- Aborted.
+
+Query 9
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The robot must successfully grasp exactly one object in the bedroom.
+Original formula: Pr[<=700](<> (pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) && robot_inventory[0][0] == 1)
+Adapted formula: Pr[<=700](<> (pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) && robot_inventory[0][0] == 1)
+Expected probability: 0.975028
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 9 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo5/queries/adapted.q:26
+-- Aborted.
+
+Query 10
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The robot must successfully grasp exactly one object in the bedroom.
+Original formula: Pr[<=700]([] (pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) imply robot_inventory[0][0] <= 1)
+Adapted formula: Pr[<=700]([] (pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) imply robot_inventory[0][0] <= 1)
+Expected probability: 0.975028
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 10 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo5/queries/adapted.q:29
+-- Aborted.
+
+Query 11
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The robot must not drop or release the object before reaching the kitchen.
+Original formula: Pr[<=700](<> (pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900) && robot_inventory[0][0] == 0)
+Adapted formula: Pr[<=700](<> (pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900) && robot_inventory[0][0] == 0)
+Expected probability: 0.02497205
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 11 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo5/queries/adapted.q:32
+-- Aborted.
+
+Query 13
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The robot shall follow the human to the kitchen while carrying the object.
+Original formula: Pr[<=700]([] user_guided_transport_robot_def.A2_a3_follow_busy imply robot_inventory[0][0] == 1)
+Adapted formula: Pr[<=700]([] user_guided_transport_robot1_def.A2_a3_moveTo_busy imply robot_inventory[0][0] == 1)
+Expected probability: 0.975028
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 13 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo5/queries/adapted.q:38
+-- Aborted.
+
+Query 14
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The robot must not navigate to the kitchen unless the object is in its possession.
+Original formula: Pr[<=700]([] user_guided_transport_robot_def.A2_a3_follow_busy imply robot_inventory[0][0] == 1)
+Adapted formula: Pr[<=700]([] user_guided_transport_robot1_def.A2_a3_moveTo_busy imply robot_inventory[0][0] == 1)
+Expected probability: 0.975028
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 14 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo5/queries/adapted.q:41
+-- Aborted.
+
+Query 15
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The robot must avoid collisions with obstacles during navigation.
+Original formula: Pr[<=700] (<> pow(robPositionX[0] - object[0], 2) + pow(robPositionY[0] - object[1], 2) <= 0 )
+Adapted formula: Pr[<=700] (<> pow(robPositionX[0] - object[0], 2) + pow(robPositionY[0] - object[1], 2) <= 0 )
+Expected probability: 0.02497205
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 15 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo5/queries/adapted.q:44
+-- Aborted.
+
+Query 17
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The human must avoid collisions with obstacles during navigation.
+Original formula: Pr[<=700] (<> pow(humanPositionX[0] - object[0], 2) + pow(humanPositionY[0] - object[1], 2) <= 0 )
+Adapted formula: Pr[<=700] (<> pow(humanPositionX[0] - object[0], 2) + pow(humanPositionY[0] - object[1], 2) <= 0 )
+Expected probability: 0.02497205
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 17 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo5/queries/adapted.q:50
+-- Aborted.
+
+Query 21
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The mission shall consist of exactly one execution cycle (no repetitions and no skipped steps).
+Original formula: Pr[<=700] (<> currP > 2)
+Adapted formula: Pr[<=700] (<> currP > 2)
+Expected probability: 0.02497205
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 21 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo5/queries/adapted.q:62
+-- Aborted.
+
+Query 22
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The mission shall terminate once both agents are in the kitchen and the robot is holding the object.
+Original formula: Pr[<=700] ([] ( pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900  && pow(humanPositionX[0] - bedroom[0], 2) + pow(humanPositionY[0] - bedroom[1], 2) <= 900 && robot_inventory[0][0] == 1) imply (user_guided_transport.end) )
+Adapted formula: Pr[<=700] ([] ( pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900  && pow(humanPositionX[0] - bedroom[0], 2) + pow(humanPositionY[0] - bedroom[1], 2) <= 900 && robot_inventory[0][0] == 1) imply (user_guided_transport.end) )
+Expected probability: 0.975028
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 22 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo5/queries/adapted.q:65
+-- Aborted.
+
+Query 23
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The agents must not continue performing actions indefinitely after mission completion.
+Original formula: Pr[<=700]([] (user_guided_transport.end imply (rm_1.idle && rf_1.idle && rp_1.idle && rd_1.idle && hi_1.idle)))
+Adapted formula: Pr[<=700]([] (user_guided_transport.end imply (rm_1.idle && rf_1.idle && rp_1.idle && rd_1.idle && hi_1.idle)))
+Expected probability: 0.975028
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 23 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo5/queries/adapted.q:68
+-- Aborted.
+
+Query 24
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The state of charge of the robot does not reach zero during the pattern.
+Original formula: Pr[<=700](<>batteryCharge[0]<=0)
+Adapted formula: Pr[<=700](<>batteryCharge[0]<=0)
+Expected probability: 0.02497205
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 24 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo5/queries/adapted.q:71
+-- Aborted.
+
+Query 25
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The fatigue of the human does not reach the maximum during the pattern.
+Original formula: Pr[<=700](<>humanFatigue[0]>=100)
+Adapted formula: Pr[<=700](<>humanFatigue[0]>=100)
+Expected probability: 0.02497205
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 25 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo5/queries/adapted.q:74
+-- Aborted.
+
+### VERIFYTA DIAGNOSTICS
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo5/xml/ITER0_20260724_004115.xml:/nta/queries/query[16]/formula:1: [error] Time-lock error:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo5/xml/ITER0_20260724_004115.xml::75: [error] Time-lock error:
+### INCORRECT LIRAS CODE
+user_guided_transport
+
+agents:
+	humans: Human1
+	robots: Robot1
+
+locations: bedroom, kitchen
+resources: item1
+
+Human1:
+	1: moveTo bedroom
+	2: moveTo kitchen
+
+Robot1:
+	1: moveTo bedroom
+	2: pick item1
+	3: moveTo kitchen

@@ -1,0 +1,6 @@
+Coffee_Delivery
+agents:
+	robots: Robot
+	humans: Employee
+locations: kitchen, bedroom
+resources: coffee, object

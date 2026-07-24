@@ -1,0 +1,5 @@
+Coffee_Delivery
+agents:
+	robots: Robot1
+locations: warehouse, kitchen
+resources: coffee

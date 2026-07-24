@@ -1,0 +1,19 @@
+user_guided_transport
+
+agents:
+	humans: Eve
+	robots: Keeper
+
+locations: bedroom, kitchen
+resources: object
+
+Eve:
+	1: moveTo bedroom
+	2: moveTo kitchen
+
+Keeper:
+	1: moveTo bedroom
+	pick object
+	3: follow Eve
+	deposit object
+	4: moveTo kitchen

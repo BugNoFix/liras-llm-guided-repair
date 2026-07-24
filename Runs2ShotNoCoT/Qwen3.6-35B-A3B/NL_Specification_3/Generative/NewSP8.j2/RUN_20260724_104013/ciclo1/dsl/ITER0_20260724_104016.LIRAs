@@ -1,0 +1,25 @@
+Factory_Pipeline
+
+agents:
+	robots: Robot1, Robot2
+
+locations: warehouse, surface_texturization_start, surface_texturization_end, laser_start, laser_end, loading_area
+resources: raw_materials, texturized_materials, lasered_materials
+
+Robot1:
+	1: moveTo warehouse
+		pick raw_materials
+		moveTo surface_texturization_start
+		deposit raw_materials
+		1: moveTo surface_texturization_end
+			pick texturized_materials
+			moveTo laser_start
+			deposit texturized_materials
+			2: moveTo laser_end
+				pick lasered_materials
+				moveTo loading_area
+				deposit lasered_materials
+		stop
+
+Robot2:
+	3: stop

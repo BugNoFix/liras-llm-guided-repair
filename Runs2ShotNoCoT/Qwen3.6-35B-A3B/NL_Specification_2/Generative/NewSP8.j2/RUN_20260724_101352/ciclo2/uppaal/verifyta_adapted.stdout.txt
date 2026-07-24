@@ -1,0 +1,145 @@
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1784881036
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+[2K
+Verifying formula 1 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:2
+[2K -- Formula is satisfied.
+(0/72 runs) Pr([] …) in [0,0.0499441] (95% CI)
+Values in [0,0] mean=0 steps=2.22045e-16: 72
+[2K
+Verifying formula 2 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:5
+[2K -- Formula is satisfied.
+(0/72 runs) Pr([] …) in [0,0.0499441] (95% CI)
+Values in [0,0] mean=0 steps=2.22045e-16: 72
+[2K
+Verifying formula 3 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:8
+[2K -- Formula is satisfied.
+(72/72 runs) Pr(<> …) in [0.950056,1] (95% CI)
+Values in [1,1] mean=1 steps=2.22045e-16: 72
+[2K
+Verifying formula 4 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:11
+[2K -- Formula is satisfied.
+(72/72 runs) Pr(<> …) in [0.950056,1] (95% CI)
+Values in [2,2] mean=2 steps=2.22045e-16: 72
+[2K
+Verifying formula 5 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:14
+[2K -- Formula is satisfied.
+(72/72 runs) Pr(<> …) in [0.950056,1] (95% CI)
+Values in [0,0] mean=0 steps=2.22045e-16: 72
+[2K
+Verifying formula 6 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:17
+ -- Throughput: 269657 runs/sec, Load: 363 runs[K
+ -- Throughput: 265993 runs/sec, Load: 337 runs[K
+[2K -- Formula is satisfied.
+(0/72 runs) Pr(<> …) in [0,0.0499441] (95% CI)
+[2K
+Verifying formula 7 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:20
+[2K -- Formula is satisfied.
+(72/72 runs) Pr(<> …) in [0.950056,1] (95% CI)
+Values in [0,0] mean=0 steps=2.22045e-16: 72
+[2K
+Verifying formula 8 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:23
+ -- Throughput: 269424 runs/sec, Load: 363 runs[K
+ -- Throughput: 268319 runs/sec, Load: 337 runs[K
+[2K -- Formula is satisfied.
+(0/72 runs) Pr(<> …) in [0,0.0499441] (95% CI)
+[2K
+Verifying formula 9 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:26
+[2K -- Formula is satisfied.
+(72/72 runs) Pr(<> …) in [0.950056,1] (95% CI)
+Values in [7.02688,11.8543] mean=9.49622 steps=0.536381: 15 6 6 4 4 7 8 14 8
+[2K
+Verifying formula 10 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:29
+ -- Throughput: 264933 runs/sec, Load: 364 runs[K
+ -- Throughput: 264410 runs/sec, Load: 338 runs[K
+[2K -- Formula is satisfied.
+(72/72 runs) Pr([] …) in [0.950056,1] (95% CI)
+[2K
+Verifying formula 11 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:32
+ -- Throughput: 205936 runs/sec, Load: 333 runs[K
+[2K -- Formula is satisfied.
+(72/72 runs) Pr(<> …) in [0.950056,1] (95% CI)
+Values in [421.515,421.515] mean=421.515 steps=6.31594e-15: 71 0 0 0 0 0 0 0 1
+[2K
+Verifying formula 12 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:35
+[2K -- Formula is satisfied.
+(72/72 runs) Pr(<> …) in [0.950056,1] (95% CI)
+Values in [0,0] mean=0 steps=2.22045e-16: 72
+[2K
+Verifying formula 13 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:38
+ -- Throughput: 261827 runs/sec, Load: 364 runs[K
+ -- Throughput: 266777 runs/sec, Load: 338 runs[K
+[2K -- Formula is satisfied.
+(72/72 runs) Pr([] …) in [0.950056,1] (95% CI)
+[2K
+Verifying formula 14 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:41
+ -- Throughput: 259059 runs/sec, Load: 358 runs[K
+ -- Throughput: 265369 runs/sec, Load: 332 runs[K
+[2K -- Formula is satisfied.
+(72/72 runs) Pr([] …) in [0.950056,1] (95% CI)
+[2K
+Verifying formula 15 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:44
+ -- Throughput: 262063 runs/sec, Load: 343 runs[K
+ -- Throughput: 258345 runs/sec, Load: 318 runs[K
+[2K -- Formula is satisfied.
+(0/72 runs) Pr(<> …) in [0,0.0499441] (95% CI)
+[2K
+Verifying formula 16 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:47
+[2K -- Formula is satisfied.
+(72/72 runs) Pr(<> …) in [0.950056,1] (95% CI)
+Values in [0,0] mean=0 steps=2.22045e-16: 72
+[2K
+Verifying formula 17 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:50
+ -- Throughput: 262128 runs/sec, Load: 364 runs[K
+ -- Throughput: 258180 runs/sec, Load: 339 runs[K
+[2K -- Formula is satisfied.
+(0/72 runs) Pr(<> …) in [0,0.0499441] (95% CI)
+[2K
+Verifying formula 18 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:53
+[2K -- Formula is satisfied.
+(72/72 runs) Pr(<> …) in [0.950056,1] (95% CI)
+Values in [0,0] mean=0 steps=2.22045e-16: 72
+[2K
+Verifying formula 19 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:56
+[2K -- Formula is satisfied.
+(72/72 runs) Pr(<> …) in [0.950056,1] (95% CI)
+Values in [0,0] mean=0 steps=2.22045e-16: 72
+[2K
+Verifying formula 20 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:59
+[2K -- Formula is satisfied.
+(72/72 runs) Pr(<> …) in [0.950056,1] (95% CI)
+Values in [0,0] mean=0 steps=2.22045e-16: 72
+[2K
+Verifying formula 21 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:62
+ -- Throughput: 262734 runs/sec, Load: 364 runs[K
+ -- Throughput: 260005 runs/sec, Load: 339 runs[K
+[2K -- Formula is satisfied.
+(0/72 runs) Pr(<> …) in [0,0.0499441] (95% CI)
+[2K
+Verifying formula 22 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:65
+ -- Throughput: 268950 runs/sec, Load: 363 runs[K
+ -- Throughput: 263289 runs/sec, Load: 338 runs[K
+[2K -- Formula is satisfied.
+(72/72 runs) Pr([] …) in [0.950056,1] (95% CI)
+[2K
+Verifying formula 23 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:68
+ -- Throughput: 263401 runs/sec, Load: 352 runs[K
+ -- Throughput: 262844 runs/sec, Load: 327 runs[K
+[2K -- Formula is satisfied.
+(72/72 runs) Pr([] …) in [0.950056,1] (95% CI)
+[2K
+Verifying formula 24 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:71
+ -- Throughput: 262175 runs/sec, Load: 364 runs[K
+ -- Throughput: 260701 runs/sec, Load: 339 runs[K
+[2K -- Formula is satisfied.
+(0/72 runs) Pr(<> …) in [0,0.0499441] (95% CI)
+[2K
+Verifying formula 25 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.6-35B-A3B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_101352/ciclo2/queries/adapted.q:74
+ -- Throughput: 263906 runs/sec, Load: 363 runs[K
+ -- Throughput: 263589 runs/sec, Load: 337 runs[K
+[2K -- Formula is satisfied.
+(0/72 runs) Pr(<> …) in [0,0.0499441] (95% CI)

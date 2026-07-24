@@ -1,0 +1,25 @@
+user_guided_transport
+
+agents:
+	humans: Alice
+	robots: Robot1
+
+locations: bedroom, kitchen
+
+resources: coffee
+
+Robot1:
+	1: moveTo bedroom
+	
+2: pick coffee
+
+
+3: moveTo kitchen
+	follow Alice
+
+Alice:
+	1: moveTo bedroom
+
+3: moveTo kitchen
+	pos: position(Robot1, bedroom) && position(Alice, bedroom)
+	 pickups: position(Robot1,kitchen)
