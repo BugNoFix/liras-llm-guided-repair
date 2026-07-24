@@ -1,0 +1,18 @@
+user_guided_transport
+agents:
+	humans: Alice
+	robots: Bot
+locations: bedroom, kitchen
+resources: object
+Alice:
+	1: moveTo bedroom
+Bot:
+	1: moveTo bedroom
+	2: pick object
+	3: follow Alice
+	4: moveTo kitchen
+Alice:
+	3: moveTo kitchen
+	4: moveTo kitchen
+Bot:
+	4: moveTo kitchen

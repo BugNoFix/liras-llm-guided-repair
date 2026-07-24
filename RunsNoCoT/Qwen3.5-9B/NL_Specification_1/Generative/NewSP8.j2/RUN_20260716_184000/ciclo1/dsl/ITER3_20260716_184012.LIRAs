@@ -1,0 +1,13 @@
+Coffee_Delivery
+agents: Human1
+robots: Robot1
+locations: warehouse, coffee_room, kitchen
+resources: coffee
+Human1:
+	1: moveTo kitchen if position(Human1, kitchen) else stop
+	2: pick coffee if position(Human1, coffee_room) else stop
+	3: follow Robot1(kitchen)
+Robot1:
+	1: moveTo kitchen if position(Robot1, kitchen) else stop
+	2: pick coffee if position(Robot1, coffee_room) else stop
+	3: follow Human1(kitchen)
