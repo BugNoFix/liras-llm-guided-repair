@@ -1,0 +1,48 @@
+### WHAT TO FIX
+Check the diagnostics below and repair the LIRAs model or generated queries accordingly.
+
+### FAILED QUERIES
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:81: [error] Unknown identifier: coffee_machine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:81: [error] Unknown identifier: delivery_point.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:82: [error] Unknown identifier: coffee_machine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:82: [error] Unknown identifier: delivery_point.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:81: [error] Unknown identifier: coffee_machine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:81: [error] Unknown identifier: delivery_point.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:82: [error] Unknown identifier: coffee_machine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:82: [error] Unknown identifier: delivery_point.
+
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:81: [error] Unknown identifier: coffee_machine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:81: [error] Unknown identifier: delivery_point.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:82: [error] Unknown identifier: coffee_machine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:82: [error] Unknown identifier: delivery_point.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:81: [error] Unknown identifier: coffee_machine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:81: [error] Unknown identifier: delivery_point.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:82: [error] Unknown identifier: coffee_machine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:82: [error] Unknown identifier: delivery_point.
+
+### VERIFYTA DIAGNOSTICS
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:81: [error] Unknown identifier: coffee_machine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:81: [error] Unknown identifier: delivery_point.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:82: [error] Unknown identifier: coffee_machine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000603/ciclo1/xml/ITER1_20260724_000613.xml:/nta/declaration:82: [error] Unknown identifier: delivery_point.
+### INCORRECT LIRAS CODE
+Coffee_Delivery
+agents:
+	robots: Robot
+locations: coffee_room, office001, coffee_machine, delivery_point
+resources: coffee
+Robot:
+	1: moveTo coffee_machine
+	2: pick coffee
+	3: moveTo office001
+	4: deposit coffee

@@ -1,0 +1,38 @@
+### WHAT TO FIX
+The adapted queries reference names that do not exist in the generated UPPAAL XML. Regenerate the LIRAs model so exported XML names match the intended scenario, or adapt the queries to the actual XML identifiers.
+
+### FAILED QUERIES
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001757/ciclo5/xml/ITER1_20260724_002305.xml::35: [error] has no member named A1_a6_pick_complete.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001757/ciclo5/xml/ITER1_20260724_002305.xml::35: [error] Type error.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001757/ciclo5/xml/ITER1_20260724_002305.xml::35: [error] has no member named A1_a6_pick_complete.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001757/ciclo5/xml/ITER1_20260724_002305.xml::35: [error] Type error.
+
+### VERIFYTA DIAGNOSTICS
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001757/ciclo5/xml/ITER1_20260724_002305.xml::35: [error] has no member named A1_a6_pick_complete.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001757/ciclo5/xml/ITER1_20260724_002305.xml::35: [error] Type error.
+### INCORRECT LIRAS CODE
+Coffee_Delivery
+agents:
+	humans: Employee
+	robots: Robot1
+locations: kitchen, office001, coffee_room
+resources: coffee
+Robot1:
+	1: moveTo coffee_room
+	2: pick coffee
+	3: moveTo kitchen
+	4: deposit coffee
+	5: moveTo office001
+	6: moveTo kitchen until position(Employee, office001)
+	7: moveTo office001 until position(Employee, kitchen)
+	8: stop
+Employee:
+	1: moveTo kitchen
+	2: moveTo office001
+	3: moveTo kitchen until position(Robot1, kitchen)
+	4: stop

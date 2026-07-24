@@ -1,0 +1,42 @@
+### WHAT TO FIX
+Check the diagnostics below and repair the LIRAs model or generated queries accordingly.
+
+### FAILED QUERIES
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_145412/ciclo1/xml/ITER0_20260724_145414.xml:/nta/declaration:81: [error] Unknown identifier: Bedroom.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_145412/ciclo1/xml/ITER0_20260724_145414.xml:/nta/declaration:82: [error] Unknown identifier: Bedroom.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_145412/ciclo1/xml/ITER0_20260724_145414.xml:/nta/declaration:81: [error] Unknown identifier: Bedroom.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_145412/ciclo1/xml/ITER0_20260724_145414.xml:/nta/declaration:82: [error] Unknown identifier: Bedroom.
+
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_145412/ciclo1/xml/ITER0_20260724_145414.xml:/nta/declaration:81: [error] Unknown identifier: Bedroom.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_145412/ciclo1/xml/ITER0_20260724_145414.xml:/nta/declaration:82: [error] Unknown identifier: Bedroom.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_145412/ciclo1/xml/ITER0_20260724_145414.xml:/nta/declaration:81: [error] Unknown identifier: Bedroom.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_145412/ciclo1/xml/ITER0_20260724_145414.xml:/nta/declaration:82: [error] Unknown identifier: Bedroom.
+
+### VERIFYTA DIAGNOSTICS
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_145412/ciclo1/xml/ITER0_20260724_145414.xml:/nta/declaration:81: [error] Unknown identifier: Bedroom.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_145412/ciclo1/xml/ITER0_20260724_145414.xml:/nta/declaration:82: [error] Unknown identifier: Bedroom.
+### INCORRECT LIRAS CODE
+Coffee_Delivery
+
+agents:
+	robots: Robot
+
+locations: kitchen, warehouse, Bedroom
+
+resources: coffee
+
+Robot:
+	1: moveTo warehouse
+	2: pick coffee
+	3: moveTo kitchen
+	4: deposit coffee

@@ -1,0 +1,8 @@
+Validating: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_152207/ciclo1/dsl/ITER5_20260724_152231.LIRAs
+FAILURE: Validation errors found.
+
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (rsrc:com.google.inject_7.0.0.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[ERROR] Line 4: missing EOF at 'humans:'

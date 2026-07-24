@@ -1,0 +1,90 @@
+### WHAT TO FIX
+UPPAAL ran successfully, but at least one property/query did not match the expected behavior. Repair the LIRAs model behavior, not just query syntax.
+
+### FAILED QUERIES
+Query 1
+Failure kind: probability_delta
+Reason: The obtained probability differs from the expected probability by more than the configured threshold.
+Description: The robot shall navigate from the starting location to the coffee machine location upon mission initialization.
+Original formula: Pr[<=700] (<> pow(robPositionX[0] - coffee_room[0], 2) + pow(robPositionY[0] - coffee_room[1], 2) <= pow(30, 2))
+Adapted formula: Pr[<=700] (<> pow(robPositionX[0] - coffee_room[0], 2) + pow(robPositionY[0] - coffee_room[1], 2) <= pow(30, 2))
+Expected probability: 0.975028
+Obtained probability: 0.02497205
+Probability delta: 0.95005595
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 1 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_140803/ciclo2/queries/adapted.q:2
+
+Query 2
+Failure kind: probability_delta
+Reason: The obtained probability differs from the expected probability by more than the configured threshold.
+Description: The robot shall navigate from the starting location to the coffee machine location upon mission initialization.
+Original formula: Pr[<=700] (<> pt_dist(robPositionX[0], location_X[2], robPositionY[0], location_Y[2]) <= 30)
+Adapted formula: Pr[<=700] (<> pt_dist(robPositionX[0], location_X[2], robPositionY[0], location_Y[2]) <= 30)
+Expected probability: 0.975028
+Obtained probability: 0.02497205
+Probability delta: 0.95005595
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 2 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_140803/ciclo2/queries/adapted.q:5
+
+Query 3
+Failure kind: probability_delta
+Reason: The obtained probability differs from the expected probability by more than the configured threshold.
+Description: The robot must be able to reach the employee's locations from the coffee machine.
+Original formula: Pr[<=700] (<> Coffee_Delivery_robot_def.A1_a3_moveTo_complete)
+Adapted formula: Pr[<=700] (<> Coffee_Delivery_robot_def.A1_a3_moveTo_complete)
+Expected probability: 0.975028
+Obtained probability: 0.02497205
+Probability delta: 0.95005595
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 3 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_140803/ciclo2/queries/adapted.q:8
+
+Query 4
+Failure kind: probability_delta
+Reason: The obtained probability differs from the expected probability by more than the configured threshold.
+Description: The robot must be able to reach the employee's locations from the coffee machine.
+Original formula: Pr[<=700] (<> Coffee_Delivery_robot_def.A1_a7_moveTo_complete)
+Adapted formula: Pr[<=700] (<> Coffee_Delivery_robot_def.A1_a3_moveTo_complete)
+Expected probability: 0.975028
+Obtained probability: 0.02497205
+Probability delta: 0.95005595
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 4 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_140803/ciclo2/queries/adapted.q:11
+
+Query 13
+Failure kind: probability_delta
+Reason: The obtained probability differs from the expected probability by more than the configured threshold.
+Description: The robot must guarantee task completion.
+Original formula: Pr[<=700] (<> Coffee_Delivery.end)
+Adapted formula: Pr[<=700] (<> Coffee_Delivery.end)
+Expected probability: 0.975028
+Obtained probability: 0.02497205
+Probability delta: 0.95005595
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 13 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/GLM-5.2/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_140803/ciclo2/queries/adapted.q:38
+
+### INCORRECT LIRAS CODE
+Coffee_Delivery
+
+agents:
+	robots: Robot
+
+locations: 
+    warehouse,
+    kitchen
+   
+resources: 
+    raw_materials,
+    coffee
+
+Robot:
+	1: moveTo warehouse
+	2: pick raw_materials
+	3: moveTo kitchen
+	4: deposit raw_materials
+	pick coffee
+	deposit coffee

@@ -1,0 +1,2 @@
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001300/ciclo1/xml/ITER0_20260724_001301.xml:/nta/declaration:81: [error] Unknown identifier: office_room.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001300/ciclo1/xml/ITER0_20260724_001301.xml:/nta/declaration:82: [error] Unknown identifier: office_room.

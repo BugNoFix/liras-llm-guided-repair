@@ -1,0 +1,17 @@
+agents:
+	robots: Robot1
+	humans: Employee
+
+locations: kitchen, office001
+resources: coffee
+
+Robot1:
+	1: moveTo kitchen until position(Employee, kitchen) else stop
+	2: pick coffee
+	3: moveTo office001
+	4: deposit coffee else stop
+	5: idle
+
+Employee:
+	1: moveTo kitchen
+	2: moveTo office001

@@ -1,0 +1,38 @@
+### WHAT TO FIX
+Check the diagnostics below and repair the LIRAs model or generated queries accordingly.
+
+### FAILED QUERIES
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001209/ciclo1/xml/ITER1_20260724_001215.xml:/nta/declaration:81: [error] Unknown identifier: coffee_machine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001209/ciclo1/xml/ITER1_20260724_001215.xml:/nta/declaration:82: [error] Unknown identifier: coffee_machine.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001209/ciclo1/xml/ITER1_20260724_001215.xml:/nta/declaration:81: [error] Unknown identifier: coffee_machine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001209/ciclo1/xml/ITER1_20260724_001215.xml:/nta/declaration:82: [error] Unknown identifier: coffee_machine.
+
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001209/ciclo1/xml/ITER1_20260724_001215.xml:/nta/declaration:81: [error] Unknown identifier: coffee_machine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001209/ciclo1/xml/ITER1_20260724_001215.xml:/nta/declaration:82: [error] Unknown identifier: coffee_machine.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001209/ciclo1/xml/ITER1_20260724_001215.xml:/nta/declaration:81: [error] Unknown identifier: coffee_machine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001209/ciclo1/xml/ITER1_20260724_001215.xml:/nta/declaration:82: [error] Unknown identifier: coffee_machine.
+
+### VERIFYTA DIAGNOSTICS
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001209/ciclo1/xml/ITER1_20260724_001215.xml:/nta/declaration:81: [error] Unknown identifier: coffee_machine.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_001209/ciclo1/xml/ITER1_20260724_001215.xml:/nta/declaration:82: [error] Unknown identifier: coffee_machine.
+### INCORRECT LIRAS CODE
+Coffee_Delivery
+agents:
+	robots: Robot1
+locations: coffee_room, office001, coffee_machine
+resources: coffee
+Robot1:
+	1: moveTo coffee_machine
+	pick coffee
+	2: moveTo office001
+	deposit coffee

@@ -1,0 +1,380 @@
+{
+  "run_id": "20260724_000938",
+  "run_started_at": "2026-07-24T00:09:38.626487",
+  "pipeline_runner_version": "v3_structured_stage_metadata",
+  "overall_result": "failed",
+  "failed_stage": "dsl_generation",
+  "failure_type": "max_iterations_reached",
+  "failure_reason": "DSL generation reached the maximum number of repair iterations without producing a valid LIRAs model.",
+  "failure_details": {
+    "generator_status": "max_iterations_reached",
+    "max_iterations": 11,
+    "compiler_failures": 11,
+    "compiler_successes": 0,
+    "abort_entire_run": false
+  },
+  "generation_provider": "huggingface",
+  "repair_provider": "huggingface",
+  "query_provider": "huggingface",
+  "system_prompt": "Generative/NewSP8.j2",
+  "repair_prompt": "Repair/NewSPR8.j2",
+  "scenario": "NL_Specification_1.txt",
+  "generation_model": "Qwen/Qwen3.5-9B",
+  "repair_model": "Qwen/Qwen3.5-9B",
+  "shots": "leave_one_spec_out",
+  "repair_shots": 2,
+  "max_iterations": 11,
+  "max_uppaal_feedback_cycles": 5,
+  "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938",
+  "cycles": [
+    {
+      "cycle": 1,
+      "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1",
+      "metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/run_metadata.json",
+      "uppaal_feedback_included": false,
+      "uppaal_feedback_chars": 4256,
+      "verifyta_probability_delta_threshold": 0.05,
+      "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/dsl/ITER0_20260724_000942.LIRAs",
+      "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/xml/ITER0_20260724_000942.xml",
+      "query_source_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_1.j2",
+      "uppaal_feedback_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/uppaal/uppaal_feedback_for_next_cycle.txt",
+      "cycle_result": "failed",
+      "failed_stage": "verifyta_adapted",
+      "failure_type": "semantic",
+      "failure_reason": "adapted-query UPPAAL verification completed, but 5 properties/queries were not satisfied.",
+      "failure_details": {
+        "failed_query_count": 5,
+        "failure_kinds": {
+          "probability_delta": 5
+        },
+        "failed_queries": [
+          {
+            "index": 1,
+            "query_line": 2,
+            "description": "The robot shall navigate from the starting location to the coffee machine location upon mission initialization.",
+            "source_formula": "Pr[<=700] (<> pow(robPositionX[0] - coffee_room[0], 2) + pow(robPositionY[0] - coffee_room[1], 2) <= pow(30, 2))",
+            "adapted_formula": "Pr[<=700] (<> pow(robPositionX[0] - coffee_room[0], 2) + pow(robPositionY[0] - coffee_room[1], 2) <= pow(30, 2))",
+            "expected_probability": 0.975028,
+            "obtained_probability": 0.02497205,
+            "probability_interval_lower": 0.0,
+            "probability_interval_upper": 0.0499441,
+            "failure_kind": "probability_delta",
+            "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+            "probability_delta": 0.95005595,
+            "probability_threshold": 0.05,
+            "verifyta_output": "Verifying formula 1 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/adapted.q:2"
+          },
+          {
+            "index": 2,
+            "query_line": 5,
+            "description": "The robot shall navigate from the starting location to the coffee machine location upon mission initialization.",
+            "source_formula": "Pr[<=700] (<> pt_dist(robPositionX[0], location_X[2], robPositionY[0], location_Y[2]) <= 30)",
+            "adapted_formula": "Pr[<=700] (<> pt_dist(robPositionX[0], location_X[4], robPositionY[0], location_Y[4]) <= 30)",
+            "expected_probability": 0.975028,
+            "obtained_probability": 0.02497205,
+            "probability_interval_lower": 0.0,
+            "probability_interval_upper": 0.0499441,
+            "failure_kind": "probability_delta",
+            "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+            "probability_delta": 0.95005595,
+            "probability_threshold": 0.05,
+            "verifyta_output": "Verifying formula 2 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/adapted.q:5"
+          },
+          {
+            "index": 3,
+            "query_line": 8,
+            "description": "The robot must be able to reach the employee's locations from the coffee machine.",
+            "source_formula": "Pr[<=700] (<> Coffee_Delivery_robot_def.A1_a3_moveTo_complete)",
+            "adapted_formula": "Pr[<=700] (<> Coffee_Delivery_robot1_def.A1_a4_moveTo_complete)",
+            "expected_probability": 0.975028,
+            "obtained_probability": 0.02497205,
+            "probability_interval_lower": 0.0,
+            "probability_interval_upper": 0.0499441,
+            "failure_kind": "probability_delta",
+            "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+            "probability_delta": 0.95005595,
+            "probability_threshold": 0.05,
+            "verifyta_output": "Verifying formula 3 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/adapted.q:8"
+          },
+          {
+            "index": 4,
+            "query_line": 11,
+            "description": "The robot must be able to reach the employee's locations from the coffee machine.",
+            "source_formula": "Pr[<=700] (<> Coffee_Delivery_robot_def.A1_a7_moveTo_complete)",
+            "adapted_formula": "Pr[<=700] (<> Coffee_Delivery_robot1_def.A1_a4_moveTo_complete)",
+            "expected_probability": 0.975028,
+            "obtained_probability": 0.02497205,
+            "probability_interval_lower": 0.0,
+            "probability_interval_upper": 0.0499441,
+            "failure_kind": "probability_delta",
+            "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+            "probability_delta": 0.95005595,
+            "probability_threshold": 0.05,
+            "verifyta_output": "Verifying formula 4 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/adapted.q:11"
+          },
+          {
+            "index": 13,
+            "query_line": 38,
+            "description": "The robot must guarantee task completion.",
+            "source_formula": "Pr[<=700] (<> Coffee_Delivery.end)",
+            "adapted_formula": "Pr[<=700] (<> Coffee_Delivery.end)",
+            "expected_probability": 0.975028,
+            "obtained_probability": 0.02497205,
+            "probability_interval_lower": 0.0,
+            "probability_interval_upper": 0.0499441,
+            "failure_kind": "probability_delta",
+            "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+            "probability_delta": 0.95005595,
+            "probability_threshold": 0.05,
+            "verifyta_output": "Verifying formula 13 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/adapted.q:38"
+          }
+        ]
+      },
+      "stages": [
+        {
+          "stage": "dsl_generation",
+          "result": "ok",
+          "details": {
+            "iterations_recorded": 1,
+            "validations_attempted": 1,
+            "compiler_failures": 0,
+            "compiler_successes": 1,
+            "setup_errors": 0,
+            "first_success_iteration": 0,
+            "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/dsl/ITER0_20260724_000942.LIRAs",
+            "total_compiler_feedback_chars": 0,
+            "llm_calls": 1,
+            "prompt_tokens_total": 2755,
+            "completion_tokens_total": 67,
+            "total_tokens_total": 2822,
+            "token_usage_available_calls": 1
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/dsl/ITER0_20260724_000942.LIRAs",
+            "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/llm_prompts.jsonl",
+            "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/llm_responses.jsonl"
+          }
+        },
+        {
+          "stage": "xml_export",
+          "result": "ok",
+          "details": {
+            "exit_code": 0
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/dsl/ITER0_20260724_000942.LIRAs",
+            "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/xml/ITER0_20260724_000942.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/xml/lira_cli.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/xml/lira_cli.stderr.txt"
+          }
+        },
+        {
+          "stage": "verifyta_internal",
+          "result": "ok",
+          "execution_result": "ok",
+          "semantic_result": "ok",
+          "details": {
+            "command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/xml/ITER0_20260724_000942.xml",
+            "exit_code": 0,
+            "verified_formula_count": 13,
+            "failed_query_count": 0,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 0
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/xml/ITER0_20260724_000942.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/uppaal/verifyta_internal.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/uppaal/verifyta_internal.stderr.txt"
+          }
+        },
+        {
+          "stage": "query_adaptation",
+          "result": "ok",
+          "artifacts": {
+            "source_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_1.j2",
+            "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/adapted.q",
+            "source_queries_copy_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/source_queries.txt",
+            "query_adapter_response_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/query_adapter_response.txt",
+            "query_adapter_attempts_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/query_adapter_attempts.jsonl",
+            "query_xml_context_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/xml_context.txt",
+            "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries"
+          }
+        },
+        {
+          "stage": "verifyta_adapted",
+          "result": "failed",
+          "execution_result": "ok",
+          "semantic_result": "failed",
+          "failure_type": "semantic",
+          "failure_reason": "adapted-query UPPAAL verification completed, but 5 properties/queries were not satisfied.",
+          "failure_details": {
+            "failed_query_count": 5,
+            "failure_kinds": {
+              "probability_delta": 5
+            },
+            "failed_queries": [
+              {
+                "index": 1,
+                "query_line": 2,
+                "description": "The robot shall navigate from the starting location to the coffee machine location upon mission initialization.",
+                "source_formula": "Pr[<=700] (<> pow(robPositionX[0] - coffee_room[0], 2) + pow(robPositionY[0] - coffee_room[1], 2) <= pow(30, 2))",
+                "adapted_formula": "Pr[<=700] (<> pow(robPositionX[0] - coffee_room[0], 2) + pow(robPositionY[0] - coffee_room[1], 2) <= pow(30, 2))",
+                "expected_probability": 0.975028,
+                "obtained_probability": 0.02497205,
+                "probability_interval_lower": 0.0,
+                "probability_interval_upper": 0.0499441,
+                "failure_kind": "probability_delta",
+                "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+                "probability_delta": 0.95005595,
+                "probability_threshold": 0.05,
+                "verifyta_output": "Verifying formula 1 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/adapted.q:2"
+              },
+              {
+                "index": 2,
+                "query_line": 5,
+                "description": "The robot shall navigate from the starting location to the coffee machine location upon mission initialization.",
+                "source_formula": "Pr[<=700] (<> pt_dist(robPositionX[0], location_X[2], robPositionY[0], location_Y[2]) <= 30)",
+                "adapted_formula": "Pr[<=700] (<> pt_dist(robPositionX[0], location_X[4], robPositionY[0], location_Y[4]) <= 30)",
+                "expected_probability": 0.975028,
+                "obtained_probability": 0.02497205,
+                "probability_interval_lower": 0.0,
+                "probability_interval_upper": 0.0499441,
+                "failure_kind": "probability_delta",
+                "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+                "probability_delta": 0.95005595,
+                "probability_threshold": 0.05,
+                "verifyta_output": "Verifying formula 2 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/adapted.q:5"
+              },
+              {
+                "index": 3,
+                "query_line": 8,
+                "description": "The robot must be able to reach the employee's locations from the coffee machine.",
+                "source_formula": "Pr[<=700] (<> Coffee_Delivery_robot_def.A1_a3_moveTo_complete)",
+                "adapted_formula": "Pr[<=700] (<> Coffee_Delivery_robot1_def.A1_a4_moveTo_complete)",
+                "expected_probability": 0.975028,
+                "obtained_probability": 0.02497205,
+                "probability_interval_lower": 0.0,
+                "probability_interval_upper": 0.0499441,
+                "failure_kind": "probability_delta",
+                "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+                "probability_delta": 0.95005595,
+                "probability_threshold": 0.05,
+                "verifyta_output": "Verifying formula 3 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/adapted.q:8"
+              },
+              {
+                "index": 4,
+                "query_line": 11,
+                "description": "The robot must be able to reach the employee's locations from the coffee machine.",
+                "source_formula": "Pr[<=700] (<> Coffee_Delivery_robot_def.A1_a7_moveTo_complete)",
+                "adapted_formula": "Pr[<=700] (<> Coffee_Delivery_robot1_def.A1_a4_moveTo_complete)",
+                "expected_probability": 0.975028,
+                "obtained_probability": 0.02497205,
+                "probability_interval_lower": 0.0,
+                "probability_interval_upper": 0.0499441,
+                "failure_kind": "probability_delta",
+                "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+                "probability_delta": 0.95005595,
+                "probability_threshold": 0.05,
+                "verifyta_output": "Verifying formula 4 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/adapted.q:11"
+              },
+              {
+                "index": 13,
+                "query_line": 38,
+                "description": "The robot must guarantee task completion.",
+                "source_formula": "Pr[<=700] (<> Coffee_Delivery.end)",
+                "adapted_formula": "Pr[<=700] (<> Coffee_Delivery.end)",
+                "expected_probability": 0.975028,
+                "obtained_probability": 0.02497205,
+                "probability_interval_lower": 0.0,
+                "probability_interval_upper": 0.0499441,
+                "failure_kind": "probability_delta",
+                "failure_reason": "The obtained probability differs from the expected probability by more than the configured threshold.",
+                "probability_delta": 0.95005595,
+                "probability_threshold": 0.05,
+                "verifyta_output": "Verifying formula 13 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/adapted.q:38"
+              }
+            ]
+          },
+          "details": {
+            "command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/xml/ITER0_20260724_000942.xml /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/adapted.q",
+            "exit_code": 0,
+            "verified_formula_count": 16,
+            "failed_query_count": 5,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 16
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/xml/ITER0_20260724_000942.xml",
+            "query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/adapted.q",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/uppaal/verifyta_adapted.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/uppaal/verifyta_adapted.stderr.txt"
+          }
+        }
+      ],
+      "exit_code": 1,
+      "continue_feedback_loop": true,
+      "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo1/queries/adapted.q"
+    },
+    {
+      "cycle": 2,
+      "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo2",
+      "metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo2/run_metadata.json",
+      "uppaal_feedback_included": true,
+      "uppaal_feedback_chars": 4256,
+      "verifyta_probability_delta_threshold": 0.05,
+      "cycle_result": "failed",
+      "failed_stage": "dsl_generation",
+      "failure_type": "max_iterations_reached",
+      "failure_reason": "DSL generation reached the maximum number of repair iterations without producing a valid LIRAs model.",
+      "failure_details": {
+        "generator_status": "max_iterations_reached",
+        "max_iterations": 11,
+        "compiler_failures": 11,
+        "compiler_successes": 0,
+        "abort_entire_run": false
+      },
+      "stages": [
+        {
+          "stage": "dsl_generation",
+          "result": "failed",
+          "failure_type": "max_iterations_reached",
+          "failure_reason": "DSL generation reached the maximum number of repair iterations without producing a valid LIRAs model.",
+          "failure_details": {
+            "generator_status": "max_iterations_reached",
+            "max_iterations": 11,
+            "compiler_failures": 11,
+            "compiler_successes": 0,
+            "abort_entire_run": false
+          },
+          "details": {
+            "iterations_recorded": 11,
+            "validations_attempted": 11,
+            "compiler_failures": 11,
+            "compiler_successes": 0,
+            "setup_errors": 0,
+            "first_success_iteration": null,
+            "final_success_dsl_path": null,
+            "total_compiler_feedback_chars": 7426,
+            "llm_calls": 11,
+            "prompt_tokens_total": 54850,
+            "completion_tokens_total": 1288,
+            "total_tokens_total": 56138,
+            "token_usage_available_calls": 11
+          },
+          "artifacts": {
+            "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo2/llm_prompts.jsonl",
+            "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo2/llm_responses.jsonl"
+          }
+        }
+      ],
+      "exit_code": 1,
+      "continue_feedback_loop": false
+    }
+  ],
+  "run_finished_at": "2026-07-24T00:12:09.673649",
+  "updated_at": "2026-07-24T00:12:09.673651",
+  "aborted": false,
+  "abort_reason": null,
+  "last_cycle_run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo2",
+  "last_cycle_metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260724_000938/ciclo2/run_metadata.json"
+}

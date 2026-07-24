@@ -1,0 +1,11 @@
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras-cli.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+Exception in thread "main" java.lang.NullPointerException: Cannot invoke "it.polimi.lIRAs.Target.getName()" because the return value of "it.polimi.lIRAs.ActionC.getTarget()" is null
+	at it.polimi.generator.LIRAsGenerator.getActionUpdate(LIRAsGenerator.java:1687)
+	at it.polimi.generator.LIRAsGenerator.seqOrch(LIRAsGenerator.java:1536)
+	at it.polimi.generator.LIRAsGenerator.lambda$doGenerate$0(LIRAsGenerator.java:125)
+	at org.eclipse.xtext.xbase.lib.IteratorExtensions.forEach(IteratorExtensions.java:446)
+	at it.polimi.generator.LIRAsGenerator.doGenerate(LIRAsGenerator.java:130)
+	at it.polimi.Main.main(Main.java:71)

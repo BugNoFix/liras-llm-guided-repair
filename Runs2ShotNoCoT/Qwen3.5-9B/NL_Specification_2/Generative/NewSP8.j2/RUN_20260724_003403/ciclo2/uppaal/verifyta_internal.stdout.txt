@@ -1,0 +1,141 @@
+Options for the verification:
+  Generating no trace
+  Search order is breadth first
+  Using conservative space optimisation
+  Seed is 1784846126
+  State space representation uses minimal constraint systems with future testing
+  Using HashMap + Compress integers for discrete state storage
+[2K
+Verifying formula 1 at /nta/queries/query[1]/formula
+ -- Formula: simulate[<=700]{user_guided_transport_human1_def.s1_start, user_guided_transport_human1_def.s1_end, user_guided_transport_human1_def.s2_start, user_guided_transport_human1_def.s2_end, user_guided_transport_human1_def.s3_start, user_guided_transport_human1_def.s3_idle, user_guided_transport.end}
+[2K -- Aborted.
+user_guided_transport_human1_def.s1_start:
+[0]: (0,0) (0,1) (0,0) (12,0)
+user_guided_transport_human1_def.s1_end:
+[0]: (0,0) (1,0) (1,1) (2,1) (2,0) (12,0)
+user_guided_transport_human1_def.s2_start:
+[0]: (0,0) (2,0) (2,1) (2,0) (7,0) (7,1) (7,0) (12,0) (12,1)
+user_guided_transport_human1_def.s2_end:
+[0]: (0,0) (12,0)
+user_guided_transport_human1_def.s3_start:
+[0]: (0,0) (12,0)
+user_guided_transport_human1_def.s3_idle:
+[0]: (0,0) (12,0)
+user_guided_transport.end:
+[0]: (0,0) (2,0)
+[2K
+Verifying formula 2 at /nta/queries/query[2]/formula
+ -- Formula: simulate[<=700]{user_guided_transport_robot1_def.s1_start, user_guided_transport_robot1_def.s1_end, user_guided_transport_robot1_def.s2_start, user_guided_transport_robot1_def.s2_end, user_guided_transport_robot1_def.s3_start, user_guided_transport_robot1_def.s3_end, user_guided_transport.end}
+[2K -- Aborted.
+user_guided_transport_robot1_def.s1_start:
+[0]: (0,0) (0,1) (0,0) (2,0)
+user_guided_transport_robot1_def.s1_end:
+[0]: (0,0) (2,0) (2,1)
+user_guided_transport_robot1_def.s2_start:
+[0]: (0,0) (2,0) (2,1)
+user_guided_transport_robot1_def.s2_end:
+[0]: (0,0) (2,0)
+user_guided_transport_robot1_def.s3_start:
+[0]: (0,0) (2,0)
+user_guided_transport_robot1_def.s3_end:
+[0]: (0,0) (2,0)
+user_guided_transport.end:
+[0]: (0,0) (2,0)
+[2K
+Verifying formula 3 at /nta/queries/query[3]/formula
+ -- Formula: Pr[<=700] (<> user_guided_transport.end)
+[2K -- Aborted.
+[2K
+Verifying formula 4 at /nta/queries/query[4]/formula
+ -- Formula: simulate[<=700]{humanPositionX[0], humanPositionY[0], robPositionX[0], robPositionY[0], batteryCharge[0], user_guided_transport.end}
+[2K -- Aborted.
+humanPositionX[0]:
+[0]: (0,0) (0,92.5) (1,92.5) (1,97.73313175708738) (3,97.73313175708738) (3,123.7285354798977) (4,123.7285354798977) (4,149.723939202708) (5,149.723939202708) (5,175.7193429255182) (6,175.7193429255182) (6,201.7147466483285) (7,201.7147466483285) (7,227.7101503711388) (8,227.7101503711388) (8,253.7055540939491) (9,253.7055540939491) (9,279.7009578167594) (10,279.7009578167594) (10,305.6963615395697) (11,305.6963615395697) (11,331.69176526238) (12,331.69176526238) (12,357.6871689851903)
+humanPositionY[0]:
+[0]: (0,0) (0,163.5) (1,163.5) (1,188.9679078844919) (3,188.9679078844919) (3,188.479046668909) (4,188.479046668909) (4,187.9901854533261) (5,187.9901854533261) (5,187.5013242377432) (6,187.5013242377432) (6,187.0124630221603) (7,187.0124630221603) (7,186.5236018065774) (8,186.5236018065774) (8,186.0347405909945) (9,186.0347405909945) (9,185.5458793754117) (10,185.5458793754117) (10,185.0570181598288) (11,185.0570181598288) (11,184.5681569442459) (12,184.5681569442459) (12,184.079295728663)
+robPositionX[0]:
+[0]: (0,0) (0,92.5) (2,92.5) (2,97.73313175708738)
+robPositionY[0]:
+[0]: (0,0) (0,163.5) (2,163.5) (2,188.9679078844919)
+batteryCharge[0]:
+[0]: (0,100)
+user_guided_transport.end:
+[0]: (0,0) (2,0)
+[2K
+Verifying formula 5 at /nta/queries/query[5]/formula
+ -- Formula: simulate[<=700]{robot_inventory[0][0], user_guided_transport.end*2}
+[2K -- Aborted.
+robot_inventory[0][0]:
+[0]: (0,0)
+user_guided_transport.end * 2:
+[0]: (0,0) (2,0)
+[2K
+Verifying formula 6 at /nta/queries/query[6]/formula
+ -- Formula: simulate[<=700]{bedroom[0], bedroom[1], kitchen[0], kitchen[1]}
+[2K -- Aborted.
+bedroom[0]:
+[0]: (0,100)
+bedroom[1]:
+[0]: (0,200)
+kitchen[0]:
+[0]: (0,4400)
+kitchen[1]:
+[0]: (0,765)
+[2K
+Verifying formula 7 at /nta/queries/query[7]/formula
+ -- Formula: simulate[<=700]{rm_1.idle, rf_1.idle, rp_1.idle, rd_1.idle}
+[2K -- Aborted.
+rm_1.idle:
+[0]: (0,0) (0,1) (0,0) (3,0) (3,1)
+rf_1.idle:
+[0]: (0,0) (0,1)
+rp_1.idle:
+[0]: (0,0) (0,1) (2,1) (2,0)
+rd_1.idle:
+[0]: (0,0) (0,1)
+[2K
+Verifying formula 8 at /nta/queries/query[8]/formula
+ -- Formula: Pr[<=700](<>!rm_1.idle || !rf_1.idle || !rp_1.idle || !rd_1.idle)
+[2K -- Formula is satisfied.
+(72/72 runs) Pr(<> …) in [0.950056,1] (95% CI)
+Values in [0,0] mean=0 steps=2.22045e-16: 72
+[2K
+Verifying formula 9 at /nta/queries/query[9]/formula
+ -- Formula: Pr[<=700]([] (user_guided_transport.end imply (rm_1.idle && rf_1.idle && rp_1.idle && rd_1.idle)))
+[2K -- Aborted.
+[2K
+Verifying formula 10 at /nta/queries/query[10]/formula
+ -- Formula: Pr[<=700] (<> pow(humanPositionX[0] - kitchen[0], 2) + pow(humanPositionY[0] - kitchen[1], 2) <= 900 )
+[2K -- Aborted.
+[2K
+Verifying formula 11 at /nta/queries/query[11]/formula
+ -- Formula: Pr[<=700] (<> pow(humanPositionX[0] - bedroom[0], 2) + pow(humanPositionY[0] - bedroom[1], 2) <= 900 )
+[2K -- Formula is satisfied.
+(72/72 runs) Pr(<> …) in [0.950056,1] (95% CI)
+Values in [1,1] mean=1 steps=2.22045e-16: 72
+[2K
+Verifying formula 12 at /nta/queries/query[12]/formula
+ -- Formula: Pr[<=700] (<> pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900 )
+[2K -- Aborted.
+[2K
+Verifying formula 13 at /nta/queries/query[13]/formula
+ -- Formula: Pr[<=700] (<> pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900 )
+[2K -- Formula is satisfied.
+(72/72 runs) Pr(<> …) in [0.950056,1] (95% CI)
+Values in [2,2] mean=2 steps=2.22045e-16: 72
+[2K
+Verifying formula 14 at /nta/queries/query[14]/formula
+ -- Formula: Pr[<=700] (<> !isValidPosition(humanPositionX[0], humanPositionY[0]))
+[2K -- Formula is satisfied.
+(72/72 runs) Pr(<> …) in [0.950056,1] (95% CI)
+Values in [0,0] mean=0 steps=2.22045e-16: 72
+[2K
+Verifying formula 15 at /nta/queries/query[15]/formula
+ -- Formula: Pr[<=700] (<> !isValidPosition(robPositionX[0], robPositionY[0]))
+[2K -- Formula is satisfied.
+(72/72 runs) Pr(<> …) in [0.950056,1] (95% CI)
+Values in [0,0] mean=0 steps=2.22045e-16: 72
+[2K
+Verifying formula 16 at /nta/queries/query[16]/formula
+ -- Formula: Pr[<=700] (<> currP > 2)
+[2K -- Aborted.

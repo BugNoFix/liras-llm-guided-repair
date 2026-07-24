@@ -1,0 +1,877 @@
+{
+  "run_id": "20260724_003521",
+  "run_started_at": "2026-07-24T00:35:21.273878",
+  "generation_provider": "huggingface",
+  "repair_provider": "huggingface",
+  "query_provider": "huggingface",
+  "project_id": null,
+  "location": "global",
+  "system_prompt": "Generative/NewSP8.j2",
+  "shots": "leave_one_spec_out",
+  "scenario": "NL_Specification_2.txt",
+  "repair_prompt": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/SPs/Repair/NewSPR8.j2",
+  "generation_model": "Qwen/Qwen3.5-9B",
+  "generation_temperature": 1.0,
+  "generation_max_output_tokens": 4000,
+  "empty_generation_max_retries": 3,
+  "llm_seed": 252,
+  "block_hf_thinking": true,
+  "repair_model": "Qwen/Qwen3.5-9B",
+  "repair_temperature": 0.35,
+  "repair_max_output_tokens": 4000,
+  "empty_query_adaptation_max_retries": 2,
+  "reasoning_effort": "none",
+  "effective_reasoning_effort": {
+    "generation": null,
+    "repair": null,
+    "query": null
+  },
+  "hf_thinking_block_skipped": {
+    "generation": false,
+    "repair": false,
+    "query": false
+  },
+  "qwen_disable_thinking_extra_body": {
+    "generation": true,
+    "repair": true,
+    "query": false
+  },
+  "glm_disable_thinking_extra_body": {
+    "generation": false,
+    "repair": false,
+    "query": false
+  },
+  "repair_shots": 2,
+  "use_generated_dsl_cache": false,
+  "generated_dsl_source": "dsl_folder",
+  "generated_dsl_cache_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/GeneratedDSL/NL_Specification_2/Generative/NewSP8.j2/shots_leave_one_spec_out.LIRAs",
+  "compiler_jar": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras_compiler.jar",
+  "max_iterations": 11,
+  "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2",
+  "results_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B",
+  "dsl_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/dsl",
+  "compiler_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/compiler",
+  "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries",
+  "prompt_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/llm_prompts.jsonl",
+  "response_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/llm_responses.jsonl",
+  "hf_debug_response_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/hf_debug_responses.jsonl",
+  "pipeline_cycle": 2,
+  "run_dir_override": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2",
+  "uppaal_feedback_included": true,
+  "uppaal_feedback_chars": 14602,
+  "iterations": [
+    {
+      "iteration": 0,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/dsl/ITER0_20260724_003523.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/compiler/ITER0_20260724_003523.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1154,
+      "compiler_error_score": {
+        "feedback_chars": 1154,
+        "lines": 15,
+        "error_lines": 9,
+        "warning_lines": 4,
+        "score": 103
+      },
+      "repair_prompt_included_previous_dsl": true,
+      "repair_prompt_mode": "dsl_plus_compiler"
+    },
+    {
+      "iteration": 1,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/dsl/ITER1_20260724_003525.LIRAs",
+      "success_artifact_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/dsl/SUCCESS_20260724_003526.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/compiler/ITER1_20260724_003525.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": true,
+      "validation": {
+        "returncode": 0,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_error_score": {
+        "feedback_chars": 625,
+        "lines": 7,
+        "error_lines": 0,
+        "warning_lines": 4,
+        "score": 11
+      }
+    }
+  ],
+  "telemetry": {
+    "llm_calls": 3,
+    "prompt_chars_total": 51448,
+    "response_chars_total": 5073,
+    "prompt_tokens_total": 24321,
+    "completion_tokens_total": 9614,
+    "total_tokens_total": 33935,
+    "token_usage_available_calls": 3,
+    "last_call": {
+      "kind": "query_adaptation",
+      "provider": "huggingface",
+      "timestamp": "2026-07-24T00:36:25.711986",
+      "finish_reason": "stop",
+      "seed": 252,
+      "safety_ratings": [],
+      "prompt_chars": 19812,
+      "response_chars": 4561,
+      "prompt_tokens": 7543,
+      "completion_tokens": 9444,
+      "total_tokens": 16987,
+      "token_usage_available": true
+    }
+  },
+  "llm_call_history": [
+    {
+      "kind": "generate",
+      "provider": "huggingface",
+      "timestamp": "2026-07-24T00:35:23.155063",
+      "finish_reason": "stop",
+      "seed": 252,
+      "safety_ratings": [],
+      "prompt_chars": 15369,
+      "response_chars": 299,
+      "prompt_tokens": 7996,
+      "completion_tokens": 99,
+      "total_tokens": 8095,
+      "token_usage_available": true
+    },
+    {
+      "kind": "repair",
+      "provider": "huggingface",
+      "timestamp": "2026-07-24T00:35:25.497270",
+      "finish_reason": "stop",
+      "seed": 252,
+      "safety_ratings": [],
+      "prompt_chars": 16267,
+      "response_chars": 213,
+      "prompt_tokens": 8782,
+      "completion_tokens": 71,
+      "total_tokens": 8853,
+      "token_usage_available": true
+    },
+    {
+      "kind": "query_adaptation",
+      "provider": "huggingface",
+      "timestamp": "2026-07-24T00:36:25.711986",
+      "finish_reason": "stop",
+      "seed": 252,
+      "safety_ratings": [],
+      "prompt_chars": 19812,
+      "response_chars": 4561,
+      "prompt_tokens": 7543,
+      "completion_tokens": 9444,
+      "total_tokens": 16987,
+      "token_usage_available": true
+    }
+  ],
+  "status": "success",
+  "run_finished_at": "2026-07-24T00:35:26.133287",
+  "summary": {
+    "iterations_recorded": 2,
+    "validations_attempted": 2,
+    "compiler_failures": 1,
+    "compiler_successes": 1,
+    "setup_errors": 0,
+    "first_success_iteration": 1,
+    "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/dsl/ITER1_20260724_003525.LIRAs",
+    "total_compiler_feedback_chars": 1154,
+    "llm_calls": 3,
+    "prompt_tokens_total": 24321,
+    "completion_tokens_total": 9614,
+    "total_tokens_total": 33935,
+    "token_usage_available_calls": 3
+  },
+  "updated_at": "2026-07-24T00:36:25.880195",
+  "resolved_generation_shots": [
+    {
+      "user": "NL_Specifications/Spec1/UserScenario.txt",
+      "assistant": "NL_Specifications/Spec1/AssistantScenario.txt",
+      "source_spec": "NL_Specification_1"
+    },
+    {
+      "user": "NL_Specifications/Spec3/UserScenario.txt",
+      "assistant": "NL_Specifications/Spec3/AssistantScenario.txt",
+      "source_spec": "NL_Specification_3"
+    }
+  ],
+  "generation_shot_count": 2,
+  "generation_attempts": [
+    {
+      "attempt": 1,
+      "response_text_chars": 299,
+      "empty_response": false,
+      "accepted": true,
+      "finish_reason": "stop"
+    }
+  ],
+  "repair": {
+    "resolved_repair_shots": [
+      {
+        "user": "LeaveOneSpecOut/TargetSpec2/Case1/UserScenario.txt",
+        "assistant": "LeaveOneSpecOut/TargetSpec2/Case1/AssistantScenario.txt",
+        "target_spec": "NL_Specification_2",
+        "source_spec": "NL_Specification_1",
+        "source": "target_spec_2_case_1_from_spec_1"
+      },
+      {
+        "user": "LeaveOneSpecOut/TargetSpec2/Case2/UserScenario.txt",
+        "assistant": "LeaveOneSpecOut/TargetSpec2/Case2/AssistantScenario.txt",
+        "target_spec": "NL_Specification_2",
+        "source_spec": "NL_Specification_3",
+        "source": "target_spec_2_case_2_from_spec_3"
+      }
+    ],
+    "repair_shot_count": 2,
+    "repair_chat_initialized_at": "2026-07-24T00:35:23.793104",
+    "repair_prompt_template_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/SPs/Repair/NewSPR8.j2",
+    "repair_system_prompt_chars": 8250,
+    "repair_stateless": true,
+    "repair_uses_server_chat": false,
+    "repair_temperature": 0.35,
+    "llm_seed": 252
+  },
+  "stages": [
+    {
+      "stage": "dsl_generation",
+      "result": "ok",
+      "details": {
+        "iterations_recorded": 2,
+        "validations_attempted": 2,
+        "compiler_failures": 1,
+        "compiler_successes": 1,
+        "setup_errors": 0,
+        "first_success_iteration": 1,
+        "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/dsl/ITER1_20260724_003525.LIRAs",
+        "total_compiler_feedback_chars": 1154,
+        "llm_calls": 2,
+        "prompt_tokens_total": 16778,
+        "completion_tokens_total": 170,
+        "total_tokens_total": 16948,
+        "token_usage_available_calls": 2
+      },
+      "artifacts": {
+        "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/dsl/ITER1_20260724_003525.LIRAs",
+        "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/llm_prompts.jsonl",
+        "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/llm_responses.jsonl"
+      }
+    },
+    {
+      "stage": "xml_export",
+      "result": "ok",
+      "details": {
+        "exit_code": 0
+      },
+      "artifacts": {
+        "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/dsl/ITER1_20260724_003525.LIRAs",
+        "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/xml/ITER1_20260724_003525.xml",
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/xml/lira_cli.stdout.txt",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/xml/lira_cli.stderr.txt"
+      }
+    },
+    {
+      "stage": "verifyta_internal",
+      "result": "failed",
+      "execution_result": "failed",
+      "semantic_result": "not_evaluated",
+      "failure_type": "execution",
+      "failure_reason": "UPPAAL verifyta failed during internal verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/xml/ITER1_20260724_003525.xml:/nta/queries/query[16]/formula:1: [error] Time-lock error:",
+      "failure_details": {
+        "exit_code": 1,
+        "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/xml/ITER1_20260724_003525.xml:/nta/queries/query[16]/formula:1: [error] Time-lock error:",
+        "stderr_preview": "nsport_human1_def.t=0 user_guided_transport_robot1_def.t=12\n.\n/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/xml/ITER1_20260724_003525.xml:/nta/queries/query[16]/formula:1: [error] Time-lock error:\nState:\n( hi_1.inactive hm_1.busy rm_1.idle rf_1.idle rp_1.starting rd_1.idle user_guided_transport.sub_seq_s2 user_guided_transport_human1_def.A1_a2_moveTo_busy user_guided_transport_robot1_def.A2_a2_pick_busy ) human1_stat=0 robot1_stat=0 location_X[0]=100 location_X[1]=4400 location_X[2]=415 location_Y[0]=200 location_Y[1]=765 location_Y[2]=165 resources_X[0]=415 resources_Y[0]=165 humanFatigue[0]=0 humanPositionX[0]=357 humanPositionY[0]=184 batteryCharge[0]=100 robPositionX[0]=97 robPositionY[0]=188 human_loc_target[0]=1 robot_loc_target[0]=0 human_to_be_followed[0]=0 robot_to_be_followed[0]=0 f_loc_target[0]=0 robot_res_to_pick[0]=0 robot_inventory[0][0]=0 old_inventory[0][0]=0 robot_res_to_deposit[0]=0 currP=1 hi_1.id=1 hi_1.FW_max=100 hi_1.Fp=0 hi_1.lambda=0 hi_1.mi=0 hi_1.obey=100 hi_1.disobey=0 hi_1.freeWillTh=101 hi_1.fw=70 hi_1.TE=0 hi_1.lambda_crit=0 hi_1.hs=0 hi_1.crit=0 hi_1.non_crit=100 hi_1.FS=100 hi_1.ONCE_FTG=1 hi_1.ONCE_POS=1 hi_1.is_crit=0 hi_1.ignore_crit=0 hi_1.collisions=0 hi_1.e_obey=100 hi_1.e_disobey=0 hi_1.e_FW_th=101 hi_1.e_delta_x100=9999 hi_1.e_lambda_inv=9999 hi_1.e_crit=0 hm_1.id=1 hm_1._v=26 hm_1.FW_max=100 hm_1.Fp=0 hm_1.lambda=0 hm_1.mi=0 hm_1.obey=100 hm_1.disobey=0 hm_1.freeWillTh=101 hm_1.fw=13 hm_1.TE=0 hm_1.lambda_crit=0 hm_1.hs=0 hm_1.crit=0 hm_1.non_crit=100 hm_1.FS=100 hm_1.ONCE_FTG=1 hm_1.ONCE_POS=1 hm_1.traj[0][0]=1452 hm_1.traj[0][1]=163 hm_1.traj[1][0]=3062 hm_1.traj[1][1]=163 hm_1.traj[2][0]=4417 hm_1.traj[2][1]=163 hm_1.traj[3][0]=4400 hm_1.traj[3][1]=765 hm_1.traj[4][0]=0 hm_1.traj[4][1]=0 hm_1.traj[5][0]=0 hm_1.traj[5][1]=0 hm_1.traj[6][0]=0 hm_1.traj[6][1]=0 hm_1.traj[7][0]=0 hm_1.traj[7][1]=0 hm_1.traj[8][0]=0 hm_1.traj[8][1]=0 hm_1.traj[9][0]=0 hm_1.traj[9][1]=0 hm_1.ort=-1 hm_1.curr_traj=0 hm_1.curr[0]=4417 hm_1.curr[1]=163 hm_1.dest[0]=4400 hm_1.dest[1]=765 hm_1.is_crit=0 hm_1.ignore_crit=0 hm_1.crit_prob=0 hm_1.e_obey=100 hm_1.e_disobey=0 hm_1.e_FW_th=101 hm_1.e_delta_x100=9999 hm_1.e_lambda_inv=9999 hm_1.e_crit=0 rm_1.id=1 rm_1._v_max=26 rm_1._a_max=26 rm_1.turn_limit=1 rm_1.traj[0][0]=100 rm_1.traj[0][1]=200 rm_1.traj[1][0]=0 rm_1.traj[1][1]=0 rm_1.traj[2][0]=0 rm_1.traj[2][1]=0 rm_1.traj[3][0]=0 rm_1.traj[3][1]=0 rm_1.traj[4][0]=0 rm_1.traj[4][1]=0 rm_1.traj[5][0]=0 rm_1.traj[5][1]=0 rm_1.traj[6][0]=0 rm_1.traj[6][1]=0 rm_1.traj[7][0]=0 rm_1.traj[7][1]=0 rm_1.traj[8][0]=0 rm_1.traj[8][1]=0 rm_1.traj[9][0]=0 rm_1.traj[9][1]=0 rm_1.ort=78 rm_1.curr_traj=0 rm_1.t=0 rm_1.v_max=26 rm_1.a_max=26 rm_1.needsTurning=1 rm_1.curr[0]=92 rm_1.curr[1]=163 rm_1.dest[0]=100 rm_1.dest[1]=200 rf_1.id=1 rf_1._v_max=26 rf_1._a_max=26 rf_1.turn_limit=0 rf_1.traj[0][0]=0 rf_1.traj[0][1]=0 rf_1.traj[1][0]=0 rf_1.traj[1][1]=0 rf_1.traj[2][0]=0 rf_1.traj[2][1]=0 rf_1.traj[3][0]=0 rf_1.traj[3][1]=0 rf_1.traj[4][0]=0 rf_1.traj[4][1]=0 rf_1.traj[5][0]=0 rf_1.traj[5][1]=0 rf_1.traj[6][0]=0 rf_1.traj[6][1]=0 rf_1.traj[7][0]=0 rf_1.traj[7][1]=0 rf_1.traj[8][0]=0 rf_1.traj[8][1]=0 rf_1.traj[9][0]=0 rf_1.traj[9][1]=0 rf_1.ort=0 rf_1.curr_traj=0 rf_1.t=0 rf_1.v_max=26 rf_1.a_max=26 rf_1.needsTurning=0 rf_1.curr[0]=0 rf_1.curr[1]=0 rf_1.dest[0]=0 rf_1.dest[1]=0 rp_1.id=1 rd_1.id=1 user_guided_transport.p=1 user_guided_transport_human1_def.p=1 user_guided_transport_human1_def.H=1 user_guided_transport_robot1_def.p=1 user_guided_transport_robot1_def.R=1#t(0)=0#time=12 global_clock=12 hi_1.t=11 hi_1.F=10.0024285447367873302937368862 hi_1.tUpd=10 hi_1.tExp=11 hm_1.t=10 hm_1.F=0.0265109636374711230000222883518 hm_1.tUpd=0 hm_1.tExp=10 rm_1.V=0 rm_1.Th=10 rm_1.tUpd=0 rf_1.V=0 rf_1.Th=12 rf_1.tUpd=0 rp_1.t=10 rd_1.t=12 user_guided_transport.end_c=12 user_guided_transport_human1_def.t=0 user_guided_transport_robot1_def.t=12\n.",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/uppaal/verifyta_internal.stderr.txt",
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/uppaal/verifyta_internal.stdout.txt"
+      },
+      "details": {
+        "verified_formula_count": 16,
+        "failed_query_count": 11,
+        "probability_threshold": 0.05,
+        "probability_checked_query_count": 0
+      },
+      "artifacts": {
+        "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/xml/ITER1_20260724_003525.xml",
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/uppaal/verifyta_internal.stdout.txt",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/uppaal/verifyta_internal.stderr.txt"
+      }
+    },
+    {
+      "stage": "query_adaptation",
+      "result": "ok",
+      "artifacts": {
+        "source_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+        "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q",
+        "source_queries_copy_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/source_queries.txt",
+        "query_adapter_response_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/query_adapter_response.txt",
+        "query_adapter_attempts_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/query_adapter_attempts.jsonl",
+        "query_xml_context_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/xml_context.txt",
+        "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries"
+      }
+    },
+    {
+      "stage": "verifyta_adapted",
+      "result": "failed",
+      "execution_result": "failed",
+      "semantic_result": "not_evaluated",
+      "failure_type": "execution",
+      "failure_reason": "UPPAAL verifyta failed during adapted-query verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/xml/ITER1_20260724_003525.xml::75: [error] Time-lock error:",
+      "failure_details": {
+        "exit_code": 1,
+        "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/xml/ITER1_20260724_003525.xml::75: [error] Time-lock error:",
+        "stderr_preview": "sport.end_c=12 user_guided_transport_human1_def.t=0 user_guided_transport_robot1_def.t=12\n.\n/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/xml/ITER1_20260724_003525.xml::75: [error] Time-lock error:\nState:\n( hi_1.inactive hm_1.busy rm_1.idle rf_1.idle rp_1.starting rd_1.idle user_guided_transport.sub_seq_s2 user_guided_transport_human1_def.A1_a2_moveTo_busy user_guided_transport_robot1_def.A2_a2_pick_busy ) human1_stat=0 robot1_stat=0 location_X[0]=100 location_X[1]=4400 location_X[2]=415 location_Y[0]=200 location_Y[1]=765 location_Y[2]=165 resources_X[0]=415 resources_Y[0]=165 humanFatigue[0]=0 humanPositionX[0]=357 humanPositionY[0]=184 batteryCharge[0]=100 robPositionX[0]=97 robPositionY[0]=188 human_loc_target[0]=1 robot_loc_target[0]=0 human_to_be_followed[0]=0 robot_to_be_followed[0]=0 f_loc_target[0]=0 robot_res_to_pick[0]=0 robot_inventory[0][0]=0 old_inventory[0][0]=0 robot_res_to_deposit[0]=0 currP=1 hi_1.id=1 hi_1.FW_max=100 hi_1.Fp=0 hi_1.lambda=0 hi_1.mi=0 hi_1.obey=100 hi_1.disobey=0 hi_1.freeWillTh=101 hi_1.fw=9 hi_1.TE=0 hi_1.lambda_crit=0 hi_1.hs=0 hi_1.crit=0 hi_1.non_crit=100 hi_1.FS=100 hi_1.ONCE_FTG=1 hi_1.ONCE_POS=1 hi_1.is_crit=0 hi_1.ignore_crit=0 hi_1.collisions=0 hi_1.e_obey=100 hi_1.e_disobey=0 hi_1.e_FW_th=101 hi_1.e_delta_x100=9999 hi_1.e_lambda_inv=9999 hi_1.e_crit=0 hm_1.id=1 hm_1._v=26 hm_1.FW_max=100 hm_1.Fp=0 hm_1.lambda=0 hm_1.mi=0 hm_1.obey=100 hm_1.disobey=0 hm_1.freeWillTh=101 hm_1.fw=41 hm_1.TE=0 hm_1.lambda_crit=0 hm_1.hs=0 hm_1.crit=0 hm_1.non_crit=100 hm_1.FS=100 hm_1.ONCE_FTG=1 hm_1.ONCE_POS=1 hm_1.traj[0][0]=1452 hm_1.traj[0][1]=163 hm_1.traj[1][0]=3062 hm_1.traj[1][1]=163 hm_1.traj[2][0]=4417 hm_1.traj[2][1]=163 hm_1.traj[3][0]=4400 hm_1.traj[3][1]=765 hm_1.traj[4][0]=0 hm_1.traj[4][1]=0 hm_1.traj[5][0]=0 hm_1.traj[5][1]=0 hm_1.traj[6][0]=0 hm_1.traj[6][1]=0 hm_1.traj[7][0]=0 hm_1.traj[7][1]=0 hm_1.traj[8][0]=0 hm_1.traj[8][1]=0 hm_1.traj[9][0]=0 hm_1.traj[9][1]=0 hm_1.ort=-1 hm_1.curr_traj=0 hm_1.curr[0]=4417 hm_1.curr[1]=163 hm_1.dest[0]=4400 hm_1.dest[1]=765 hm_1.is_crit=0 hm_1.ignore_crit=0 hm_1.crit_prob=0 hm_1.e_obey=100 hm_1.e_disobey=0 hm_1.e_FW_th=101 hm_1.e_delta_x100=9999 hm_1.e_lambda_inv=9999 hm_1.e_crit=0 rm_1.id=1 rm_1._v_max=26 rm_1._a_max=26 rm_1.turn_limit=1 rm_1.traj[0][0]=100 rm_1.traj[0][1]=200 rm_1.traj[1][0]=0 rm_1.traj[1][1]=0 rm_1.traj[2][0]=0 rm_1.traj[2][1]=0 rm_1.traj[3][0]=0 rm_1.traj[3][1]=0 rm_1.traj[4][0]=0 rm_1.traj[4][1]=0 rm_1.traj[5][0]=0 rm_1.traj[5][1]=0 rm_1.traj[6][0]=0 rm_1.traj[6][1]=0 rm_1.traj[7][0]=0 rm_1.traj[7][1]=0 rm_1.traj[8][0]=0 rm_1.traj[8][1]=0 rm_1.traj[9][0]=0 rm_1.traj[9][1]=0 rm_1.ort=78 rm_1.curr_traj=0 rm_1.t=0 rm_1.v_max=26 rm_1.a_max=26 rm_1.needsTurning=1 rm_1.curr[0]=92 rm_1.curr[1]=163 rm_1.dest[0]=100 rm_1.dest[1]=200 rf_1.id=1 rf_1._v_max=26 rf_1._a_max=26 rf_1.turn_limit=0 rf_1.traj[0][0]=0 rf_1.traj[0][1]=0 rf_1.traj[1][0]=0 rf_1.traj[1][1]=0 rf_1.traj[2][0]=0 rf_1.traj[2][1]=0 rf_1.traj[3][0]=0 rf_1.traj[3][1]=0 rf_1.traj[4][0]=0 rf_1.traj[4][1]=0 rf_1.traj[5][0]=0 rf_1.traj[5][1]=0 rf_1.traj[6][0]=0 rf_1.traj[6][1]=0 rf_1.traj[7][0]=0 rf_1.traj[7][1]=0 rf_1.traj[8][0]=0 rf_1.traj[8][1]=0 rf_1.traj[9][0]=0 rf_1.traj[9][1]=0 rf_1.ort=0 rf_1.curr_traj=0 rf_1.t=0 rf_1.v_max=26 rf_1.a_max=26 rf_1.needsTurning=0 rf_1.curr[0]=0 rf_1.curr[1]=0 rf_1.dest[0]=0 rf_1.dest[1]=0 rp_1.id=1 rd_1.id=1 user_guided_transport.p=1 user_guided_transport_human1_def.p=1 user_guided_transport_human1_def.H=1 user_guided_transport_robot1_def.p=1 user_guided_transport_robot1_def.R=1#t(0)=0#time=12 global_clock=12 hi_1.t=11 hi_1.F=10.0016588221512101597454602597 hi_1.tUpd=10 hi_1.tExp=11 hm_1.t=10 hm_1.F=0.0181789099897966301144780487675 hm_1.tUpd=0 hm_1.tExp=10 rm_1.V=0 rm_1.Th=10 rm_1.tUpd=0 rf_1.V=0 rf_1.Th=12 rf_1.tUpd=0 rp_1.t=10 rd_1.t=12 user_guided_transport.end_c=12 user_guided_transport_human1_def.t=0 user_guided_transport_robot1_def.t=12\n.",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/uppaal/verifyta_adapted.stderr.txt",
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/uppaal/verifyta_adapted.stdout.txt"
+      },
+      "details": {
+        "verified_formula_count": 25,
+        "failed_query_count": 14,
+        "probability_threshold": 0.05,
+        "probability_checked_query_count": 11
+      },
+      "artifacts": {
+        "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/xml/ITER1_20260724_003525.xml",
+        "query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q",
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/uppaal/verifyta_adapted.stdout.txt",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/uppaal/verifyta_adapted.stderr.txt"
+      }
+    }
+  ],
+  "cycle_result": "failed",
+  "failed_stage": "verifyta_internal",
+  "failure_type": "execution",
+  "failure_reason": "UPPAAL verifyta failed during internal verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/xml/ITER1_20260724_003525.xml:/nta/queries/query[16]/formula:1: [error] Time-lock error:",
+  "failure_details": {
+    "exit_code": 1,
+    "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/xml/ITER1_20260724_003525.xml:/nta/queries/query[16]/formula:1: [error] Time-lock error:",
+    "stderr_preview": "nsport_human1_def.t=0 user_guided_transport_robot1_def.t=12\n.\n/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/xml/ITER1_20260724_003525.xml:/nta/queries/query[16]/formula:1: [error] Time-lock error:\nState:\n( hi_1.inactive hm_1.busy rm_1.idle rf_1.idle rp_1.starting rd_1.idle user_guided_transport.sub_seq_s2 user_guided_transport_human1_def.A1_a2_moveTo_busy user_guided_transport_robot1_def.A2_a2_pick_busy ) human1_stat=0 robot1_stat=0 location_X[0]=100 location_X[1]=4400 location_X[2]=415 location_Y[0]=200 location_Y[1]=765 location_Y[2]=165 resources_X[0]=415 resources_Y[0]=165 humanFatigue[0]=0 humanPositionX[0]=357 humanPositionY[0]=184 batteryCharge[0]=100 robPositionX[0]=97 robPositionY[0]=188 human_loc_target[0]=1 robot_loc_target[0]=0 human_to_be_followed[0]=0 robot_to_be_followed[0]=0 f_loc_target[0]=0 robot_res_to_pick[0]=0 robot_inventory[0][0]=0 old_inventory[0][0]=0 robot_res_to_deposit[0]=0 currP=1 hi_1.id=1 hi_1.FW_max=100 hi_1.Fp=0 hi_1.lambda=0 hi_1.mi=0 hi_1.obey=100 hi_1.disobey=0 hi_1.freeWillTh=101 hi_1.fw=70 hi_1.TE=0 hi_1.lambda_crit=0 hi_1.hs=0 hi_1.crit=0 hi_1.non_crit=100 hi_1.FS=100 hi_1.ONCE_FTG=1 hi_1.ONCE_POS=1 hi_1.is_crit=0 hi_1.ignore_crit=0 hi_1.collisions=0 hi_1.e_obey=100 hi_1.e_disobey=0 hi_1.e_FW_th=101 hi_1.e_delta_x100=9999 hi_1.e_lambda_inv=9999 hi_1.e_crit=0 hm_1.id=1 hm_1._v=26 hm_1.FW_max=100 hm_1.Fp=0 hm_1.lambda=0 hm_1.mi=0 hm_1.obey=100 hm_1.disobey=0 hm_1.freeWillTh=101 hm_1.fw=13 hm_1.TE=0 hm_1.lambda_crit=0 hm_1.hs=0 hm_1.crit=0 hm_1.non_crit=100 hm_1.FS=100 hm_1.ONCE_FTG=1 hm_1.ONCE_POS=1 hm_1.traj[0][0]=1452 hm_1.traj[0][1]=163 hm_1.traj[1][0]=3062 hm_1.traj[1][1]=163 hm_1.traj[2][0]=4417 hm_1.traj[2][1]=163 hm_1.traj[3][0]=4400 hm_1.traj[3][1]=765 hm_1.traj[4][0]=0 hm_1.traj[4][1]=0 hm_1.traj[5][0]=0 hm_1.traj[5][1]=0 hm_1.traj[6][0]=0 hm_1.traj[6][1]=0 hm_1.traj[7][0]=0 hm_1.traj[7][1]=0 hm_1.traj[8][0]=0 hm_1.traj[8][1]=0 hm_1.traj[9][0]=0 hm_1.traj[9][1]=0 hm_1.ort=-1 hm_1.curr_traj=0 hm_1.curr[0]=4417 hm_1.curr[1]=163 hm_1.dest[0]=4400 hm_1.dest[1]=765 hm_1.is_crit=0 hm_1.ignore_crit=0 hm_1.crit_prob=0 hm_1.e_obey=100 hm_1.e_disobey=0 hm_1.e_FW_th=101 hm_1.e_delta_x100=9999 hm_1.e_lambda_inv=9999 hm_1.e_crit=0 rm_1.id=1 rm_1._v_max=26 rm_1._a_max=26 rm_1.turn_limit=1 rm_1.traj[0][0]=100 rm_1.traj[0][1]=200 rm_1.traj[1][0]=0 rm_1.traj[1][1]=0 rm_1.traj[2][0]=0 rm_1.traj[2][1]=0 rm_1.traj[3][0]=0 rm_1.traj[3][1]=0 rm_1.traj[4][0]=0 rm_1.traj[4][1]=0 rm_1.traj[5][0]=0 rm_1.traj[5][1]=0 rm_1.traj[6][0]=0 rm_1.traj[6][1]=0 rm_1.traj[7][0]=0 rm_1.traj[7][1]=0 rm_1.traj[8][0]=0 rm_1.traj[8][1]=0 rm_1.traj[9][0]=0 rm_1.traj[9][1]=0 rm_1.ort=78 rm_1.curr_traj=0 rm_1.t=0 rm_1.v_max=26 rm_1.a_max=26 rm_1.needsTurning=1 rm_1.curr[0]=92 rm_1.curr[1]=163 rm_1.dest[0]=100 rm_1.dest[1]=200 rf_1.id=1 rf_1._v_max=26 rf_1._a_max=26 rf_1.turn_limit=0 rf_1.traj[0][0]=0 rf_1.traj[0][1]=0 rf_1.traj[1][0]=0 rf_1.traj[1][1]=0 rf_1.traj[2][0]=0 rf_1.traj[2][1]=0 rf_1.traj[3][0]=0 rf_1.traj[3][1]=0 rf_1.traj[4][0]=0 rf_1.traj[4][1]=0 rf_1.traj[5][0]=0 rf_1.traj[5][1]=0 rf_1.traj[6][0]=0 rf_1.traj[6][1]=0 rf_1.traj[7][0]=0 rf_1.traj[7][1]=0 rf_1.traj[8][0]=0 rf_1.traj[8][1]=0 rf_1.traj[9][0]=0 rf_1.traj[9][1]=0 rf_1.ort=0 rf_1.curr_traj=0 rf_1.t=0 rf_1.v_max=26 rf_1.a_max=26 rf_1.needsTurning=0 rf_1.curr[0]=0 rf_1.curr[1]=0 rf_1.dest[0]=0 rf_1.dest[1]=0 rp_1.id=1 rd_1.id=1 user_guided_transport.p=1 user_guided_transport_human1_def.p=1 user_guided_transport_human1_def.H=1 user_guided_transport_robot1_def.p=1 user_guided_transport_robot1_def.R=1#t(0)=0#time=12 global_clock=12 hi_1.t=11 hi_1.F=10.0024285447367873302937368862 hi_1.tUpd=10 hi_1.tExp=11 hm_1.t=10 hm_1.F=0.0265109636374711230000222883518 hm_1.tUpd=0 hm_1.tExp=10 rm_1.V=0 rm_1.Th=10 rm_1.tUpd=0 rf_1.V=0 rf_1.Th=12 rf_1.tUpd=0 rp_1.t=10 rd_1.t=12 user_guided_transport.end_c=12 user_guided_transport_human1_def.t=0 user_guided_transport_robot1_def.t=12\n.",
+    "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/uppaal/verifyta_internal.stderr.txt",
+    "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/uppaal/verifyta_internal.stdout.txt"
+  },
+  "query_source_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+  "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q",
+  "last_command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/xml/ITER1_20260724_003525.xml /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q",
+  "last_exit_code": 1,
+  "last_stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/uppaal/verifyta_adapted.stdout.txt",
+  "last_stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/uppaal/verifyta_adapted.stderr.txt",
+  "verifyta_probability_delta_threshold": 0.05,
+  "verifyta_internal_analysis": {
+    "status": "failed",
+    "verified_formula_count": 16,
+    "failed_query_count": 11,
+    "failed_queries": [
+      {
+        "index": 1,
+        "query_line": null,
+        "description": "",
+        "source_formula": "",
+        "adapted_formula": "",
+        "expected_probability": null,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": null,
+        "probability_threshold": null,
+        "verifyta_output": "Verifying formula 1 at /nta/queries/query[1]/formula\n-- Formula: simulate[<=700]{user_guided_transport_human1_def.s1_start, user_guided_transport_human1_def.s1_end, user_guided_transport_human1_def.s2_start, user_guided_transport_human1_def.s2_end, user_guided_transport_human1_def.s3_start, user_guided_transport_human1_def.s3_idle, user_guided_transport.end}\n-- Aborted."
+      },
+      {
+        "index": 2,
+        "query_line": null,
+        "description": "",
+        "source_formula": "",
+        "adapted_formula": "",
+        "expected_probability": null,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": null,
+        "probability_threshold": null,
+        "verifyta_output": "Verifying formula 2 at /nta/queries/query[2]/formula\n-- Formula: simulate[<=700]{user_guided_transport_robot1_def.s1_start, user_guided_transport_robot1_def.s1_end, user_guided_transport_robot1_def.s2_start, user_guided_transport_robot1_def.s2_end, user_guided_transport_robot1_def.s3_start, user_guided_transport_robot1_def.s3_end, user_guided_transport.end}\n-- Aborted."
+      },
+      {
+        "index": 3,
+        "query_line": null,
+        "description": "",
+        "source_formula": "",
+        "adapted_formula": "",
+        "expected_probability": null,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": null,
+        "probability_threshold": null,
+        "verifyta_output": "Verifying formula 3 at /nta/queries/query[3]/formula\n-- Formula: Pr[<=700] (<> user_guided_transport.end)\n-- Aborted."
+      },
+      {
+        "index": 4,
+        "query_line": null,
+        "description": "",
+        "source_formula": "",
+        "adapted_formula": "",
+        "expected_probability": null,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": null,
+        "probability_threshold": null,
+        "verifyta_output": "Verifying formula 4 at /nta/queries/query[4]/formula\n-- Formula: simulate[<=700]{humanPositionX[0], humanPositionY[0], robPositionX[0], robPositionY[0], batteryCharge[0], user_guided_transport.end}\n-- Aborted."
+      },
+      {
+        "index": 5,
+        "query_line": null,
+        "description": "",
+        "source_formula": "",
+        "adapted_formula": "",
+        "expected_probability": null,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": null,
+        "probability_threshold": null,
+        "verifyta_output": "Verifying formula 5 at /nta/queries/query[5]/formula\n-- Formula: simulate[<=700]{robot_inventory[0][0], user_guided_transport.end*2}\n-- Aborted."
+      },
+      {
+        "index": 6,
+        "query_line": null,
+        "description": "",
+        "source_formula": "",
+        "adapted_formula": "",
+        "expected_probability": null,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": null,
+        "probability_threshold": null,
+        "verifyta_output": "Verifying formula 6 at /nta/queries/query[6]/formula\n-- Formula: simulate[<=700]{bedroom[0], bedroom[1], kitchen[0], kitchen[1]}\n-- Aborted."
+      },
+      {
+        "index": 7,
+        "query_line": null,
+        "description": "",
+        "source_formula": "",
+        "adapted_formula": "",
+        "expected_probability": null,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": null,
+        "probability_threshold": null,
+        "verifyta_output": "Verifying formula 7 at /nta/queries/query[7]/formula\n-- Formula: simulate[<=700]{rm_1.idle, rf_1.idle, rp_1.idle, rd_1.idle}\n-- Aborted."
+      },
+      {
+        "index": 9,
+        "query_line": null,
+        "description": "",
+        "source_formula": "",
+        "adapted_formula": "",
+        "expected_probability": null,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": null,
+        "probability_threshold": null,
+        "verifyta_output": "Verifying formula 9 at /nta/queries/query[9]/formula\n-- Formula: Pr[<=700]([] (user_guided_transport.end imply (rm_1.idle && rf_1.idle && rp_1.idle && rd_1.idle)))\n-- Aborted."
+      },
+      {
+        "index": 10,
+        "query_line": null,
+        "description": "",
+        "source_formula": "",
+        "adapted_formula": "",
+        "expected_probability": null,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": null,
+        "probability_threshold": null,
+        "verifyta_output": "Verifying formula 10 at /nta/queries/query[10]/formula\n-- Formula: Pr[<=700] (<> pow(humanPositionX[0] - kitchen[0], 2) + pow(humanPositionY[0] - kitchen[1], 2) <= 900 )\n-- Aborted."
+      },
+      {
+        "index": 12,
+        "query_line": null,
+        "description": "",
+        "source_formula": "",
+        "adapted_formula": "",
+        "expected_probability": null,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": null,
+        "probability_threshold": null,
+        "verifyta_output": "Verifying formula 12 at /nta/queries/query[12]/formula\n-- Formula: Pr[<=700] (<> pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900 )\n-- Aborted."
+      },
+      {
+        "index": 16,
+        "query_line": null,
+        "description": "",
+        "source_formula": "",
+        "adapted_formula": "",
+        "expected_probability": null,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": null,
+        "probability_threshold": null,
+        "verifyta_output": "Verifying formula 16 at /nta/queries/query[16]/formula\n-- Formula: Pr[<=700] (<> currP > 2)\n-- Aborted."
+      }
+    ],
+    "probability_threshold": 0.05,
+    "probability_checked_query_count": 0,
+    "probability_checked_queries": [],
+    "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/uppaal/verifyta_internal.stdout.txt",
+    "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/uppaal/verifyta_internal.stderr.txt",
+    "adapted_query_path": null,
+    "source_query_path": null,
+    "failure_reason": "adapted-query UPPAAL verification completed, but 11 properties/queries were not satisfied."
+  },
+  "verifyta_adapted_analysis": {
+    "status": "failed",
+    "verified_formula_count": 25,
+    "failed_query_count": 14,
+    "failed_queries": [
+      {
+        "index": 6,
+        "query_line": 17,
+        "description": "The robot must not attempt to pick up the object before reaching the bedroom.",
+        "source_formula": "Pr[<=700] (<> user_guided_transport_robot_def.A2_a2_pick_busy && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )",
+        "adapted_formula": "Pr[<=700] (<> user_guided_transport_robot1_def.A2_a2_pick_busy && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )",
+        "expected_probability": 0.02497205,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": 1.0,
+        "probability_threshold": 0.05,
+        "verifyta_output": "Verifying formula 6 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q:17\n-- Aborted."
+      },
+      {
+        "index": 8,
+        "query_line": 23,
+        "description": "The robot must not attempt to pick up the object unless the human is also present in the bedroom.",
+        "source_formula": "Pr[<=700] (<> user_guided_transport_robot_def.A2_a2_pick_busy && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )",
+        "adapted_formula": "Pr[<=700] (<> user_guided_transport_robot1_def.A2_a2_pick_busy && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )",
+        "expected_probability": 0.02497205,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": 1.0,
+        "probability_threshold": 0.05,
+        "verifyta_output": "Verifying formula 8 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q:23\n-- Aborted."
+      },
+      {
+        "index": 9,
+        "query_line": 26,
+        "description": "The robot must successfully grasp exactly one object in the bedroom.",
+        "source_formula": "Pr[<=700](<> (pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) && robot_inventory[0][0] == 1)",
+        "adapted_formula": "Pr[<=700](<> (pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) && robot_inventory[0][0] == 1)",
+        "expected_probability": 0.975028,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": 1.0,
+        "probability_threshold": 0.05,
+        "verifyta_output": "Verifying formula 9 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q:26\n-- Aborted."
+      },
+      {
+        "index": 10,
+        "query_line": 29,
+        "description": "The robot must successfully grasp exactly one object in the bedroom.",
+        "source_formula": "Pr[<=700]([] (pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) imply robot_inventory[0][0] <= 1)",
+        "adapted_formula": "Pr[<=700]([] (pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) imply robot_inventory[0][0] <= 1)",
+        "expected_probability": 0.975028,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": 1.0,
+        "probability_threshold": 0.05,
+        "verifyta_output": "Verifying formula 10 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q:29\n-- Aborted."
+      },
+      {
+        "index": 11,
+        "query_line": 32,
+        "description": "The robot must not drop or release the object before reaching the kitchen.",
+        "source_formula": "Pr[<=700](<> (pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900) && robot_inventory[0][0] == 0)",
+        "adapted_formula": "Pr[<=700](<> (pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900) && robot_inventory[0][0] == 0)",
+        "expected_probability": 0.02497205,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": 1.0,
+        "probability_threshold": 0.05,
+        "verifyta_output": "Verifying formula 11 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q:32\n-- Aborted."
+      },
+      {
+        "index": 13,
+        "query_line": 38,
+        "description": "The robot shall follow the human to the kitchen while carrying the object.",
+        "source_formula": "Pr[<=700]([] user_guided_transport_robot_def.A2_a3_follow_busy imply robot_inventory[0][0] == 1)",
+        "adapted_formula": "Pr[<=700]([] user_guided_transport_robot1_def.A2_a3_moveTo_busy imply robot_inventory[0][0] == 1)",
+        "expected_probability": 0.975028,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": 1.0,
+        "probability_threshold": 0.05,
+        "verifyta_output": "Verifying formula 13 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q:38\n-- Aborted."
+      },
+      {
+        "index": 14,
+        "query_line": 41,
+        "description": "The robot must not navigate to the kitchen unless the object is in its possession.",
+        "source_formula": "Pr[<=700]([] user_guided_transport_robot_def.A2_a3_follow_busy imply robot_inventory[0][0] == 1)",
+        "adapted_formula": "Pr[<=700]([] user_guided_transport_robot1_def.A2_a3_moveTo_busy imply robot_inventory[0][0] == 1)",
+        "expected_probability": 0.975028,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": 1.0,
+        "probability_threshold": 0.05,
+        "verifyta_output": "Verifying formula 14 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q:41\n-- Aborted."
+      },
+      {
+        "index": 15,
+        "query_line": 44,
+        "description": "The robot must avoid collisions with obstacles during navigation.",
+        "source_formula": "Pr[<=700] (<> pow(robPositionX[0] - object[0], 2) + pow(robPositionY[0] - object[1], 2) <= 0 )",
+        "adapted_formula": "Pr[<=700] (<> pow(robPositionX[0] - object[0], 2) + pow(robPositionY[0] - object[1], 2) <= 0 )",
+        "expected_probability": 0.02497205,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": 1.0,
+        "probability_threshold": 0.05,
+        "verifyta_output": "Verifying formula 15 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q:44\n-- Aborted."
+      },
+      {
+        "index": 17,
+        "query_line": 50,
+        "description": "The human must avoid collisions with obstacles during navigation.",
+        "source_formula": "Pr[<=700] (<> pow(humanPositionX[0] - object[0], 2) + pow(humanPositionY[0] - object[1], 2) <= 0 )",
+        "adapted_formula": "Pr[<=700] (<> pow(humanPositionX[0] - object[0], 2) + pow(humanPositionY[0] - object[1], 2) <= 0 )",
+        "expected_probability": 0.02497205,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": 1.0,
+        "probability_threshold": 0.05,
+        "verifyta_output": "Verifying formula 17 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q:50\n-- Aborted."
+      },
+      {
+        "index": 21,
+        "query_line": 62,
+        "description": "The mission shall consist of exactly one execution cycle (no repetitions and no skipped steps).",
+        "source_formula": "Pr[<=700] (<> currP > 2)",
+        "adapted_formula": "Pr[<=700] (<> currP > 2)",
+        "expected_probability": 0.02497205,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": 1.0,
+        "probability_threshold": 0.05,
+        "verifyta_output": "Verifying formula 21 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q:62\n-- Aborted."
+      },
+      {
+        "index": 22,
+        "query_line": 65,
+        "description": "The mission shall terminate once both agents are in the kitchen and the robot is holding the object.",
+        "source_formula": "Pr[<=700] ([] ( pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900  && pow(humanPositionX[0] - bedroom[0], 2) + pow(humanPositionY[0] - bedroom[1], 2) <= 900 && robot_inventory[0][0] == 1) imply (user_guided_transport.end) )",
+        "adapted_formula": "Pr[<=700] ([] ( pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) <= 900  && pow(humanPositionX[0] - bedroom[0], 2) + pow(humanPositionY[0] - bedroom[1], 2) <= 900 && robot_inventory[0][0] == 1) imply (user_guided_transport.end) )",
+        "expected_probability": 0.975028,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": 1.0,
+        "probability_threshold": 0.05,
+        "verifyta_output": "Verifying formula 22 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q:65\n-- Aborted."
+      },
+      {
+        "index": 23,
+        "query_line": 68,
+        "description": "The agents must not continue performing actions indefinitely after mission completion.",
+        "source_formula": "Pr[<=700]([] (user_guided_transport.end imply (rm_1.idle && rf_1.idle && rp_1.idle && rd_1.idle && hi_1.idle)))",
+        "adapted_formula": "Pr[<=700]([] (user_guided_transport.end imply (rm_1.idle && rf_1.idle && rp_1.idle && rd_1.idle)))",
+        "expected_probability": 0.975028,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": 1.0,
+        "probability_threshold": 0.05,
+        "verifyta_output": "Verifying formula 23 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q:68\n-- Aborted."
+      },
+      {
+        "index": 24,
+        "query_line": 71,
+        "description": "The state of charge of the robot does not reach zero during the pattern.",
+        "source_formula": "Pr[<=700](<>batteryCharge[0]<=0)",
+        "adapted_formula": "Pr[<=700](<>batteryCharge[0]<=0)",
+        "expected_probability": 0.02497205,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": 1.0,
+        "probability_threshold": 0.05,
+        "verifyta_output": "Verifying formula 24 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q:71\n-- Aborted."
+      },
+      {
+        "index": 25,
+        "query_line": 74,
+        "description": "The fatigue of the human does not reach the maximum during the pattern.",
+        "source_formula": "Pr[<=700](<>humanFatigue[0]>=100)",
+        "adapted_formula": "Pr[<=700](<>humanFatigue[0]>=100)",
+        "expected_probability": 0.02497205,
+        "failure_kind": "aborted",
+        "failure_reason": "UPPAAL aborted while evaluating this property/query.",
+        "probability_delta": 1.0,
+        "probability_threshold": 0.05,
+        "verifyta_output": "Verifying formula 25 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q:74\n-- Aborted."
+      }
+    ],
+    "probability_threshold": 0.05,
+    "probability_checked_query_count": 11,
+    "probability_checked_queries": [
+      {
+        "index": 1,
+        "query_line": 2,
+        "description": "Upon mission initialization, the robot shall transition from 'Idle' to an 'Active' mode.",
+        "source_formula": "Pr[<=1]([] user_guided_transport_robot_def.init_robot)",
+        "adapted_formula": "Pr[<=1]([] user_guided_transport_robot1_def.init_robot1)",
+        "expected_probability": 0.02497205,
+        "obtained_probability": 0.02497205,
+        "probability_interval_lower": 0.0,
+        "probability_interval_upper": 0.0499441,
+        "probability_delta": 0.0,
+        "probability_threshold": 0.05,
+        "probability_status": "ok"
+      },
+      {
+        "index": 2,
+        "query_line": 5,
+        "description": "Upon mission initialization, the human shall transition from 'Idle' to an 'Active' mode.",
+        "source_formula": "Pr[<=1]([] user_guided_transport_human_def.init_human)",
+        "adapted_formula": "Pr[<=1]([] user_guided_transport_human1_def.init_human1)",
+        "expected_probability": 0.02497205,
+        "obtained_probability": 0.02497205,
+        "probability_interval_lower": 0.0,
+        "probability_interval_upper": 0.0499441,
+        "probability_delta": 0.0,
+        "probability_threshold": 0.05,
+        "probability_status": "ok"
+      },
+      {
+        "index": 3,
+        "query_line": 8,
+        "description": "The human shall navigate from the initial location to the bedroom.",
+        "source_formula": "Pr[<=700] (<> pow(humanPositionX[0] - bedroom[0], 2) + pow(humanPositionY[0] - bedroom[1], 2) <= 900 )",
+        "adapted_formula": "Pr[<=700] (<> pow(humanPositionX[0] - bedroom[0], 2) + pow(humanPositionY[0] - bedroom[1], 2) <= 900 )",
+        "expected_probability": 0.975028,
+        "obtained_probability": 0.975028,
+        "probability_interval_lower": 0.950056,
+        "probability_interval_upper": 1.0,
+        "probability_delta": 0.0,
+        "probability_threshold": 0.05,
+        "probability_status": "ok"
+      },
+      {
+        "index": 4,
+        "query_line": 11,
+        "description": "The robot shall navigate from the initial location to the bedroom.",
+        "source_formula": "Pr[<=700] (<> pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900 )",
+        "adapted_formula": "Pr[<=700] (<> pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900 )",
+        "expected_probability": 0.975028,
+        "obtained_probability": 0.975028,
+        "probability_interval_lower": 0.950056,
+        "probability_interval_upper": 1.0,
+        "probability_delta": 0.0,
+        "probability_threshold": 0.05,
+        "probability_status": "ok"
+      },
+      {
+        "index": 5,
+        "query_line": 14,
+        "description": "The robot must not attempt to pick up the object before reaching the bedroom.",
+        "source_formula": "Pr[<=700] (<> !rp_1.idle && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )",
+        "adapted_formula": "Pr[<=700] (<> !rp_1.idle && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )",
+        "expected_probability": 0.975028,
+        "obtained_probability": 0.975028,
+        "probability_interval_lower": 0.950056,
+        "probability_interval_upper": 1.0,
+        "probability_delta": 0.0,
+        "probability_threshold": 0.05,
+        "probability_status": "ok"
+      },
+      {
+        "index": 7,
+        "query_line": 20,
+        "description": "The robot must not attempt to pick up the object unless the human is also present in the bedroom.",
+        "source_formula": "Pr[<=700] (<> !rp_1.idle && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )",
+        "adapted_formula": "Pr[<=700] (<> !rp_1.idle && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )",
+        "expected_probability": 0.975028,
+        "obtained_probability": 0.975028,
+        "probability_interval_lower": 0.950056,
+        "probability_interval_upper": 1.0,
+        "probability_delta": 0.0,
+        "probability_threshold": 0.05,
+        "probability_status": "ok"
+      },
+      {
+        "index": 12,
+        "query_line": 35,
+        "description": "After the object is grasped, the human shall navigate to the kitchen.",
+        "source_formula": "Pr[<=700](<>  robot_inventory[0][0] == 1 imply (user_guided_transport_human_def.A1_a2_moveTo_busy))",
+        "adapted_formula": "Pr[<=700](<>  robot_inventory[0][0] == 1 imply (user_guided_transport_human1_def.A1_a2_moveTo_busy))",
+        "expected_probability": 0.975028,
+        "obtained_probability": 0.975028,
+        "probability_interval_lower": 0.950056,
+        "probability_interval_upper": 1.0,
+        "probability_delta": 0.0,
+        "probability_threshold": 0.05,
+        "probability_status": "ok"
+      },
+      {
+        "index": 16,
+        "query_line": 47,
+        "description": "The robot must avoid collisions with the human during navigation.",
+        "source_formula": "Pr[<=700] (<> pow(robPositionX[0] - humanPositionX[0], 2) + pow(robPositionY[0] - humanPositionY[0], 2) <= 0 )",
+        "adapted_formula": "Pr[<=700] (<> pow(robPositionX[0] - humanPositionX[0], 2) + pow(robPositionY[0] - humanPositionY[0], 2) <= 0 )",
+        "expected_probability": 0.975028,
+        "obtained_probability": 0.975028,
+        "probability_interval_lower": 0.950056,
+        "probability_interval_upper": 1.0,
+        "probability_delta": 0.0,
+        "probability_threshold": 0.05,
+        "probability_status": "ok"
+      },
+      {
+        "index": 18,
+        "query_line": 53,
+        "description": "The human must avoid collisions with the robot during navigation.",
+        "source_formula": "Pr[<=700] (<> pow(robPositionX[0] - humanPositionX[0], 2) + pow(robPositionY[0] - humanPositionY[0], 2) <= 0 )",
+        "adapted_formula": "Pr[<=700] (<> pow(robPositionX[0] - humanPositionX[0], 2) + pow(robPositionY[0] - humanPositionY[0], 2) <= 0 )",
+        "expected_probability": 0.975028,
+        "obtained_probability": 0.975028,
+        "probability_interval_lower": 0.950056,
+        "probability_interval_upper": 1.0,
+        "probability_delta": 0.0,
+        "probability_threshold": 0.05,
+        "probability_status": "ok"
+      },
+      {
+        "index": 19,
+        "query_line": 56,
+        "description": "The robot must not enter forbidden areas of the environment.",
+        "source_formula": "Pr[<=700] (<> !isValidPosition(robPositionX[0], robPositionY[0]))",
+        "adapted_formula": "Pr[<=700] (<> !isValidPosition(robPositionX[0], robPositionY[0]))",
+        "expected_probability": 0.975028,
+        "obtained_probability": 0.975028,
+        "probability_interval_lower": 0.950056,
+        "probability_interval_upper": 1.0,
+        "probability_delta": 0.0,
+        "probability_threshold": 0.05,
+        "probability_status": "ok"
+      },
+      {
+        "index": 20,
+        "query_line": 59,
+        "description": "The human must not enter forbidden areas of the environment.",
+        "source_formula": "Pr[<=700] (<> !isValidPosition(humanPositionX[0], humanPositionY[0]))",
+        "adapted_formula": "Pr[<=700] (<> !isValidPosition(humanPositionX[0], humanPositionY[0]))",
+        "expected_probability": 0.975028,
+        "obtained_probability": 0.975028,
+        "probability_interval_lower": 0.950056,
+        "probability_interval_upper": 1.0,
+        "probability_delta": 0.0,
+        "probability_threshold": 0.05,
+        "probability_status": "ok"
+      }
+    ],
+    "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/uppaal/verifyta_adapted.stdout.txt",
+    "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/uppaal/verifyta_adapted.stderr.txt",
+    "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/queries/adapted.q",
+    "source_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_2.j2",
+    "failure_reason": "adapted-query UPPAAL verification completed, but 14 properties/queries were not satisfied."
+  },
+  "uppaal_feedback_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP8.j2/RUN_20260724_003403/ciclo2/uppaal/uppaal_feedback_for_next_cycle.txt"
+}

@@ -1,0 +1,37 @@
+### WHAT TO FIX
+Check the diagnostics below and repair the LIRAs model or generated queries accordingly.
+
+### FAILED QUERIES
+Query 14
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+Description: The robots shall transport raw materials from the warehouse to the loading location of the surface texturization station.
+Original formula: Pr[<=700] (<> pow(robPositionX[1] - surface_texturization_start[0], 2) + pow(robPositionY[1] - surface_texturization_start[1], 2) <= 900 && robot_inventory[1][0] == 1)
+Adapted formula: Pr[<=700] (<> pow(robPositionX[1] - surface_texturization_start[0], 2) + pow(robPositionY[1] - surface_texturization_start[1], 2) <= 900 && robot_inventory[1][0] == 1)
+Expected probability: 0.02497205
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Related diagnostics:
+EXCEPTION: Array index out of bounds.
+
+### VERIFYTA DIAGNOSTICS
+EXCEPTION: Array index out of bounds.
+### INCORRECT LIRAS CODE
+Factory_Pipeline
+
+agents:
+	robots: Robot1, Robot2
+
+locations: warehouse, surface_texturization_start, surface_texturization_end, laser_start, laser_end, loading_area
+resources: raw_materials
+
+Robot1:
+	1: moveTo warehouse until position(Robot1, warehouse)
+	3: pick raw_materials
+	5: moveTo surface_texturization_start
+
+Robot2:
+	2: moveTo surface_texturization_end until position(Robot1, surface_texturization_start)
+	4: pick raw_materials if position(Robot1, warehouse) else stop
+	6: moveTo laser_start until position(Robot1, laser_end)

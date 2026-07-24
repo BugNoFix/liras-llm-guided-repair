@@ -1,0 +1,23 @@
+Coffee_Delivery
+agents:
+	humans: Employee
+	robots: Robot1
+
+locations: kitchen, office001, coffee_room
+resources: coffee
+
+Robot1:
+	1: moveTo coffee_room
+	2: pick coffee
+	3: moveTo kitchen
+	4: deposit coffee
+	5: moveTo office001
+	6: moveTo kitchen until position(Employee, office001)
+	7: moveTo office001 until position(Employee, kitchen)
+	8: stop
+
+Employee:
+	1: moveTo kitchen
+	2: moveTo office001
+	3: moveTo kitchen until position(Robot1, kitchen)
+	4: stop
