@@ -1,0 +1,24 @@
+### REPAIR TASK
+The DSL below failed to compile. Compare it to the COMPILER_OUTPUT to identify why and fix it.
+
+### PREVIOUS_FAILED_ATTEMPT
+Coffee_Delivery
+agents:
+	humans: Employee1
+	robots: Robot1
+locations: coffee_room, office001
+resources: coffee
+Robot1:
+	moveTo coffee_room
+	pick coffee
+	moveTo office001
+	deposit coffee
+
+### CURRENT_COMPILER_OUTPUT
+FAILURE: Validation errors found.
+[ERROR] Line 8: missing EOF at 'moveTo'
+
+### INSTRUCTION
+1. Fix the FIRST error reported. Do not repeat the same edit used in PREVIOUS_FAILED_ATTEMPT.
+2. If the error is 'unresolved reference', check the Pattern block at the top.
+3. Output ONLY the full corrected LIRAs text.

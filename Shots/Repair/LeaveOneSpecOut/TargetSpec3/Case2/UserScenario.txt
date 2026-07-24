@@ -1,0 +1,30 @@
+### REPAIR TASK
+The DSL below failed to compile. Compare it to the COMPILER_OUTPUT to identify why and fix it.
+
+### PREVIOUS_FAILED_ATTEMPT
+user_guided_transport
+agents:
+	humans: human1
+	robots: robot1
+locations: bedroom, kitchen
+resources: object
+human1:
+	1: moveTo bedroom
+	3: moveTo kitchen
+robot1:
+	1: moveTo bedroom
+	2: pick object
+	4: follow(human1)(kitchen)
+
+### CURRENT_COMPILER_OUTPUT
+FAILURE: Validation errors found.
+[ERROR] Line 13: extraneous input '(' expecting RULE_ID
+[ERROR] Line 13: mismatched input ')' expecting RULE_NL
+[ERROR] Line 13: mismatched input ')' expecting ':'
+[ERROR] Line 13: Agent name must be one of the names specified in the pattern.
+[ERROR] Line 13: Agent name must be one of the names specified in the pattern.
+
+### INSTRUCTION
+1. Fix the FIRST error reported. Do not repeat the same edit used in PREVIOUS_FAILED_ATTEMPT.
+2. If the error is 'unresolved reference', check the Pattern block at the top.
+3. Output ONLY the full corrected LIRAs text.

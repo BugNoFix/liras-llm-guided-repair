@@ -1,1 +1,0 @@
-Hobbit follows the user to a desired location in the home, after an object was placed on its tray. To follow a person, we used RGB-D person tracking to retrieve the user’s pose and calculate a path towards this location.

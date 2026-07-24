@@ -18,17 +18,3 @@ Robot:
 	pick coffee
 	moveTo office004
 	deposit coffee
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	

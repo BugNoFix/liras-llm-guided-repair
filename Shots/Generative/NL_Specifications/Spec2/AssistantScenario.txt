@@ -8,12 +8,11 @@ locations: bedroom, kitchen
 resources: object
 
 Human:
-	1: moveTo bedroom if position(Robot, bedroom) else stop
+	1: moveTo bedroom
 	3: moveTo kitchen until position(Robot, bedroom)
 	
 Robot:
 	1: moveTo bedroom
 	2: pick object
 	3: follow Human (kitchen)
-
 
