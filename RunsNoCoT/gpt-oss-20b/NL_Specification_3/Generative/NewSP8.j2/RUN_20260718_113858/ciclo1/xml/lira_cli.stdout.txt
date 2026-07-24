@@ -1,0 +1,2 @@
+Generation completed in 33 ms
+Generated: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_3/Generative/NewSP8.j2/RUN_20260718_113858/ciclo1/xml/ITER0_20260718_113905.xml
