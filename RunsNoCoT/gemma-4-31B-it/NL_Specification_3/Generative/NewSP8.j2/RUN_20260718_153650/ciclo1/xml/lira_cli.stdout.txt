@@ -1,0 +1,2 @@
+Generation completed in 32 ms
+Generated: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_3/Generative/NewSP8.j2/RUN_20260718_153650/ciclo1/xml/ITER0_20260718_153720.xml

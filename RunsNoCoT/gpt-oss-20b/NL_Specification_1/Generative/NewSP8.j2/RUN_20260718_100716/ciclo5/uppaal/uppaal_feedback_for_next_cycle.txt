@@ -1,0 +1,220 @@
+### WHAT TO FIX
+Check the diagnostics below and repair the LIRAs model or generated queries accordingly.
+
+### FAILED QUERIES
+Query 1
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 1 at /nta/queries/query[1]/formula
+-- Formula: simulate[<=700]{Coffee_Delivery_robot1_def.s1_start, Coffee_Delivery_robot1_def.s1_end, Coffee_Delivery_robot1_def.s2_start, Coffee_Delivery_robot1_def.s2_end, Coffee_Delivery_robot1_def.s3_start, Coffee_Delivery_robot1_def.s3_end, Coffee_Delivery_robot1_def.s4_start, Coffee_Delivery_robot1_def.s4_end, Coffee_Delivery.end}
+-- Aborted.
+
+Query 2
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 2 at /nta/queries/query[2]/formula
+-- Formula: Pr[<=700] (<> Coffee_Delivery.end)
+-- Aborted.
+
+Query 3
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 3 at /nta/queries/query[3]/formula
+-- Formula: simulate[<=700]{robPositionX[0], robPositionY[0], batteryCharge[0], Coffee_Delivery.end}
+-- Aborted.
+
+Query 4
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 4 at /nta/queries/query[4]/formula
+-- Formula: simulate[<=700]{robot_inventory[0][0], Coffee_Delivery.end*2}
+-- Aborted.
+
+Query 5
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 5 at /nta/queries/query[5]/formula
+-- Formula: simulate[<=700]{kitchen[0], kitchen[1], bedroom[0], bedroom[1]}
+-- Aborted.
+
+Query 6
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 6 at /nta/queries/query[6]/formula
+-- Formula: simulate[<=700]{rm_1.idle, rf_1.idle, rp_1.idle, rd_1.idle}
+-- Aborted.
+
+Query 8
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 8 at /nta/queries/query[8]/formula
+-- Formula: Pr[<=700]([] (Coffee_Delivery.end imply (rm_1.idle && rf_1.idle && rp_1.idle && rd_1.idle)))
+-- Aborted.
+
+Query 10
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 10 at /nta/queries/query[10]/formula
+-- Formula: Pr[<=700] (<> pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900 )
+-- Aborted.
+
+Query 12
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+UPPAAL output:
+Verifying formula 12 at /nta/queries/query[12]/formula
+-- Formula: Pr[<=700] (<> currP > 2)
+-- Aborted.
+
+Query 1
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The robot shall navigate from the starting location to the coffee machine location upon mission initialization.
+Original formula: Pr[<=700] (<> pow(robPositionX[0] - coffee_room[0], 2) + pow(robPositionY[0] - coffee_room[1], 2) <= pow(30, 2))
+Adapted formula: Pr[<=700] (<> pow(robPositionX[0] - coffee_room[0], 2) + pow(robPositionY[0] - coffee_room[1], 2) <= pow(30, 2))
+Expected probability: 0.975028
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 1 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_100716/ciclo5/queries/adapted.q:2
+-- Aborted.
+
+Query 2
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The robot shall navigate from the starting location to the coffee machine location upon mission initialization.
+Original formula: Pr[<=700] (<> pt_dist(robPositionX[0], location_X[2], robPositionY[0], location_Y[2]) <= 30)
+Adapted formula: Pr[<=700] (<> pt_dist(robPositionX[0], location_X[2], robPositionY[0], location_Y[2]) <= 30)
+Expected probability: 0.975028
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 2 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_100716/ciclo5/queries/adapted.q:5
+-- Aborted.
+
+Query 3
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The robot must be able to reach the employee's locations from the coffee machine.
+Original formula: Pr[<=700] (<> Coffee_Delivery_robot_def.A1_a3_moveTo_complete)
+Adapted formula: Pr[<=700] (<> Coffee_Delivery_robot1_def.A1_a3_moveTo_complete)
+Expected probability: 0.975028
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 3 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_100716/ciclo5/queries/adapted.q:8
+-- Aborted.
+
+Query 4
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The robot must be able to reach the employee's locations from the coffee machine.
+Original formula: Pr[<=700] (<> Coffee_Delivery_robot_def.A1_a7_moveTo_complete)
+Adapted formula: Pr[<=700] (<> Coffee_Delivery_robot1_def.A1_a3_moveTo_complete)
+Expected probability: 0.975028
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 4 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_100716/ciclo5/queries/adapted.q:11
+-- Aborted.
+
+Query 6
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The robot must perform exactly one cycle of the mission for each delivery request (no repetitions, no missing steps).
+Original formula: Pr[<=700] (<> currP > 2)
+Adapted formula: Pr[<=700] (<> currP > 2)
+Expected probability: 0.02497205
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 6 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_100716/ciclo5/queries/adapted.q:17
+-- Aborted.
+
+Query 7
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The robot must not continue performing actions indefinitely once the delivery is completed.
+Original formula: Pr[<=700]([] (Coffee_Delivery.end imply (rm_1.idle && rf_1.idle && rp_1.idle && rd_1.idle)))
+Adapted formula: Pr[<=700]([] (Coffee_Delivery.end imply (rm_1.idle && rf_1.idle && rp_1.idle && rd_1.idle)))
+Expected probability: 0.975028
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 7 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_100716/ciclo5/queries/adapted.q:20
+-- Aborted.
+
+Query 13
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The robot must guarantee task completion.
+Original formula: Pr[<=700] (<> Coffee_Delivery.end)
+Adapted formula: Pr[<=700] (<> Coffee_Delivery.end)
+Expected probability: 0.975028
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 13 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_100716/ciclo5/queries/adapted.q:38
+-- Aborted.
+
+Query 14
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The state of charge of the robot must not reach zero during the mission.
+Original formula: Pr[<=700](<>batteryCharge[0]<=0)
+Adapted formula: Pr[<=700](<>batteryCharge[0]<=0)
+Expected probability: 0.02497205
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 14 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_100716/ciclo5/queries/adapted.q:41
+-- Aborted.
+
+Query 15
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: The robot must not move too fast for safety reasons.
+Original formula: Pr[<=700] (<> rm_1.V > rm_1._v_max)
+Adapted formula: Pr[<=700] (<> rm_1.V > rm_1._v_max)
+Expected probability: 0.02497205
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 15 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_100716/ciclo5/queries/adapted.q:44
+-- Aborted.
+
+Query 16
+Failure kind: aborted
+Reason: UPPAAL aborted while evaluating this property/query.
+Description: Only one coffee-serving action can be initiated at a time. The robot must prevent overlapping uses.
+Original formula: Pr[<=700](<> robot_inventory[0][0]>1)
+Adapted formula: Pr[<=700](<> robot_inventory[0][0]>1)
+Expected probability: 0.02497205
+Probability delta: 1.0
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 16 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_100716/ciclo5/queries/adapted.q:47
+-- Aborted.
+
+### VERIFYTA DIAGNOSTICS
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_100716/ciclo5/xml/ITER0_20260718_101121.xml:/nta/queries/query[12]/formula:1: [error] Time-lock error:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_1/Generative/NewSP8.j2/RUN_20260718_100716/ciclo5/xml/ITER0_20260718_101121.xml::48: [error] Time-lock error:
+### INCORRECT LIRAS CODE
+Coffee_Delivery
+agents:
+	robots: Robot1
+locations: kitchen, bedroom
+resources: coffee
+Robot1:
+	1: moveTo kitchen
+	2: pick coffee
+	3: moveTo bedroom
+	4: deposit coffee
