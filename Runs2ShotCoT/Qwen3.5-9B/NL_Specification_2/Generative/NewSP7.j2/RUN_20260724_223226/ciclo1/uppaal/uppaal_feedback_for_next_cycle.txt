@@ -1,0 +1,63 @@
+### WHAT TO FIX
+UPPAAL ran successfully, but at least one property/query did not match the expected behavior. Repair the LIRAs model behavior, not just query syntax.
+
+### FAILED QUERIES
+Query 3
+Failure kind: probability_delta
+Reason: The obtained probability differs from the expected probability by more than the configured threshold.
+Description: The human shall navigate from the initial location to the bedroom.
+Original formula: Pr[<=700] (<> pow(humanPositionX[0] - bedroom[0], 2) + pow(humanPositionY[0] - bedroom[1], 2) <= 900 )
+Adapted formula: Pr[<=700] (<> pow(humanPositionX[0] - bedroom[0], 2) + pow(humanPositionY[0] - bedroom[1], 2) <= 900 )
+Expected probability: 0.975028
+Obtained probability: 0.02497205
+Probability delta: 0.95005595
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 3 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260724_223226/ciclo1/queries/adapted.q:8
+
+Query 6
+Failure kind: probability_delta
+Reason: The obtained probability differs from the expected probability by more than the configured threshold.
+Description: The robot must not attempt to pick up the object before reaching the bedroom.
+Original formula: Pr[<=700] (<> user_guided_transport_robot_def.A2_a2_pick_busy && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )
+Adapted formula: Pr[<=700] (<> Coffee_Delivery_robot1_def.A1_a2_pick_busy && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )
+Expected probability: 0.02497205
+Obtained probability: 0.975028
+Probability delta: 0.95005595
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 6 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260724_223226/ciclo1/queries/adapted.q:17
+
+Query 8
+Failure kind: probability_delta
+Reason: The obtained probability differs from the expected probability by more than the configured threshold.
+Description: The robot must not attempt to pick up the object unless the human is also present in the bedroom.
+Original formula: Pr[<=700] (<> user_guided_transport_robot_def.A2_a2_pick_busy && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )
+Adapted formula: Pr[<=700] (<> Coffee_Delivery_robot1_def.A1_a2_pick_busy && !(pow(robPositionX[0] - bedroom[0], 2) + pow(robPositionY[0] - bedroom[1], 2) <= 900) )
+Expected probability: 0.02497205
+Obtained probability: 0.975028
+Probability delta: 0.95005595
+Allowed probability delta threshold: 0.05
+UPPAAL output:
+Verifying formula 8 at /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260724_223226/ciclo1/queries/adapted.q:23
+
+### INCORRECT LIRAS CODE
+Coffee_Delivery
+
+agents:
+	robots: Robot1
+
+
+locations: office001, office004, coffee_room
+resources: coffee
+
+
+Robot1:
+	1: moveTo coffee_room
+	pick coffee
+	moveTo office001
+	deposit coffee
+	moveTo coffee_room
+	pick coffee
+	moveTo office004
+	deposit coffee

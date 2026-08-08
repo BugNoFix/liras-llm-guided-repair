@@ -1,0 +1,64 @@
+### WHAT TO FIX
+The adapted queries reference names that do not exist in the generated UPPAAL XML. Regenerate the LIRAs model so exported XML names match the intended scenario, or adapt the queries to the actual XML identifiers.
+
+### FAILED QUERIES
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260724_230154/ciclo1/xml/ITER4_20260724_230810.xml::35: [error] has no member named A1_a2_moveTo_busy.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260724_230154/ciclo1/xml/ITER4_20260724_230810.xml::35: [error] Type error.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260724_230154/ciclo1/xml/ITER4_20260724_230810.xml::35: [error] has no member named A1_a2_moveTo_busy.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260724_230154/ciclo1/xml/ITER4_20260724_230810.xml::35: [error] Type error.
+
+### VERIFYTA DIAGNOSTICS
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260724_230154/ciclo1/xml/ITER4_20260724_230810.xml::35: [error] has no member named A1_a2_moveTo_busy.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260724_230154/ciclo1/xml/ITER4_20260724_230810.xml::35: [error] Type error.
+### INCORRECT LIRAS CODE
+Coffee_Delivery
+agents:
+	humans: Human1
+	robots: Robot, Robot1, Robot2
+locations: warehouse, surface_texturization_start, surface_texturization_end, laser_start, laser_end, loading_area, bedroom, kitchen
+resources: coffee, item1, raw_materials, texturized_materials, lasered_materials, object
+Robot:
+	1: moveTo warehouse
+	2: pick coffee
+	3: moveTo loading_area
+	4: deposit coffee
+	5: moveTo warehouse
+	6: pick coffee
+	7: moveTo bedroom
+	8: deposit coffee
+Robot1:
+	1: moveTo warehouse
+	2: pick raw_materials
+	3: moveTo surface_texturization_start
+	4: deposit raw_materials
+	5: moveTo surface_texturization_end
+	6: pick texturized_materials
+	7: moveTo laser_start
+	8: deposit texturized_materials
+	9: moveTo laser_end
+	10: pick lasered_materials
+	11: moveTo loading_area
+	12: deposit lasered_materials
+Robot2:
+	1: moveTo warehouse
+	2: pick raw_materials
+	3: moveTo surface_texturization_start
+	4: deposit raw_materials
+	5: moveTo surface_texturization_end
+	6: pick texturized_materials
+	7: moveTo laser_start
+	8: deposit texturized_materials
+	9: moveTo laser_end
+	10: pick lasered_materials
+	11: moveTo loading_area
+	12: deposit lasered_materials
+Human1:
+	1: moveTo bedroom
+	2: moveTo kitchen
+	3: moveTo kitchen
+	4: moveTo kitchen

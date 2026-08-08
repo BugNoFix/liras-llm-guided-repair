@@ -1,0 +1,21 @@
+Coffee_Delivery
+
+agents:
+	humans: Human
+	robots: Robot
+
+locations: bedroom, kitchen
+
+resources: coffee
+
+Human:
+	1: moveTo bedroom
+	2: moveTo kitchen until dist(Human, Robot) > 10 else stop
+	3: moveTo bedroom
+
+Robot:
+	1: moveTo bedroom
+	2: pick coffee if position(Robot, bedroom) else stop
+	3: follow Human (kitchen) until position(Robot, kitchen) else stop
+	4: moveTo kitchen until position(Robot, kitchen) else stop
+	5: stop

@@ -1,0 +1,1 @@
+{"timestamp": "2026-07-24T18:23:54.867164", "attempt": 1, "raw_response_chars": 4573, "adapted_query_chars": 4573, "empty_response": false, "accepted": true, "model": "zai-org/GLM-5.2", "provider": "huggingface"}

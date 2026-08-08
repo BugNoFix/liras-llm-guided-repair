@@ -1,0 +1,2 @@
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:82: [error] Unknown identifier: storage_area.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:83: [error] Unknown identifier: storage_area.

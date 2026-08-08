@@ -1,0 +1,31 @@
+Coffee_Pipeline
+
+agents:
+	robots: Robot1, Robot2
+
+locations: loading_area, surface_texturization_start, surface_texturization_end, diffusion_start, diffusion_end, laser_start, laser_end, etching_start, etching_end, annealing_start, annealing_end, perc_start, perc_end, rear_top_paste_start, rear_top_paste_end, laser_slotting_start, laser_slotting_end, storage_area
+resources: raw_materials, texturized_materials, diffused_materials, lasered_materials, etched_materials, annealed_materials, perc_cells, pasted_cells, slotted_cells
+
+Robot1:
+	1: moveTo surface_texturization_start
+	pick texturized_materials
+	moveTo surface_texturization_end
+	2: moveTo laser_start
+	moveTo laser_end
+	3: moveTo laser_slotting_start
+	pick slotted_cells
+	4: moveTo laser_slotting_end
+	moveTo loading_area
+	deposit slotted_cells
+
+Robot2:
+	1: moveTo surface_texturization_start
+	pick texturized_materials
+	moveTo surface_texturization_end
+	2: moveTo laser_start
+	moveTo laser_end
+	3: moveTo laser_slotting_start
+	pick slotted_cells
+	4: moveTo laser_slotting_end
+	moveTo loading_area
+	deposit slotted_cells

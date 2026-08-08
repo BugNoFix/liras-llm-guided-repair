@@ -1,0 +1,34 @@
+### WHAT TO FIX
+The adapted queries reference names that do not exist in the generated UPPAAL XML. Regenerate the LIRAs model so exported XML names match the intended scenario, or adapt the queries to the actual XML identifiers.
+
+### FAILED QUERIES
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260724_224528/ciclo1/xml/ITER0_20260724_224908.xml::35: [error] has no member named A1_a2_moveTo_busy.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260724_224528/ciclo1/xml/ITER0_20260724_224908.xml::35: [error] Type error.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260724_224528/ciclo1/xml/ITER0_20260724_224908.xml::35: [error] has no member named A1_a2_moveTo_busy.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260724_224528/ciclo1/xml/ITER0_20260724_224908.xml::35: [error] Type error.
+
+### VERIFYTA DIAGNOSTICS
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260724_224528/ciclo1/xml/ITER0_20260724_224908.xml::35: [error] has no member named A1_a2_moveTo_busy.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_2/Generative/NewSP7.j2/RUN_20260724_224528/ciclo1/xml/ITER0_20260724_224908.xml::35: [error] Type error.
+### INCORRECT LIRAS CODE
+user_guided_transport
+
+agents:
+	humans: Human1
+	robots: Robot1
+locations: bedroom, kitchen
+resources: object
+
+Robot1:
+	1: moveTo bedroom
+	2: pick object
+	3: follow Human1 (kitchen)
+
+Human1:
+	1: moveTo bedroom
+	3: moveTo kitchen

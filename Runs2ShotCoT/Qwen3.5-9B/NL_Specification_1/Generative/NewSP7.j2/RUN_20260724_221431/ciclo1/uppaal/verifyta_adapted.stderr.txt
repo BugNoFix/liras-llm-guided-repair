@@ -1,0 +1,1 @@
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_1/Generative/NewSP7.j2/RUN_20260724_221431/ciclo1/xml/ITER1_20260724_221547.xml:/nta/declaration/template[3]/transition[3]/label[2]:1: [error] Unknown identifier: stop_h_follow.

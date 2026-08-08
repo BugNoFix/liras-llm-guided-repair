@@ -1,0 +1,20 @@
+Coffee_Delivery
+
+agents:
+	humans: Human
+	robots: Robot
+
+locations: bedroom, kitchen, loading_area
+resources: coffee
+
+Human:
+	1: moveTo loading_area
+	2: moveTo bedroom until position(Robot, bedroom)
+	3: stop
+
+Robot:
+	1: moveTo loading_area
+	2: pick coffee
+	3: moveTo bedroom
+	4: follow Human (bedroom) until position(Human, bedroom)
+	5: stop

@@ -1,0 +1,664 @@
+{
+  "run_id": "20260724_234719",
+  "run_started_at": "2026-07-24T23:47:19.306057",
+  "pipeline_runner_version": "v3_structured_stage_metadata",
+  "overall_result": "ok",
+  "failed_stage": null,
+  "failure_type": null,
+  "failure_reason": null,
+  "failure_details": null,
+  "generation_provider": "huggingface",
+  "repair_provider": "huggingface",
+  "query_provider": "huggingface",
+  "system_prompt": "Generative/NewSP7.j2",
+  "repair_prompt": "Repair/NewSPR7.j2",
+  "scenario": "NL_Specification_3.txt",
+  "generation_model": "Qwen/Qwen3.5-9B",
+  "repair_model": "Qwen/Qwen3.5-9B",
+  "shots": "leave_one_spec_out",
+  "repair_shots": 2,
+  "max_iterations": 11,
+  "max_uppaal_feedback_cycles": 5,
+  "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719",
+  "cycles": [
+    {
+      "cycle": 1,
+      "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1",
+      "metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/run_metadata.json",
+      "uppaal_feedback_included": false,
+      "uppaal_feedback_chars": 3873,
+      "verifyta_probability_delta_threshold": 0.05,
+      "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/dsl/ITER0_20260725_000120.LIRAs",
+      "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml",
+      "query_source_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_3.j2",
+      "uppaal_feedback_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/uppaal/uppaal_feedback_for_next_cycle.txt",
+      "cycle_result": "failed",
+      "failed_stage": "verifyta_internal",
+      "failure_type": "execution",
+      "failure_reason": "UPPAAL verifyta failed during internal verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:82: [error] Unknown identifier: storage_area.",
+      "failure_details": {
+        "exit_code": 1,
+        "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:82: [error] Unknown identifier: storage_area.",
+        "stderr_preview": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:82: [error] Unknown identifier: storage_area.\n/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:83: [error] Unknown identifier: storage_area.",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/uppaal/verifyta_internal.stderr.txt",
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/uppaal/verifyta_internal.stdout.txt"
+      },
+      "stages": [
+        {
+          "stage": "dsl_generation",
+          "result": "ok",
+          "details": {
+            "iterations_recorded": 1,
+            "validations_attempted": 1,
+            "compiler_failures": 0,
+            "compiler_successes": 1,
+            "setup_errors": 0,
+            "first_success_iteration": 0,
+            "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/dsl/ITER0_20260725_000120.LIRAs",
+            "total_compiler_feedback_chars": 0,
+            "llm_calls": 1,
+            "prompt_tokens_total": 2553,
+            "completion_tokens_total": 1252,
+            "total_tokens_total": 3805,
+            "token_usage_available_calls": 1
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/dsl/ITER0_20260725_000120.LIRAs",
+            "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/llm_prompts.jsonl",
+            "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/llm_responses.jsonl"
+          }
+        },
+        {
+          "stage": "xml_export",
+          "result": "ok",
+          "details": {
+            "exit_code": 0
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/dsl/ITER0_20260725_000120.LIRAs",
+            "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/lira_cli.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/lira_cli.stderr.txt"
+          }
+        },
+        {
+          "stage": "verifyta_internal",
+          "result": "failed",
+          "execution_result": "failed",
+          "semantic_result": "not_evaluated",
+          "failure_type": "execution",
+          "failure_reason": "UPPAAL verifyta failed during internal verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:82: [error] Unknown identifier: storage_area.",
+          "failure_details": {
+            "exit_code": 1,
+            "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:82: [error] Unknown identifier: storage_area.",
+            "stderr_preview": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:82: [error] Unknown identifier: storage_area.\n/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:83: [error] Unknown identifier: storage_area.",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/uppaal/verifyta_internal.stderr.txt",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/uppaal/verifyta_internal.stdout.txt"
+          },
+          "details": {
+            "verified_formula_count": 0,
+            "failed_query_count": 1,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 0
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/uppaal/verifyta_internal.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/uppaal/verifyta_internal.stderr.txt"
+          }
+        },
+        {
+          "stage": "query_adaptation",
+          "result": "ok",
+          "artifacts": {
+            "source_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_3.j2",
+            "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/queries/adapted.q",
+            "source_queries_copy_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/queries/source_queries.txt",
+            "query_adapter_response_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/queries/query_adapter_response.txt",
+            "query_adapter_attempts_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/queries/query_adapter_attempts.jsonl",
+            "query_xml_context_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/queries/xml_context.txt",
+            "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/queries"
+          }
+        },
+        {
+          "stage": "verifyta_adapted",
+          "result": "failed",
+          "execution_result": "failed",
+          "semantic_result": "not_evaluated",
+          "failure_type": "execution",
+          "failure_reason": "UPPAAL verifyta failed during adapted-query verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:82: [error] Unknown identifier: storage_area.",
+          "failure_details": {
+            "exit_code": 1,
+            "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:82: [error] Unknown identifier: storage_area.",
+            "stderr_preview": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:82: [error] Unknown identifier: storage_area.\n/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:83: [error] Unknown identifier: storage_area.",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/uppaal/verifyta_adapted.stderr.txt",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/uppaal/verifyta_adapted.stdout.txt"
+          },
+          "details": {
+            "verified_formula_count": 0,
+            "failed_query_count": 1,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 0
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml",
+            "query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/queries/adapted.q",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/uppaal/verifyta_adapted.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/uppaal/verifyta_adapted.stderr.txt"
+          }
+        }
+      ],
+      "exit_code": 1,
+      "continue_feedback_loop": true,
+      "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/queries/adapted.q"
+    },
+    {
+      "cycle": 2,
+      "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2",
+      "metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/run_metadata.json",
+      "uppaal_feedback_included": true,
+      "uppaal_feedback_chars": 19021,
+      "verifyta_probability_delta_threshold": 0.05,
+      "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/dsl/ITER0_20260725_000410.LIRAs",
+      "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/xml/ITER0_20260725_000410.xml",
+      "query_source_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_3.j2",
+      "uppaal_feedback_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/uppaal/uppaal_feedback_for_next_cycle.txt",
+      "cycle_result": "failed",
+      "failed_stage": "verifyta_internal",
+      "failure_type": "execution",
+      "failure_reason": "UPPAAL verifyta failed during internal verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/xml/ITER0_20260725_000410.xml:/nta/queries/query[22]/formula:1: [error] Time-lock error:",
+      "failure_details": {
+        "exit_code": 1,
+        "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/xml/ITER0_20260725_000410.xml:/nta/queries/query[22]/formula:1: [error] Time-lock error:",
+        "stderr_preview": ".starting rd_1.idle rd_2.idle Factory_Pipeline.sub_seq_s2 Factory_Pipeline_robot1_def.A1_a2_pick_busy Factory_Pipeline_robot2_def.A2_a2_pick_busy ) robot1_stat=0 robot2_stat=0 location_X[0]=250 location_X[1]=6200 location_X[2]=6200 location_X[3]=4800 location_X[4]=4800 location_X[5]=6550 location_Y[0]=250 location_Y[1]=3900 location_Y[2]=100 location_Y[3]=3900 location_Y[4]=100 location_Y[5]=3250 resources_X[0]=6550 resources_Y[0]=3250 humanPositionX[0]=0 humanPositionY[0]=0 batteryCharge[0]=100 batteryCharge[1]=100 robPositionX[0]=6190 robPositionX[1]=6190 robPositionY[0]=3900 robPositionY[1]=3900 robot_loc_target[0]=1 robot_loc_target[1]=1 human_to_be_followed[0]=0 human_to_be_followed[1]=0 robot_to_be_followed[0]=0 robot_to_be_followed[1]=0 f_loc_target[0]=0 f_loc_target[1]=0 robot_res_to_pick[0]=0 robot_res_to_pick[1]=0 robot_inventory[0][0]=0 robot_inventory[1][0]=0 old_inventory[0][0]=0 old_inventory[1][0]=0 robot_res_to_deposit[0]=0 robot_res_to_deposit[1]=0 currP=1 rm_1.id=1 rm_1._v_max=26 rm_1._a_max=26 rm_1.turn_limit=0 rm_1.traj[0][0]=600 rm_1.traj[0][1]=100 rm_1.traj[1][0]=600 rm_1.traj[1][1]=3900 rm_1.traj[2][0]=6200 rm_1.traj[2][1]=3900 rm_1.traj[3][0]=0 rm_1.traj[3][1]=0 rm_1.traj[4][0]=0 rm_1.traj[4][1]=0 rm_1.traj[5][0]=0 rm_1.traj[5][1]=0 rm_1.traj[6][0]=0 rm_1.traj[6][1]=0 rm_1.traj[7][0]=0 rm_1.traj[7][1]=0 rm_1.traj[8][0]=0 rm_1.traj[8][1]=0 rm_1.traj[9][0]=0 rm_1.traj[9][1]=0 rm_1.ort=0 rm_1.curr_traj=2 rm_1.t=0 rm_1.v_max=26 rm_1.a_max=26 rm_1.needsTurning=0 rm_1.curr[0]=600 rm_1.curr[1]=3900 rm_1.dest[0]=6200 rm_1.dest[1]=3900 rm_2.id=2 rm_2._v_max=26 rm_2._a_max=26 rm_2.turn_limit=0 rm_2.traj[0][0]=6200 rm_2.traj[0][1]=3900 rm_2.traj[1][0]=0 rm_2.traj[1][1]=0 rm_2.traj[2][0]=0 rm_2.traj[2][1]=0 rm_2.traj[3][0]=0 rm_2.traj[3][1]=0 rm_2.traj[4][0]=0 rm_2.traj[4][1]=0 rm_2.traj[5][0]=0 rm_2.traj[5][1]=0 rm_2.traj[6][0]=0 rm_2.traj[6][1]=0 rm_2.traj[7][0]=0 rm_2.traj[7][1]=0 rm_2.traj[8][0]=0 rm_2.traj[8][1]=0 rm_2.traj[9][0]=0 rm_2.traj[9][1]=0 rm_2.ort=0 rm_2.curr_traj=0 rm_2.t=0 rm_2.v_max=26 rm_2.a_max=26 rm_2.needsTurning=0 rm_2.curr[0]=600 rm_2.curr[1]=3900 rm_2.dest[0]=6200 rm_2.dest[1]=3900 rf_1.id=1 rf_1._v_max=26 rf_1._a_max=26 rf_1.turn_limit=0 rf_1.traj[0][0]=0 rf_1.traj[0][1]=0 rf_1.traj[1][0]=0 rf_1.traj[1][1]=0 rf_1.traj[2][0]=0 rf_1.traj[2][1]=0 rf_1.traj[3][0]=0 rf_1.traj[3][1]=0 rf_1.traj[4][0]=0 rf_1.traj[4][1]=0 rf_1.traj[5][0]=0 rf_1.traj[5][1]=0 rf_1.traj[6][0]=0 rf_1.traj[6][1]=0 rf_1.traj[7][0]=0 rf_1.traj[7][1]=0 rf_1.traj[8][0]=0 rf_1.traj[8][1]=0 rf_1.traj[9][0]=0 rf_1.traj[9][1]=0 rf_1.ort=0 rf_1.curr_traj=0 rf_1.t=0 rf_1.v_max=26 rf_1.a_max=26 rf_1.needsTurning=0 rf_1.curr[0]=0 rf_1.curr[1]=0 rf_1.dest[0]=0 rf_1.dest[1]=0 rf_2.id=2 rf_2._v_max=26 rf_2._a_max=26 rf_2.turn_limit=0 rf_2.traj[0][0]=0 rf_2.traj[0][1]=0 rf_2.traj[1][0]=0 rf_2.traj[1][1]=0 rf_2.traj[2][0]=0 rf_2.traj[2][1]=0 rf_2.traj[3][0]=0 rf_2.traj[3][1]=0 rf_2.traj[4][0]=0 rf_2.traj[4][1]=0 rf_2.traj[5][0]=0 rf_2.traj[5][1]=0 rf_2.traj[6][0]=0 rf_2.traj[6][1]=0 rf_2.traj[7][0]=0 rf_2.traj[7][1]=0 rf_2.traj[8][0]=0 rf_2.traj[8][1]=0 rf_2.traj[9][0]=0 rf_2.traj[9][1]=0 rf_2.ort=0 rf_2.curr_traj=0 rf_2.t=0 rf_2.v_max=26 rf_2.a_max=26 rf_2.needsTurning=0 rf_2.curr[0]=0 rf_2.curr[1]=0 rf_2.dest[0]=0 rf_2.dest[1]=0 rp_1.id=1 rp_2.id=2 rd_1.id=1 rd_2.id=2 Factory_Pipeline.p=1 Factory_Pipeline_robot1_def.p=1 Factory_Pipeline_robot1_def.R=1 Factory_Pipeline_robot2_def.p=1 Factory_Pipeline_robot2_def.R=2#t(0)=0#time=382.570796326794891228928463534 global_clock=382.570796326794891228928463534 rm_1.V=0 rm_1.Th=225 rm_1.tUpd=0 rm_2.V=0 rm_2.Th=382.570796326794891228928463534 rm_2.tUpd=0 rf_1.V=0 rf_1.Th=382.570796326794891228928463534 rf_1.tUpd=0 rf_2.V=0 rf_2.Th=382.570796326794891228928463534 rf_2.tUpd=0 rp_1.t=10 rp_2.t=10 rd_1.t=382.570796326794891228928463534 rd_2.t=382.570796326794891228928463534 Factory_Pipeline_robot1_def.t=382.570796326794891228928463534 Factory_Pipeline_robot2_def.t=382.570796326794891228928463534\n.",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/uppaal/verifyta_internal.stderr.txt",
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/uppaal/verifyta_internal.stdout.txt"
+      },
+      "stages": [
+        {
+          "stage": "dsl_generation",
+          "result": "ok",
+          "details": {
+            "iterations_recorded": 1,
+            "validations_attempted": 1,
+            "compiler_failures": 0,
+            "compiler_successes": 1,
+            "setup_errors": 0,
+            "first_success_iteration": 0,
+            "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/dsl/ITER0_20260725_000410.LIRAs",
+            "total_compiler_feedback_chars": 0,
+            "llm_calls": 1,
+            "prompt_tokens_total": 4058,
+            "completion_tokens_total": 744,
+            "total_tokens_total": 4802,
+            "token_usage_available_calls": 1
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/dsl/ITER0_20260725_000410.LIRAs",
+            "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/llm_prompts.jsonl",
+            "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/llm_responses.jsonl"
+          }
+        },
+        {
+          "stage": "xml_export",
+          "result": "ok",
+          "details": {
+            "exit_code": 0
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/dsl/ITER0_20260725_000410.LIRAs",
+            "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/xml/ITER0_20260725_000410.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/xml/lira_cli.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/xml/lira_cli.stderr.txt"
+          }
+        },
+        {
+          "stage": "verifyta_internal",
+          "result": "failed",
+          "execution_result": "failed",
+          "semantic_result": "not_evaluated",
+          "failure_type": "execution",
+          "failure_reason": "UPPAAL verifyta failed during internal verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/xml/ITER0_20260725_000410.xml:/nta/queries/query[22]/formula:1: [error] Time-lock error:",
+          "failure_details": {
+            "exit_code": 1,
+            "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/xml/ITER0_20260725_000410.xml:/nta/queries/query[22]/formula:1: [error] Time-lock error:",
+            "stderr_preview": ".starting rd_1.idle rd_2.idle Factory_Pipeline.sub_seq_s2 Factory_Pipeline_robot1_def.A1_a2_pick_busy Factory_Pipeline_robot2_def.A2_a2_pick_busy ) robot1_stat=0 robot2_stat=0 location_X[0]=250 location_X[1]=6200 location_X[2]=6200 location_X[3]=4800 location_X[4]=4800 location_X[5]=6550 location_Y[0]=250 location_Y[1]=3900 location_Y[2]=100 location_Y[3]=3900 location_Y[4]=100 location_Y[5]=3250 resources_X[0]=6550 resources_Y[0]=3250 humanPositionX[0]=0 humanPositionY[0]=0 batteryCharge[0]=100 batteryCharge[1]=100 robPositionX[0]=6190 robPositionX[1]=6190 robPositionY[0]=3900 robPositionY[1]=3900 robot_loc_target[0]=1 robot_loc_target[1]=1 human_to_be_followed[0]=0 human_to_be_followed[1]=0 robot_to_be_followed[0]=0 robot_to_be_followed[1]=0 f_loc_target[0]=0 f_loc_target[1]=0 robot_res_to_pick[0]=0 robot_res_to_pick[1]=0 robot_inventory[0][0]=0 robot_inventory[1][0]=0 old_inventory[0][0]=0 old_inventory[1][0]=0 robot_res_to_deposit[0]=0 robot_res_to_deposit[1]=0 currP=1 rm_1.id=1 rm_1._v_max=26 rm_1._a_max=26 rm_1.turn_limit=0 rm_1.traj[0][0]=600 rm_1.traj[0][1]=100 rm_1.traj[1][0]=600 rm_1.traj[1][1]=3900 rm_1.traj[2][0]=6200 rm_1.traj[2][1]=3900 rm_1.traj[3][0]=0 rm_1.traj[3][1]=0 rm_1.traj[4][0]=0 rm_1.traj[4][1]=0 rm_1.traj[5][0]=0 rm_1.traj[5][1]=0 rm_1.traj[6][0]=0 rm_1.traj[6][1]=0 rm_1.traj[7][0]=0 rm_1.traj[7][1]=0 rm_1.traj[8][0]=0 rm_1.traj[8][1]=0 rm_1.traj[9][0]=0 rm_1.traj[9][1]=0 rm_1.ort=0 rm_1.curr_traj=2 rm_1.t=0 rm_1.v_max=26 rm_1.a_max=26 rm_1.needsTurning=0 rm_1.curr[0]=600 rm_1.curr[1]=3900 rm_1.dest[0]=6200 rm_1.dest[1]=3900 rm_2.id=2 rm_2._v_max=26 rm_2._a_max=26 rm_2.turn_limit=0 rm_2.traj[0][0]=6200 rm_2.traj[0][1]=3900 rm_2.traj[1][0]=0 rm_2.traj[1][1]=0 rm_2.traj[2][0]=0 rm_2.traj[2][1]=0 rm_2.traj[3][0]=0 rm_2.traj[3][1]=0 rm_2.traj[4][0]=0 rm_2.traj[4][1]=0 rm_2.traj[5][0]=0 rm_2.traj[5][1]=0 rm_2.traj[6][0]=0 rm_2.traj[6][1]=0 rm_2.traj[7][0]=0 rm_2.traj[7][1]=0 rm_2.traj[8][0]=0 rm_2.traj[8][1]=0 rm_2.traj[9][0]=0 rm_2.traj[9][1]=0 rm_2.ort=0 rm_2.curr_traj=0 rm_2.t=0 rm_2.v_max=26 rm_2.a_max=26 rm_2.needsTurning=0 rm_2.curr[0]=600 rm_2.curr[1]=3900 rm_2.dest[0]=6200 rm_2.dest[1]=3900 rf_1.id=1 rf_1._v_max=26 rf_1._a_max=26 rf_1.turn_limit=0 rf_1.traj[0][0]=0 rf_1.traj[0][1]=0 rf_1.traj[1][0]=0 rf_1.traj[1][1]=0 rf_1.traj[2][0]=0 rf_1.traj[2][1]=0 rf_1.traj[3][0]=0 rf_1.traj[3][1]=0 rf_1.traj[4][0]=0 rf_1.traj[4][1]=0 rf_1.traj[5][0]=0 rf_1.traj[5][1]=0 rf_1.traj[6][0]=0 rf_1.traj[6][1]=0 rf_1.traj[7][0]=0 rf_1.traj[7][1]=0 rf_1.traj[8][0]=0 rf_1.traj[8][1]=0 rf_1.traj[9][0]=0 rf_1.traj[9][1]=0 rf_1.ort=0 rf_1.curr_traj=0 rf_1.t=0 rf_1.v_max=26 rf_1.a_max=26 rf_1.needsTurning=0 rf_1.curr[0]=0 rf_1.curr[1]=0 rf_1.dest[0]=0 rf_1.dest[1]=0 rf_2.id=2 rf_2._v_max=26 rf_2._a_max=26 rf_2.turn_limit=0 rf_2.traj[0][0]=0 rf_2.traj[0][1]=0 rf_2.traj[1][0]=0 rf_2.traj[1][1]=0 rf_2.traj[2][0]=0 rf_2.traj[2][1]=0 rf_2.traj[3][0]=0 rf_2.traj[3][1]=0 rf_2.traj[4][0]=0 rf_2.traj[4][1]=0 rf_2.traj[5][0]=0 rf_2.traj[5][1]=0 rf_2.traj[6][0]=0 rf_2.traj[6][1]=0 rf_2.traj[7][0]=0 rf_2.traj[7][1]=0 rf_2.traj[8][0]=0 rf_2.traj[8][1]=0 rf_2.traj[9][0]=0 rf_2.traj[9][1]=0 rf_2.ort=0 rf_2.curr_traj=0 rf_2.t=0 rf_2.v_max=26 rf_2.a_max=26 rf_2.needsTurning=0 rf_2.curr[0]=0 rf_2.curr[1]=0 rf_2.dest[0]=0 rf_2.dest[1]=0 rp_1.id=1 rp_2.id=2 rd_1.id=1 rd_2.id=2 Factory_Pipeline.p=1 Factory_Pipeline_robot1_def.p=1 Factory_Pipeline_robot1_def.R=1 Factory_Pipeline_robot2_def.p=1 Factory_Pipeline_robot2_def.R=2#t(0)=0#time=382.570796326794891228928463534 global_clock=382.570796326794891228928463534 rm_1.V=0 rm_1.Th=225 rm_1.tUpd=0 rm_2.V=0 rm_2.Th=382.570796326794891228928463534 rm_2.tUpd=0 rf_1.V=0 rf_1.Th=382.570796326794891228928463534 rf_1.tUpd=0 rf_2.V=0 rf_2.Th=382.570796326794891228928463534 rf_2.tUpd=0 rp_1.t=10 rp_2.t=10 rd_1.t=382.570796326794891228928463534 rd_2.t=382.570796326794891228928463534 Factory_Pipeline_robot1_def.t=382.570796326794891228928463534 Factory_Pipeline_robot2_def.t=382.570796326794891228928463534\n.",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/uppaal/verifyta_internal.stderr.txt",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/uppaal/verifyta_internal.stdout.txt"
+          },
+          "details": {
+            "verified_formula_count": 22,
+            "failed_query_count": 17,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 0
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/xml/ITER0_20260725_000410.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/uppaal/verifyta_internal.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/uppaal/verifyta_internal.stderr.txt"
+          }
+        },
+        {
+          "stage": "query_adaptation",
+          "result": "ok",
+          "artifacts": {
+            "source_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_3.j2",
+            "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/queries/adapted.q",
+            "source_queries_copy_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/queries/source_queries.txt",
+            "query_adapter_response_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/queries/query_adapter_response.txt",
+            "query_adapter_attempts_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/queries/query_adapter_attempts.jsonl",
+            "query_xml_context_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/queries/xml_context.txt",
+            "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/queries"
+          }
+        },
+        {
+          "stage": "verifyta_adapted",
+          "result": "failed",
+          "execution_result": "failed",
+          "semantic_result": "not_evaluated",
+          "failure_type": "execution",
+          "failure_reason": "UPPAAL verifyta failed during adapted-query verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/xml/ITER0_20260725_000410.xml::63: [error] Time-lock error:",
+          "failure_details": {
+            "exit_code": 1,
+            "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/xml/ITER0_20260725_000410.xml::63: [error] Time-lock error:",
+            "stderr_preview": ".starting rd_1.idle rd_2.idle Factory_Pipeline.sub_seq_s2 Factory_Pipeline_robot1_def.A1_a2_pick_busy Factory_Pipeline_robot2_def.A2_a2_pick_busy ) robot1_stat=0 robot2_stat=0 location_X[0]=250 location_X[1]=6200 location_X[2]=6200 location_X[3]=4800 location_X[4]=4800 location_X[5]=6550 location_Y[0]=250 location_Y[1]=3900 location_Y[2]=100 location_Y[3]=3900 location_Y[4]=100 location_Y[5]=3250 resources_X[0]=6550 resources_Y[0]=3250 humanPositionX[0]=0 humanPositionY[0]=0 batteryCharge[0]=100 batteryCharge[1]=100 robPositionX[0]=6190 robPositionX[1]=6190 robPositionY[0]=3900 robPositionY[1]=3900 robot_loc_target[0]=1 robot_loc_target[1]=1 human_to_be_followed[0]=0 human_to_be_followed[1]=0 robot_to_be_followed[0]=0 robot_to_be_followed[1]=0 f_loc_target[0]=0 f_loc_target[1]=0 robot_res_to_pick[0]=0 robot_res_to_pick[1]=0 robot_inventory[0][0]=0 robot_inventory[1][0]=0 old_inventory[0][0]=0 old_inventory[1][0]=0 robot_res_to_deposit[0]=0 robot_res_to_deposit[1]=0 currP=1 rm_1.id=1 rm_1._v_max=26 rm_1._a_max=26 rm_1.turn_limit=0 rm_1.traj[0][0]=600 rm_1.traj[0][1]=100 rm_1.traj[1][0]=600 rm_1.traj[1][1]=3900 rm_1.traj[2][0]=6200 rm_1.traj[2][1]=3900 rm_1.traj[3][0]=0 rm_1.traj[3][1]=0 rm_1.traj[4][0]=0 rm_1.traj[4][1]=0 rm_1.traj[5][0]=0 rm_1.traj[5][1]=0 rm_1.traj[6][0]=0 rm_1.traj[6][1]=0 rm_1.traj[7][0]=0 rm_1.traj[7][1]=0 rm_1.traj[8][0]=0 rm_1.traj[8][1]=0 rm_1.traj[9][0]=0 rm_1.traj[9][1]=0 rm_1.ort=0 rm_1.curr_traj=2 rm_1.t=0 rm_1.v_max=26 rm_1.a_max=26 rm_1.needsTurning=0 rm_1.curr[0]=600 rm_1.curr[1]=3900 rm_1.dest[0]=6200 rm_1.dest[1]=3900 rm_2.id=2 rm_2._v_max=26 rm_2._a_max=26 rm_2.turn_limit=0 rm_2.traj[0][0]=6200 rm_2.traj[0][1]=3900 rm_2.traj[1][0]=0 rm_2.traj[1][1]=0 rm_2.traj[2][0]=0 rm_2.traj[2][1]=0 rm_2.traj[3][0]=0 rm_2.traj[3][1]=0 rm_2.traj[4][0]=0 rm_2.traj[4][1]=0 rm_2.traj[5][0]=0 rm_2.traj[5][1]=0 rm_2.traj[6][0]=0 rm_2.traj[6][1]=0 rm_2.traj[7][0]=0 rm_2.traj[7][1]=0 rm_2.traj[8][0]=0 rm_2.traj[8][1]=0 rm_2.traj[9][0]=0 rm_2.traj[9][1]=0 rm_2.ort=0 rm_2.curr_traj=0 rm_2.t=0 rm_2.v_max=26 rm_2.a_max=26 rm_2.needsTurning=0 rm_2.curr[0]=600 rm_2.curr[1]=3900 rm_2.dest[0]=6200 rm_2.dest[1]=3900 rf_1.id=1 rf_1._v_max=26 rf_1._a_max=26 rf_1.turn_limit=0 rf_1.traj[0][0]=0 rf_1.traj[0][1]=0 rf_1.traj[1][0]=0 rf_1.traj[1][1]=0 rf_1.traj[2][0]=0 rf_1.traj[2][1]=0 rf_1.traj[3][0]=0 rf_1.traj[3][1]=0 rf_1.traj[4][0]=0 rf_1.traj[4][1]=0 rf_1.traj[5][0]=0 rf_1.traj[5][1]=0 rf_1.traj[6][0]=0 rf_1.traj[6][1]=0 rf_1.traj[7][0]=0 rf_1.traj[7][1]=0 rf_1.traj[8][0]=0 rf_1.traj[8][1]=0 rf_1.traj[9][0]=0 rf_1.traj[9][1]=0 rf_1.ort=0 rf_1.curr_traj=0 rf_1.t=0 rf_1.v_max=26 rf_1.a_max=26 rf_1.needsTurning=0 rf_1.curr[0]=0 rf_1.curr[1]=0 rf_1.dest[0]=0 rf_1.dest[1]=0 rf_2.id=2 rf_2._v_max=26 rf_2._a_max=26 rf_2.turn_limit=0 rf_2.traj[0][0]=0 rf_2.traj[0][1]=0 rf_2.traj[1][0]=0 rf_2.traj[1][1]=0 rf_2.traj[2][0]=0 rf_2.traj[2][1]=0 rf_2.traj[3][0]=0 rf_2.traj[3][1]=0 rf_2.traj[4][0]=0 rf_2.traj[4][1]=0 rf_2.traj[5][0]=0 rf_2.traj[5][1]=0 rf_2.traj[6][0]=0 rf_2.traj[6][1]=0 rf_2.traj[7][0]=0 rf_2.traj[7][1]=0 rf_2.traj[8][0]=0 rf_2.traj[8][1]=0 rf_2.traj[9][0]=0 rf_2.traj[9][1]=0 rf_2.ort=0 rf_2.curr_traj=0 rf_2.t=0 rf_2.v_max=26 rf_2.a_max=26 rf_2.needsTurning=0 rf_2.curr[0]=0 rf_2.curr[1]=0 rf_2.dest[0]=0 rf_2.dest[1]=0 rp_1.id=1 rp_2.id=2 rd_1.id=1 rd_2.id=2 Factory_Pipeline.p=1 Factory_Pipeline_robot1_def.p=1 Factory_Pipeline_robot1_def.R=1 Factory_Pipeline_robot2_def.p=1 Factory_Pipeline_robot2_def.R=2#t(0)=0#time=382.570796326794891228928463534 global_clock=382.570796326794891228928463534 rm_1.V=0 rm_1.Th=225 rm_1.tUpd=0 rm_2.V=0 rm_2.Th=382.570796326794891228928463534 rm_2.tUpd=0 rf_1.V=0 rf_1.Th=382.570796326794891228928463534 rf_1.tUpd=0 rf_2.V=0 rf_2.Th=382.570796326794891228928463534 rf_2.tUpd=0 rp_1.t=10 rp_2.t=10 rd_1.t=382.570796326794891228928463534 rd_2.t=382.570796326794891228928463534 Factory_Pipeline_robot1_def.t=382.570796326794891228928463534 Factory_Pipeline_robot2_def.t=382.570796326794891228928463534\n.",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/uppaal/verifyta_adapted.stderr.txt",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/uppaal/verifyta_adapted.stdout.txt"
+          },
+          "details": {
+            "verified_formula_count": 21,
+            "failed_query_count": 16,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 5
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/xml/ITER0_20260725_000410.xml",
+            "query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/queries/adapted.q",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/uppaal/verifyta_adapted.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/uppaal/verifyta_adapted.stderr.txt"
+          }
+        }
+      ],
+      "exit_code": 1,
+      "continue_feedback_loop": true,
+      "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo2/queries/adapted.q"
+    },
+    {
+      "cycle": 3,
+      "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3",
+      "metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/run_metadata.json",
+      "uppaal_feedback_included": true,
+      "uppaal_feedback_chars": 19021,
+      "verifyta_probability_delta_threshold": 0.05,
+      "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/dsl/ITER1_20260725_000736.LIRAs",
+      "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/xml/ITER1_20260725_000736.xml",
+      "query_source_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_3.j2",
+      "uppaal_feedback_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/uppaal/uppaal_feedback_for_next_cycle.txt",
+      "cycle_result": "failed",
+      "failed_stage": "verifyta_internal",
+      "failure_type": "execution",
+      "failure_reason": "UPPAAL verifyta failed during internal verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/xml/ITER1_20260725_000736.xml:/nta/queries/query[22]/formula:1: [error] Time-lock error:",
+      "failure_details": {
+        "exit_code": 1,
+        "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/xml/ITER1_20260725_000736.xml:/nta/queries/query[22]/formula:1: [error] Time-lock error:",
+        "stderr_preview": ".starting rd_1.idle rd_2.idle Factory_Pipeline.sub_seq_s2 Factory_Pipeline_robot1_def.A1_a2_pick_busy Factory_Pipeline_robot2_def.A2_a2_pick_busy ) robot1_stat=0 robot2_stat=0 location_X[0]=250 location_X[1]=6200 location_X[2]=6200 location_X[3]=4800 location_X[4]=4800 location_X[5]=6550 location_Y[0]=250 location_Y[1]=3900 location_Y[2]=100 location_Y[3]=3900 location_Y[4]=100 location_Y[5]=3250 resources_X[0]=6550 resources_Y[0]=3250 humanPositionX[0]=0 humanPositionY[0]=0 batteryCharge[0]=100 batteryCharge[1]=100 robPositionX[0]=6190 robPositionX[1]=6190 robPositionY[0]=3900 robPositionY[1]=3900 robot_loc_target[0]=1 robot_loc_target[1]=1 human_to_be_followed[0]=0 human_to_be_followed[1]=0 robot_to_be_followed[0]=0 robot_to_be_followed[1]=0 f_loc_target[0]=0 f_loc_target[1]=0 robot_res_to_pick[0]=0 robot_res_to_pick[1]=0 robot_inventory[0][0]=0 robot_inventory[1][0]=0 old_inventory[0][0]=0 old_inventory[1][0]=0 robot_res_to_deposit[0]=0 robot_res_to_deposit[1]=0 currP=1 rm_1.id=1 rm_1._v_max=26 rm_1._a_max=26 rm_1.turn_limit=0 rm_1.traj[0][0]=600 rm_1.traj[0][1]=100 rm_1.traj[1][0]=600 rm_1.traj[1][1]=3900 rm_1.traj[2][0]=6200 rm_1.traj[2][1]=3900 rm_1.traj[3][0]=0 rm_1.traj[3][1]=0 rm_1.traj[4][0]=0 rm_1.traj[4][1]=0 rm_1.traj[5][0]=0 rm_1.traj[5][1]=0 rm_1.traj[6][0]=0 rm_1.traj[6][1]=0 rm_1.traj[7][0]=0 rm_1.traj[7][1]=0 rm_1.traj[8][0]=0 rm_1.traj[8][1]=0 rm_1.traj[9][0]=0 rm_1.traj[9][1]=0 rm_1.ort=0 rm_1.curr_traj=2 rm_1.t=0 rm_1.v_max=26 rm_1.a_max=26 rm_1.needsTurning=0 rm_1.curr[0]=600 rm_1.curr[1]=3900 rm_1.dest[0]=6200 rm_1.dest[1]=3900 rm_2.id=2 rm_2._v_max=26 rm_2._a_max=26 rm_2.turn_limit=0 rm_2.traj[0][0]=6200 rm_2.traj[0][1]=3900 rm_2.traj[1][0]=0 rm_2.traj[1][1]=0 rm_2.traj[2][0]=0 rm_2.traj[2][1]=0 rm_2.traj[3][0]=0 rm_2.traj[3][1]=0 rm_2.traj[4][0]=0 rm_2.traj[4][1]=0 rm_2.traj[5][0]=0 rm_2.traj[5][1]=0 rm_2.traj[6][0]=0 rm_2.traj[6][1]=0 rm_2.traj[7][0]=0 rm_2.traj[7][1]=0 rm_2.traj[8][0]=0 rm_2.traj[8][1]=0 rm_2.traj[9][0]=0 rm_2.traj[9][1]=0 rm_2.ort=0 rm_2.curr_traj=0 rm_2.t=0 rm_2.v_max=26 rm_2.a_max=26 rm_2.needsTurning=0 rm_2.curr[0]=600 rm_2.curr[1]=3900 rm_2.dest[0]=6200 rm_2.dest[1]=3900 rf_1.id=1 rf_1._v_max=26 rf_1._a_max=26 rf_1.turn_limit=0 rf_1.traj[0][0]=0 rf_1.traj[0][1]=0 rf_1.traj[1][0]=0 rf_1.traj[1][1]=0 rf_1.traj[2][0]=0 rf_1.traj[2][1]=0 rf_1.traj[3][0]=0 rf_1.traj[3][1]=0 rf_1.traj[4][0]=0 rf_1.traj[4][1]=0 rf_1.traj[5][0]=0 rf_1.traj[5][1]=0 rf_1.traj[6][0]=0 rf_1.traj[6][1]=0 rf_1.traj[7][0]=0 rf_1.traj[7][1]=0 rf_1.traj[8][0]=0 rf_1.traj[8][1]=0 rf_1.traj[9][0]=0 rf_1.traj[9][1]=0 rf_1.ort=0 rf_1.curr_traj=0 rf_1.t=0 rf_1.v_max=26 rf_1.a_max=26 rf_1.needsTurning=0 rf_1.curr[0]=0 rf_1.curr[1]=0 rf_1.dest[0]=0 rf_1.dest[1]=0 rf_2.id=2 rf_2._v_max=26 rf_2._a_max=26 rf_2.turn_limit=0 rf_2.traj[0][0]=0 rf_2.traj[0][1]=0 rf_2.traj[1][0]=0 rf_2.traj[1][1]=0 rf_2.traj[2][0]=0 rf_2.traj[2][1]=0 rf_2.traj[3][0]=0 rf_2.traj[3][1]=0 rf_2.traj[4][0]=0 rf_2.traj[4][1]=0 rf_2.traj[5][0]=0 rf_2.traj[5][1]=0 rf_2.traj[6][0]=0 rf_2.traj[6][1]=0 rf_2.traj[7][0]=0 rf_2.traj[7][1]=0 rf_2.traj[8][0]=0 rf_2.traj[8][1]=0 rf_2.traj[9][0]=0 rf_2.traj[9][1]=0 rf_2.ort=0 rf_2.curr_traj=0 rf_2.t=0 rf_2.v_max=26 rf_2.a_max=26 rf_2.needsTurning=0 rf_2.curr[0]=0 rf_2.curr[1]=0 rf_2.dest[0]=0 rf_2.dest[1]=0 rp_1.id=1 rp_2.id=2 rd_1.id=1 rd_2.id=2 Factory_Pipeline.p=1 Factory_Pipeline_robot1_def.p=1 Factory_Pipeline_robot1_def.R=1 Factory_Pipeline_robot2_def.p=1 Factory_Pipeline_robot2_def.R=2#t(0)=0#time=382.570796326794891228928463534 global_clock=382.570796326794891228928463534 rm_1.V=0 rm_1.Th=225 rm_1.tUpd=0 rm_2.V=0 rm_2.Th=382.570796326794891228928463534 rm_2.tUpd=0 rf_1.V=0 rf_1.Th=382.570796326794891228928463534 rf_1.tUpd=0 rf_2.V=0 rf_2.Th=382.570796326794891228928463534 rf_2.tUpd=0 rp_1.t=10 rp_2.t=10 rd_1.t=382.570796326794891228928463534 rd_2.t=382.570796326794891228928463534 Factory_Pipeline_robot1_def.t=382.570796326794891228928463534 Factory_Pipeline_robot2_def.t=382.570796326794891228928463534\n.",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/uppaal/verifyta_internal.stderr.txt",
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/uppaal/verifyta_internal.stdout.txt"
+      },
+      "stages": [
+        {
+          "stage": "dsl_generation",
+          "result": "ok",
+          "details": {
+            "iterations_recorded": 2,
+            "validations_attempted": 2,
+            "compiler_failures": 1,
+            "compiler_successes": 1,
+            "setup_errors": 0,
+            "first_success_iteration": 1,
+            "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/dsl/ITER1_20260725_000736.LIRAs",
+            "total_compiler_feedback_chars": 1972,
+            "llm_calls": 2,
+            "prompt_tokens_total": 18987,
+            "completion_tokens_total": 2945,
+            "total_tokens_total": 21932,
+            "token_usage_available_calls": 2
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/dsl/ITER1_20260725_000736.LIRAs",
+            "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/llm_prompts.jsonl",
+            "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/llm_responses.jsonl"
+          }
+        },
+        {
+          "stage": "xml_export",
+          "result": "ok",
+          "details": {
+            "exit_code": 0
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/dsl/ITER1_20260725_000736.LIRAs",
+            "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/xml/ITER1_20260725_000736.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/xml/lira_cli.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/xml/lira_cli.stderr.txt"
+          }
+        },
+        {
+          "stage": "verifyta_internal",
+          "result": "failed",
+          "execution_result": "failed",
+          "semantic_result": "not_evaluated",
+          "failure_type": "execution",
+          "failure_reason": "UPPAAL verifyta failed during internal verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/xml/ITER1_20260725_000736.xml:/nta/queries/query[22]/formula:1: [error] Time-lock error:",
+          "failure_details": {
+            "exit_code": 1,
+            "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/xml/ITER1_20260725_000736.xml:/nta/queries/query[22]/formula:1: [error] Time-lock error:",
+            "stderr_preview": ".starting rd_1.idle rd_2.idle Factory_Pipeline.sub_seq_s2 Factory_Pipeline_robot1_def.A1_a2_pick_busy Factory_Pipeline_robot2_def.A2_a2_pick_busy ) robot1_stat=0 robot2_stat=0 location_X[0]=250 location_X[1]=6200 location_X[2]=6200 location_X[3]=4800 location_X[4]=4800 location_X[5]=6550 location_Y[0]=250 location_Y[1]=3900 location_Y[2]=100 location_Y[3]=3900 location_Y[4]=100 location_Y[5]=3250 resources_X[0]=6550 resources_Y[0]=3250 humanPositionX[0]=0 humanPositionY[0]=0 batteryCharge[0]=100 batteryCharge[1]=100 robPositionX[0]=6190 robPositionX[1]=6190 robPositionY[0]=3900 robPositionY[1]=3900 robot_loc_target[0]=1 robot_loc_target[1]=1 human_to_be_followed[0]=0 human_to_be_followed[1]=0 robot_to_be_followed[0]=0 robot_to_be_followed[1]=0 f_loc_target[0]=0 f_loc_target[1]=0 robot_res_to_pick[0]=0 robot_res_to_pick[1]=0 robot_inventory[0][0]=0 robot_inventory[1][0]=0 old_inventory[0][0]=0 old_inventory[1][0]=0 robot_res_to_deposit[0]=0 robot_res_to_deposit[1]=0 currP=1 rm_1.id=1 rm_1._v_max=26 rm_1._a_max=26 rm_1.turn_limit=0 rm_1.traj[0][0]=600 rm_1.traj[0][1]=100 rm_1.traj[1][0]=600 rm_1.traj[1][1]=3900 rm_1.traj[2][0]=6200 rm_1.traj[2][1]=3900 rm_1.traj[3][0]=0 rm_1.traj[3][1]=0 rm_1.traj[4][0]=0 rm_1.traj[4][1]=0 rm_1.traj[5][0]=0 rm_1.traj[5][1]=0 rm_1.traj[6][0]=0 rm_1.traj[6][1]=0 rm_1.traj[7][0]=0 rm_1.traj[7][1]=0 rm_1.traj[8][0]=0 rm_1.traj[8][1]=0 rm_1.traj[9][0]=0 rm_1.traj[9][1]=0 rm_1.ort=0 rm_1.curr_traj=2 rm_1.t=0 rm_1.v_max=26 rm_1.a_max=26 rm_1.needsTurning=0 rm_1.curr[0]=600 rm_1.curr[1]=3900 rm_1.dest[0]=6200 rm_1.dest[1]=3900 rm_2.id=2 rm_2._v_max=26 rm_2._a_max=26 rm_2.turn_limit=0 rm_2.traj[0][0]=6200 rm_2.traj[0][1]=3900 rm_2.traj[1][0]=0 rm_2.traj[1][1]=0 rm_2.traj[2][0]=0 rm_2.traj[2][1]=0 rm_2.traj[3][0]=0 rm_2.traj[3][1]=0 rm_2.traj[4][0]=0 rm_2.traj[4][1]=0 rm_2.traj[5][0]=0 rm_2.traj[5][1]=0 rm_2.traj[6][0]=0 rm_2.traj[6][1]=0 rm_2.traj[7][0]=0 rm_2.traj[7][1]=0 rm_2.traj[8][0]=0 rm_2.traj[8][1]=0 rm_2.traj[9][0]=0 rm_2.traj[9][1]=0 rm_2.ort=0 rm_2.curr_traj=0 rm_2.t=0 rm_2.v_max=26 rm_2.a_max=26 rm_2.needsTurning=0 rm_2.curr[0]=600 rm_2.curr[1]=3900 rm_2.dest[0]=6200 rm_2.dest[1]=3900 rf_1.id=1 rf_1._v_max=26 rf_1._a_max=26 rf_1.turn_limit=0 rf_1.traj[0][0]=0 rf_1.traj[0][1]=0 rf_1.traj[1][0]=0 rf_1.traj[1][1]=0 rf_1.traj[2][0]=0 rf_1.traj[2][1]=0 rf_1.traj[3][0]=0 rf_1.traj[3][1]=0 rf_1.traj[4][0]=0 rf_1.traj[4][1]=0 rf_1.traj[5][0]=0 rf_1.traj[5][1]=0 rf_1.traj[6][0]=0 rf_1.traj[6][1]=0 rf_1.traj[7][0]=0 rf_1.traj[7][1]=0 rf_1.traj[8][0]=0 rf_1.traj[8][1]=0 rf_1.traj[9][0]=0 rf_1.traj[9][1]=0 rf_1.ort=0 rf_1.curr_traj=0 rf_1.t=0 rf_1.v_max=26 rf_1.a_max=26 rf_1.needsTurning=0 rf_1.curr[0]=0 rf_1.curr[1]=0 rf_1.dest[0]=0 rf_1.dest[1]=0 rf_2.id=2 rf_2._v_max=26 rf_2._a_max=26 rf_2.turn_limit=0 rf_2.traj[0][0]=0 rf_2.traj[0][1]=0 rf_2.traj[1][0]=0 rf_2.traj[1][1]=0 rf_2.traj[2][0]=0 rf_2.traj[2][1]=0 rf_2.traj[3][0]=0 rf_2.traj[3][1]=0 rf_2.traj[4][0]=0 rf_2.traj[4][1]=0 rf_2.traj[5][0]=0 rf_2.traj[5][1]=0 rf_2.traj[6][0]=0 rf_2.traj[6][1]=0 rf_2.traj[7][0]=0 rf_2.traj[7][1]=0 rf_2.traj[8][0]=0 rf_2.traj[8][1]=0 rf_2.traj[9][0]=0 rf_2.traj[9][1]=0 rf_2.ort=0 rf_2.curr_traj=0 rf_2.t=0 rf_2.v_max=26 rf_2.a_max=26 rf_2.needsTurning=0 rf_2.curr[0]=0 rf_2.curr[1]=0 rf_2.dest[0]=0 rf_2.dest[1]=0 rp_1.id=1 rp_2.id=2 rd_1.id=1 rd_2.id=2 Factory_Pipeline.p=1 Factory_Pipeline_robot1_def.p=1 Factory_Pipeline_robot1_def.R=1 Factory_Pipeline_robot2_def.p=1 Factory_Pipeline_robot2_def.R=2#t(0)=0#time=382.570796326794891228928463534 global_clock=382.570796326794891228928463534 rm_1.V=0 rm_1.Th=225 rm_1.tUpd=0 rm_2.V=0 rm_2.Th=382.570796326794891228928463534 rm_2.tUpd=0 rf_1.V=0 rf_1.Th=382.570796326794891228928463534 rf_1.tUpd=0 rf_2.V=0 rf_2.Th=382.570796326794891228928463534 rf_2.tUpd=0 rp_1.t=10 rp_2.t=10 rd_1.t=382.570796326794891228928463534 rd_2.t=382.570796326794891228928463534 Factory_Pipeline_robot1_def.t=382.570796326794891228928463534 Factory_Pipeline_robot2_def.t=382.570796326794891228928463534\n.",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/uppaal/verifyta_internal.stderr.txt",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/uppaal/verifyta_internal.stdout.txt"
+          },
+          "details": {
+            "verified_formula_count": 22,
+            "failed_query_count": 17,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 0
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/xml/ITER1_20260725_000736.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/uppaal/verifyta_internal.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/uppaal/verifyta_internal.stderr.txt"
+          }
+        },
+        {
+          "stage": "query_adaptation",
+          "result": "ok",
+          "artifacts": {
+            "source_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_3.j2",
+            "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/queries/adapted.q",
+            "source_queries_copy_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/queries/source_queries.txt",
+            "query_adapter_response_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/queries/query_adapter_response.txt",
+            "query_adapter_attempts_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/queries/query_adapter_attempts.jsonl",
+            "query_xml_context_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/queries/xml_context.txt",
+            "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/queries"
+          }
+        },
+        {
+          "stage": "verifyta_adapted",
+          "result": "failed",
+          "execution_result": "failed",
+          "semantic_result": "not_evaluated",
+          "failure_type": "execution",
+          "failure_reason": "UPPAAL verifyta failed during adapted-query verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/xml/ITER1_20260725_000736.xml::63: [error] Time-lock error:",
+          "failure_details": {
+            "exit_code": 1,
+            "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/xml/ITER1_20260725_000736.xml::63: [error] Time-lock error:",
+            "stderr_preview": ".starting rd_1.idle rd_2.idle Factory_Pipeline.sub_seq_s2 Factory_Pipeline_robot1_def.A1_a2_pick_busy Factory_Pipeline_robot2_def.A2_a2_pick_busy ) robot1_stat=0 robot2_stat=0 location_X[0]=250 location_X[1]=6200 location_X[2]=6200 location_X[3]=4800 location_X[4]=4800 location_X[5]=6550 location_Y[0]=250 location_Y[1]=3900 location_Y[2]=100 location_Y[3]=3900 location_Y[4]=100 location_Y[5]=3250 resources_X[0]=6550 resources_Y[0]=3250 humanPositionX[0]=0 humanPositionY[0]=0 batteryCharge[0]=100 batteryCharge[1]=100 robPositionX[0]=6190 robPositionX[1]=6190 robPositionY[0]=3900 robPositionY[1]=3900 robot_loc_target[0]=1 robot_loc_target[1]=1 human_to_be_followed[0]=0 human_to_be_followed[1]=0 robot_to_be_followed[0]=0 robot_to_be_followed[1]=0 f_loc_target[0]=0 f_loc_target[1]=0 robot_res_to_pick[0]=0 robot_res_to_pick[1]=0 robot_inventory[0][0]=0 robot_inventory[1][0]=0 old_inventory[0][0]=0 old_inventory[1][0]=0 robot_res_to_deposit[0]=0 robot_res_to_deposit[1]=0 currP=1 rm_1.id=1 rm_1._v_max=26 rm_1._a_max=26 rm_1.turn_limit=0 rm_1.traj[0][0]=600 rm_1.traj[0][1]=100 rm_1.traj[1][0]=600 rm_1.traj[1][1]=3900 rm_1.traj[2][0]=6200 rm_1.traj[2][1]=3900 rm_1.traj[3][0]=0 rm_1.traj[3][1]=0 rm_1.traj[4][0]=0 rm_1.traj[4][1]=0 rm_1.traj[5][0]=0 rm_1.traj[5][1]=0 rm_1.traj[6][0]=0 rm_1.traj[6][1]=0 rm_1.traj[7][0]=0 rm_1.traj[7][1]=0 rm_1.traj[8][0]=0 rm_1.traj[8][1]=0 rm_1.traj[9][0]=0 rm_1.traj[9][1]=0 rm_1.ort=0 rm_1.curr_traj=2 rm_1.t=0 rm_1.v_max=26 rm_1.a_max=26 rm_1.needsTurning=0 rm_1.curr[0]=600 rm_1.curr[1]=3900 rm_1.dest[0]=6200 rm_1.dest[1]=3900 rm_2.id=2 rm_2._v_max=26 rm_2._a_max=26 rm_2.turn_limit=0 rm_2.traj[0][0]=6200 rm_2.traj[0][1]=3900 rm_2.traj[1][0]=0 rm_2.traj[1][1]=0 rm_2.traj[2][0]=0 rm_2.traj[2][1]=0 rm_2.traj[3][0]=0 rm_2.traj[3][1]=0 rm_2.traj[4][0]=0 rm_2.traj[4][1]=0 rm_2.traj[5][0]=0 rm_2.traj[5][1]=0 rm_2.traj[6][0]=0 rm_2.traj[6][1]=0 rm_2.traj[7][0]=0 rm_2.traj[7][1]=0 rm_2.traj[8][0]=0 rm_2.traj[8][1]=0 rm_2.traj[9][0]=0 rm_2.traj[9][1]=0 rm_2.ort=0 rm_2.curr_traj=0 rm_2.t=0 rm_2.v_max=26 rm_2.a_max=26 rm_2.needsTurning=0 rm_2.curr[0]=600 rm_2.curr[1]=3900 rm_2.dest[0]=6200 rm_2.dest[1]=3900 rf_1.id=1 rf_1._v_max=26 rf_1._a_max=26 rf_1.turn_limit=0 rf_1.traj[0][0]=0 rf_1.traj[0][1]=0 rf_1.traj[1][0]=0 rf_1.traj[1][1]=0 rf_1.traj[2][0]=0 rf_1.traj[2][1]=0 rf_1.traj[3][0]=0 rf_1.traj[3][1]=0 rf_1.traj[4][0]=0 rf_1.traj[4][1]=0 rf_1.traj[5][0]=0 rf_1.traj[5][1]=0 rf_1.traj[6][0]=0 rf_1.traj[6][1]=0 rf_1.traj[7][0]=0 rf_1.traj[7][1]=0 rf_1.traj[8][0]=0 rf_1.traj[8][1]=0 rf_1.traj[9][0]=0 rf_1.traj[9][1]=0 rf_1.ort=0 rf_1.curr_traj=0 rf_1.t=0 rf_1.v_max=26 rf_1.a_max=26 rf_1.needsTurning=0 rf_1.curr[0]=0 rf_1.curr[1]=0 rf_1.dest[0]=0 rf_1.dest[1]=0 rf_2.id=2 rf_2._v_max=26 rf_2._a_max=26 rf_2.turn_limit=0 rf_2.traj[0][0]=0 rf_2.traj[0][1]=0 rf_2.traj[1][0]=0 rf_2.traj[1][1]=0 rf_2.traj[2][0]=0 rf_2.traj[2][1]=0 rf_2.traj[3][0]=0 rf_2.traj[3][1]=0 rf_2.traj[4][0]=0 rf_2.traj[4][1]=0 rf_2.traj[5][0]=0 rf_2.traj[5][1]=0 rf_2.traj[6][0]=0 rf_2.traj[6][1]=0 rf_2.traj[7][0]=0 rf_2.traj[7][1]=0 rf_2.traj[8][0]=0 rf_2.traj[8][1]=0 rf_2.traj[9][0]=0 rf_2.traj[9][1]=0 rf_2.ort=0 rf_2.curr_traj=0 rf_2.t=0 rf_2.v_max=26 rf_2.a_max=26 rf_2.needsTurning=0 rf_2.curr[0]=0 rf_2.curr[1]=0 rf_2.dest[0]=0 rf_2.dest[1]=0 rp_1.id=1 rp_2.id=2 rd_1.id=1 rd_2.id=2 Factory_Pipeline.p=1 Factory_Pipeline_robot1_def.p=1 Factory_Pipeline_robot1_def.R=1 Factory_Pipeline_robot2_def.p=1 Factory_Pipeline_robot2_def.R=2#t(0)=0#time=382.570796326794891228928463534 global_clock=382.570796326794891228928463534 rm_1.V=0 rm_1.Th=225 rm_1.tUpd=0 rm_2.V=0 rm_2.Th=382.570796326794891228928463534 rm_2.tUpd=0 rf_1.V=0 rf_1.Th=382.570796326794891228928463534 rf_1.tUpd=0 rf_2.V=0 rf_2.Th=382.570796326794891228928463534 rf_2.tUpd=0 rp_1.t=10 rp_2.t=10 rd_1.t=382.570796326794891228928463534 rd_2.t=382.570796326794891228928463534 Factory_Pipeline_robot1_def.t=382.570796326794891228928463534 Factory_Pipeline_robot2_def.t=382.570796326794891228928463534\n.",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/uppaal/verifyta_adapted.stderr.txt",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/uppaal/verifyta_adapted.stdout.txt"
+          },
+          "details": {
+            "verified_formula_count": 21,
+            "failed_query_count": 16,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 5
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/xml/ITER1_20260725_000736.xml",
+            "query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/queries/adapted.q",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/uppaal/verifyta_adapted.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/uppaal/verifyta_adapted.stderr.txt"
+          }
+        }
+      ],
+      "exit_code": 1,
+      "continue_feedback_loop": true,
+      "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo3/queries/adapted.q"
+    },
+    {
+      "cycle": 4,
+      "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4",
+      "metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/run_metadata.json",
+      "uppaal_feedback_included": true,
+      "uppaal_feedback_chars": 19017,
+      "verifyta_probability_delta_threshold": 0.05,
+      "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/dsl/ITER1_20260725_001053.LIRAs",
+      "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/xml/ITER1_20260725_001053.xml",
+      "query_source_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_3.j2",
+      "uppaal_feedback_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/uppaal/uppaal_feedback_for_next_cycle.txt",
+      "cycle_result": "failed",
+      "failed_stage": "verifyta_internal",
+      "failure_type": "execution",
+      "failure_reason": "UPPAAL verifyta failed during internal verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/xml/ITER1_20260725_001053.xml:/nta/queries/query[22]/formula:1: [error] Time-lock error:",
+      "failure_details": {
+        "exit_code": 1,
+        "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/xml/ITER1_20260725_001053.xml:/nta/queries/query[22]/formula:1: [error] Time-lock error:",
+        "stderr_preview": ".starting rd_1.idle rd_2.idle Factory_Pipeline.sub_seq_s2 Factory_Pipeline_robot1_def.A1_a2_pick_busy Factory_Pipeline_robot2_def.A2_a2_pick_busy ) robot1_stat=0 robot2_stat=0 location_X[0]=250 location_X[1]=6200 location_X[2]=6200 location_X[3]=4800 location_X[4]=4800 location_X[5]=6550 location_Y[0]=250 location_Y[1]=3900 location_Y[2]=100 location_Y[3]=3900 location_Y[4]=100 location_Y[5]=3250 resources_X[0]=6550 resources_Y[0]=3250 humanPositionX[0]=0 humanPositionY[0]=0 batteryCharge[0]=100 batteryCharge[1]=100 robPositionX[0]=6190 robPositionX[1]=6190 robPositionY[0]=3900 robPositionY[1]=3900 robot_loc_target[0]=1 robot_loc_target[1]=1 human_to_be_followed[0]=0 human_to_be_followed[1]=0 robot_to_be_followed[0]=0 robot_to_be_followed[1]=0 f_loc_target[0]=0 f_loc_target[1]=0 robot_res_to_pick[0]=0 robot_res_to_pick[1]=0 robot_inventory[0][0]=0 robot_inventory[1][0]=0 old_inventory[0][0]=0 old_inventory[1][0]=0 robot_res_to_deposit[0]=0 robot_res_to_deposit[1]=0 currP=1 rm_1.id=1 rm_1._v_max=26 rm_1._a_max=26 rm_1.turn_limit=0 rm_1.traj[0][0]=600 rm_1.traj[0][1]=100 rm_1.traj[1][0]=600 rm_1.traj[1][1]=3900 rm_1.traj[2][0]=6200 rm_1.traj[2][1]=3900 rm_1.traj[3][0]=0 rm_1.traj[3][1]=0 rm_1.traj[4][0]=0 rm_1.traj[4][1]=0 rm_1.traj[5][0]=0 rm_1.traj[5][1]=0 rm_1.traj[6][0]=0 rm_1.traj[6][1]=0 rm_1.traj[7][0]=0 rm_1.traj[7][1]=0 rm_1.traj[8][0]=0 rm_1.traj[8][1]=0 rm_1.traj[9][0]=0 rm_1.traj[9][1]=0 rm_1.ort=0 rm_1.curr_traj=2 rm_1.t=0 rm_1.v_max=26 rm_1.a_max=26 rm_1.needsTurning=0 rm_1.curr[0]=600 rm_1.curr[1]=3900 rm_1.dest[0]=6200 rm_1.dest[1]=3900 rm_2.id=2 rm_2._v_max=26 rm_2._a_max=26 rm_2.turn_limit=0 rm_2.traj[0][0]=6200 rm_2.traj[0][1]=3900 rm_2.traj[1][0]=0 rm_2.traj[1][1]=0 rm_2.traj[2][0]=0 rm_2.traj[2][1]=0 rm_2.traj[3][0]=0 rm_2.traj[3][1]=0 rm_2.traj[4][0]=0 rm_2.traj[4][1]=0 rm_2.traj[5][0]=0 rm_2.traj[5][1]=0 rm_2.traj[6][0]=0 rm_2.traj[6][1]=0 rm_2.traj[7][0]=0 rm_2.traj[7][1]=0 rm_2.traj[8][0]=0 rm_2.traj[8][1]=0 rm_2.traj[9][0]=0 rm_2.traj[9][1]=0 rm_2.ort=0 rm_2.curr_traj=0 rm_2.t=0 rm_2.v_max=26 rm_2.a_max=26 rm_2.needsTurning=0 rm_2.curr[0]=600 rm_2.curr[1]=3900 rm_2.dest[0]=6200 rm_2.dest[1]=3900 rf_1.id=1 rf_1._v_max=26 rf_1._a_max=26 rf_1.turn_limit=0 rf_1.traj[0][0]=0 rf_1.traj[0][1]=0 rf_1.traj[1][0]=0 rf_1.traj[1][1]=0 rf_1.traj[2][0]=0 rf_1.traj[2][1]=0 rf_1.traj[3][0]=0 rf_1.traj[3][1]=0 rf_1.traj[4][0]=0 rf_1.traj[4][1]=0 rf_1.traj[5][0]=0 rf_1.traj[5][1]=0 rf_1.traj[6][0]=0 rf_1.traj[6][1]=0 rf_1.traj[7][0]=0 rf_1.traj[7][1]=0 rf_1.traj[8][0]=0 rf_1.traj[8][1]=0 rf_1.traj[9][0]=0 rf_1.traj[9][1]=0 rf_1.ort=0 rf_1.curr_traj=0 rf_1.t=0 rf_1.v_max=26 rf_1.a_max=26 rf_1.needsTurning=0 rf_1.curr[0]=0 rf_1.curr[1]=0 rf_1.dest[0]=0 rf_1.dest[1]=0 rf_2.id=2 rf_2._v_max=26 rf_2._a_max=26 rf_2.turn_limit=0 rf_2.traj[0][0]=0 rf_2.traj[0][1]=0 rf_2.traj[1][0]=0 rf_2.traj[1][1]=0 rf_2.traj[2][0]=0 rf_2.traj[2][1]=0 rf_2.traj[3][0]=0 rf_2.traj[3][1]=0 rf_2.traj[4][0]=0 rf_2.traj[4][1]=0 rf_2.traj[5][0]=0 rf_2.traj[5][1]=0 rf_2.traj[6][0]=0 rf_2.traj[6][1]=0 rf_2.traj[7][0]=0 rf_2.traj[7][1]=0 rf_2.traj[8][0]=0 rf_2.traj[8][1]=0 rf_2.traj[9][0]=0 rf_2.traj[9][1]=0 rf_2.ort=0 rf_2.curr_traj=0 rf_2.t=0 rf_2.v_max=26 rf_2.a_max=26 rf_2.needsTurning=0 rf_2.curr[0]=0 rf_2.curr[1]=0 rf_2.dest[0]=0 rf_2.dest[1]=0 rp_1.id=1 rp_2.id=2 rd_1.id=1 rd_2.id=2 Factory_Pipeline.p=1 Factory_Pipeline_robot1_def.p=1 Factory_Pipeline_robot1_def.R=1 Factory_Pipeline_robot2_def.p=1 Factory_Pipeline_robot2_def.R=2#t(0)=0#time=382.570796326794891228928463534 global_clock=382.570796326794891228928463534 rm_1.V=0 rm_1.Th=225 rm_1.tUpd=0 rm_2.V=0 rm_2.Th=382.570796326794891228928463534 rm_2.tUpd=0 rf_1.V=0 rf_1.Th=382.570796326794891228928463534 rf_1.tUpd=0 rf_2.V=0 rf_2.Th=382.570796326794891228928463534 rf_2.tUpd=0 rp_1.t=10 rp_2.t=10 rd_1.t=382.570796326794891228928463534 rd_2.t=382.570796326794891228928463534 Factory_Pipeline_robot1_def.t=382.570796326794891228928463534 Factory_Pipeline_robot2_def.t=382.570796326794891228928463534\n.",
+        "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/uppaal/verifyta_internal.stderr.txt",
+        "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/uppaal/verifyta_internal.stdout.txt"
+      },
+      "stages": [
+        {
+          "stage": "dsl_generation",
+          "result": "ok",
+          "details": {
+            "iterations_recorded": 2,
+            "validations_attempted": 2,
+            "compiler_failures": 1,
+            "compiler_successes": 1,
+            "setup_errors": 0,
+            "first_success_iteration": 1,
+            "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/dsl/ITER1_20260725_001053.LIRAs",
+            "total_compiler_feedback_chars": 1038,
+            "llm_calls": 2,
+            "prompt_tokens_total": 18980,
+            "completion_tokens_total": 1765,
+            "total_tokens_total": 20745,
+            "token_usage_available_calls": 2
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/dsl/ITER1_20260725_001053.LIRAs",
+            "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/llm_prompts.jsonl",
+            "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/llm_responses.jsonl"
+          }
+        },
+        {
+          "stage": "xml_export",
+          "result": "ok",
+          "details": {
+            "exit_code": 0
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/dsl/ITER1_20260725_001053.LIRAs",
+            "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/xml/ITER1_20260725_001053.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/xml/lira_cli.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/xml/lira_cli.stderr.txt"
+          }
+        },
+        {
+          "stage": "verifyta_internal",
+          "result": "failed",
+          "execution_result": "failed",
+          "semantic_result": "not_evaluated",
+          "failure_type": "execution",
+          "failure_reason": "UPPAAL verifyta failed during internal verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/xml/ITER1_20260725_001053.xml:/nta/queries/query[22]/formula:1: [error] Time-lock error:",
+          "failure_details": {
+            "exit_code": 1,
+            "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/xml/ITER1_20260725_001053.xml:/nta/queries/query[22]/formula:1: [error] Time-lock error:",
+            "stderr_preview": ".starting rd_1.idle rd_2.idle Factory_Pipeline.sub_seq_s2 Factory_Pipeline_robot1_def.A1_a2_pick_busy Factory_Pipeline_robot2_def.A2_a2_pick_busy ) robot1_stat=0 robot2_stat=0 location_X[0]=250 location_X[1]=6200 location_X[2]=6200 location_X[3]=4800 location_X[4]=4800 location_X[5]=6550 location_Y[0]=250 location_Y[1]=3900 location_Y[2]=100 location_Y[3]=3900 location_Y[4]=100 location_Y[5]=3250 resources_X[0]=6550 resources_Y[0]=3250 humanPositionX[0]=0 humanPositionY[0]=0 batteryCharge[0]=100 batteryCharge[1]=100 robPositionX[0]=6190 robPositionX[1]=6190 robPositionY[0]=3900 robPositionY[1]=3900 robot_loc_target[0]=1 robot_loc_target[1]=1 human_to_be_followed[0]=0 human_to_be_followed[1]=0 robot_to_be_followed[0]=0 robot_to_be_followed[1]=0 f_loc_target[0]=0 f_loc_target[1]=0 robot_res_to_pick[0]=0 robot_res_to_pick[1]=0 robot_inventory[0][0]=0 robot_inventory[1][0]=0 old_inventory[0][0]=0 old_inventory[1][0]=0 robot_res_to_deposit[0]=0 robot_res_to_deposit[1]=0 currP=1 rm_1.id=1 rm_1._v_max=26 rm_1._a_max=26 rm_1.turn_limit=0 rm_1.traj[0][0]=600 rm_1.traj[0][1]=100 rm_1.traj[1][0]=600 rm_1.traj[1][1]=3900 rm_1.traj[2][0]=6200 rm_1.traj[2][1]=3900 rm_1.traj[3][0]=0 rm_1.traj[3][1]=0 rm_1.traj[4][0]=0 rm_1.traj[4][1]=0 rm_1.traj[5][0]=0 rm_1.traj[5][1]=0 rm_1.traj[6][0]=0 rm_1.traj[6][1]=0 rm_1.traj[7][0]=0 rm_1.traj[7][1]=0 rm_1.traj[8][0]=0 rm_1.traj[8][1]=0 rm_1.traj[9][0]=0 rm_1.traj[9][1]=0 rm_1.ort=0 rm_1.curr_traj=2 rm_1.t=0 rm_1.v_max=26 rm_1.a_max=26 rm_1.needsTurning=0 rm_1.curr[0]=600 rm_1.curr[1]=3900 rm_1.dest[0]=6200 rm_1.dest[1]=3900 rm_2.id=2 rm_2._v_max=26 rm_2._a_max=26 rm_2.turn_limit=0 rm_2.traj[0][0]=6200 rm_2.traj[0][1]=3900 rm_2.traj[1][0]=0 rm_2.traj[1][1]=0 rm_2.traj[2][0]=0 rm_2.traj[2][1]=0 rm_2.traj[3][0]=0 rm_2.traj[3][1]=0 rm_2.traj[4][0]=0 rm_2.traj[4][1]=0 rm_2.traj[5][0]=0 rm_2.traj[5][1]=0 rm_2.traj[6][0]=0 rm_2.traj[6][1]=0 rm_2.traj[7][0]=0 rm_2.traj[7][1]=0 rm_2.traj[8][0]=0 rm_2.traj[8][1]=0 rm_2.traj[9][0]=0 rm_2.traj[9][1]=0 rm_2.ort=0 rm_2.curr_traj=0 rm_2.t=0 rm_2.v_max=26 rm_2.a_max=26 rm_2.needsTurning=0 rm_2.curr[0]=600 rm_2.curr[1]=3900 rm_2.dest[0]=6200 rm_2.dest[1]=3900 rf_1.id=1 rf_1._v_max=26 rf_1._a_max=26 rf_1.turn_limit=0 rf_1.traj[0][0]=0 rf_1.traj[0][1]=0 rf_1.traj[1][0]=0 rf_1.traj[1][1]=0 rf_1.traj[2][0]=0 rf_1.traj[2][1]=0 rf_1.traj[3][0]=0 rf_1.traj[3][1]=0 rf_1.traj[4][0]=0 rf_1.traj[4][1]=0 rf_1.traj[5][0]=0 rf_1.traj[5][1]=0 rf_1.traj[6][0]=0 rf_1.traj[6][1]=0 rf_1.traj[7][0]=0 rf_1.traj[7][1]=0 rf_1.traj[8][0]=0 rf_1.traj[8][1]=0 rf_1.traj[9][0]=0 rf_1.traj[9][1]=0 rf_1.ort=0 rf_1.curr_traj=0 rf_1.t=0 rf_1.v_max=26 rf_1.a_max=26 rf_1.needsTurning=0 rf_1.curr[0]=0 rf_1.curr[1]=0 rf_1.dest[0]=0 rf_1.dest[1]=0 rf_2.id=2 rf_2._v_max=26 rf_2._a_max=26 rf_2.turn_limit=0 rf_2.traj[0][0]=0 rf_2.traj[0][1]=0 rf_2.traj[1][0]=0 rf_2.traj[1][1]=0 rf_2.traj[2][0]=0 rf_2.traj[2][1]=0 rf_2.traj[3][0]=0 rf_2.traj[3][1]=0 rf_2.traj[4][0]=0 rf_2.traj[4][1]=0 rf_2.traj[5][0]=0 rf_2.traj[5][1]=0 rf_2.traj[6][0]=0 rf_2.traj[6][1]=0 rf_2.traj[7][0]=0 rf_2.traj[7][1]=0 rf_2.traj[8][0]=0 rf_2.traj[8][1]=0 rf_2.traj[9][0]=0 rf_2.traj[9][1]=0 rf_2.ort=0 rf_2.curr_traj=0 rf_2.t=0 rf_2.v_max=26 rf_2.a_max=26 rf_2.needsTurning=0 rf_2.curr[0]=0 rf_2.curr[1]=0 rf_2.dest[0]=0 rf_2.dest[1]=0 rp_1.id=1 rp_2.id=2 rd_1.id=1 rd_2.id=2 Factory_Pipeline.p=1 Factory_Pipeline_robot1_def.p=1 Factory_Pipeline_robot1_def.R=1 Factory_Pipeline_robot2_def.p=1 Factory_Pipeline_robot2_def.R=2#t(0)=0#time=382.570796326794891228928463534 global_clock=382.570796326794891228928463534 rm_1.V=0 rm_1.Th=225 rm_1.tUpd=0 rm_2.V=0 rm_2.Th=382.570796326794891228928463534 rm_2.tUpd=0 rf_1.V=0 rf_1.Th=382.570796326794891228928463534 rf_1.tUpd=0 rf_2.V=0 rf_2.Th=382.570796326794891228928463534 rf_2.tUpd=0 rp_1.t=10 rp_2.t=10 rd_1.t=382.570796326794891228928463534 rd_2.t=382.570796326794891228928463534 Factory_Pipeline_robot1_def.t=382.570796326794891228928463534 Factory_Pipeline_robot2_def.t=382.570796326794891228928463534\n.",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/uppaal/verifyta_internal.stderr.txt",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/uppaal/verifyta_internal.stdout.txt"
+          },
+          "details": {
+            "verified_formula_count": 22,
+            "failed_query_count": 17,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 0
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/xml/ITER1_20260725_001053.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/uppaal/verifyta_internal.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/uppaal/verifyta_internal.stderr.txt"
+          }
+        },
+        {
+          "stage": "query_adaptation",
+          "result": "ok",
+          "artifacts": {
+            "source_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_3.j2",
+            "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/queries/adapted.q",
+            "source_queries_copy_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/queries/source_queries.txt",
+            "query_adapter_response_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/queries/query_adapter_response.txt",
+            "query_adapter_attempts_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/queries/query_adapter_attempts.jsonl",
+            "query_xml_context_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/queries/xml_context.txt",
+            "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/queries"
+          }
+        },
+        {
+          "stage": "verifyta_adapted",
+          "result": "failed",
+          "execution_result": "failed",
+          "semantic_result": "not_evaluated",
+          "failure_type": "execution",
+          "failure_reason": "UPPAAL verifyta failed during adapted-query verification: /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/xml/ITER1_20260725_001053.xml::63: [error] Time-lock error:",
+          "failure_details": {
+            "exit_code": 1,
+            "error_message": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/xml/ITER1_20260725_001053.xml::63: [error] Time-lock error:",
+            "stderr_preview": ".starting rd_1.idle rd_2.idle Factory_Pipeline.sub_seq_s2 Factory_Pipeline_robot1_def.A1_a2_pick_busy Factory_Pipeline_robot2_def.A2_a2_pick_busy ) robot1_stat=0 robot2_stat=0 location_X[0]=250 location_X[1]=6200 location_X[2]=6200 location_X[3]=4800 location_X[4]=4800 location_X[5]=6550 location_Y[0]=250 location_Y[1]=3900 location_Y[2]=100 location_Y[3]=3900 location_Y[4]=100 location_Y[5]=3250 resources_X[0]=6550 resources_Y[0]=3250 humanPositionX[0]=0 humanPositionY[0]=0 batteryCharge[0]=100 batteryCharge[1]=100 robPositionX[0]=6190 robPositionX[1]=6190 robPositionY[0]=3900 robPositionY[1]=3900 robot_loc_target[0]=1 robot_loc_target[1]=1 human_to_be_followed[0]=0 human_to_be_followed[1]=0 robot_to_be_followed[0]=0 robot_to_be_followed[1]=0 f_loc_target[0]=0 f_loc_target[1]=0 robot_res_to_pick[0]=0 robot_res_to_pick[1]=0 robot_inventory[0][0]=0 robot_inventory[1][0]=0 old_inventory[0][0]=0 old_inventory[1][0]=0 robot_res_to_deposit[0]=0 robot_res_to_deposit[1]=0 currP=1 rm_1.id=1 rm_1._v_max=26 rm_1._a_max=26 rm_1.turn_limit=0 rm_1.traj[0][0]=600 rm_1.traj[0][1]=100 rm_1.traj[1][0]=600 rm_1.traj[1][1]=3900 rm_1.traj[2][0]=6200 rm_1.traj[2][1]=3900 rm_1.traj[3][0]=0 rm_1.traj[3][1]=0 rm_1.traj[4][0]=0 rm_1.traj[4][1]=0 rm_1.traj[5][0]=0 rm_1.traj[5][1]=0 rm_1.traj[6][0]=0 rm_1.traj[6][1]=0 rm_1.traj[7][0]=0 rm_1.traj[7][1]=0 rm_1.traj[8][0]=0 rm_1.traj[8][1]=0 rm_1.traj[9][0]=0 rm_1.traj[9][1]=0 rm_1.ort=0 rm_1.curr_traj=2 rm_1.t=0 rm_1.v_max=26 rm_1.a_max=26 rm_1.needsTurning=0 rm_1.curr[0]=600 rm_1.curr[1]=3900 rm_1.dest[0]=6200 rm_1.dest[1]=3900 rm_2.id=2 rm_2._v_max=26 rm_2._a_max=26 rm_2.turn_limit=0 rm_2.traj[0][0]=6200 rm_2.traj[0][1]=3900 rm_2.traj[1][0]=0 rm_2.traj[1][1]=0 rm_2.traj[2][0]=0 rm_2.traj[2][1]=0 rm_2.traj[3][0]=0 rm_2.traj[3][1]=0 rm_2.traj[4][0]=0 rm_2.traj[4][1]=0 rm_2.traj[5][0]=0 rm_2.traj[5][1]=0 rm_2.traj[6][0]=0 rm_2.traj[6][1]=0 rm_2.traj[7][0]=0 rm_2.traj[7][1]=0 rm_2.traj[8][0]=0 rm_2.traj[8][1]=0 rm_2.traj[9][0]=0 rm_2.traj[9][1]=0 rm_2.ort=0 rm_2.curr_traj=0 rm_2.t=0 rm_2.v_max=26 rm_2.a_max=26 rm_2.needsTurning=0 rm_2.curr[0]=600 rm_2.curr[1]=3900 rm_2.dest[0]=6200 rm_2.dest[1]=3900 rf_1.id=1 rf_1._v_max=26 rf_1._a_max=26 rf_1.turn_limit=0 rf_1.traj[0][0]=0 rf_1.traj[0][1]=0 rf_1.traj[1][0]=0 rf_1.traj[1][1]=0 rf_1.traj[2][0]=0 rf_1.traj[2][1]=0 rf_1.traj[3][0]=0 rf_1.traj[3][1]=0 rf_1.traj[4][0]=0 rf_1.traj[4][1]=0 rf_1.traj[5][0]=0 rf_1.traj[5][1]=0 rf_1.traj[6][0]=0 rf_1.traj[6][1]=0 rf_1.traj[7][0]=0 rf_1.traj[7][1]=0 rf_1.traj[8][0]=0 rf_1.traj[8][1]=0 rf_1.traj[9][0]=0 rf_1.traj[9][1]=0 rf_1.ort=0 rf_1.curr_traj=0 rf_1.t=0 rf_1.v_max=26 rf_1.a_max=26 rf_1.needsTurning=0 rf_1.curr[0]=0 rf_1.curr[1]=0 rf_1.dest[0]=0 rf_1.dest[1]=0 rf_2.id=2 rf_2._v_max=26 rf_2._a_max=26 rf_2.turn_limit=0 rf_2.traj[0][0]=0 rf_2.traj[0][1]=0 rf_2.traj[1][0]=0 rf_2.traj[1][1]=0 rf_2.traj[2][0]=0 rf_2.traj[2][1]=0 rf_2.traj[3][0]=0 rf_2.traj[3][1]=0 rf_2.traj[4][0]=0 rf_2.traj[4][1]=0 rf_2.traj[5][0]=0 rf_2.traj[5][1]=0 rf_2.traj[6][0]=0 rf_2.traj[6][1]=0 rf_2.traj[7][0]=0 rf_2.traj[7][1]=0 rf_2.traj[8][0]=0 rf_2.traj[8][1]=0 rf_2.traj[9][0]=0 rf_2.traj[9][1]=0 rf_2.ort=0 rf_2.curr_traj=0 rf_2.t=0 rf_2.v_max=26 rf_2.a_max=26 rf_2.needsTurning=0 rf_2.curr[0]=0 rf_2.curr[1]=0 rf_2.dest[0]=0 rf_2.dest[1]=0 rp_1.id=1 rp_2.id=2 rd_1.id=1 rd_2.id=2 Factory_Pipeline.p=1 Factory_Pipeline_robot1_def.p=1 Factory_Pipeline_robot1_def.R=1 Factory_Pipeline_robot2_def.p=1 Factory_Pipeline_robot2_def.R=2#t(0)=0#time=382.570796326794891228928463534 global_clock=382.570796326794891228928463534 rm_1.V=0 rm_1.Th=225 rm_1.tUpd=0 rm_2.V=0 rm_2.Th=382.570796326794891228928463534 rm_2.tUpd=0 rf_1.V=0 rf_1.Th=382.570796326794891228928463534 rf_1.tUpd=0 rf_2.V=0 rf_2.Th=382.570796326794891228928463534 rf_2.tUpd=0 rp_1.t=10 rp_2.t=10 rd_1.t=382.570796326794891228928463534 rd_2.t=382.570796326794891228928463534 Factory_Pipeline_robot1_def.t=382.570796326794891228928463534 Factory_Pipeline_robot2_def.t=382.570796326794891228928463534\n.",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/uppaal/verifyta_adapted.stderr.txt",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/uppaal/verifyta_adapted.stdout.txt"
+          },
+          "details": {
+            "verified_formula_count": 21,
+            "failed_query_count": 16,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 5
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/xml/ITER1_20260725_001053.xml",
+            "query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/queries/adapted.q",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/uppaal/verifyta_adapted.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/uppaal/verifyta_adapted.stderr.txt"
+          }
+        }
+      ],
+      "exit_code": 1,
+      "continue_feedback_loop": true,
+      "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo4/queries/adapted.q"
+    },
+    {
+      "cycle": 5,
+      "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5",
+      "metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/run_metadata.json",
+      "uppaal_feedback_included": true,
+      "uppaal_feedback_chars": 19017,
+      "verifyta_probability_delta_threshold": 0.05,
+      "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/dsl/ITER0_20260725_001145.LIRAs",
+      "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/xml/ITER0_20260725_001145.xml",
+      "query_source_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_3.j2",
+      "cycle_result": "ok",
+      "failed_stage": null,
+      "failure_type": null,
+      "failure_reason": null,
+      "failure_details": null,
+      "stages": [
+        {
+          "stage": "dsl_generation",
+          "result": "ok",
+          "details": {
+            "iterations_recorded": 1,
+            "validations_attempted": 1,
+            "compiler_failures": 0,
+            "compiler_successes": 1,
+            "setup_errors": 0,
+            "first_success_iteration": 0,
+            "final_success_dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/dsl/ITER0_20260725_001145.LIRAs",
+            "total_compiler_feedback_chars": 0,
+            "llm_calls": 1,
+            "prompt_tokens_total": 9142,
+            "completion_tokens_total": 1093,
+            "total_tokens_total": 10235,
+            "token_usage_available_calls": 1
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/dsl/ITER0_20260725_001145.LIRAs",
+            "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/llm_prompts.jsonl",
+            "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/llm_responses.jsonl"
+          }
+        },
+        {
+          "stage": "xml_export",
+          "result": "ok",
+          "details": {
+            "exit_code": 0
+          },
+          "artifacts": {
+            "selected_liras_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/dsl/ITER0_20260725_001145.LIRAs",
+            "compiled_xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/xml/ITER0_20260725_001145.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/xml/lira_cli.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/xml/lira_cli.stderr.txt"
+          }
+        },
+        {
+          "stage": "verifyta_internal",
+          "result": "ok",
+          "execution_result": "ok",
+          "semantic_result": "ok",
+          "details": {
+            "command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/xml/ITER0_20260725_001145.xml",
+            "exit_code": 0,
+            "verified_formula_count": 24,
+            "failed_query_count": 0,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 0
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/xml/ITER0_20260725_001145.xml",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/uppaal/verifyta_internal.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/uppaal/verifyta_internal.stderr.txt"
+          }
+        },
+        {
+          "stage": "query_adaptation",
+          "result": "ok",
+          "artifacts": {
+            "source_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Queries/NL_Specification_3.j2",
+            "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/queries/adapted.q",
+            "source_queries_copy_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/queries/source_queries.txt",
+            "query_adapter_response_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/queries/query_adapter_response.txt",
+            "query_adapter_attempts_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/queries/query_adapter_attempts.jsonl",
+            "query_xml_context_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/queries/xml_context.txt",
+            "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/queries"
+          }
+        },
+        {
+          "stage": "verifyta_adapted",
+          "result": "ok",
+          "execution_result": "ok",
+          "semantic_result": "ok",
+          "details": {
+            "command": "/Applications/UPPAAL-5.0.0.app/Contents/Resources/uppaal/bin/verifyta /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/xml/ITER0_20260725_001145.xml /Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/queries/adapted.q",
+            "exit_code": 0,
+            "verified_formula_count": 21,
+            "failed_query_count": 0,
+            "probability_threshold": 0.05,
+            "probability_checked_query_count": 21
+          },
+          "artifacts": {
+            "xml_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/xml/ITER0_20260725_001145.xml",
+            "query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/queries/adapted.q",
+            "stdout_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/uppaal/verifyta_adapted.stdout.txt",
+            "stderr_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/uppaal/verifyta_adapted.stderr.txt"
+          }
+        }
+      ],
+      "exit_code": 0,
+      "continue_feedback_loop": false,
+      "adapted_query_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/queries/adapted.q"
+    }
+  ],
+  "run_finished_at": "2026-07-25T00:12:28.715956",
+  "updated_at": "2026-07-25T00:12:28.715957",
+  "successful_cycle": 5,
+  "last_cycle_run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5",
+  "last_cycle_metadata_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo5/run_metadata.json"
+}

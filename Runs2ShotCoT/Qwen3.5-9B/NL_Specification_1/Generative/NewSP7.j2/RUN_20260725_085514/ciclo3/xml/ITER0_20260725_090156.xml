@@ -1,0 +1,2295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>/**
+*** GLOBAL DECLARATIONS
+*/
+
+// Pigreco
+const double PI = 3.1415926535;
+clock global_clock;
+const int Tpoll = 1;
+
+// Locations (Layout 1)
+const double room1[2] = {400, 150};
+const double room2[2] = {1200, 750};
+const double room3[2] = {500, 400};
+const double office001[2] = {100, 200};
+const double office004[2] = {100, 765};
+const double coffee_room[2] = {1450, 500};
+const double bedroom[2] = {100, 200};
+const double kitchen[2] = {4400, 765};
+
+// Recources (Layout 1)
+const double item1[2] = {415, 165};
+const double item2[2] = {1215, 765};
+const double item3[2] = {515, 415};
+const double coffee[2] = {1450, 500};
+const double object[2] = {100, 200};
+
+// Locations (Layout 2)
+const double warehouse[2] = {6550,3250}; // Where there is the dispenser
+
+const double surface_texturization_start[2] = {6200.0, 3900.0};
+const double surface_texturization_end[2] = {6200.0, 100.0};
+
+const double diffusion_start[2] = {5500.0, 3900.0};
+const double diffusion_end[2] = {5500.0, 100.0};
+
+const double laser_start[2] = {4800.0, 3900.0};
+const double laser_end[2] = {4800.0, 100.0};
+
+const double etching_start[2] = {4100.0, 3900.0};
+const double etching_end[2]   = {4100.0, 100.0};
+
+const double annealing_start[2] = {3400.0, 3900.0};
+const double annealing_end[2]   = {3400.0, 100.0};
+
+const double perc_start[2] = {2700.0, 3900.0};
+const double perc_end[2]   = {2700.0, 100.0};
+
+const double rear_top_paste_start[2] = {2000.0, 3900.0};
+const double rear_top_paste_end[2]   = {2000.0, 100.0};
+
+const double laser_slotting_start[2] = {600.0, 3900.0};
+const double laser_slotting_end[2]   = {600.0, 100.0};
+
+const double loading_area[2] = {250, 250};
+
+// Recources (Layout 2)
+const double raw_materials[2]           = {6550.0, 3250.0};
+const double texturized_materials[2]    = {6200.0, 100.0};
+const double diffused_materials[2]      = {5500.0, 100.0};
+const double lasered_materials[2]       = {4800.0, 100.0};
+const double etched_materials[2]        = {4100.0, 100.0};
+const double annealed_materials[2]      = {3400.0, 100.0};
+const double perc_cells[2]              = {2700.0, 100.0};
+const double pasted_cells[2]            = {2000.0, 100.0};
+const double slotted_cells[2]           = {600.0, 100.0};
+
+
+
+/**
+*** STUFF TO BE GENERATED AUTOMATICALLY
+*/
+
+// Sub-sequence Stages
+urgent broadcast chan s1, s2, s3, s4, s5, e;
+
+// Sequence status (one for each agent)
+bool robot_stat = true;
+bool employee_stat = true;
+
+
+// Declared Locations
+double location_X[3] = {kitchen[0], loading_area[0], coffee[0]};
+double location_Y[3] = {kitchen[1], loading_area[1], coffee[1]};
+
+
+// Declared Resources
+double resources_X[1] = {coffee[0]};
+double resources_Y[1] = {coffee[1]};
+
+
+// Quantity of agents and resouces
+const int N_H = 1; // Number of humans in the pattern
+const int N_R = 1; // Number of robots in the pattern
+const int N_ITEMS = 1; // Number of resources in the pattern
+
+// Human initialization
+double humanFatigue[N_H] = {0.0};
+// The humans will start from the first N_H intersections
+const int H_start_nodes[N_H] = {0};
+double humanPositionX[N_H] = {0.0};
+double humanPositionY[N_H] = {0.0};
+
+
+// Robot initialization
+double batteryCharge[N_R] = {100.0};
+// The robots will start from the first N_R intersections
+const int R_start_nodes[N_R] = {0};
+double robPositionX[N_R] = {0.0};
+double robPositionY[N_R] = {0.0};
+
+
+
+/**
+*** GLOBAL VARIABLES
+*/
+
+// ACTIONs synchronization management and variables
+
+urgent broadcast chan obey_h_moveTo[N_H];
+urgent broadcast chan start_h_moveTo[N_H], stop_h_moveTo[N_H];
+broadcast chan hm_fail;
+urgent broadcast chan start_r_moveTo[N_R], stop_r_moveTo[N_R];
+broadcast chan rm_still;
+urgent broadcast chan start_r_follow[N_R], stop_r_follow[N_R];
+broadcast chan rf_still;
+urgent broadcast chan start_r_pick[N_R], stop_r_pick[N_R];
+urgent broadcast chan start_r_deposit[N_R], stop_r_deposit[N_R];
+
+int human_loc_target[N_H];
+int robot_loc_target[N_R];
+// Who I have to follow (agent id)?
+int human_to_be_followed[N_R];
+int robot_to_be_followed[N_R];
+int f_loc_target[N_R];
+int robot_res_to_pick[N_R];
+int robot_inventory[N_R][N_ITEMS];
+int old_inventory[N_R][N_ITEMS];
+int robot_res_to_deposit[N_R];
+
+
+
+/**
+*** VARIABLES
+**/
+
+const int MAX_BUFF_SIZE = 10;
+
+// Pattern execution flow
+int currP = 1;
+
+
+/**
+*** FLOOR PLAN
+**/
+
+// Layout 1
+
+const int N_A = 10;
+const int N_P = 10;
+const int N_I = 9;
+
+typedef double point[2];
+typedef point area[4];
+typedef area layout[N_A];
+typedef point trajectory[N_P];
+
+const layout FLOOR = {{{0.0, 110.0},{0.0, 299.5},{1550.0, 299.5},{1550.0, 110.0}},{{0.0, 110.0},{0.0, 850.0},{185.0, 850.0},{185.0, 110.0}},{{0.0, 672.5},{0.0, 850.0},{1550.0, 850.0},{1550.0, 672.5}},{{1352.0, 110.0},{1352.0, 850.0},{1550.0, 850.0},{1550.0, 110.0}},{{2970.0, 110.0},{2970.0, 299.5},{4512.5, 299.5},{4512.5, 110.0}},{{2970.0, 110.0},{2970.0, 850.0},{3155.0, 850.0},{3155.0, 110.0}},{{2970.0, 672.5},{2970.0, 850.0},{4512.5, 850.0},{4512.5, 672.5}},{{4322.0, 110.0},{4322.0, 850.0},{4512.5, 850.0},{4512.5, 110.0}},{{1945.0, 0.0},{1945.0, 695.0},{2670.0, 695.0},{2670.0, 0.0}},{{1352.0, 110.0},{1352.0, 425.0},{3155.0, 425.0},{3155.0, 110.0}}};
+
+const point INTERSECTIONS[N_I] = {{92.5, 163.5},{92.5, 761.2},{1452.0, 761.2},{1452.0, 163.5},{3062.5, 163.5},{4417.0, 163.5},{3062.5, 761.2},{4417.0, 761.2},{2253.5, 267.5}};
+
+// Layout 2
+
+//const int N_A = 15; // Number of Areas
+//const int N_P = 10; // Number of points in a trajectory
+//const int N_I = 20; // Number of intersections
+
+//typedef double point[2];
+//typedef point area[4];
+//typedef area layout[N_A];
+//typedef point trajectory[N_P];
+
+//const layout FLOOR = {{{500.0, 0.0}, {500.0, 200}, {6300.0, 200.0}, {6300.0, 0.0}}, {{500.0, 3800.0}, {500.0, 4000}, {6300.0, 4000.0}, {6300.0, 3800.0}}, {{500.0, 0.0}, {500.0, 4000}, {700.0, 4000.0}, {700.0, 0.0}}, {{1200.0, 0.0}, {1200.0, 4000}, {1400.0, 4000.0}, {1400.0, 0.0}}, {{1900.0, 0.0}, {1900.0, 4000}, {2100.0, 4000.0}, {2100.0, 0.0}}, {{2600.0, 0.0}, {2600.0, 4000}, {2800.0, 4000.0}, {2800.0, 0.0}}, {{3300.0, 0.0}, {3300.0, 4000}, {3500.0, 4000.0}, {3500.0, 0.0}}, {{4000.0, 0.0}, {4000.0, 4000}, {4200.0, 4000.0}, {4200.0, 0.0}}, {{4700.0, 0.0}, {4700.0, 4000}, {4900.0, 4000.0}, {4900.0, 0.0}}, {{5400.0, 0.0}, {5400.0, 4000}, {5600.0, 4000.0}, {5600.0, 0.0}}, {{6100.0, 0.0}, {6100.0, 4000}, {6300.0, 4000.0}, {6300.0, 0.0}}, {{6300.0, 4000.0}, {6300.0, 2500}, {6800.0, 2500.0}, {6800.0, 4000.0}}, {{0.0, 0.0}, {0.0, 500.0}, {500.0, 500.0}, {500.0, 0.0}}, {{300.0, 0.0}, {300.0, 200.0}, {700.0, 200.0}, {700.0, 0.0} }, {{6500.0, 4000.0}, {6100.0, 4000}, {6100.0, 3800.0}, {6500.0, 3800.0}}};
+
+
+//const point INTERSECTIONS[N_I] = {{400.0, 100.0}, {600.0, 3900.0}, {600.0, 100.0}, {1300.0, 100.0}, {1300.0, 3900.0}, {2000.0, 100.0}, {2000.0, 3900.0}, {2700.0, 100.0}, {2700.0, 3900.0}, {3400.0, 100.0}, {3400.0, 3900.0}, {4100.0, 100.0}, {4100.0, 3900.0}, {4800.0, 100.0}, {4800.0, 3900.0}, {5500.0, 100.0}, {5500.0, 3900.0}, {6400.0, 3900.0}, {6200.0, 3900.0}, {6200.0, 100.0}};
+
+// used in all the actions
+bool same_area(double sx, double sy, double dx, double dy) {
+    int i;
+    bool x_s_in, y_s_in, x_d_in, y_d_in;
+    double x_min, x_max, y_min, y_max;
+
+    for (i = 0; i &lt; N_A; i++)
+    {
+        x_min = FLOOR[i][0][0] &lt; FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
+        x_max = FLOOR[i][0][0] &gt; FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
+        y_min = FLOOR[i][0][1] &lt; FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
+        y_max = FLOOR[i][0][1] &gt; FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
+
+        x_s_in = (sx &gt;= x_min - 1.0) &amp;&amp; (sx &lt;= x_max + 1.0);
+        y_s_in = (sy &gt;= y_min - 1.0) &amp;&amp; (sy &lt;= y_max + 1.0);
+        x_d_in = (dx &gt;= x_min - 1.0) &amp;&amp; (dx &lt;= x_max + 1.0);
+        y_d_in = (dy &gt;= y_min - 1.0) &amp;&amp; (dy &lt;= y_max + 1.0);
+
+        if ((x_s_in &amp;&amp; y_s_in) &amp;&amp; (x_d_in &amp;&amp; y_d_in)) // start and dest in same area
+            return true;
+    }
+    return false;
+}
+
+double pt_dist(double x1, double x2, double y1, double y2) {
+    double xdifference = x2-x1;
+    double ydifference = y2-y1;
+    return sqrt((xdifference*xdifference)+(ydifference*ydifference));
+}
+
+/**
+ * Checks if the given coordinates (x, y) are inside ANY of the valid floor areas.
+ * Returns true if the position is valid, false if it is in a forbidden area.
+ */
+const double EPSILON = 1.0;
+
+bool isValidPosition(double x, double y) {
+    int i;
+    double x_min, x_max, y_min, y_max;
+    
+    for (i = 0; i &lt; N_A; i++) {
+        x_min = FLOOR[i][0][0] &lt; FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
+        x_max = FLOOR[i][0][0] &gt; FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
+        y_min = FLOOR[i][0][1] &lt; FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
+        y_max = FLOOR[i][0][1] &gt; FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
+        
+        if (x &gt;= x_min - 1.0 &amp;&amp; x &lt;= x_max + 1.0 &amp;&amp; y &gt;= y_min - 1.0 &amp;&amp; y &lt;= y_max + 1.0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+	<template>
+		<name>Coffee_Delivery_orchestrator</name>
+		<parameter>int p</parameter>
+		<declaration>// Place local declarations here.
+clock end_c;
+		</declaration>
+<location id="id0" x="0" y="0">
+	<name x="-17" y="-34">Init</name>
+</location>
+<location id="id1" x="500" y="0">
+	<name x="483" y="-34">sub_seq_s1</name>
+</location>
+<location id="id2" x="1000" y="0">
+	<name x="983" y="-34">sub_seq_s2</name>
+</location>
+<location id="id3" x="1500" y="0">
+	<name x="1483" y="-34">sub_seq_s3</name>
+</location>
+<location id="id4" x="2000" y="0">
+	<name x="1983" y="-34">sub_seq_s4</name>
+</location>
+<location id="id5" x="2500" y="0">
+	<name x="2483" y="-34">sub_seq_s5</name>
+</location>
+<location id="id6" x="3000" y="0">
+	<name x="2983" y="-34">pre_end</name>
+	<label kind="invariant" x="2990" y="17">end_c &lt;= 2</label>
+</location>
+<location id="id7" x="3500" y="0">
+	<name x="3483" y="-34">end</name>
+</location>
+		<init ref="id0"/>
+<transition id="id8">
+	<source ref="id0"/>
+	<target ref="id1"/>
+	<label kind="guard" x="18" y="-34">robot_stat==true and employee_stat==true and p==currP</label>
+	<label kind="synchronisation" x="18" y="-17">s1!</label>
+	<label kind="assignment" x="18" y="0">robot_stat=false, employee_stat=false</label>
+</transition>
+<transition id="id9">
+	<source ref="id1"/>
+	<target ref="id2"/>
+	<label kind="guard" x="518" y="-34">robot_stat==true and employee_stat==true</label>
+	<label kind="synchronisation" x="518" y="-17">s2!</label>
+	<label kind="assignment" x="518" y="0">robot_stat=false, employee_stat=false</label>
+</transition>
+<transition id="id10">
+	<source ref="id2"/>
+	<target ref="id3"/>
+	<label kind="guard" x="1018" y="-34">robot_stat==true and employee_stat==true</label>
+	<label kind="synchronisation" x="1018" y="-17">s3!</label>
+	<label kind="assignment" x="1018" y="0">robot_stat=false, employee_stat=false</label>
+</transition>
+<transition id="id11">
+	<source ref="id3"/>
+	<target ref="id4"/>
+	<label kind="guard" x="1518" y="-34">robot_stat==true and employee_stat==true</label>
+	<label kind="synchronisation" x="1518" y="-17">s4!</label>
+	<label kind="assignment" x="1518" y="0">robot_stat=false, employee_stat=false</label>
+</transition>
+<transition id="id12">
+	<source ref="id4"/>
+	<target ref="id5"/>
+	<label kind="guard" x="2018" y="-34">robot_stat==true and employee_stat==true</label>
+	<label kind="synchronisation" x="2018" y="-17">s5!</label>
+	<label kind="assignment" x="2018" y="0">robot_stat=false, employee_stat=false</label>
+</transition>
+<transition id="id13">
+	<source ref="id5"/>
+	<target ref="id6"/>
+	<label kind="guard" x="2518" y="-34">robot_stat==true and employee_stat==true</label>
+	<label kind="synchronisation" x="2518" y="-17">e!</label>
+	<label kind="assignment" x="2518" y="0">end_c=0</label>
+</transition>
+<transition id="id14">
+	<source ref="id6"/>
+	<target ref="id7"/>
+	<label kind="guard" x="3018" y="-34">end_c &gt;= 2</label>
+	<label kind="assignment" x="3018" y="0">currP=currP+1</label>
+</transition>
+	</template>
+
+<template>
+	<name>Coffee_Delivery_robot</name>
+	<parameter>int p, int R</parameter>
+	<declaration>// Place local declarations here.
+clock t;
+	</declaration>
+<location id="id0" x="0" y="0">
+	<name x="-17" y="-34">init_robot</name>
+</location>
+<location id="id1" x="0" y="350">
+	<name x="-17" y="316">s1_start</name>
+	<committed/>
+</location>
+<location id="id2" x="0" y="700">
+	<name x="-17" y="666">s2_start</name>
+	<committed/>
+</location>
+<location id="id3" x="0" y="1050">
+	<name x="-17" y="1016">s3_start</name>
+	<committed/>
+</location>
+<location id="id4" x="0" y="1400">
+	<name x="-17" y="1366">s4_start</name>
+	<committed/>
+</location>
+<location id="id5" x="0" y="1750">
+	<name x="-17" y="1716">s5_start</name>
+	<committed/>
+</location>
+<location id="id6" x="0" y="2100">
+	<name x="-17" y="2066">end_robot</name>
+</location>
+<location id="id7" x="200" y="350">
+	<name x="183" y="316">A1_a1_moveTo_busy</name>
+</location>
+<location id="id8" x="400" y="350">
+	<name x="383" y="316">A1_a1_moveTo_complete</name>
+	<committed/>
+</location>
+<location id="id9" x="600" y="350">
+	<name x="583" y="316">A1_a2_pick_busy</name>
+</location>
+<location id="id10" x="800" y="350">
+	<name x="783" y="316">A1_a2_pick_complete</name>
+	<committed/>
+</location>
+<location id="id11" x="1000" y="350">
+	<name x="983" y="316">s1_end</name>
+</location>
+<location id="id13" x="200" y="700">
+	<name x="183" y="666">A1_a3_moveTo_busy</name>
+</location>
+<location id="id14" x="400" y="700">
+	<name x="383" y="666">A1_a3_moveTo_complete</name>
+	<committed/>
+</location>
+<location id="id15" x="600" y="700">
+	<name x="583" y="666">s2_end</name>
+</location>
+<location id="id17" x="200" y="1050">
+	<name x="183" y="1016">A1_a4_follow_busy</name>
+</location>
+<location id="id18" x="400" y="1050">
+	<name x="383" y="1016">A1_a4_follow_complete</name>
+	<committed/>
+</location>
+<location id="id19" x="600" y="1050">
+	<name x="583" y="1016">s3_end</name>
+</location>
+<location id="id21" x="200" y="1400">
+	<name x="183" y="1366">A1_a5_moveTo_busy</name>
+</location>
+<location id="id22" x="400" y="1400">
+	<name x="383" y="1366">A1_a5_moveTo_complete</name>
+	<committed/>
+</location>
+<location id="id23" x="600" y="1400">
+	<name x="583" y="1366">s4_end</name>
+</location>
+<location id="id25" x="200" y="1750">
+	<name x="183" y="1716">A1_a6_deposit_busy</name>
+</location>
+<location id="id26" x="400" y="1750">
+	<name x="383" y="1716">A1_a6_deposit_complete</name>
+	<committed/>
+</location>
+<location id="id27" x="600" y="1750">
+	<name x="583" y="1716">s5_end</name>
+</location>
+		<init ref="id0"/>
+<transition id="id12">
+	<source ref="id10"/>
+	<target ref="id11"/>
+	<label kind="assignment" x="818" y="350">robot_stat = true</label>
+</transition>
+<transition id="id16">
+	<source ref="id14"/>
+	<target ref="id15"/>
+	<label kind="assignment" x="418" y="700">robot_stat = true</label>
+</transition>
+<transition id="id20">
+	<source ref="id18"/>
+	<target ref="id19"/>
+	<label kind="assignment" x="418" y="1050">robot_stat = true</label>
+</transition>
+<transition id="id24">
+	<source ref="id22"/>
+	<target ref="id23"/>
+	<label kind="assignment" x="418" y="1400">robot_stat = true</label>
+</transition>
+<transition id="id28">
+	<source ref="id26"/>
+	<target ref="id27"/>
+	<label kind="assignment" x="418" y="1750">robot_stat = true</label>
+</transition>
+<transition id="id29">
+	<source ref="id1"/>
+	<target ref="id7"/>
+	<label kind="synchronisation" x="18" y="333">start_r_moveTo[R-1]!</label>
+</transition>
+<transition id="id30">
+	<source ref="id0"/>
+	<target ref="id1"/>
+	<label kind="synchronisation" x="18" y="233">s1?</label>
+	<label kind="assignment" x="18" y="250">robot_loc_target[R-1] = 0</label>
+</transition>
+<transition id="id31">
+	<source ref="id7"/>
+	<target ref="id8"/>
+	<label kind="guard" x="218" y="216">robPositionX[R-1] &lt;= location_X[robot_loc_target[R-1]]+30 and
+		robPositionX[R-1] &gt;= location_X[robot_loc_target[R-1]]-30 and
+		robPositionY[R-1] &lt;= location_Y[robot_loc_target[R-1]]+30 and
+		robPositionY[R-1] &gt;= location_Y[robot_loc_target[R-1]]-30</label>
+	<label kind="synchronisation" x="218" y="233">stop_r_moveTo[R-1]!</label>
+	<label kind="assignment" x="218" y="250">robot_res_to_pick[R-1] = 0, old_inventory = robot_inventory</label>
+</transition>
+<transition id="id32">
+	<source ref="id8"/>
+	<target ref="id9"/>
+	<label kind="synchronisation" x="418" y="333">start_r_pick[R-1]!</label>
+</transition>
+<transition id="id33">
+	<source ref="id9"/>
+	<target ref="id10"/>
+	<label kind="guard" x="618" y="216">robot_inventory[R-1][robot_res_to_pick[R-1]] > old_inventory[R-1][robot_res_to_pick[R-1]]</label>
+	<label kind="synchronisation" x="618" y="233">stop_r_pick[R-1]!</label>
+	<label kind="assignment" x="618" y="250"></label>
+</transition>
+<transition id="id34">
+	<source ref="id2"/>
+	<target ref="id13"/>
+	<label kind="synchronisation" x="18" y="683">start_r_moveTo[R-1]!</label>
+</transition>
+<transition id="id35">
+	<source ref="id11"/>
+	<target ref="id2"/>
+	<label kind="synchronisation" x="18" y="583">s2?</label>
+	<label kind="assignment" x="18" y="600">robot_loc_target[R-1] = 0</label>
+</transition>
+<transition id="id36">
+	<source ref="id13"/>
+	<target ref="id14"/>
+	<label kind="guard" x="218" y="566">robPositionX[R-1] &lt;= location_X[robot_loc_target[R-1]]+30 and
+		robPositionX[R-1] &gt;= location_X[robot_loc_target[R-1]]-30 and
+		robPositionY[R-1] &lt;= location_Y[robot_loc_target[R-1]]+30 and
+		robPositionY[R-1] &gt;= location_Y[robot_loc_target[R-1]]-30</label>
+	<label kind="synchronisation" x="218" y="583">stop_r_moveTo[R-1]!</label>
+	<label kind="assignment" x="218" y="600"></label>
+</transition>
+<transition id="id37">
+	<source ref="id3"/>
+	<target ref="id17"/>
+	<label kind="synchronisation" x="18" y="1033">start_r_follow[R-1]!</label>
+</transition>
+<transition id="id38">
+	<source ref="id15"/>
+	<target ref="id3"/>
+	<label kind="synchronisation" x="18" y="933">s3?</label>
+	<label kind="assignment" x="18" y="950">f_loc_target[R-1] = 0,
+	human_to_be_followed[R-1] = 1,
+	robot_to_be_followed[R-1] = 0</label>
+</transition>
+<transition id="id39">
+	<source ref="id17"/>
+	<target ref="id18"/>
+	<label kind="guard" x="218" y="916">humanPositionX[human_to_be_followed[R-1]-1] &lt;= location_X[f_loc_target[R-1]]+30 and
+		humanPositionX[human_to_be_followed[R-1]-1] &gt;= location_X[f_loc_target[R-1]]-30 and
+		humanPositionY[human_to_be_followed[R-1]-1] &lt;= location_Y[f_loc_target[R-1]]+30 and
+		humanPositionY[human_to_be_followed[R-1]-1] &gt;= location_Y[f_loc_target[R-1]]-30 and
+		robPositionX[R-1] &gt;= location_X[f_loc_target[R-1]]-30 and
+		robPositionX[R-1] &lt;= location_X[f_loc_target[R-1]]+30 and
+		robPositionY[R-1] &gt;= location_Y[f_loc_target[R-1]]-30 and
+		robPositionY[R-1] &lt;= location_Y[f_loc_target[R-1]]+30</label>
+	<label kind="synchronisation" x="218" y="933">stop_r_follow[R-1]!</label>
+	<label kind="assignment" x="218" y="950"></label>
+</transition>
+<transition id="id40">
+	<source ref="id4"/>
+	<target ref="id21"/>
+	<label kind="synchronisation" x="18" y="1383">start_r_moveTo[R-1]!</label>
+</transition>
+<transition id="id41">
+	<source ref="id19"/>
+	<target ref="id4"/>
+	<label kind="synchronisation" x="18" y="1283">s4?</label>
+	<label kind="assignment" x="18" y="1300">robot_loc_target[R-1] = 1</label>
+</transition>
+<transition id="id42">
+	<source ref="id21"/>
+	<target ref="id22"/>
+	<label kind="guard" x="218" y="1266">robPositionX[R-1] &lt;= location_X[robot_loc_target[R-1]]+30 and
+		robPositionX[R-1] &gt;= location_X[robot_loc_target[R-1]]-30 and
+		robPositionY[R-1] &lt;= location_Y[robot_loc_target[R-1]]+30 and
+		robPositionY[R-1] &gt;= location_Y[robot_loc_target[R-1]]-30</label>
+	<label kind="synchronisation" x="218" y="1283">stop_r_moveTo[R-1]!</label>
+	<label kind="assignment" x="218" y="1300"></label>
+</transition>
+<transition id="id43">
+	<source ref="id5"/>
+	<target ref="id25"/>
+	<label kind="synchronisation" x="18" y="1733">start_r_deposit[R-1]!</label>
+</transition>
+<transition id="id44">
+	<source ref="id23"/>
+	<target ref="id5"/>
+	<label kind="synchronisation" x="18" y="1633">s5?</label>
+	<label kind="assignment" x="18" y="1650">robot_res_to_deposit[R-1] = 0, old_inventory = robot_inventory</label>
+</transition>
+<transition id="id45">
+	<source ref="id25"/>
+	<target ref="id26"/>
+	<label kind="guard" x="218" y="1616">robot_inventory[R-1][robot_res_to_deposit[R-1]] &lt; old_inventory[R-1][robot_res_to_deposit[R-1]]</label>
+	<label kind="synchronisation" x="218" y="1633">stop_r_deposit[R-1]!</label>
+	<label kind="assignment" x="218" y="1650"></label>
+</transition>
+<transition id="id46">
+	<source ref="id27"/>
+	<target ref="id6"/>
+	<label kind="synchronisation" x="18" y="1983">e?</label>
+</transition>
+	</template>
+<template>
+	<name>Coffee_Delivery_employee</name>
+	<parameter>int p, int H</parameter>
+	<declaration>// Place local declarations here.
+clock t;
+	</declaration>
+<location id="id0" x="0" y="0">
+	<name x="-17" y="-34">init_employee</name>
+</location>
+<location id="id1" x="0" y="350">
+	<name x="-17" y="316">s1_start</name>
+	<committed/>
+</location>
+<location id="id2" x="0" y="700">
+	<name x="-17" y="666">s2_start</name>
+	<committed/>
+</location>
+<location id="id3" x="0" y="1050">
+	<name x="-17" y="1016">s3_start</name>
+	<committed/>
+</location>
+<location id="id4" x="0" y="1400">
+	<name x="-17" y="1366">s4_start</name>
+	<committed/>
+</location>
+<location id="id5" x="0" y="1750">
+	<name x="-17" y="1716">s5_start</name>
+	<committed/>
+</location>
+<location id="id6" x="0" y="2100">
+	<name x="-17" y="2066">end_employee</name>
+</location>
+<location id="id7" x="200" y="1400">
+	<name x="183" y="1366">A2_a1_moveTo_busy</name>
+	<label kind="invariant" x="190" y="1417">t&lt;=5</label>
+</location>
+<location id="id8" x="400" y="1400">
+	<name x="383" y="1366">A2_a1_moveTo_complete</name>
+	<committed/>
+</location>
+<location id="id9" x="600" y="1400">
+	<name x="583" y="1366">s4_end</name>
+</location>
+<location id="id11" x="200" y="350">
+	<name x="183" y="316">s1_idle</name>
+</location>
+<location id="id12" x="200" y="700">
+	<name x="183" y="666">s2_idle</name>
+</location>
+<location id="id13" x="200" y="1050">
+	<name x="183" y="1016">s3_idle</name>
+</location>
+<location id="id14" x="200" y="1750">
+	<name x="183" y="1716">s5_idle</name>
+</location>
+		<init ref="id0"/>
+<transition id="id10">
+	<source ref="id8"/>
+	<target ref="id9"/>
+	<label kind="assignment" x="418" y="1400">employee_stat = true</label>
+</transition>
+<transition id="id15">
+	<source ref="id4"/>
+	<target ref="id7"/>
+	<label kind="synchronisation" x="18" y="1383">start_h_moveTo[H-1]!</label>
+	<label kind="assignment" x="18" y="1400">t = 0</label>
+</transition>
+<transition id="id16">
+	<source ref="id13"/>
+	<target ref="id4"/>
+	<label kind="synchronisation" x="18" y="1283">s4?</label>
+	<label kind="assignment" x="18" y="1300">human_loc_target[H-1] = 1</label>
+</transition>
+<transition id="id17">
+	<source ref="id7"/>
+	<target ref="id4"/>
+	<label kind="guard" x="18" y="1466">t&gt;=5</label>
+	<nail x="100" y="1480"/>
+</transition>
+<transition id="id18">
+	<source ref="id7"/>
+	<target ref="id8"/>
+	<label kind="guard" x="218" y="1266">humanPositionX[H-1] &lt;= location_X[human_loc_target[H-1]]+30 and
+		humanPositionX[H-1] &gt;= location_X[human_loc_target[H-1]]-30 and
+		humanPositionY[H-1] &lt;= location_Y[human_loc_target[H-1]]+30 and
+		humanPositionY[H-1] &gt;= location_Y[human_loc_target[H-1]]-30</label>
+	<label kind="synchronisation" x="218" y="1283">stop_h_moveTo[H-1]!</label>
+	<label kind="assignment" x="218" y="1300"></label>
+</transition>
+<transition id="id19">
+	<source ref="id0"/>
+	<target ref="id1"/>
+	<label kind="synchronisation" x="18" y="233">s1?</label>
+</transition>
+<transition id="id20">
+	<source ref="id1"/>
+	<target ref="id11"/>
+	<label kind="assignment" x="18" y="350">employee_stat = true</label>
+</transition>
+<transition id="id21">
+	<source ref="id11"/>
+	<target ref="id2"/>
+	<label kind="synchronisation" x="18" y="583">s2?</label>
+</transition>
+<transition id="id22">
+	<source ref="id2"/>
+	<target ref="id12"/>
+	<label kind="assignment" x="18" y="700">employee_stat = true</label>
+</transition>
+<transition id="id23">
+	<source ref="id12"/>
+	<target ref="id3"/>
+	<label kind="synchronisation" x="18" y="933">s3?</label>
+</transition>
+<transition id="id24">
+	<source ref="id3"/>
+	<target ref="id13"/>
+	<label kind="assignment" x="18" y="1050">employee_stat = true</label>
+</transition>
+<transition id="id25">
+	<source ref="id9"/>
+	<target ref="id5"/>
+	<label kind="synchronisation" x="18" y="1633">s5?</label>
+</transition>
+<transition id="id26">
+	<source ref="id5"/>
+	<target ref="id14"/>
+	<label kind="assignment" x="18" y="1750">employee_stat = true</label>
+</transition>
+<transition id="id27">
+	<source ref="id14"/>
+	<target ref="id6"/>
+	<label kind="synchronisation" x="18" y="1983">e?</label>
+</transition>
+	</template>
+
+<template>
+    <name>Human_idle</name>
+    <parameter>int id</parameter>
+    <declaration>
+clock t, F;
+clock tUpd;
+clock tExp;
+int FW_max = 100;
+double Fp;
+double lambda, mi;
+const double passout_th = 1.0;
+const double iteration_time = 3.0;
+const double YOUNG_SICK[2] = {0.001865, 0.005117};
+const double YOUNG_SICK_SIGMA[2] = {0.000719, 0.000001};
+
+// Errors Model
+int obey, disobey;
+double freeWillTh;
+double fw;
+int TE;
+double lambda_crit;
+double hs, crit, non_crit;
+int FS =100;
+
+void updateHealthDangerProb() {
+crit = hs + hs * humanFatigue[id-1];
+non_crit = FS - crit;
+}
+
+// Fatigue Sharing Parameters
+bool ONCE_FTG = true;
+bool ONCE_POS = true;
+
+meta int v;
+
+void updateF(double coeff, bool walking) {
+// if two human instances are the same person,
+// residual conditions must be retrieved
+
+if(walking) humanFatigue[id-1] = 1-(1-humanFatigue[id-1])*exp(coeff*Tpoll);
+else humanFatigue[id-1] = humanFatigue[id-1]*exp(coeff*Tpoll);
+
+humanFatigue[id-1] = fmax(0, humanFatigue[id-1]);
+}
+
+
+
+bool is_crit = false;
+bool ignore_crit = false;
+int collisions = 0;
+
+int e_obey=100, e_disobey=0;
+int e_FW_th = 101;
+int e_delta_x100 = 9999;
+int e_lambda_inv = 9999;
+int e_crit = 0;
+
+
+void initHuman() {
+
+t = 0;
+tUpd = 0;
+F = 0;
+Fp = 0;
+
+humanPositionX[id-1] = INTERSECTIONS[H_start_nodes[id-1]][0];
+humanPositionY[id-1] = INTERSECTIONS[H_start_nodes[id-1]][1];
+
+lambda = random_normal(YOUNG_SICK[0], YOUNG_SICK_SIGMA[0]);
+mi = random_normal(YOUNG_SICK[1], YOUNG_SICK_SIGMA[1]);
+
+obey = e_obey;
+disobey = e_disobey;
+freeWillTh = e_FW_th;
+lambda_crit = 1/e_lambda_inv;
+hs = e_crit;
+crit = 1.0;
+non_crit = 999.0;
+}
+</declaration>
+    <location id="id42" x="-425" y="-153">
+        <name x="-477" y="-144">idle</name>
+        <label kind="invariant" x="-629" y="-119">F' == -Fp*mi*exp(-mi*t)
+&amp;&amp; tUpd&lt;=Tpoll</label>
+    </location>
+    <location id="id43" x="144" y="-153">
+        <name x="135" y="-187">inactive</name>
+    </location>
+    <location id="id44" x="-671" y="-153">
+        <name x="-722" y="-170">Init</name>
+        <committed/>
+    </location>
+    <location id="id45" x="-111" y="-442" color="#ff0000">
+        <name x="-357" y="-527">passed_out</name>
+        <label kind="invariant" x="-357" y="-510">t' == 0 &amp;&amp;
+F' == 0 &amp;&amp;
+tExp'==0</label>
+        <label kind="exponentialrate" x="-119" y="-425">1</label>
+    </location>
+    <location id="id46" x="-535" y="-442">
+        <committed/>
+    </location>
+    <location id="id47" x="68" y="85">
+        <name x="76" y="51">c3</name>
+        <committed/>
+    </location>
+    <location id="id48" x="-213" y="9">
+        <label kind="invariant" x="-357" y="-25">t&lt;=iteration_time</label>
+    </location>
+    <branchpoint id="id49" x="-535" y="-340"/>
+    <branchpoint id="id50" x="-212" y="85"/>
+    <init ref="id44"/>
+    <transition id="id51">
+        <source ref="id42"/>
+        <target ref="id43"/>
+        <label kind="synchronisation" x="-263" y="-144">obey_h_moveTo[id-1]?</label>
+    </transition>
+    <transition id="id52" color="#ff0000">
+        <source ref="id49"/>
+        <target ref="id46"/>
+        <label kind="probability" x="-494" y="-399">crit</label>
+    </transition>
+    <transition id="id53">
+        <source ref="id46"/>
+        <target ref="id45"/>
+        <label kind="synchronisation" x="-348" y="-433">hm_fail!</label>
+    </transition>
+    <transition id="id54">
+        <source ref="id49"/>
+        <target ref="id42"/>
+        <label kind="probability" x="-442" y="-357">non_crit</label>
+        <nail x="-425" y="-340"/>
+    </transition>
+    <transition id="id55">
+        <source ref="id42"/>
+        <target ref="id49"/>
+        <label kind="guard" x="-739" y="-340">tUpd &gt;= Tpoll</label>
+        <label kind="assignment" x="-739" y="-323">updateF(-mi, 0),
+tUpd=0,
+fw = random(FW_max),
+updateHealthDangerProb()</label>
+        <nail x="-535" y="-195"/>
+    </transition>
+    <transition id="id56">
+        <source ref="id45"/>
+        <target ref="id45"/>
+        <nail x="-136" y="-391"/>
+        <nail x="-94" y="-391"/>
+    </transition>
+    <transition id="id57">
+        <source ref="id44"/>
+        <target ref="id42"/>
+        <label kind="assignment" x="-603" y="-153">initHuman()</label>
+    </transition>
+    <transition id="id58">
+        <source ref="id48"/>
+        <target ref="id47"/>
+        <label kind="guard" x="-144" y="-17">t&gt;=iteration_time</label>
+        <nail x="68" y="9"/>
+    </transition>
+    <transition id="id59">
+        <source ref="id47"/>
+        <target ref="id50"/>
+        <label kind="assignment" x="-195" y="93">t = 0, Fp=humanFatigue[id-1],
+F=humanFatigue[id-1],
+tUpd=0, tExp=0</label>
+    </transition>
+    <transition id="id60" color="#ff0000">
+        <source ref="id50"/>
+        <target ref="id48"/>
+        <label kind="probability" x="-280" y="42">disobey</label>
+    </transition>
+    <transition id="id61">
+        <source ref="id50"/>
+        <target ref="id42"/>
+        <label kind="synchronisation" x="-408" y="93">obey_h_moveTo[id-1]!</label>
+        <label kind="probability" x="-357" y="59">obey</label>
+        <nail x="-425" y="85"/>
+    </transition>
+    <transition id="id62">
+        <source ref="id43"/>
+        <target ref="id47"/>
+        <label kind="synchronisation" x="152" y="-51">stop_h_moveTo[id-1]?</label>
+        <nail x="144" y="85"/>
+    </transition>
+</template>
+<template>
+        <name>Human_moveTo</name>
+        <parameter>int id, double _v</parameter>
+        <declaration>
+clock t, F;
+clock tUpd;
+clock tExp;
+int FW_max = 100;
+double Fp;
+double lambda, mi;
+const double passout_th = 1.0;
+const double iteration_time = 3.0;
+const double YOUNG_SICK[2] = {0.001865, 0.005117};
+const double YOUNG_SICK_SIGMA[2] = {0.000719, 0.000001};
+
+// Errors Model
+int obey, disobey;
+double freeWillTh;
+double fw;
+int TE;
+double lambda_crit;
+double hs, crit, non_crit;
+int FS =100;
+
+void updateHealthDangerProb() {
+    crit = hs + hs * humanFatigue[id-1];
+    non_crit = FS - crit;
+}
+
+// Fatigue Sharing Parameters
+bool ONCE_FTG = true;
+bool ONCE_POS = true;
+
+meta int v;
+
+void updateF(double coeff, bool walking) {
+    // if two human instances are the same person,
+    // residual conditions must be retrieved
+
+    if(walking) humanFatigue[id-1] = 1-(1-humanFatigue[id-1])*exp(coeff*Tpoll);
+    else humanFatigue[id-1] = humanFatigue[id-1]*exp(coeff*Tpoll);
+
+    humanFatigue[id-1] = fmax(0, humanFatigue[id-1]);
+}
+
+trajectory traj = {{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0}};
+double ort = 0.0;
+int curr_traj = 0;
+
+void change_orientation(double sx, double sy, double dx, double dy) {
+    double cos_alpha, alpha, theta, delta;
+    double AC, AB;
+    bool turnLeft, needsTurning = false;
+
+    AC = pt_dist(sx, dx, sy, sy);
+    AB = pt_dist(sx, dx, sy, dy);
+
+    if (AB == 0)
+    {
+        return;
+    }
+
+    cos_alpha = AC / AB;
+    // angle between destination and hor. line
+    alpha = acos(cos_alpha);
+    // angle between robot axis and hor. line
+    theta = ort;
+    // how much the robot should rotate [deg]
+    delta = 0.0;
+    turnLeft = false;
+
+    if (dx &gt;= sx &amp;&amp; dy &gt;= sy)
+    { // Destination in 1st quadrant
+        alpha = alpha * (180 / PI);
+        if (alpha &gt; theta)
+        {
+            delta = alpha - theta;
+            turnLeft = true;
+        }
+        else
+        {
+            delta = theta - alpha;
+            turnLeft = false;
+        }
+    }
+    else if (dx &gt;= sx &amp;&amp; dy &lt;= sy)
+    { // Destination in 2nd quadrant
+        alpha = -alpha * (180 / PI);
+        if (theta &lt; alpha)
+        {
+            delta = alpha - theta;
+            turnLeft = true;
+        }
+        else
+        {
+            delta = theta - alpha;
+            turnLeft = false;
+        }
+    }
+    else if (dx &lt;= sx &amp;&amp; dy &lt;= sy)
+    { // Destination in 3rd quadrant
+        alpha = -(180 - alpha * (180 / PI));
+        if (theta &lt; alpha)
+        {
+            delta = alpha - theta;
+            turnLeft = true;
+        }
+        else
+        {
+            delta = theta - alpha;
+            turnLeft = false;
+        }
+    }
+    else if (dx &lt;= sx &amp;&amp; dy &gt;= sy)
+    { // Destination in 4th quadrant
+        alpha = 180 - alpha * (180 / PI);
+        if (theta &lt; alpha)
+        {
+            delta = alpha - theta;
+            turnLeft = true;
+        }
+        else
+        {
+            delta = theta - alpha;
+            turnLeft = false;
+        }
+    }
+
+    needsTurning = delta &gt; 0.0;
+
+    if (needsTurning &amp;&amp; turnLeft)
+    {
+        ort = ort  + delta;
+    }
+    else if (needsTurning &amp;&amp; !turnLeft)
+    {
+        ort = ort  - delta;
+    }
+}
+
+point curr, dest;
+
+void plan_traj() {
+    int i, j, next_inters = -1;
+    int neigh[5] = {-1,-1,-1,-1,-1};
+    int k = 0;
+    double dist, min_dist;
+    bool visited[N_I] = {false,false,false,false,false,false,false,false,false};
+    curr[0] = humanPositionX[id-1]; curr[1] = humanPositionY[id-1];
+    dest[0] = location_X[human_loc_target[id-1]]; dest[1] = location_Y[human_loc_target[id-1]];
+    // init trajectory
+    for (i = 0; i &lt; N_P; i++)
+    {
+        traj[i][0] = 0.0;
+        traj[i][1] = 0.0;
+    }
+    i = 0;
+    curr_traj = 0;
+
+    // builds trajectory by finding a path among adjacent areas
+    // (the existence of an intersection point means two areas are adjacent to each other)
+    // until the destination area is reached
+    while (!same_area(curr[0], curr[1], dest[0], dest[1]))
+    {
+        for (j = 0; j &lt; N_I; j++)
+        {
+            // find all int. pts which are a neighbor of curr. point
+            // there are max. 3 in the long left hall
+            if (same_area(curr[0], curr[1], INTERSECTIONS[j][0], INTERSECTIONS[j][1]) &amp;&amp; !visited[j])
+            {
+                neigh[k] = j;
+                k++;
+            }
+        }
+        if(neigh[0]==-1) return;
+        // next int. point to add to traj. is the closest to destination
+        min_dist = pt_dist(INTERSECTIONS[neigh[0]][0], dest[0], INTERSECTIONS[neigh[0]][1], dest[1]);
+        next_inters = neigh[0];
+        for (j = 1; j &lt; 5 &amp;&amp; neigh[j] != -1; j++)
+        {
+            dist = pt_dist(INTERSECTIONS[neigh[j]][0], dest[0], INTERSECTIONS[neigh[j]][1], dest[1]);
+            if (dist &lt; min_dist)
+            {
+                min_dist = dist;
+                next_inters = neigh[j];
+            }
+        }
+        // if trajectory is full, or no next point has been found,
+        // something has gone wrong, but I cannot raise an exception
+        if (i == N_P - 1 || next_inters == -1)
+            return;
+        // next inters point is set as visited,
+        visited[next_inters] = true;
+        // added to the trajectory,
+        traj[i][0] = INTERSECTIONS[next_inters][0];
+        traj[i][1] = INTERSECTIONS[next_inters][1];
+        i++;
+        // and set as current point
+        curr[0] = INTERSECTIONS[next_inters][0];
+        curr[1] = INTERSECTIONS[next_inters][1];
+        // reset
+        next_inters = -1;
+        k = 0;
+        for(j=0; j&lt;5;j++) neigh[j] = -1;
+    }
+    // destination point is always part of the trajectory
+    traj[i][0] = dest[0];
+    traj[i][1] = dest[1];
+
+    //sets initial orientation
+    change_orientation(humanPositionX[id-1], humanPositionY[id-1], traj[0][0], traj[0][1]);
+}
+
+void updateP() {
+    double nextX, nextY;
+
+    if (curr_traj &gt;= N_P || (traj[curr_traj][0] == 0.0 &amp;&amp; traj[curr_traj][1] == 0.0))
+        return;
+
+    // 1. Waypoint Reach Check with SNAP
+    if (pt_dist(humanPositionX[id-1], traj[curr_traj][0], humanPositionY[id-1], traj[curr_traj][1]) &lt; v * 1.1) {
+        // SNAP to prevent cumulative drift
+        humanPositionX[id-1] = traj[curr_traj][0];
+        humanPositionY[id-1] = traj[curr_traj][1];
+        
+        curr_traj++;
+        if (curr_traj &gt;= N_P || (traj[curr_traj][0] == 0.0 &amp;&amp; traj[curr_traj][1] == 0.0))
+            return;
+            
+        change_orientation(humanPositionX[id-1], humanPositionY[id-1], traj[curr_traj][0], traj[curr_traj][1]);
+    }
+    
+    // 2. Calculated movement with safety check
+    nextX = humanPositionX[id-1] + v * Tpoll * cos(ort * PI / 180);
+    nextY = humanPositionY[id-1] + v * Tpoll * sin(ort * PI / 180);
+
+    // Only apply movement if inside valid areas (prevents "walking through walls")
+    if (isValidPosition(nextX, nextY)) {
+        humanPositionX[id-1] = nextX;
+        humanPositionY[id-1] = nextY;
+    }
+}
+bool is_crit = false;
+bool ignore_crit = false;
+
+
+void check_crit(){
+
+     if(is_crit) v = fint(_v*0.6);
+     else v = fint(_v);
+}
+
+
+double crit_prob;
+void update_crit() {
+    double dice = random(100);
+    crit_prob = 1-exp(-lambda_crit*t);
+
+    if(dice&lt;=crit_prob*100) {
+        is_crit = false;
+        v = fint(_v);
+    }
+}
+
+int e_obey=100, e_disobey=0;
+int e_FW_th = 101;
+int e_delta_x100 = 9999;
+int e_lambda_inv = 9999;
+int e_crit = 0;
+
+
+void initHuman() {
+
+    t = 0;
+    tUpd = 0;
+    F = 0;
+    Fp = 0;
+    v = fint(_v);
+
+    humanPositionX[id-1] = INTERSECTIONS[H_start_nodes[id-1]][0];
+    humanPositionY[id-1] = INTERSECTIONS[H_start_nodes[id-1]][1];
+    
+    lambda = random_normal(YOUNG_SICK[0], YOUNG_SICK_SIGMA[0]);
+    mi = random_normal(YOUNG_SICK[1], YOUNG_SICK_SIGMA[1]);
+
+    obey = e_obey;
+    disobey = e_disobey;
+    freeWillTh = e_FW_th;
+    lambda_crit = 1/e_lambda_inv;
+    hs = e_crit;
+    crit = 1.0;
+    non_crit = 999.0;
+}
+    </declaration>
+        <location id="id63" x="-977" y="-255">
+            <name x="-1028" y="-289">inactive</name>
+        </location>
+        <location id="id64" x="-51" y="-255">
+            <name x="-34" y="-280">busy</name>
+            <label kind="invariant" x="-34" y="-340">F &lt;= passout_th
+&amp;&amp; F' == Fp*lambda*exp(-lambda*t)
+&amp;&amp; tUpd&lt;=Tpoll</label>
+        </location>
+        <location id="id65" x="-1215" y="-255">
+            <name x="-1266" y="-272">Init</name>
+            <committed/>
+        </location>
+        <location id="id66" x="459" y="-255" color="#ff0000">
+            <name x="374" y="-331">passed_out</name>
+            <label kind="invariant" x="374" y="-314">t' == 0 &amp;&amp;
+F' == 0 &amp;&amp;
+tExp'==0</label>
+            <label kind="exponentialrate" x="451" y="-238">1</label>
+        </location>
+        <location id="id67" x="-722" y="-255">
+            <name x="-732" y="-289">c1</name>
+            <committed/>
+        </location>
+        <location id="id68" x="-297" y="-255">
+            <name x="-289" y="-280">c2</name>
+            <committed/>
+        </location>
+        <location id="id69" x="51" y="-25">
+            <name x="-8" y="-51">pub_3</name>
+            <committed/>
+        </location>
+        <location id="id70" x="527" y="-25">
+            <committed/>
+        </location>
+        <location id="id71" x="-722" y="-195">
+            <label kind="invariant" x="-866" y="-187">t&lt;=iteration_time</label>
+        </location>
+        <branchpoint id="id72" x="289" y="-25"/>
+        <branchpoint id="id73" x="-492" y="-255"/>
+        <init ref="id65"/>
+        <transition id="id74">
+            <source ref="id71"/>
+            <target ref="id67"/>
+            <label kind="guard" x="-875" y="-238">t&gt;=iteration_time</label>
+        </transition>
+        <transition id="id75">
+            <source ref="id70"/>
+            <target ref="id66"/>
+            <label kind="synchronisation" x="476" y="-280">hm_fail!</label>
+            <nail x="527" y="-255"/>
+        </transition>
+        <transition id="id76" color="#ff0000">
+            <source ref="id72"/>
+            <target ref="id70"/>
+            <label kind="probability" x="391" y="-25">crit</label>
+        </transition>
+        <transition id="id77">
+            <source ref="id72"/>
+            <target ref="id69"/>
+            <label kind="probability" x="204" y="-25">non_crit</label>
+        </transition>
+        <transition id="id78">
+            <source ref="id67"/>
+            <target ref="id73"/>
+        </transition>
+        <transition id="id79" color="#ff0000">
+            <source ref="id73"/>
+            <target ref="id71"/>
+            <label kind="probability" x="-645" y="-221">disobey</label>
+            <nail x="-492" y="-195"/>
+        </transition>
+        <transition id="id80">
+            <source ref="id73"/>
+            <target ref="id68"/>
+            <label kind="synchronisation" x="-484" y="-280">obey_h_moveTo[id-1]!</label>
+            <label kind="assignment" x="-696" y="-340">t = 0,
+tExp=0,
+tUpd=0,
+F = humanFatigue[id-1]</label>
+            <label kind="probability" x="-484" y="-297">obey</label>
+        </transition>
+        <transition id="id81">
+            <source ref="id64"/>
+            <target ref="id72"/>
+            <label kind="guard" x="306" y="-127">tUpd &gt;= Tpoll</label>
+            <label kind="assignment" x="306" y="-110">updateF(-lambda, 1),
+updateP(), tUpd=0,
+fw = random(FW_max),
+updateHealthDangerProb()</label>
+            <nail x="289" y="-136"/>
+        </transition>
+        <transition id="id82">
+            <source ref="id69"/>
+            <target ref="id64"/>
+            <label kind="assignment" x="17" y="-135">check_crit(),
+update_crit()</label>
+        </transition>
+        <transition id="id83">
+            <source ref="id68"/>
+            <target ref="id64"/>
+            <label kind="guard" x="-272" y="-255">F&lt;=0 &amp;&amp; F&gt;=-0.05</label>
+            <label kind="assignment" x="-272" y="-238">Fp=1, F=0, plan_traj()</label>
+        </transition>
+        <transition id="id84">
+            <source ref="id68"/>
+            <target ref="id64"/>
+            <label kind="guard" x="-221" y="-408">F&gt;0</label>
+            <label kind="assignment" x="-221" y="-391">Fp=1-F,
+plan_traj()</label>
+            <nail x="-297" y="-348"/>
+            <nail x="-51" y="-348"/>
+        </transition>
+        <transition id="id85">
+            <source ref="id64"/>
+            <target ref="id63"/>
+            <label kind="synchronisation" x="-586" y="-17">obey_h_moveTo[id-1]?</label>
+            <nail x="-51" y="-25"/>
+            <nail x="-977" y="-25"/>
+        </transition>
+        <transition id="id86">
+            <source ref="id63"/>
+            <target ref="id67"/>
+            <label kind="synchronisation" x="-943" y="-280">start_h_moveTo[id-1]?</label>
+        </transition>
+        <transition id="id87">
+            <source ref="id64"/>
+            <target ref="id66"/>
+            <label kind="guard" x="178" y="-280">F &gt;= passout_th</label>
+            <label kind="synchronisation" x="212" y="-255">hm_fail!</label>
+            <label kind="assignment" x="221" y="-238">t = 0</label>
+        </transition>
+        <transition id="id88">
+            <source ref="id66"/>
+            <target ref="id66"/>
+            <nail x="434" y="-204"/>
+            <nail x="476" y="-204"/>
+        </transition>
+        <transition id="id89">
+            <source ref="id65"/>
+            <target ref="id63"/>
+            <label kind="assignment" x="-1164" y="-255">initHuman()</label>
+        </transition>
+    </template> 
+<template>
+    <name>Robot_moveTo</name>
+    <parameter>int id, double _v_max, double _a_max</parameter>
+    <declaration>
+clock V, Th, tUpd;
+double turn_limit;
+trajectory traj = {{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0}};
+
+double ort = 0.0;
+int curr_traj = 0;
+
+// Position Sharing parameters
+int t = 0;
+const int T_poll = 1;
+int v_max;
+int a_max;
+
+bool needsTurning = false;
+
+void change_orientation(double sx, double sy, double dx, double dy) {
+    double cos_alpha, alpha, theta, delta;
+    double AC, AB;
+    bool turnLeft;
+
+    AC = pt_dist(sx, dx, sy, sy);
+    AB = pt_dist(sx, dx, sy, dy);
+
+    if (AB == 0) return;
+
+    cos_alpha = AC / AB;
+    alpha = acos(cos_alpha); // Result in radians
+    theta = ort; // Current orientation in degrees
+    
+    delta = 0.0;
+    turnLeft = false;
+
+    // Calculate target angle and rotation delta based on quadrant
+    if (dx &gt;= sx &amp;&amp; dy &gt;= sy) {
+        alpha = alpha * (180 / PI);
+        if (alpha &gt; theta) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
+    }
+    else if (dx &gt;= sx &amp;&amp; dy &lt;= sy) {
+        alpha = -alpha * (180 / PI);
+        if (theta &lt; alpha) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
+    }
+    else if (dx &lt;= sx &amp;&amp; dy &lt;= sy) {
+        alpha = -(180 - alpha * (180 / PI));
+        if (theta &lt; alpha) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
+    }
+    else if (dx &lt;= sx &amp;&amp; dy &gt;= sy) {
+        alpha = 180 - alpha * (180 / PI);
+        if (theta &lt; alpha) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
+    }
+
+    needsTurning = delta &gt; 0.0;
+
+    // Update orientation
+    if (needsTurning &amp;&amp; turnLeft) ort = ort + delta;
+    else if (needsTurning &amp;&amp; !turnLeft) ort = ort - delta;
+}
+
+point curr, dest;
+
+void plan_traj() {
+    int i, j, next_inters = -1;
+    int neigh[5] = {-1,-1,-1,-1,-1};
+    int k = 0;
+    double dist, min_dist;
+    bool visited[N_I] = {false,false,false,false,false,false,false,false,false}; // Layout 1
+    //bool visited[N_I] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};  // Layout 2
+    bool close;
+
+    curr[0] = robPositionX[id-1];
+    curr[1] = robPositionY[id-1];
+    dest[0] = location_X[robot_loc_target[id-1]];
+    dest[1] = location_Y[robot_loc_target[id-1]];
+
+    // Reset trajectory
+    for (i = 0; i &lt; N_P; i++) {
+        traj[i][0] = 0.0;
+        traj[i][1] = 0.0;
+    }
+    i = 0;
+    curr_traj = 0;
+
+    // Build path through adjacent intersections
+    close = same_area(curr[0], curr[1], dest[0], dest[1]);
+    while (!close) {
+        for (j = 0; j &lt; N_I &amp;&amp; k &lt; 3; j++) {
+            if (same_area(curr[0], curr[1], INTERSECTIONS[j][0], INTERSECTIONS[j][1]) &amp;&amp; !visited[j]) {
+                neigh[k] = j;
+                k++;
+            }
+        }
+        if (neigh[0] == -1) {
+            close = true;
+        } else {
+            min_dist = pt_dist(INTERSECTIONS[neigh[0]][0], dest[0], INTERSECTIONS[neigh[0]][1], dest[1]);
+            next_inters = neigh[0];
+            for (j = 1; j &lt; 5 &amp;&amp; neigh[j] != -1; j++) {
+                dist = pt_dist(INTERSECTIONS[neigh[j]][0], dest[0], INTERSECTIONS[neigh[j]][1], dest[1]);
+                if (dist &lt; min_dist) {
+                    min_dist = dist;
+                    next_inters = neigh[j];
+                }
+            }
+            if (i == N_P - 1 || next_inters == -1) return;
+            
+            visited[next_inters] = true;
+            traj[i][0] = INTERSECTIONS[next_inters][0];
+            traj[i][1] = INTERSECTIONS[next_inters][1];
+            curr[0] = INTERSECTIONS[next_inters][0];
+            curr[1] = INTERSECTIONS[next_inters][1];
+            
+            i++;
+            next_inters = -1;
+            k = 0;
+            for(j=0; j&lt;5; j++) neigh[j] = -1;
+            close = same_area(curr[0], curr[1], dest[0], dest[1]);
+        }
+    }
+    // Add final destination
+    traj[i][0] = dest[0];
+    traj[i][1] = dest[1];
+
+    change_orientation(robPositionX[id-1], robPositionY[id-1], traj[0][0], traj[0][1]);
+}
+
+void update_pos(double coeff) {
+    double nextX = robPositionX[id-1] + coeff*Tpoll*cos(ort*PI/180);
+    double nextY = robPositionY[id-1] + coeff*Tpoll*sin(ort*PI/180);
+
+    // Update position only if valid
+    if (isValidPosition(nextX, nextY)) {
+        robPositionX[id-1] = nextX;
+        robPositionY[id-1] = nextY;
+    }
+}
+
+void initRobot() {
+    t = 0;
+    V = 0;
+
+    // Initialize position at assigned intersection
+    robPositionX[id-1] = INTERSECTIONS[R_start_nodes[id-1]][0];
+    robPositionY[id-1] = INTERSECTIONS[R_start_nodes[id-1]][1];
+
+    tUpd = 0;
+    v_max = fint(_v_max);
+    a_max = fint(_a_max);
+}
+
+void varsUpdate(double coeff) {
+    double final_X;
+    double final_Y;
+
+    tUpd = 0;
+    final_X = location_X[robot_loc_target[id-1]];
+    final_Y = location_Y[robot_loc_target[id-1]];
+    
+    // Stop logic if destination is reached
+    if (robPositionX[id-1] == final_X &amp;&amp; robPositionY[id-1] == final_Y) {
+        return;
+    }
+
+    if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0)) return;
+
+    // Waypoint management
+    if (pt_dist(robPositionX[id-1], traj[curr_traj][0], robPositionY[id-1], traj[curr_traj][1]) &lt; v_max*1.1) {
+        // Snap to exact coordinates to prevent drift
+        robPositionX[id-1] = traj[curr_traj][0];
+        robPositionY[id-1] = traj[curr_traj][1];
+
+        curr_traj++;
+        
+        if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0)) {
+            plan_traj();
+        } else {
+            change_orientation(robPositionX[id-1], robPositionY[id-1], traj[curr_traj][0], traj[curr_traj][1]);
+        }
+    } else {
+        update_pos(coeff);
+    }
+}
+</declaration>
+    <location id="id90" x="-629" y="-348">
+        <name x="-680" y="-374">idle</name>
+        <label kind="invariant" x="-731" y="-348">V' == 0 &amp;&amp;
+tUpd'==0</label>
+    </location>
+    <location id="id91" x="-416" y="-42">
+        <name x="-408" y="-42">stopping</name>
+        <label kind="invariant" x="-595" y="18">V' == -a_max
+&amp;&amp; tUpd&lt;=Tpoll</label>
+        <label kind="comments" x="-331" y="-33">&amp;&amp; V &gt;=0</label>
+    </location>
+    <location id="id92" x="-416" y="-348">
+        <name x="-399" y="-366">starting</name>
+        <label kind="invariant" x="-314" y="-408">V' == a_max
+&amp;&amp; V &lt;= v_max
+&amp;&amp; tUpd&lt;=Tpoll</label>
+    </location>
+    <location id="id93" x="-161" y="-246">
+        <name x="-229" y="-263">moving</name>
+        <label kind="invariant" x="-263" y="-246">V' == 0 &amp;&amp;
+tUpd&lt;=Tpoll</label>
+    </location>
+    <location id="id94" x="-833" y="-348">
+        <name x="-843" y="-382">Init</name>
+        <committed/>
+    </location>
+    <location id="id95" x="204" y="-246">
+        <name x="221" y="-272">turning</name>
+        <label kind="invariant" x="221" y="-255">V'==0 &amp;&amp;
+Th&lt;=turn_limit</label>
+    </location>
+    <location id="id96" x="42" y="-246">
+        <committed/>
+    </location>
+    <location id="id97" x="-416" y="-501">
+        <committed/>
+    </location>
+    <location id="id98" x="-416" y="102">
+        <committed/>
+    </location>
+    <location id="id99" x="-59" y="-170">
+        <committed/>
+    </location>
+    <location id="id100" x="-629" y="-42">
+        <committed/>
+    </location>
+    <init ref="id94"/>
+    <transition id="id101">
+        <source ref="id91"/>
+        <target ref="id100"/>
+        <label kind="guard" x="-578" y="-68">V &lt;= 0</label>
+    </transition>
+    <transition id="id102">
+        <source ref="id99"/>
+        <target ref="id93"/>
+    </transition>
+    <transition id="id103">
+        <source ref="id96"/>
+        <target ref="id99"/>
+        <label kind="guard" x="-9" y="-204">!needsTurning</label>
+        <label kind="assignment" x="8" y="-187">tUpd=0</label>
+    </transition>
+    <transition id="id104">
+        <source ref="id98"/>
+        <target ref="id91"/>
+        <nail x="-459" y="86"/>
+        <nail x="-459" y="-16"/>
+    </transition>
+    <transition id="id105">
+        <source ref="id97"/>
+        <target ref="id92"/>
+        <nail x="-374" y="-459"/>
+        <nail x="-374" y="-391"/>
+    </transition>
+    <transition id="id106">
+        <source ref="id91"/>
+        <target ref="id98"/>
+        <label kind="guard" x="-408" y="43">tUpd&gt;=Tpoll
+&amp;&amp;V&gt;0</label>
+        <label kind="assignment" x="-408" y="1">t+=Tpoll, tUpd=0,
+varsUpdate(v_max-a_max*t)</label>
+    </transition>
+    <transition id="id107">
+        <source ref="id92"/>
+        <target ref="id97"/>
+        <label kind="guard" x="-527" y="-493">tUpd&gt;=Tpoll
+&amp;&amp;V&lt;v_max</label>
+        <label kind="assignment" x="-586" y="-450">t+=Tpoll, tUpd=0,
+varsUpdate(a_max*t)</label>
+    </transition>
+    <transition id="id108">
+        <source ref="id95"/>
+        <target ref="id91"/>
+        <label kind="synchronisation" x="-170" y="-67">stop_r_moveTo[id-1]?</label>
+        <label kind="assignment" x="-25" y="-68">tUpd=0, t=0</label>
+        <nail x="204" y="-50"/>
+    </transition>
+    <transition id="id109">
+        <source ref="id95"/>
+        <target ref="id93"/>
+        <label kind="guard" x="-42" y="-374">Th&gt;=turn_limit</label>
+        <label kind="assignment" x="-42" y="-348">tUpd = 0, Th = 0,
+needsTurning = false</label>
+        <nail x="204" y="-348"/>
+        <nail x="-161" y="-348"/>
+    </transition>
+    <transition id="id110">
+        <source ref="id96"/>
+        <target ref="id95"/>
+        <label kind="guard" x="68" y="-263">needsTurning</label>
+        <label kind="assignment" x="102" y="-246">Th=0, turn_limit = fabs(ort * PI / 180)</label>
+    </transition>
+    <transition id="id111">
+        <source ref="id93"/>
+        <target ref="id96"/>
+        <label kind="guard" x="-119" y="-280">tUpd&gt;=Tpoll</label>
+        <label kind="assignment" x="-136" y="-263">varsUpdate(v_max)</label>
+    </transition>
+    <transition id="id112">
+        <source ref="id91"/>
+        <target ref="id92"/>
+        <label kind="synchronisation" x="-416" y="-204">start_r_moveTo[id-1]?</label>
+        <label kind="assignment" x="-416" y="-187">t=0, tUpd=0,
+plan_traj()</label>
+    </transition>
+    <transition id="id113">
+        <source ref="id92"/>
+        <target ref="id91"/>
+        <label kind="synchronisation" x="-595" y="-204">stop_r_moveTo[id-1]?</label>
+        <label kind="assignment" x="-578" y="-187">t=0, tUpd=0</label>
+        <nail x="-476" y="-314"/>
+        <nail x="-476" y="-92"/>
+    </transition>
+    <transition id="id114">
+        <source ref="id100"/>
+        <target ref="id90"/>
+        <label kind="synchronisation" x="-706" y="-221">rm_still!</label>
+        <label kind="assignment" x="-706" y="-204">t=0,
+tUpd = 0,
+V=0</label>
+    </transition>
+    <transition id="id115">
+        <source ref="id93"/>
+        <target ref="id91"/>
+        <label kind="synchronisation" x="-289" y="-136">stop_r_moveTo[id-1]?</label>
+        <label kind="assignment" x="-280" y="-119">tUpd=0, t=0</label>
+        <nail x="-161" y="-101"/>
+    </transition>
+    <transition id="id116">
+        <source ref="id92"/>
+        <target ref="id93"/>
+        <label kind="guard" x="-314" y="-348">V &gt;= v_max</label>
+        <label kind="assignment" x="-195" y="-408">t+=Tpoll,
+tUpd=0,
+V=v_max</label>
+        <nail x="-161" y="-348"/>
+    </transition>
+    <transition id="id117">
+        <source ref="id90"/>
+        <target ref="id92"/>
+        <label kind="synchronisation" x="-603" y="-374">start_r_moveTo[id-1]?</label>
+        <label kind="assignment" x="-586" y="-348">t=0, tUpd=0,
+plan_traj()</label>
+    </transition>
+    <transition id="id118">
+        <source ref="id94"/>
+        <target ref="id90"/>
+        <label kind="assignment" x="-807" y="-365">initRobot()</label>
+    </transition>
+</template>
+<template>
+    <name>Robot_follow</name>
+    <parameter>int id, double _v_max, double _a_max</parameter>
+    <declaration>
+clock V, Th, tUpd;
+double turn_limit;
+trajectory traj = {{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0}};
+
+double ort = 0.0;
+int curr_traj = 0;
+
+// Position Sharing parameters
+int t = 0;
+const int T_poll = 1;
+int v_max;
+int a_max;
+
+bool needsTurning = false;
+void change_orientation(double sx, double sy, double dx, double dy) {
+    double cos_alpha, alpha, theta, delta;
+    double AC, AB;
+    bool turnLeft;
+
+    AC = pt_dist(sx, dx, sy, sy);
+    AB = pt_dist(sx, dx, sy, dy);
+
+    // Avoid division by zero if start and destination are the same
+    if (AB == 0) {
+        return;
+    }
+
+    cos_alpha = AC / AB;
+    alpha = acos(cos_alpha); // Result is in radians
+    
+    // Corrected: ort is already in degrees, just copy it to theta
+    theta = ort;
+    
+    delta = 0.0;
+    turnLeft = false;
+
+    // Calculate the target angle based on the quadrant
+    if (dx &gt;= sx &amp;&amp; dy &gt;= sy) { // 1st Quadrant
+        alpha = alpha * (180 / PI);
+        if (alpha &gt; theta) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
+    }
+    else if (dx &gt;= sx &amp;&amp; dy &lt;= sy) { // 2nd Quadrant
+        alpha = -alpha * (180 / PI);
+        if (theta &lt; alpha) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
+    }
+    else if (dx &lt;= sx &amp;&amp; dy &lt;= sy) { // 3rd Quadrant
+        alpha = -(180 - alpha * (180 / PI));
+        if (theta &lt; alpha) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
+    }
+    else if (dx &lt;= sx &amp;&amp; dy &gt;= sy) { // 4th Quadrant
+        alpha = 180 - alpha * (180 / PI);
+        if (theta &lt; alpha) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
+    }
+
+    needsTurning = delta &gt; 0.0;
+
+    // Update orientation strictly in degrees
+    if (needsTurning &amp;&amp; turnLeft) {
+        ort = ort + delta;
+    }
+    else if (needsTurning &amp;&amp; !turnLeft) {
+        ort = ort - delta;
+    }
+}
+
+point curr, dest;
+
+void plan_traj() {
+    int i, j, next_inters = -1;
+    int neigh[5] = {-1,-1,-1,-1,-1};
+    int k = 0;
+    double dist, min_dist;
+    bool visited[N_I] = {false,false,false,false,false,false,false,false,false}; // Layout 1
+    //bool visited[N_I] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};  // Layout 2
+    bool close;
+
+    curr[0] = robPositionX[id-1];
+    curr[1] = robPositionY[id-1];
+
+    // Follow Logic (Keep original target selection)
+    if (human_to_be_followed[id-1] == 0 &amp;&amp; robot_to_be_followed[id-1] != 0 &amp;&amp; robot_to_be_followed[id-1] != id) {
+        dest[0] = robPositionX[robot_to_be_followed[id-1]-1];
+        dest[1] = robPositionY[robot_to_be_followed[id-1]-1]; // Fixed Y coordinate index
+    }
+    if (human_to_be_followed[id-1] != 0 &amp;&amp; robot_to_be_followed[id-1] == 0) {
+        dest[0] = humanPositionX[human_to_be_followed[id-1]-1];
+        dest[1] = humanPositionY[human_to_be_followed[id-1]-1];
+    }
+
+    // Reset trajectory
+    for (i = 0; i &lt; N_P; i++) {
+        traj[i][0] = 0.0;
+        traj[i][1] = 0.0;
+    }
+    i = 0;
+    curr_traj = 0;
+
+    // Build path among adjacent areas
+    close = same_area(curr[0], curr[1], dest[0], dest[1]);
+    while (!close) {
+        for (j = 0; j &lt; N_I &amp;&amp; k &lt; 3; j++) {
+            if (same_area(curr[0], curr[1], INTERSECTIONS[j][0], INTERSECTIONS[j][1]) &amp;&amp; !visited[j]) {
+                neigh[k] = j;
+                k++;
+            }
+        }
+        if (neigh[0] == -1) {
+            close = true;
+        } else {
+            min_dist = pt_dist(INTERSECTIONS[neigh[0]][0], dest[0], INTERSECTIONS[neigh[0]][1], dest[1]);
+            next_inters = neigh[0];
+            for (j = 1; j &lt; 5 &amp;&amp; neigh[j] != -1; j++) {
+                dist = pt_dist(INTERSECTIONS[neigh[j]][0], dest[0], INTERSECTIONS[neigh[j]][1], dest[1]);
+                if (dist &lt; min_dist) {
+                    min_dist = dist;
+                    next_inters = neigh[j];
+                }
+            }
+            if (i == N_P - 1 || next_inters == -1) return;
+
+            visited[next_inters] = true;
+            traj[i][0] = INTERSECTIONS[next_inters][0];
+            traj[i][1] = INTERSECTIONS[next_inters][1];
+            curr[0] = INTERSECTIONS[next_inters][0];
+            curr[1] = INTERSECTIONS[next_inters][1];
+            
+            i++;
+            next_inters = -1;
+            k = 0;
+            for(j=0; j&lt;5; j++) neigh[j] = -1;
+            close = same_area(curr[0], curr[1], dest[0], dest[1]);
+        }
+    }
+    traj[i][0] = dest[0];
+    traj[i][1] = dest[1];
+
+    change_orientation(robPositionX[id-1], robPositionY[id-1], traj[0][0], traj[0][1]);
+}
+
+void update_pos(double coeff) {
+    double nextX = robPositionX[id-1] + coeff*Tpoll*cos(ort*PI/180);
+    double nextY = robPositionY[id-1] + coeff*Tpoll*sin(ort*PI/180);
+
+    // Collision avoidance with layout boundaries
+    if (isValidPosition(nextX, nextY)) {
+        robPositionX[id-1] = nextX;
+        robPositionY[id-1] = nextY;
+    }
+}
+
+void initRobot() {
+    t = 0;
+    V = 0;
+
+    // Fetch the correct X and Y coordinates from the INTERSECTIONS array
+    // using the start_nodes index for each specific robot
+    robPositionX[id-1] = INTERSECTIONS[R_start_nodes[id-1]][0];
+    robPositionY[id-1] = INTERSECTIONS[R_start_nodes[id-1]][1];
+
+    tUpd = 0;
+    v_max = fint(_v_max);
+    a_max = fint(_a_max);
+}
+
+void varsUpdate(double coeff) {
+    double final_X;
+    double final_Y;
+
+    tUpd = 0;
+    
+    // Arrival check to avoid Zeno behavior
+    // Re-calculating current target position
+    if (human_to_be_followed[id-1] == 0 &amp;&amp; robot_to_be_followed[id-1] != 0) {
+        final_X = robPositionX[robot_to_be_followed[id-1]-1];
+        final_Y = robPositionY[robot_to_be_followed[id-1]-1];
+    } else {
+        final_X = humanPositionX[human_to_be_followed[id-1]-1];
+        final_Y = humanPositionY[human_to_be_followed[id-1]-1];
+    }
+    
+    if (robPositionX[id-1] == final_X &amp;&amp; robPositionY[id-1] == final_Y) {
+        return;
+    }
+
+    if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0)) return;
+
+    // Waypoint management with Snap
+    if (pt_dist(robPositionX[id-1], traj[curr_traj][0], robPositionY[id-1], traj[curr_traj][1]) &lt; v_max*1.1) {
+        robPositionX[id-1] = traj[curr_traj][0];
+        robPositionY[id-1] = traj[curr_traj][1];
+        curr_traj++;
+        
+        if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0)) {
+            plan_traj();
+        } else {
+            change_orientation(robPositionX[id-1], robPositionY[id-1], traj[curr_traj][0], traj[curr_traj][1]);
+        }
+    } else {
+        update_pos(coeff);
+    }
+}
+</declaration>
+    <location id="id119" x="-620" y="-348">
+        <name x="-671" y="-374">idle</name>
+        <label kind="invariant" x="-722" y="-348">V' == 0 &amp;&amp;
+tUpd'==0</label>
+    </location>
+    <location id="id120" x="-416" y="-127">
+        <name x="-408" y="-127">stopping</name>
+        <label kind="invariant" x="-586" y="-76">V' == -a_max
+&amp;&amp; tUpd&lt;=Tpoll</label>
+        <label kind="comments" x="-331" y="-119">&amp;&amp; V &gt;=0</label>
+    </location>
+    <location id="id121" x="-416" y="-348">
+        <name x="-399" y="-366">starting</name>
+        <label kind="invariant" x="-314" y="-408">V' == a_max
+&amp;&amp; V &lt;= v_max
+&amp;&amp; tUpd&lt;=Tpoll</label>
+    </location>
+    <location id="id122" x="-161" y="-246">
+        <name x="-229" y="-263">moving</name>
+        <label kind="invariant" x="-263" y="-246">V' == 0 &amp;&amp;
+tUpd&lt;=Tpoll</label>
+    </location>
+    <location id="id123" x="-841" y="-348">
+        <name x="-851" y="-382">Init</name>
+        <committed/>
+    </location>
+    <location id="id124" x="212" y="-246">
+        <name x="229" y="-272">turning</name>
+        <label kind="invariant" x="229" y="-255">V'==0 &amp;&amp;
+Th&lt;=turn_limit</label>
+    </location>
+    <location id="id125" x="51" y="-246">
+        <committed/>
+    </location>
+    <location id="id126" x="-416" y="-501">
+        <committed/>
+    </location>
+    <location id="id127" x="-416" y="25">
+        <committed/>
+    </location>
+    <location id="id128" x="-51" y="-170">
+        <committed/>
+    </location>
+    <location id="id129" x="-620" y="-127">
+        <committed/>
+    </location>
+    <init ref="id123"/>
+    <transition id="id130">
+        <source ref="id120"/>
+        <target ref="id129"/>
+        <label kind="guard" x="-552" y="-152">V &lt;= 0</label>
+    </transition>
+    <transition id="id131">
+        <source ref="id128"/>
+        <target ref="id122"/>
+    </transition>
+    <transition id="id132">
+        <source ref="id125"/>
+        <target ref="id128"/>
+        <label kind="guard" x="-9" y="-204">!needsTurning</label>
+        <label kind="assignment" x="8" y="-187">tUpd=0</label>
+    </transition>
+    <transition id="id133">
+        <source ref="id127"/>
+        <target ref="id120"/>
+        <nail x="-459" y="-34"/>
+        <nail x="-459" y="-101"/>
+    </transition>
+    <transition id="id134">
+        <source ref="id126"/>
+        <target ref="id121"/>
+        <nail x="-391" y="-467"/>
+        <nail x="-391" y="-382"/>
+    </transition>
+    <transition id="id135">
+        <source ref="id120"/>
+        <target ref="id127"/>
+        <label kind="guard" x="-408" y="-43">tUpd&gt;=Tpoll
+&amp;&amp;V&gt;0</label>
+        <label kind="assignment" x="-416" y="-85">t+=Tpoll, tUpd=0,
+varsUpdate(v_max-a_max*t)</label>
+    </transition>
+    <transition id="id136">
+        <source ref="id121"/>
+        <target ref="id126"/>
+        <label kind="guard" x="-595" y="-501">tUpd&gt;=Tpoll
+&amp;&amp;V&lt;v_max</label>
+        <label kind="assignment" x="-595" y="-459">t+=Tpoll, tUpd=0,
+varsUpdate(a_max*t),
+plan_traj()</label>
+    </transition>
+    <transition id="id137">
+        <source ref="id124"/>
+        <target ref="id120"/>
+        <label kind="synchronisation" x="-170" y="-152">stop_r_follow[id-1]?</label>
+        <label kind="assignment" x="-25" y="-153">tUpd=0, t=0</label>
+        <nail x="212" y="-135"/>
+    </transition>
+    <transition id="id138">
+        <source ref="id124"/>
+        <target ref="id122"/>
+        <label kind="guard" x="-42" y="-374">Th&gt;=turn_limit</label>
+        <label kind="assignment" x="-42" y="-348">tUpd = 0, Th = 0,
+needsTurning = false,
+plan_traj()</label>
+        <nail x="212" y="-348"/>
+        <nail x="-161" y="-348"/>
+    </transition>
+    <transition id="id139">
+        <source ref="id125"/>
+        <target ref="id124"/>
+        <label kind="guard" x="85" y="-263">needsTurning</label>
+        <label kind="assignment" x="111" y="-246">Th=0, turn_limit = fabs(ort * PI / 180)</label>
+    </transition>
+    <transition id="id140">
+        <source ref="id122"/>
+        <target ref="id125"/>
+        <label kind="guard" x="-127" y="-280">tUpd&gt;=Tpoll</label>
+        <label kind="assignment" x="-127" y="-263">varsUpdate(v_max),
+plan_traj()</label>
+    </transition>
+    <transition id="id141">
+        <source ref="id120"/>
+        <target ref="id121"/>
+        <label kind="synchronisation" x="-416" y="-289">start_r_follow[id-1]?</label>
+        <label kind="assignment" x="-416" y="-272">t=0, tUpd=0,
+plan_traj()</label>
+    </transition>
+    <transition id="id142">
+        <source ref="id121"/>
+        <target ref="id120"/>
+        <label kind="synchronisation" x="-603" y="-204">stop_r_follow[id-1]?</label>
+        <label kind="assignment" x="-603" y="-187">t=0, tUpd=0</label>
+        <nail x="-476" y="-314"/>
+        <nail x="-476" y="-177"/>
+    </transition>
+    <transition id="id143">
+        <source ref="id129"/>
+        <target ref="id119"/>
+        <label kind="synchronisation" x="-697" y="-221">rf_still!</label>
+        <label kind="assignment" x="-697" y="-204">t=0,
+tUpd = 0,
+V=0</label>
+    </transition>
+    <transition id="id144">
+        <source ref="id122"/>
+        <target ref="id120"/>
+        <label kind="synchronisation" x="-374" y="-195">stop_r_follow[id-1]?</label>
+        <label kind="assignment" x="-365" y="-178">tUpd=0, t=0</label>
+        <nail x="-161" y="-186"/>
+    </transition>
+    <transition id="id145">
+        <source ref="id121"/>
+        <target ref="id122"/>
+        <label kind="guard" x="-314" y="-348">V &gt;= v_max</label>
+        <label kind="assignment" x="-195" y="-408">t+=Tpoll,
+tUpd=0,
+V=v_max,
+plan_traj()</label>
+        <nail x="-161" y="-348"/>
+    </transition>
+    <transition id="id146">
+        <source ref="id119"/>
+        <target ref="id121"/>
+        <label kind="synchronisation" x="-586" y="-374">start_r_follow[id-1]?</label>
+        <label kind="assignment" x="-586" y="-348">t=0, tUpd=0,
+plan_traj()</label>
+    </transition>
+    <transition id="id147">
+        <source ref="id123"/>
+        <target ref="id119"/>
+        <label kind="assignment" x="-824" y="-348">initRobot()</label>
+    </transition>
+</template>
+<template>
+        <name>Robot_pick</name>
+        <parameter>int id</parameter>
+        <declaration>clock t;
+
+void initRobot(){
+    for (i : int[0,N_R-1]){
+        for (j : int[0,N_ITEMS-1]){
+            robot_inventory[i][j] = 0;
+        }
+    }
+}
+</declaration>
+        <location id="id138" x="-416" y="272">
+            <name x="-426" y="238">Init</name>
+            <committed/>
+        </location>
+        <location id="id139" x="-204" y="272">
+            <name x="-246" y="246">idle</name>
+        </location>
+        <location id="id140" x="68" y="272">
+            <name x="59" y="238">starting</name>
+            <label kind="invariant" x="59" y="289">t &lt;= 10</label>
+        </location>
+        <location id="id141" x="-76" y="408">
+            <name x="-178" y="399">stopping</name>
+        </location>
+        <init ref="id138"/>
+        <transition id="id142">
+            <source ref="id140"/>
+            <target ref="id139"/>
+            <label kind="synchronisation" x="-127" y="110">stop_r_pick[id-1]?</label>
+            <nail x="-68" y="136"/>
+        </transition>
+        <transition id="id143">
+            <source ref="id140"/>
+            <target ref="id141"/>
+            <label kind="guard" x="8" y="331">t &gt;= 5 and
+robPositionX[id-1] &lt;= resources_X[robot_res_to_pick[id-1]]+30 and
+robPositionX[id-1] &gt;= resources_X[robot_res_to_pick[id-1]]-30 and
+robPositionY[id-1] &lt;= resources_Y[robot_res_to_pick[id-1]]+30 and
+robPositionY[id-1] &gt;= resources_Y[robot_res_to_pick[id-1]]-30</label>
+            <label kind="assignment" x="8" y="433">robot_inventory[id-1][robot_res_to_pick[id-1]] += 1</label>
+        </transition>
+        <transition id="id144">
+            <source ref="id141"/>
+            <target ref="id139"/>
+            <label kind="synchronisation" x="-246" y="365">stop_r_pick[id-1]?</label>
+        </transition>
+        <transition id="id145">
+            <source ref="id139"/>
+            <target ref="id140"/>
+            <label kind="synchronisation" x="-187" y="238">start_r_pick[id-1]?</label>
+            <label kind="assignment" x="-144" y="272">t=0</label>
+        </transition>
+        <transition id="id146">
+            <source ref="id138"/>
+            <target ref="id139"/>
+            <label kind="assignment" x="-398" y="272">initRobot()</label>
+        </transition>
+    </template>
+<template>
+    <name>Robot_deposit</name>
+    <parameter>int id</parameter>
+    <declaration>clock t;
+
+
+</declaration>
+    <location id="id147" x="-450" y="34">
+        <name x="-460" y="0">Init</name>
+        <committed/>
+    </location>
+    <location id="id148" x="-238" y="34">
+        <name x="-280" y="8">idle</name>
+    </location>
+    <location id="id149" x="34" y="34">
+        <name x="25" y="0">starting</name>
+        <label kind="invariant" x="25" y="51">t &lt;= 5</label>
+    </location>
+    <location id="id150" x="-110" y="170">
+        <name x="-212" y="161">stopping</name>
+    </location>
+    <init ref="id147"/>
+    <transition id="id151">
+        <source ref="id149"/>
+        <target ref="id148"/>
+        <label kind="synchronisation" x="-161" y="-127">stop_r_deposit[id-1]?</label>
+        <nail x="-102" y="-102"/>
+    </transition>
+    <transition id="id152">
+        <source ref="id149"/>
+        <target ref="id150"/>
+        <label kind="guard" x="-25" y="93">t &gt;= 5 and
+robot_inventory[id-1][robot_res_to_deposit[id-1]] &gt; 0</label>
+        <label kind="assignment" x="-34" y="153">robot_inventory[id-1][robot_res_to_deposit[id-1]] -= 1</label>
+    </transition>
+    <transition id="id153">
+        <source ref="id150"/>
+        <target ref="id148"/>
+        <label kind="synchronisation" x="-331" y="127">stop_r_deposit[id-1]?</label>
+    </transition>
+    <transition id="id154">
+        <source ref="id148"/>
+        <target ref="id149"/>
+        <label kind="synchronisation" x="-187" y="8">start_r_deposit[id-1]?</label>
+        <label kind="assignment" x="-178" y="34">t=0</label>
+    </transition>
+    <transition id="id155">
+        <source ref="id147"/>
+        <target ref="id148"/>
+    </transition>
+</template>
+
+</declaration>
+	<system>
+// Mission Definition
+
+hi_1 = Human_idle(1);
+hm_1 = Human_moveTo(1, 26.0);
+rm_1 = Robot_moveTo(1, 26.0, 26.0);
+rf_1 = Robot_follow(1, 26.0, 26.0);
+rp_1 = Robot_pick(1);
+rd_1 = Robot_deposit(1);
+
+
+// Pattern Definition
+
+Coffee_Delivery = Coffee_Delivery_orchestrator(1);
+Coffee_Delivery_robot_def = Coffee_Delivery_robot(1, 1);
+Coffee_Delivery_employee_def = Coffee_Delivery_employee(1, 1);
+
+
+// ======================================================
+
+system
+
+hi_1,
+hm_1,
+rm_1,
+rf_1,
+rp_1,
+rd_1,
+
+
+Coffee_Delivery,
+Coffee_Delivery_robot_def,
+Coffee_Delivery_employee_def
+
+;
+</system>
+	<queries>
+        <query>
+	<formula>simulate[&lt;=700]{Coffee_Delivery_robot_def.s1_start, Coffee_Delivery_robot_def.s1_end, Coffee_Delivery_robot_def.s2_start, Coffee_Delivery_robot_def.s2_end, Coffee_Delivery_robot_def.s3_start, Coffee_Delivery_robot_def.s3_end, Coffee_Delivery_robot_def.s4_start, Coffee_Delivery_robot_def.s4_end, Coffee_Delivery_robot_def.s5_start, Coffee_Delivery_robot_def.s5_end, Coffee_Delivery.end}</formula>
+</query>
+
+<query>
+	<formula>simulate[&lt;=700]{Coffee_Delivery_employee_def.s1_start, Coffee_Delivery_employee_def.s1_idle, Coffee_Delivery_employee_def.s2_start, Coffee_Delivery_employee_def.s2_idle, Coffee_Delivery_employee_def.s3_start, Coffee_Delivery_employee_def.s3_idle, Coffee_Delivery_employee_def.s4_start, Coffee_Delivery_employee_def.s4_end, Coffee_Delivery_employee_def.s5_start, Coffee_Delivery_employee_def.s5_idle, Coffee_Delivery.end}</formula>
+</query>
+
+<query>
+	<formula>Pr[&lt;=700] (&lt;&gt; Coffee_Delivery.end)</formula>
+	<comment>Check if the whole pattern ends within 700 time unit</comment>
+</query>
+
+<query>
+	<formula>simulate[&lt;=700]{humanPositionX[0], humanPositionY[0], robPositionX[0], robPositionY[0], batteryCharge[0], Coffee_Delivery.end}</formula>
+	<comment>Check the position of all the agent in the pattern for 700 time unit</comment>
+</query>
+
+<query>
+	<formula>simulate[&lt;=700]{robot_inventory[0][0], Coffee_Delivery.end*2}</formula>
+	<comment>Check quantity of each item for each robot</comment>
+</query>
+
+<query>
+	<formula>simulate[&lt;=700]{kitchen[0], kitchen[1], loading_area[0], loading_area[1]}</formula>
+	<comment>Plot the position of each location in the pattern</comment>
+</query>
+
+<query>
+	<formula>simulate[&lt;=700]{rm_1.idle, rf_1.idle, rp_1.idle, rd_1.idle}</formula>
+	<comment></comment>
+</query>
+
+<query>
+	<formula>Pr[&lt;=700](&lt;&gt;!rm_1.idle || !rf_1.idle || !rp_1.idle || !rd_1.idle)</formula>
+	<comment></comment>
+</query>
+
+<query>
+	<formula>Pr[&lt;=700]([] (Coffee_Delivery.end imply (rm_1.idle &amp;&amp; rf_1.idle &amp;&amp; rp_1.idle &amp;&amp; rd_1.idle)))</formula>
+	<comment></comment>
+</query>
+
+<query>
+	<formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - kitchen[0], 2) + pow(robPositionY[0] - kitchen[1], 2) &lt;= 900 )</formula>
+	<comment>Check if robot Robot reaches kitchen (within 30 units)</comment>
+</query>
+
+<query>
+	<formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - loading_area[0], 2) + pow(robPositionY[0] - loading_area[1], 2) &lt;= 900 )</formula>
+	<comment>Check if robot Robot reaches loading_area (within 30 units)</comment>
+</query>
+
+<query>
+	<formula>Pr[&lt;=700] (&lt;&gt; pow(humanPositionX[0] - loading_area[0], 2) + pow(humanPositionY[0] - loading_area[1], 2) &lt;= 900 )</formula>
+	<comment>Check if human Employee reaches loading_area (within 30 units)</comment>
+</query>
+
+<query>
+	<formula>Pr[&lt;=700] (&lt;&gt; !isValidPosition(humanPositionX[0], humanPositionY[0]))</formula>
+	<comment>Check if human Employee enters an invalid position (e.g. collision or obstacle)</comment>
+</query>
+
+<query>
+	<formula>Pr[&lt;=700] (&lt;&gt; !isValidPosition(robPositionX[0], robPositionY[0]))</formula>
+	<comment>Check if robot Robot enters an invalid position (e.g. collision or obstacle)</comment>
+</query>
+
+<query>
+	<formula>Pr[&lt;=700] (&lt;&gt; currP > 2)</formula>
+	<comment>Check if pattern is executed more then once</comment>
+</query>
+
+	</queries>
+</nta>

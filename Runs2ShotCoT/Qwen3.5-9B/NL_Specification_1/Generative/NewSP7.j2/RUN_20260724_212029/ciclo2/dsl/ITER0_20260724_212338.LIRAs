@@ -1,0 +1,18 @@
+Coffee_Delivery
+
+agents:
+	robots: Robot
+
+locations: bedroom, kitchen, office
+resources: coffee
+
+Robot:
+	1: moveTo kitchen if position(Robot,kitchen)!=location_X[0] else stop
+	2: moveTo bedroom if position(Robot,bedroom)!=location_X[0] else stop
+	3: moveTo kitchen until position(Robot,kitchen)==location_X[0]
+	4: moveTo bedroom until position(Robot,bedroom)==location_X[0]
+	5: moveTo office else stop
+	6: moveTo kitchen until dist(Robot,Kitchen)<=100
+	7: moveTo bedroom until dist(Robot,Bedroom)<=100
+	8: moveTo office until dist(Robot,Office)<=100
+	9: moveTo kitchen if position(Robot,kitchen)==location_X[0] else stop

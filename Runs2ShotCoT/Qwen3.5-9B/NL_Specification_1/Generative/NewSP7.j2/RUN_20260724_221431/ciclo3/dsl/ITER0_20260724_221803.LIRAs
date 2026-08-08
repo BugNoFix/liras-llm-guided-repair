@@ -1,0 +1,19 @@
+Coffee_Delivery
+
+agents:
+	humans: Employee
+	robots: Robot1
+
+locations: kitchen, bedroom
+resources: coffee
+
+Robot1:
+	1: moveTo kitchen
+	2: pick coffee
+	3: moveTo bedroom until position(Employee, kitchen)
+Employee:
+	1: moveTo kitchen else stop
+	2: follow Robot1
+
+Conclusion:
+<div>(position(Employee, kitchen) && position(Robot1, bedroom) && soc(Robot1) > 0)</div>

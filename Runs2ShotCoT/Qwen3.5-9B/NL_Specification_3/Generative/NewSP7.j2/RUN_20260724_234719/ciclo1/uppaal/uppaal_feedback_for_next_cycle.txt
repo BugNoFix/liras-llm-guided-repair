@@ -1,0 +1,59 @@
+### WHAT TO FIX
+Check the diagnostics below and repair the LIRAs model or generated queries accordingly.
+
+### FAILED QUERIES
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:82: [error] Unknown identifier: storage_area.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:83: [error] Unknown identifier: storage_area.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:82: [error] Unknown identifier: storage_area.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:83: [error] Unknown identifier: storage_area.
+
+Query None
+Failure kind: verifyta_error
+Reason: UPPAAL reported an error while evaluating this property/query.
+UPPAAL output:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:82: [error] Unknown identifier: storage_area.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:83: [error] Unknown identifier: storage_area.
+Related diagnostics:
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:82: [error] Unknown identifier: storage_area.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:83: [error] Unknown identifier: storage_area.
+
+### VERIFYTA DIAGNOSTICS
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:82: [error] Unknown identifier: storage_area.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/Qwen3.5-9B/NL_Specification_3/Generative/NewSP7.j2/RUN_20260724_234719/ciclo1/xml/ITER0_20260725_000120.xml:/nta/declaration:83: [error] Unknown identifier: storage_area.
+### INCORRECT LIRAS CODE
+Coffee_Pipeline
+
+agents:
+	robots: Robot1, Robot2
+
+locations: loading_area, surface_texturization_start, surface_texturization_end, diffusion_start, diffusion_end, laser_start, laser_end, etching_start, etching_end, annealing_start, annealing_end, perc_start, perc_end, rear_top_paste_start, rear_top_paste_end, laser_slotting_start, laser_slotting_end, storage_area
+resources: raw_materials, texturized_materials, diffused_materials, lasered_materials, etched_materials, annealed_materials, perc_cells, pasted_cells, slotted_cells
+
+Robot1:
+	1: moveTo surface_texturization_start
+	pick texturized_materials
+	moveTo surface_texturization_end
+	2: moveTo laser_start
+	moveTo laser_end
+	3: moveTo laser_slotting_start
+	pick slotted_cells
+	4: moveTo laser_slotting_end
+	moveTo loading_area
+	deposit slotted_cells
+
+Robot2:
+	1: moveTo surface_texturization_start
+	pick texturized_materials
+	moveTo surface_texturization_end
+	2: moveTo laser_start
+	moveTo laser_end
+	3: moveTo laser_slotting_start
+	pick slotted_cells
+	4: moveTo laser_slotting_end
+	moveTo loading_area
+	deposit slotted_cells
