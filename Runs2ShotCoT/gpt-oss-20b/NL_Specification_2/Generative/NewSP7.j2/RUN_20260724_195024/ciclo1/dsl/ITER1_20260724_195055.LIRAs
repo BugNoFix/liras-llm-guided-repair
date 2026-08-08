@@ -1,0 +1,58 @@
+Coffee_Delivery
+agents:
+	robots: Robot
+locations: office001, office004, coffee_room
+resources: coffee
+Robot:
+	1: moveTo coffee_room
+	pick coffee
+	moveTo office001
+	deposit coffee
+	moveTo coffee_room
+	pick coffee
+	moveTo office004
+	deposit coffee
+Factory_Pipeline
+agents:
+	robots: Robot1, Robot2
+locations: warehouse, surface_texturization_start, surface_texturization_end, laser_start, laser_end, loading_area
+resources: raw_materials, texturized_materials, lasered_materials
+Robot1:
+	1: moveTo warehouse
+	2: pick raw_materials
+	3: moveTo surface_texturization_start
+	4: deposit raw_materials
+	5: moveTo surface_texturization_end
+	6: pick texturized_materials
+	7: moveTo laser_start
+	8: deposit texturized_materials
+	9: moveTo laser_end
+	10: pick lasered_materials
+	11: moveTo loading_area
+	12: deposit lasered_materials
+Robot2:
+	3: moveTo warehouse
+	pick raw_materials
+	moveTo surface_texturization_start
+	deposit raw_materials
+	4: moveTo surface_texturization_end
+	pick textized_materials
+	5: moveTo laser_start
+	deposit textized_materials
+	6: moveTo laser_end
+	pick lasered_materials
+	7: moveTo loading_area
+	deposit lasered_materials
+user_guided_transport
+agents:
+	humans: Human
+	robots: Robot
+locations: bedroom, kitchen
+resources: object
+Robot:
+	1: moveTo bedroom
+	2: pick object
+	4: follow Human (kitchen)
+Human:
+	1: moveTo bedroom
+	3: moveTo kitchen

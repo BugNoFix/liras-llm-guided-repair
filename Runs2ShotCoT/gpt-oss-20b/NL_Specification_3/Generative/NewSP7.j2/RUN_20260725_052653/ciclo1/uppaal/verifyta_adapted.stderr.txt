@@ -1,0 +1,4 @@
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_3/Generative/NewSP7.j2/RUN_20260725_052653/ciclo1/xml/ITER0_20260725_052705.xml:/nta/declaration:82: [error] Unknown identifier: lasers_start.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_3/Generative/NewSP7.j2/RUN_20260725_052653/ciclo1/xml/ITER0_20260725_052705.xml:/nta/declaration:82: [error] Unknown identifier: lasers_end.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_3/Generative/NewSP7.j2/RUN_20260725_052653/ciclo1/xml/ITER0_20260725_052705.xml:/nta/declaration:83: [error] Unknown identifier: lasers_start.
+/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gpt-oss-20b/NL_Specification_3/Generative/NewSP7.j2/RUN_20260725_052653/ciclo1/xml/ITER0_20260725_052705.xml:/nta/declaration:83: [error] Unknown identifier: lasers_end.

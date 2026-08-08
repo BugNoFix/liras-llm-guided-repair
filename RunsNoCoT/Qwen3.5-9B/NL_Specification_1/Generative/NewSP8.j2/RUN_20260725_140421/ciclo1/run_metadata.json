@@ -1,0 +1,223 @@
+{
+  "run_id": "20260725_140422",
+  "run_started_at": "2026-07-25T14:04:22.045119",
+  "generation_provider": "huggingface",
+  "repair_provider": "huggingface",
+  "query_provider": "huggingface",
+  "project_id": null,
+  "location": "global",
+  "system_prompt": "Generative/NewSP8.j2",
+  "shots": 0,
+  "scenario": "NL_Specification_1.txt",
+  "repair_prompt": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/SPs/Repair/NewSPR7.j2",
+  "generation_model": "Qwen/Qwen3.5-9B",
+  "generation_temperature": 1.0,
+  "generation_max_output_tokens": 16384,
+  "empty_generation_max_retries": 3,
+  "llm_seed": 600,
+  "block_hf_thinking": false,
+  "repair_model": "Qwen/Qwen3.5-9B",
+  "repair_temperature": 0.35,
+  "repair_max_output_tokens": 16384,
+  "empty_query_adaptation_max_retries": 2,
+  "reasoning_effort": null,
+  "effective_reasoning_effort": {
+    "generation": null,
+    "repair": null,
+    "query": null
+  },
+  "hf_thinking_block_skipped": {
+    "generation": false,
+    "repair": false,
+    "query": false
+  },
+  "qwen_disable_thinking_extra_body": {
+    "generation": false,
+    "repair": false,
+    "query": false
+  },
+  "glm_disable_thinking_extra_body": {
+    "generation": false,
+    "repair": false,
+    "query": false
+  },
+  "repair_shots": 0,
+  "use_generated_dsl_cache": false,
+  "generated_dsl_source": "dsl_folder",
+  "generated_dsl_cache_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/GeneratedDSL/NL_Specification_1/Generative/NewSP8.j2/shots_0.LIRAs",
+  "compiler_jar": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras_compiler.jar",
+  "max_iterations": 11,
+  "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/RunsNoCoT/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_140421/ciclo1",
+  "results_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/RunsNoCoT/Qwen3.5-9B",
+  "dsl_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/RunsNoCoT/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_140421/ciclo1/dsl",
+  "compiler_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/RunsNoCoT/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_140421/ciclo1/compiler",
+  "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/RunsNoCoT/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_140421/ciclo1/queries",
+  "prompt_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/RunsNoCoT/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_140421/ciclo1/llm_prompts.jsonl",
+  "response_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/RunsNoCoT/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_140421/ciclo1/llm_responses.jsonl",
+  "hf_debug_response_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/RunsNoCoT/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_140421/ciclo1/hf_debug_responses.jsonl",
+  "pipeline_cycle": 1,
+  "run_dir_override": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/RunsNoCoT/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_140421/ciclo1",
+  "uppaal_feedback_included": false,
+  "uppaal_feedback_chars": 0,
+  "iterations": [
+    {
+      "iteration": 0,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/RunsNoCoT/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_140421/ciclo1/dsl/ITER0_20260725_140503.LIRAs",
+      "compiler_output_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/RunsNoCoT/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_140421/ciclo1/compiler/ITER0_20260725_140503.LIRAs.compiler.txt",
+      "validated": true,
+      "is_valid": false,
+      "validation": {
+        "returncode": 1,
+        "timed_out": false,
+        "java_missing": false,
+        "jar_missing": false,
+        "dsl_missing": false
+      },
+      "compiler_feedback_chars": 1109,
+      "compiler_error_score": {
+        "feedback_chars": 1109,
+        "lines": 14,
+        "error_lines": 8,
+        "warning_lines": 4,
+        "score": 93
+      }
+    }
+  ],
+  "telemetry": {
+    "llm_calls": 1,
+    "prompt_chars_total": 232,
+    "response_chars_total": 166,
+    "prompt_tokens_total": 2156,
+    "completion_tokens_total": 748,
+    "total_tokens_total": 2904,
+    "token_usage_available_calls": 1,
+    "last_call": {
+      "kind": "generate",
+      "provider": "huggingface",
+      "timestamp": "2026-07-25T14:05:03.043961",
+      "finish_reason": "stop",
+      "seed": 600,
+      "safety_ratings": [],
+      "prompt_chars": 232,
+      "response_chars": 166,
+      "prompt_tokens": 2156,
+      "completion_tokens": 748,
+      "total_tokens": 2904,
+      "token_usage_available": true
+    }
+  },
+  "llm_call_history": [
+    {
+      "kind": "generate",
+      "provider": "huggingface",
+      "timestamp": "2026-07-25T14:05:03.043961",
+      "finish_reason": "stop",
+      "seed": 600,
+      "safety_ratings": [],
+      "prompt_chars": 232,
+      "response_chars": 166,
+      "prompt_tokens": 2156,
+      "completion_tokens": 748,
+      "total_tokens": 2904,
+      "token_usage_available": true
+    }
+  ],
+  "status": "crashed",
+  "run_finished_at": "2026-07-25T14:42:46.530108",
+  "summary": {
+    "iterations_recorded": 1,
+    "validations_attempted": 1,
+    "compiler_failures": 1,
+    "compiler_successes": 0,
+    "setup_errors": 0,
+    "first_success_iteration": null,
+    "final_success_dsl_path": null,
+    "total_compiler_feedback_chars": 1109,
+    "llm_calls": 1,
+    "prompt_tokens_total": 2156,
+    "completion_tokens_total": 748,
+    "total_tokens_total": 2904,
+    "token_usage_available_calls": 1
+  },
+  "updated_at": "2026-07-25T14:42:46.533942",
+  "resolved_generation_shots": [],
+  "generation_shot_count": 0,
+  "generation_attempts": [
+    {
+      "attempt": 1,
+      "response_text_chars": 166,
+      "empty_response": false,
+      "accepted": true,
+      "finish_reason": "stop"
+    }
+  ],
+  "repair": {
+    "resolved_repair_shots": [],
+    "repair_shot_count": 0,
+    "repair_chat_initialized_at": "2026-07-25T14:05:03.769256",
+    "repair_prompt_template_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/SPs/Repair/NewSPR7.j2",
+    "repair_system_prompt_chars": 8190,
+    "repair_stateless": true,
+    "repair_uses_server_chat": false,
+    "repair_temperature": 0.35,
+    "llm_seed": 600
+  },
+  "interrupted": true,
+  "breaking_error": {
+    "type": "InternalServerError",
+    "message": "<!DOCTYPE html>\n<html class=\"\" lang=\"en\">\n<head>\n    <meta charset=\"utf-8\" />\n    <meta\n            name=\"viewport\"\n            content=\"width=device-width, initial-scale=1.0, user-scalable=no\"\n    />\n    <meta\n            name=\"description\"\n            content=\"We're on a journey to advance and democratize artificial intelligence through open source and open science.\"\n    />\n    <meta property=\"fb:app_id\" content=\"1321688464574422\" />\n    <meta name=\"twitter:card\" content=\"summary_large_image\" />\n    <meta name=\"twitter:site\" content=\"@huggingface\" />\n    <meta\n            property=\"og:title\"\n            content=\"Hugging Face - The AI community building the future.\"\n    />\n    <meta property=\"og:type\" content=\"website\" />\n\n    <title>Hugging Face - The AI community building the future.</title>\n    <style>\n        body {\n            margin: 0;\n        }\n\n        main {\n            background-color: white;\n            min-height: 100vh;\n            padding: 7rem 1rem 8rem 1rem;\n            text-align: center;\n            font-family: Source Sans Pro, ui-sans-serif, system-ui, -apple-system,\n            BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans,\n            sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol,\n            Noto Color Emoji;\n        }\n\n        img {\n            width: 6rem;\n            height: 6rem;\n            margin: 0 auto 1rem;\n        }\n\n        h1 {\n            font-size: 3.75rem;\n            line-height: 1;\n            color: rgba(31, 41, 55, 1);\n            font-weight: 700;\n            box-sizing: border-box;\n            margin: 0 auto;\n        }\n\n        p, a {\n            color: rgba(107, 114, 128, 1);\n            font-size: 1.125rem;\n            line-height: 1.75rem;\n            max-width: 28rem;\n            box-sizing: border-box;\n            margin: 0 auto;\n        }\n\n        .dark main {\n            background-color: rgb(11, 15, 25);\n        }\n        .dark h1 {\n            color: rgb(209, 213, 219);\n        }\n        .dark p, .dark a {\n            color: rgb(156, 163, 175);\n        }\n    </style>\n    <script>\n        // On page load or when changing themes, best to add inline in `head` to avoid FOUC\n        const key = \"_tb_global_settings\";\n        let theme = window.matchMedia(\"(prefers-color-scheme: dark)\").matches\n            ? \"dark\"\n            : \"light\";\n        try {\n            const storageTheme = JSON.parse(window.localStorage.getItem(key)).theme;\n            if (storageTheme) {\n                theme = storageTheme === \"dark\" ? \"dark\" : \"light\";\n            }\n        } catch (e) {}\n        if (theme === \"dark\") {\n            document.documentElement.classList.add(\"dark\");\n        } else {\n            document.documentElement.classList.remove(\"dark\");\n        }\n    </script>\n</head>\n\n<body>\n<main>\n    <img\n            src=\"https://cdn-media.huggingface.co/assets/huggingface_logo.svg\"\n            alt=\"\"\n    />\n    <div>\n        <h1>504</h1>\n        <p>Gateway Timeout</p>\n    </div>\n</main>\n</body>\n</html>",
+    "when": "2026-07-25T14:42:46.514992",
+    "where": "run_automated_session/exception",
+    "iteration": 0,
+    "traceback": "Traceback (most recent call last):\n  File \"/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/dsl_generator.py\", line 2986, in run_automated_session\n    repair_result = self.repair_with_compiler_output(\n        previous_dsl=dsl_code,\n    ...<2 lines>...\n        repair_shots=config.get('repair_shots'),\n    )\n  File \"/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/dsl_generator.py\", line 2173, in repair_with_compiler_output\n    response = self._call_with_backoff(\n        lambda: self._call_non_gemini_chat(\n    ...<11 lines>...\n        provider=provider_name,\n    )\n  File \"/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/dsl_generator.py\", line 692, in _call_with_backoff\n    return func()\n  File \"/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/dsl_generator.py\", line 2174, in <lambda>\n    lambda: self._call_non_gemini_chat(\n            ~~~~~~~~~~~~~~~~~~~~~~~~~~^\n        provider=provider_name,\n        ^^^^^^^^^^^^^^^^^^^^^^^\n    ...<7 lines>...\n        kind=\"repair\",\n        ^^^^^^^^^^^^^^\n    ),\n    ^\n  File \"/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/dsl_generator.py\", line 630, in _call_non_gemini_chat\n    return self._call_groq_chat(\n           ~~~~~~~~~~~~~~~~~~~~^\n        provider=provider_name,\n        ^^^^^^^^^^^^^^^^^^^^^^^\n    ...<7 lines>...\n        kind=kind,\n        ^^^^^^^^^^\n    )\n    ^\n  File \"/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/dsl_generator.py\", line 505, in _call_groq_chat\n    return client.chat.completions.create(**params)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^\n  File \"/opt/miniconda3/lib/python3.13/site-packages/openai/_utils/_utils.py\", line 287, in wrapper\n    return func(*args, **kwargs)\n  File \"/opt/miniconda3/lib/python3.13/site-packages/openai/resources/chat/completions/completions.py\", line 1211, in create\n    return self._post(\n           ~~~~~~~~~~^\n        \"/chat/completions\",\n        ^^^^^^^^^^^^^^^^^^^^\n    ...<47 lines>...\n        stream_cls=Stream[ChatCompletionChunk],\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/opt/miniconda3/lib/python3.13/site-packages/openai/_base_client.py\", line 1314, in post\n    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))\n                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/miniconda3/lib/python3.13/site-packages/openai/_base_client.py\", line 1087, in request\n    raise self._make_status_error_from_response(err.response) from None\nopenai.InternalServerError: <!DOCTYPE html>\n<html class=\"\" lang=\"en\">\n<head>\n    <meta charset=\"utf-8\" />\n    <meta\n            name=\"viewport\"\n            content=\"width=device-width, initial-scale=1.0, user-scalable=no\"\n    />\n    <meta\n            name=\"description\"\n            content=\"We're on a journey to advance and democratize artificial intelligence through open source and open science.\"\n    />\n    <meta property=\"fb:app_id\" content=\"1321688464574422\" />\n    <meta name=\"twitter:card\" content=\"summary_large_image\" />\n    <meta name=\"twitter:site\" content=\"@huggingface\" />\n    <meta\n            property=\"og:title\"\n            content=\"Hugging Face - The AI community building the future.\"\n    />\n    <meta property=\"og:type\" content=\"website\" />\n\n    <title>Hugging Face - The AI community building the future.</title>\n    <style>\n        body {\n            margin: 0;\n        }\n\n        main {\n            background-color: white;\n            min-height: 100vh;\n            padding: 7rem 1rem 8rem 1rem;\n            text-align: center;\n            font-family: Source Sans Pro, ui-sans-serif, system-ui, -apple-system,\n            BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans,\n            sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol,\n            Noto Color Emoji;\n        }\n\n        img {\n            width: 6rem;\n            height: 6rem;\n            margin: 0 auto 1rem;\n        }\n\n        h1 {\n            font-size: 3.75rem;\n            line-height: 1;\n            color: rgba(31, 41, 55, 1);\n            font-weight: 700;\n            box-sizing: border-box;\n            margin: 0 auto;\n        }\n\n        p, a {\n            color: rgba(107, 114, 128, 1);\n            font-size: 1.125rem;\n            line-height: 1.75rem;\n            max-width: 28rem;\n            box-sizing: border-box;\n            margin: 0 auto;\n        }\n\n        .dark main {\n            background-color: rgb(11, 15, 25);\n        }\n        .dark h1 {\n            color: rgb(209, 213, 219);\n        }\n        .dark p, .dark a {\n            color: rgb(156, 163, 175);\n        }\n    </style>\n    <script>\n        // On page load or when changing themes, best to add inline in `head` to avoid FOUC\n        const key = \"_tb_global_settings\";\n        let theme = window.matchMedia(\"(prefers-color-scheme: dark)\").matches\n            ? \"dark\"\n            : \"light\";\n        try {\n            const storageTheme = JSON.parse(window.localStorage.getItem(key)).theme;\n            if (storageTheme) {\n                theme = storageTheme === \"dark\" ? \"dark\" : \"light\";\n            }\n        } catch (e) {}\n        if (theme === \"dark\") {\n            document.documentElement.classList.add(\"dark\");\n        } else {\n            document.documentElement.classList.remove(\"dark\");\n        }\n    </script>\n</head>\n\n<body>\n<main>\n    <img\n            src=\"https://cdn-media.huggingface.co/assets/huggingface_logo.svg\"\n            alt=\"\"\n    />\n    <div>\n        <h1>504</h1>\n        <p>Gateway Timeout</p>\n    </div>\n</main>\n</body>\n</html>\n"
+  },
+  "stages": [
+    {
+      "stage": "dsl_generation",
+      "result": "failed",
+      "failure_type": "execution",
+      "failure_reason": "<!DOCTYPE html>\n<html class=\"\" lang=\"en\">\n<head>\n    <meta charset=\"utf-8\" />\n    <meta\n            name=\"viewport\"\n            content=\"width=device-width, initial-scale=1.0, user-scalable=no\"\n    />\n    <meta\n            name=\"description\"\n            content=\"We're on a journey to advance and democratize artificial intelligence through open source and open science.\"\n    />\n    <meta property=\"fb:app_id\" content=\"1321688464574422\" />\n    <meta name=\"twitter:card\" content=\"summary_large_image\" />\n    <meta name=\"twitter:site\" content=\"@huggingface\" />\n    <meta\n            property=\"og:title\"\n            content=\"Hugging Face - The AI community building the future.\"\n    />\n    <meta property=\"og:type\" content=\"website\" />\n\n    <title>Hugging Face - The AI community building the future.</title>\n    <style>\n        body {\n            margin: 0;\n        }\n\n        main {\n            background-color: white;\n            min-height: 100vh;\n            padding: 7rem 1rem 8rem 1rem;\n            text-align: center;\n            font-family: Source Sans Pro, ui-sans-serif, system-ui, -apple-system,\n            BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans,\n            sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol,\n            Noto Color Emoji;\n        }\n\n        img {\n            width: 6rem;\n            height: 6rem;\n            margin: 0 auto 1rem;\n        }\n\n        h1 {\n            font-size: 3.75rem;\n            line-height: 1;\n            color: rgba(31, 41, 55, 1);\n            font-weight: 700;\n            box-sizing: border-box;\n            margin: 0 auto;\n        }\n\n        p, a {\n            color: rgba(107, 114, 128, 1);\n            font-size: 1.125rem;\n            line-height: 1.75rem;\n            max-width: 28rem;\n            box-sizing: border-box;\n            margin: 0 auto;\n        }\n\n        .dark main {\n            background-color: rgb(11, 15, 25);\n        }\n        .dark h1 {\n            color: rgb(209, 213, 219);\n        }\n        .dark p, .dark a {\n            color: rgb(156, 163, 175);\n        }\n    </style>\n    <script>\n        // On page load or when changing themes, best to add inline in `head` to avoid FOUC\n        const key = \"_tb_global_settings\";\n        let theme = window.matchMedia(\"(prefers-color-scheme: dark)\").matches\n            ? \"dark\"\n            : \"light\";\n        try {\n            const storageTheme = JSON.parse(window.localStorage.getItem(key)).theme;\n            if (storageTheme) {\n                theme = storageTheme === \"dark\" ? \"dark\" : \"light\";\n            }\n        } catch (e) {}\n        if (theme === \"dark\") {\n            document.documentElement.classList.add(\"dark\");\n        } else {\n            document.documentElement.classList.remove(\"dark\");\n        }\n    </script>\n</head>\n\n<body>\n<main>\n    <img\n            src=\"https://cdn-media.huggingface.co/assets/huggingface_logo.svg\"\n            alt=\"\"\n    />\n    <div>\n        <h1>504</h1>\n        <p>Gateway Timeout</p>\n    </div>\n</main>\n</body>\n</html>",
+      "failure_details": {
+        "generator_status": "crashed",
+        "max_iterations": 11,
+        "compiler_failures": 1,
+        "compiler_successes": 0,
+        "error_type": "InternalServerError",
+        "error_message": "<!DOCTYPE html>\n<html class=\"\" lang=\"en\">\n<head>\n    <meta charset=\"utf-8\" />\n    <meta\n            name=\"viewport\"\n            content=\"width=device-width, initial-scale=1.0, user-scalable=no\"\n    />\n    <meta\n            name=\"description\"\n            content=\"We're on a journey to advance and democratize artificial intelligence through open source and open science.\"\n    />\n    <meta property=\"fb:app_id\" content=\"1321688464574422\" />\n    <meta name=\"twitter:card\" content=\"summary_large_image\" />\n    <meta name=\"twitter:site\" content=\"@huggingface\" />\n    <meta\n            property=\"og:title\"\n            content=\"Hugging Face - The AI community building the future.\"\n    />\n    <meta property=\"og:type\" content=\"website\" />\n\n    <title>Hugging Face - The AI community building the future.</title>\n    <style>\n        body {\n            margin: 0;\n        }\n\n        main {\n            background-color: white;\n            min-height: 100vh;\n            padding: 7rem 1rem 8rem 1rem;\n            text-align: center;\n            font-family: Source Sans Pro, ui-sans-serif, system-ui, -apple-system,\n            BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans,\n            sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol,\n            Noto Color Emoji;\n        }\n\n        img {\n            width: 6rem;\n            height: 6rem;\n            margin: 0 auto 1rem;\n        }\n\n        h1 {\n            font-size: 3.75rem;\n            line-height: 1;\n            color: rgba(31, 41, 55, 1);\n            font-weight: 700;\n            box-sizing: border-box;\n            margin: 0 auto;\n        }\n\n        p, a {\n            color: rgba(107, 114, 128, 1);\n            font-size: 1.125rem;\n            line-height: 1.75rem;\n            max-width: 28rem;\n            box-sizing: border-box;\n            margin: 0 auto;\n        }\n\n        .dark main {\n            background-color: rgb(11, 15, 25);\n        }\n        .dark h1 {\n            color: rgb(209, 213, 219);\n        }\n        .dark p, .dark a {\n            color: rgb(156, 163, 175);\n        }\n    </style>\n    <script>\n        // On page load or when changing themes, best to add inline in `head` to avoid FOUC\n        const key = \"_tb_global_settings\";\n        let theme = window.matchMedia(\"(prefers-color-scheme: dark)\").matches\n            ? \"dark\"\n            : \"light\";\n        try {\n            const storageTheme = JSON.parse(window.localStorage.getItem(key)).theme;\n            if (storageTheme) {\n                theme = storageTheme === \"dark\" ? \"dark\" : \"light\";\n            }\n        } catch (e) {}\n        if (theme === \"dark\") {\n            document.documentElement.classList.add(\"dark\");\n        } else {\n            document.documentElement.classList.remove(\"dark\");\n        }\n    </script>\n</head>\n\n<body>\n<main>\n    <img\n            src=\"https://cdn-media.huggingface.co/assets/huggingface_logo.svg\"\n            alt=\"\"\n    />\n    <div>\n        <h1>504</h1>\n        <p>Gateway Timeout</p>\n    </div>\n</main>\n</body>\n</html>",
+        "abort_entire_run": false
+      },
+      "details": {
+        "iterations_recorded": 1,
+        "validations_attempted": 1,
+        "compiler_failures": 1,
+        "compiler_successes": 0,
+        "setup_errors": 0,
+        "first_success_iteration": null,
+        "final_success_dsl_path": null,
+        "total_compiler_feedback_chars": 1109,
+        "llm_calls": 1,
+        "prompt_tokens_total": 2156,
+        "completion_tokens_total": 748,
+        "total_tokens_total": 2904,
+        "token_usage_available_calls": 1
+      },
+      "artifacts": {
+        "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/RunsNoCoT/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_140421/ciclo1/llm_prompts.jsonl",
+        "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/RunsNoCoT/Qwen3.5-9B/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_140421/ciclo1/llm_responses.jsonl"
+      }
+    }
+  ],
+  "cycle_result": "failed",
+  "failed_stage": "dsl_generation",
+  "failure_type": "execution",
+  "failure_reason": "<!DOCTYPE html>\n<html class=\"\" lang=\"en\">\n<head>\n    <meta charset=\"utf-8\" />\n    <meta\n            name=\"viewport\"\n            content=\"width=device-width, initial-scale=1.0, user-scalable=no\"\n    />\n    <meta\n            name=\"description\"\n            content=\"We're on a journey to advance and democratize artificial intelligence through open source and open science.\"\n    />\n    <meta property=\"fb:app_id\" content=\"1321688464574422\" />\n    <meta name=\"twitter:card\" content=\"summary_large_image\" />\n    <meta name=\"twitter:site\" content=\"@huggingface\" />\n    <meta\n            property=\"og:title\"\n            content=\"Hugging Face - The AI community building the future.\"\n    />\n    <meta property=\"og:type\" content=\"website\" />\n\n    <title>Hugging Face - The AI community building the future.</title>\n    <style>\n        body {\n            margin: 0;\n        }\n\n        main {\n            background-color: white;\n            min-height: 100vh;\n            padding: 7rem 1rem 8rem 1rem;\n            text-align: center;\n            font-family: Source Sans Pro, ui-sans-serif, system-ui, -apple-system,\n            BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans,\n            sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol,\n            Noto Color Emoji;\n        }\n\n        img {\n            width: 6rem;\n            height: 6rem;\n            margin: 0 auto 1rem;\n        }\n\n        h1 {\n            font-size: 3.75rem;\n            line-height: 1;\n            color: rgba(31, 41, 55, 1);\n            font-weight: 700;\n            box-sizing: border-box;\n            margin: 0 auto;\n        }\n\n        p, a {\n            color: rgba(107, 114, 128, 1);\n            font-size: 1.125rem;\n            line-height: 1.75rem;\n            max-width: 28rem;\n            box-sizing: border-box;\n            margin: 0 auto;\n        }\n\n        .dark main {\n            background-color: rgb(11, 15, 25);\n        }\n        .dark h1 {\n            color: rgb(209, 213, 219);\n        }\n        .dark p, .dark a {\n            color: rgb(156, 163, 175);\n        }\n    </style>\n    <script>\n        // On page load or when changing themes, best to add inline in `head` to avoid FOUC\n        const key = \"_tb_global_settings\";\n        let theme = window.matchMedia(\"(prefers-color-scheme: dark)\").matches\n            ? \"dark\"\n            : \"light\";\n        try {\n            const storageTheme = JSON.parse(window.localStorage.getItem(key)).theme;\n            if (storageTheme) {\n                theme = storageTheme === \"dark\" ? \"dark\" : \"light\";\n            }\n        } catch (e) {}\n        if (theme === \"dark\") {\n            document.documentElement.classList.add(\"dark\");\n        } else {\n            document.documentElement.classList.remove(\"dark\");\n        }\n    </script>\n</head>\n\n<body>\n<main>\n    <img\n            src=\"https://cdn-media.huggingface.co/assets/huggingface_logo.svg\"\n            alt=\"\"\n    />\n    <div>\n        <h1>504</h1>\n        <p>Gateway Timeout</p>\n    </div>\n</main>\n</body>\n</html>",
+  "failure_details": {
+    "generator_status": "crashed",
+    "max_iterations": 11,
+    "compiler_failures": 1,
+    "compiler_successes": 0,
+    "error_type": "InternalServerError",
+    "error_message": "<!DOCTYPE html>\n<html class=\"\" lang=\"en\">\n<head>\n    <meta charset=\"utf-8\" />\n    <meta\n            name=\"viewport\"\n            content=\"width=device-width, initial-scale=1.0, user-scalable=no\"\n    />\n    <meta\n            name=\"description\"\n            content=\"We're on a journey to advance and democratize artificial intelligence through open source and open science.\"\n    />\n    <meta property=\"fb:app_id\" content=\"1321688464574422\" />\n    <meta name=\"twitter:card\" content=\"summary_large_image\" />\n    <meta name=\"twitter:site\" content=\"@huggingface\" />\n    <meta\n            property=\"og:title\"\n            content=\"Hugging Face - The AI community building the future.\"\n    />\n    <meta property=\"og:type\" content=\"website\" />\n\n    <title>Hugging Face - The AI community building the future.</title>\n    <style>\n        body {\n            margin: 0;\n        }\n\n        main {\n            background-color: white;\n            min-height: 100vh;\n            padding: 7rem 1rem 8rem 1rem;\n            text-align: center;\n            font-family: Source Sans Pro, ui-sans-serif, system-ui, -apple-system,\n            BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans,\n            sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol,\n            Noto Color Emoji;\n        }\n\n        img {\n            width: 6rem;\n            height: 6rem;\n            margin: 0 auto 1rem;\n        }\n\n        h1 {\n            font-size: 3.75rem;\n            line-height: 1;\n            color: rgba(31, 41, 55, 1);\n            font-weight: 700;\n            box-sizing: border-box;\n            margin: 0 auto;\n        }\n\n        p, a {\n            color: rgba(107, 114, 128, 1);\n            font-size: 1.125rem;\n            line-height: 1.75rem;\n            max-width: 28rem;\n            box-sizing: border-box;\n            margin: 0 auto;\n        }\n\n        .dark main {\n            background-color: rgb(11, 15, 25);\n        }\n        .dark h1 {\n            color: rgb(209, 213, 219);\n        }\n        .dark p, .dark a {\n            color: rgb(156, 163, 175);\n        }\n    </style>\n    <script>\n        // On page load or when changing themes, best to add inline in `head` to avoid FOUC\n        const key = \"_tb_global_settings\";\n        let theme = window.matchMedia(\"(prefers-color-scheme: dark)\").matches\n            ? \"dark\"\n            : \"light\";\n        try {\n            const storageTheme = JSON.parse(window.localStorage.getItem(key)).theme;\n            if (storageTheme) {\n                theme = storageTheme === \"dark\" ? \"dark\" : \"light\";\n            }\n        } catch (e) {}\n        if (theme === \"dark\") {\n            document.documentElement.classList.add(\"dark\");\n        } else {\n            document.documentElement.classList.remove(\"dark\");\n        }\n    </script>\n</head>\n\n<body>\n<main>\n    <img\n            src=\"https://cdn-media.huggingface.co/assets/huggingface_logo.svg\"\n            alt=\"\"\n    />\n    <div>\n        <h1>504</h1>\n        <p>Gateway Timeout</p>\n    </div>\n</main>\n</body>\n</html>",
+    "abort_entire_run": false
+  }
+}

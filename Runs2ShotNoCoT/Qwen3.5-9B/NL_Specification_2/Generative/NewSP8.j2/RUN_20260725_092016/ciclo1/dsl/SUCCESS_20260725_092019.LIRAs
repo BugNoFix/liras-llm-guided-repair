@@ -1,0 +1,20 @@
+user_guided_transport
+
+agents:
+	humans: Person1
+	robots: Robot1
+
+locations: bedroom, kitchen
+
+resources: object
+
+Person1:
+	1: moveTo bedroom
+	4: moveTo kitchen
+
+Robot1:
+	1: moveTo bedroom
+	pick object
+	follow Person1
+	4: moveTo kitchen
+	stop if position(Robot1,kitchen)&&position(Person1,kitchen) else stop

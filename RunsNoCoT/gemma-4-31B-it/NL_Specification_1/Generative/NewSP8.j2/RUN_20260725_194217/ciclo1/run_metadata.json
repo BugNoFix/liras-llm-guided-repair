@@ -1,0 +1,260 @@
+{
+  "run_id": "20260725_194217",
+  "run_started_at": "2026-07-25T19:42:17.865284",
+  "generation_provider": "huggingface",
+  "repair_provider": "huggingface",
+  "query_provider": "huggingface",
+  "project_id": null,
+  "location": "global",
+  "system_prompt": "Generative/NewSP8.j2",
+  "shots": 0,
+  "scenario": "NL_Specification_1.txt",
+  "repair_prompt": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/SPs/Repair/NewSPR8.j2",
+  "generation_model": "google/gemma-4-31B-it",
+  "generation_temperature": 1.0,
+  "generation_max_output_tokens": 1000,
+  "empty_generation_max_retries": 3,
+  "llm_seed": 609,
+  "block_hf_thinking": true,
+  "repair_model": "google/gemma-4-31B-it",
+  "repair_temperature": 0.35,
+  "repair_max_output_tokens": 1000,
+  "empty_query_adaptation_max_retries": 2,
+  "reasoning_effort": "none",
+  "effective_reasoning_effort": {
+    "generation": "none",
+    "repair": "none",
+    "query": null
+  },
+  "hf_thinking_block_skipped": {
+    "generation": false,
+    "repair": false,
+    "query": false
+  },
+  "qwen_disable_thinking_extra_body": {
+    "generation": false,
+    "repair": false,
+    "query": false
+  },
+  "glm_disable_thinking_extra_body": {
+    "generation": false,
+    "repair": false,
+    "query": false
+  },
+  "repair_shots": 0,
+  "use_generated_dsl_cache": false,
+  "generated_dsl_source": "dsl_folder",
+  "generated_dsl_cache_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/GeneratedDSL/NL_Specification_1/Generative/NewSP8.j2/shots_0.LIRAs",
+  "compiler_jar": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/liras_compiler.jar",
+  "max_iterations": 11,
+  "run_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_194217/ciclo1",
+  "results_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it",
+  "dsl_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_194217/ciclo1/dsl",
+  "compiler_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_194217/ciclo1/compiler",
+  "queries_dir": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_194217/ciclo1/queries",
+  "prompt_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_194217/ciclo1/llm_prompts.jsonl",
+  "response_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_194217/ciclo1/llm_responses.jsonl",
+  "hf_debug_response_log": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_194217/ciclo1/hf_debug_responses.jsonl",
+  "pipeline_cycle": 1,
+  "run_dir_override": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_194217/ciclo1",
+  "uppaal_feedback_included": false,
+  "uppaal_feedback_chars": 0,
+  "iterations": [
+    {
+      "iteration": 0,
+      "dsl_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_194217/ciclo1/dsl/ITER0_20260725_194310.LIRAs",
+      "validated": false,
+      "is_valid": false,
+      "ended_because": "EmptyResponseGeneration"
+    }
+  ],
+  "telemetry": {
+    "llm_calls": 4,
+    "prompt_chars_total": 928,
+    "response_chars_total": 0,
+    "prompt_tokens_total": 9296,
+    "completion_tokens_total": 4000,
+    "total_tokens_total": 13296,
+    "token_usage_available_calls": 4,
+    "last_call": {
+      "kind": "generate",
+      "provider": "huggingface",
+      "timestamp": "2026-07-25T19:43:10.750062",
+      "finish_reason": "length",
+      "seed": 609,
+      "safety_ratings": [],
+      "prompt_chars": 232,
+      "response_chars": 0,
+      "prompt_tokens": 2324,
+      "completion_tokens": 1000,
+      "total_tokens": 3324,
+      "token_usage_available": true
+    }
+  },
+  "llm_call_history": [
+    {
+      "kind": "generate",
+      "provider": "huggingface",
+      "timestamp": "2026-07-25T19:42:32.930354",
+      "finish_reason": "length",
+      "seed": 609,
+      "safety_ratings": [],
+      "prompt_chars": 232,
+      "response_chars": 0,
+      "prompt_tokens": 2324,
+      "completion_tokens": 1000,
+      "total_tokens": 3324,
+      "token_usage_available": true
+    },
+    {
+      "kind": "generate",
+      "provider": "huggingface",
+      "timestamp": "2026-07-25T19:42:48.049775",
+      "finish_reason": "length",
+      "seed": 609,
+      "safety_ratings": [],
+      "prompt_chars": 232,
+      "response_chars": 0,
+      "prompt_tokens": 2324,
+      "completion_tokens": 1000,
+      "total_tokens": 3324,
+      "token_usage_available": true
+    },
+    {
+      "kind": "generate",
+      "provider": "huggingface",
+      "timestamp": "2026-07-25T19:42:59.702498",
+      "finish_reason": "length",
+      "seed": 609,
+      "safety_ratings": [],
+      "prompt_chars": 232,
+      "response_chars": 0,
+      "prompt_tokens": 2324,
+      "completion_tokens": 1000,
+      "total_tokens": 3324,
+      "token_usage_available": true
+    },
+    {
+      "kind": "generate",
+      "provider": "huggingface",
+      "timestamp": "2026-07-25T19:43:10.750062",
+      "finish_reason": "length",
+      "seed": 609,
+      "safety_ratings": [],
+      "prompt_chars": 232,
+      "response_chars": 0,
+      "prompt_tokens": 2324,
+      "completion_tokens": 1000,
+      "total_tokens": 3324,
+      "token_usage_available": true
+    }
+  ],
+  "status": "failed",
+  "run_finished_at": "2026-07-25T19:43:10.751671",
+  "summary": {
+    "iterations_recorded": 1,
+    "validations_attempted": 0,
+    "compiler_failures": 0,
+    "compiler_successes": 0,
+    "setup_errors": 0,
+    "first_success_iteration": null,
+    "final_success_dsl_path": null,
+    "total_compiler_feedback_chars": 0,
+    "llm_calls": 4,
+    "prompt_tokens_total": 9296,
+    "completion_tokens_total": 4000,
+    "total_tokens_total": 13296,
+    "token_usage_available_calls": 4
+  },
+  "updated_at": "2026-07-25T19:43:10.753093",
+  "resolved_generation_shots": [],
+  "generation_shot_count": 0,
+  "generation_attempts": [
+    {
+      "attempt": 1,
+      "response_text_chars": 0,
+      "empty_response": true,
+      "accepted": false,
+      "finish_reason": "length"
+    },
+    {
+      "attempt": 2,
+      "response_text_chars": 0,
+      "empty_response": true,
+      "accepted": false,
+      "finish_reason": "length"
+    },
+    {
+      "attempt": 3,
+      "response_text_chars": 0,
+      "empty_response": true,
+      "accepted": false,
+      "finish_reason": "length"
+    },
+    {
+      "attempt": 4,
+      "response_text_chars": 0,
+      "empty_response": true,
+      "accepted": false,
+      "finish_reason": "length"
+    }
+  ],
+  "failure_reason": "EmptyResponseGeneration",
+  "interrupted": true,
+  "breaking_error": {
+    "type": "EmptyResponseGeneration",
+    "message": "Generation model returned an empty response.",
+    "when": "2026-07-25T19:43:10.751665",
+    "where": "run_automated_session/generation",
+    "response_text_chars": 0,
+    "dsl_text_chars": 0
+  },
+  "stages": [
+    {
+      "stage": "dsl_generation",
+      "result": "failed",
+      "failure_type": "empty_generation_response",
+      "failure_reason": "EmptyResponseGeneration",
+      "failure_details": {
+        "generator_status": "failed",
+        "max_iterations": 11,
+        "compiler_failures": 0,
+        "compiler_successes": 0,
+        "error_type": "EmptyResponseGeneration",
+        "error_message": "Generation model returned an empty response.",
+        "abort_entire_run": true
+      },
+      "details": {
+        "iterations_recorded": 1,
+        "validations_attempted": 0,
+        "compiler_failures": 0,
+        "compiler_successes": 0,
+        "setup_errors": 0,
+        "first_success_iteration": null,
+        "final_success_dsl_path": null,
+        "total_compiler_feedback_chars": 0,
+        "llm_calls": 4,
+        "prompt_tokens_total": 9296,
+        "completion_tokens_total": 4000,
+        "total_tokens_total": 13296,
+        "token_usage_available_calls": 4
+      },
+      "artifacts": {
+        "prompt_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_194217/ciclo1/llm_prompts.jsonl",
+        "response_log_path": "/Users/marco/Documents/T2I/Tesi/liras-llm-guided-repair/Runs/gemma-4-31B-it/NL_Specification_1/Generative/NewSP8.j2/RUN_20260725_194217/ciclo1/llm_responses.jsonl"
+      }
+    }
+  ],
+  "cycle_result": "failed",
+  "failed_stage": "dsl_generation",
+  "failure_type": "empty_generation_response",
+  "failure_details": {
+    "generator_status": "failed",
+    "max_iterations": 11,
+    "compiler_failures": 0,
+    "compiler_successes": 0,
+    "error_type": "EmptyResponseGeneration",
+    "error_message": "Generation model returned an empty response.",
+    "abort_entire_run": true
+  }
+}
