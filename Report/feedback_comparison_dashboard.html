@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Comparison Feedback Loop</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #64748b;
+      --line: #dbe3ef;
+      --blue: #2563eb;
+      --red: #dc2626;
+      --green: #15803d;
+      --soft-blue: #eff6ff;
+      --soft-red: #fef2f2;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, "Avenir Next", "Segoe UI", sans-serif;
+    }
+    .wrap { max-width: 1320px; margin: 0 auto; padding: 22px; display: grid; gap: 16px; }
+    .hero {
+      background: linear-gradient(100deg, #172033 0%, #7f1d1d 100%);
+      color: white;
+      border-radius: 8px;
+      padding: 22px;
+    }
+    .hero h1 { margin: 0 0 8px; font-size: 30px; }
+    .hero p { margin: 0; color: #e2e8f0; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+    .card, .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+    }
+    .card { padding: 14px; }
+    .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+    .value { font-size: 28px; font-weight: 800; margin-top: 5px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    @media (max-width: 950px) { .grid { grid-template-columns: 1fr; } }
+    .panel { padding: 14px; display: grid; gap: 12px; }
+    .panel.wide { grid-column: 1 / -1; }
+    .panel-head h2 { margin: 0 0 4px; font-size: 18px; }
+    .panel-head p { margin: 0; color: var(--muted); font-size: 13px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { border-bottom: 1px solid #edf2f7; padding: 10px; vertical-align: top; }
+    th { text-align: left; background: #f8fafc; color: #334155; }
+    .matrix th:not(:first-child), .matrix td { text-align: center; }
+    .matrix td strong { display: block; font-size: 26px; color: var(--green); }
+    .matrix td .delta { display: block; margin-top: 2px; color: var(--red); font-style: normal; font-weight: 800; }
+    .matrix td span { display: block; margin-top: 4px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .matrix tbody tr:nth-child(1) th { border-left: 4px solid var(--blue); }
+    .matrix tbody tr:nth-child(2) th { border-left: 4px solid var(--red); }
+    .table-scroll { overflow: auto; }
+    .table-scroll table { min-width: 980px; }
+    .table-scroll td:nth-child(n+4), .table-scroll th:nth-child(n+4) {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    code { font-family: "Cascadia Mono", Consolas, monospace; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>Comparison feedback loop</h1>
+      <p>Confronto tabellare tra zero-shot/few-shot e CoT/NoCoT. Generata il 2026-08-08T11:22:47.</p>
+    </section>
+    <section class="cards">
+      <article class="card"><div class="label">Run reali</div><div class="value">540</div></article><article class="card"><div class="label">Successi reali</div><div class="value">319</div></article><article class="card"><div class="label">Success rate globale</div><div class="value">59.1%</div></article><article class="card"><div class="label">Token/successo globale</div><div class="value">35,784</div></article>
+    </section>
+    <section class="grid">
+      
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Success rate - Feedback loop attivi</h2>
+          <p>Risultato reale delle run, con feedback loop semantico e sintattico attivi.</p>
+        </div>
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th>Shot / CoT</th>
+              <th>Senza CoT</th>
+              <th>Con CoT</th>
+            </tr>
+          </thead>
+          <tbody><tr><th>Zero-shot</th><td><strong>41.7%</strong><span>50 / 120</span></td><td><strong>78.7%</strong><span>118 / 150</span></td></tr><tr><th>Few-shot</th><td><strong>55.0%</strong><span>66 / 120</span></td><td><strong>56.7%</strong><span>85 / 150</span></td></tr></tbody>
+        </table>
+      </section>
+    
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Success rate - Senza feedback loop semantico</h2>
+          <p>Simula lo stop dopo il primo ciclo semantico.</p>
+        </div>
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th>Shot / CoT</th>
+              <th>Senza CoT</th>
+              <th>Con CoT</th>
+            </tr>
+          </thead>
+          <tbody><tr><th>Zero-shot</th><td><strong>32.5%</strong><em class="delta">(-9.2 pp)</em><span>39 / 120</span></td><td><strong>68.0%</strong><em class="delta">(-10.7 pp)</em><span>102 / 150</span></td></tr><tr><th>Few-shot</th><td><strong>44.2%</strong><em class="delta">(-10.8 pp)</em><span>53 / 120</span></td><td><strong>48.7%</strong><em class="delta">(-8.0 pp)</em><span>73 / 150</span></td></tr></tbody>
+        </table>
+      </section>
+    
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Success rate - Senza feedback loop sintattico</h2>
+          <p>Simula solo ITER0 per ogni ciclo DSL.</p>
+        </div>
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th>Shot / CoT</th>
+              <th>Senza CoT</th>
+              <th>Con CoT</th>
+            </tr>
+          </thead>
+          <tbody><tr><th>Zero-shot</th><td><strong>32.5%</strong><em class="delta">(-9.2 pp)</em><span>39 / 120</span></td><td><strong>68.0%</strong><em class="delta">(-10.7 pp)</em><span>102 / 150</span></td></tr><tr><th>Few-shot</th><td><strong>45.8%</strong><em class="delta">(-9.2 pp)</em><span>55 / 120</span></td><td><strong>55.3%</strong><em class="delta">(-1.3 pp)</em><span>83 / 150</span></td></tr></tbody>
+        </table>
+      </section>
+    
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Success rate - Senza feedback loop semantico e sintattico</h2>
+          <p>Combina entrambe le simulazioni: primo ciclo semantico e solo ITER0.</p>
+        </div>
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th>Shot / CoT</th>
+              <th>Senza CoT</th>
+              <th>Con CoT</th>
+            </tr>
+          </thead>
+          <tbody><tr><th>Zero-shot</th><td><strong>26.7%</strong><em class="delta">(-15.0 pp)</em><span>32 / 120</span></td><td><strong>57.3%</strong><em class="delta">(-21.3 pp)</em><span>86 / 150</span></td></tr><tr><th>Few-shot</th><td><strong>36.7%</strong><em class="delta">(-18.3 pp)</em><span>44 / 120</span></td><td><strong>47.3%</strong><em class="delta">(-9.3 pp)</em><span>71 / 150</span></td></tr></tbody>
+        </table>
+      </section>
+    
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Token/successo medio - feedback loop attivi</h2>
+          <p>Output token LLM totali divisi per numero di successi, calcolati sul caso reale.</p>
+        </div>
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th>Shot / CoT</th>
+              <th>Senza CoT</th>
+              <th>Con CoT</th>
+            </tr>
+          </thead>
+          <tbody><tr><th>Zero-shot</th><td><strong>48,982</strong><span>2,449,106 token / 50 successi</span></td><td><strong>30,809</strong><span>3,635,495 token / 118 successi</span></td></tr><tr><th>Few-shot</th><td><strong>24,896</strong><span>1,643,126 token / 66 successi</span></td><td><strong>43,382</strong><span>3,687,448 token / 85 successi</span></td></tr></tbody>
+        </table>
+      </section>
+    
+      <section class="panel wide"><div class="panel-head"><h2>Dettaglio numerico</h2><p>Tutte le celle usate nelle matrici, con conteggi e token/successo.</p></div><div class="table-scroll"><table><thead><tr><th>Modalita</th><th>Caso</th><th>Cartella</th><th>Run</th><th>Successi</th><th>Fallite</th><th>Success rate</th><th>Delta baseline pp</th><th>Token/successo</th></tr></thead><tbody><tr><td>Feedback loop attivi</td><td>Zero-shot senza CoT</td><td>RunsNoCoT</td><td>120</td><td>50</td><td>70</td><td>41.7%</td><td>0.0</td><td>48,982</td></tr><tr><td>Feedback loop attivi</td><td>Zero-shot con CoT</td><td>RunsCoT</td><td>150</td><td>118</td><td>32</td><td>78.7%</td><td>0.0</td><td>30,809</td></tr><tr><td>Feedback loop attivi</td><td>Few-shot senza CoT</td><td>Runs2shotNoCot</td><td>120</td><td>66</td><td>54</td><td>55.0%</td><td>0.0</td><td>24,896</td></tr><tr><td>Feedback loop attivi</td><td>Few-shot con CoT</td><td>Runs2ShotCoT</td><td>150</td><td>85</td><td>65</td><td>56.7%</td><td>0.0</td><td>43,382</td></tr><tr><td>Senza feedback loop semantico</td><td>Zero-shot senza CoT</td><td>RunsNoCoT</td><td>120</td><td>39</td><td>81</td><td>32.5%</td><td>-9.2</td><td>23,586</td></tr><tr><td>Senza feedback loop semantico</td><td>Zero-shot con CoT</td><td>RunsCoT</td><td>150</td><td>102</td><td>48</td><td>68.0%</td><td>-10.7</td><td>22,844</td></tr><tr><td>Senza feedback loop semantico</td><td>Few-shot senza CoT</td><td>Runs2shotNoCot</td><td>120</td><td>53</td><td>67</td><td>44.2%</td><td>-10.8</td><td>12,061</td></tr><tr><td>Senza feedback loop semantico</td><td>Few-shot con CoT</td><td>Runs2ShotCoT</td><td>150</td><td>73</td><td>77</td><td>48.7%</td><td>-8.0</td><td>20,305</td></tr><tr><td>Senza feedback loop sintattico</td><td>Zero-shot senza CoT</td><td>RunsNoCoT</td><td>120</td><td>39</td><td>81</td><td>32.5%</td><td>-9.2</td><td>48,568</td></tr><tr><td>Senza feedback loop sintattico</td><td>Zero-shot con CoT</td><td>RunsCoT</td><td>150</td><td>102</td><td>48</td><td>68.0%</td><td>-10.7</td><td>29,834</td></tr><tr><td>Senza feedback loop sintattico</td><td>Few-shot senza CoT</td><td>Runs2shotNoCot</td><td>120</td><td>55</td><td>65</td><td>45.8%</td><td>-9.2</td><td>20,618</td></tr><tr><td>Senza feedback loop sintattico</td><td>Few-shot con CoT</td><td>Runs2ShotCoT</td><td>150</td><td>83</td><td>67</td><td>55.3%</td><td>-1.3</td><td>36,373</td></tr><tr><td>Senza feedback loop semantico e sintattico</td><td>Zero-shot senza CoT</td><td>RunsNoCoT</td><td>120</td><td>32</td><td>88</td><td>26.7%</td><td>-15.0</td><td>24,537</td></tr><tr><td>Senza feedback loop semantico e sintattico</td><td>Zero-shot con CoT</td><td>RunsCoT</td><td>150</td><td>86</td><td>64</td><td>57.3%</td><td>-21.3</td><td>23,736</td></tr><tr><td>Senza feedback loop semantico e sintattico</td><td>Few-shot senza CoT</td><td>Runs2shotNoCot</td><td>120</td><td>44</td><td>76</td><td>36.7%</td><td>-18.3</td><td>11,412</td></tr><tr><td>Senza feedback loop semantico e sintattico</td><td>Few-shot con CoT</td><td>Runs2ShotCoT</td><td>150</td><td>71</td><td>79</td><td>47.3%</td><td>-9.3</td><td>19,552</td></tr></tbody></table></div></section>
+    </section>
+  </main>
+  <script type="application/json" id="comparison-payload">{&quot;generated_at&quot;: &quot;2026-08-08T11:22:47&quot;, &quot;cases&quot;: [{&quot;key&quot;: &quot;zero_nocot&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;label&quot;: &quot;Zero-shot senza CoT&quot;, &quot;runs_dir&quot;: &quot;RunsNoCoT&quot;}, {&quot;key&quot;: &quot;zero_cot&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;label&quot;: &quot;Zero-shot con CoT&quot;, &quot;runs_dir&quot;: &quot;RunsCoT&quot;}, {&quot;key&quot;: &quot;few_nocot&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;label&quot;: &quot;Few-shot senza CoT&quot;, &quot;runs_dir&quot;: &quot;Runs2shotNoCot&quot;}, {&quot;key&quot;: &quot;few_cot&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;label&quot;: &quot;Few-shot con CoT&quot;, &quot;runs_dir&quot;: &quot;Runs2ShotCoT&quot;}], &quot;modes&quot;: [{&quot;key&quot;: &quot;actual&quot;, &quot;label&quot;: &quot;Feedback loop attivi&quot;, &quot;description&quot;: &quot;Risultato reale delle run, con feedback loop semantico e sintattico attivi.&quot;}, {&quot;key&quot;: &quot;no_semantic&quot;, &quot;label&quot;: &quot;Senza feedback loop semantico&quot;, &quot;description&quot;: &quot;Simula lo stop dopo il primo ciclo semantico.&quot;}, {&quot;key&quot;: &quot;no_syntactic&quot;, &quot;label&quot;: &quot;Senza feedback loop sintattico&quot;, &quot;description&quot;: &quot;Simula solo ITER0 per ogni ciclo DSL.&quot;}, {&quot;key&quot;: &quot;no_semantic_no_syntactic&quot;, &quot;label&quot;: &quot;Senza feedback loop semantico e sintattico&quot;, &quot;description&quot;: &quot;Combina entrambe le simulazioni: primo ciclo semantico e solo ITER0.&quot;}], &quot;tables&quot;: {&quot;actual&quot;: {&quot;zero_nocot&quot;: {&quot;total&quot;: 120, &quot;success&quot;: 50, &quot;failed&quot;: 70, &quot;success_rate&quot;: 0.4166666666666667, &quot;output_tokens&quot;: 2449106.0, &quot;tokens_per_success&quot;: 48982.12, &quot;case&quot;: &quot;zero_nocot&quot;, &quot;label&quot;: &quot;Zero-shot senza CoT&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;source_runs_dir&quot;: &quot;RunsNoCoT&quot;, &quot;baseline_success_rate&quot;: 0.4166666666666667, &quot;success_rate_delta&quot;: 0.0}, &quot;zero_cot&quot;: {&quot;total&quot;: 150, &quot;success&quot;: 118, &quot;failed&quot;: 32, &quot;success_rate&quot;: 0.7866666666666666, &quot;output_tokens&quot;: 3635495.0, &quot;tokens_per_success&quot;: 30809.27966101695, &quot;case&quot;: &quot;zero_cot&quot;, &quot;label&quot;: &quot;Zero-shot con CoT&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;source_runs_dir&quot;: &quot;RunsCoT&quot;, &quot;baseline_success_rate&quot;: 0.7866666666666666, &quot;success_rate_delta&quot;: 0.0}, &quot;few_nocot&quot;: {&quot;total&quot;: 120, &quot;success&quot;: 66, &quot;failed&quot;: 54, &quot;success_rate&quot;: 0.55, &quot;output_tokens&quot;: 1643126.0, &quot;tokens_per_success&quot;: 24895.848484848484, &quot;case&quot;: &quot;few_nocot&quot;, &quot;label&quot;: &quot;Few-shot senza CoT&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;source_runs_dir&quot;: &quot;Runs2shotNoCot&quot;, &quot;baseline_success_rate&quot;: 0.55, &quot;success_rate_delta&quot;: 0.0}, &quot;few_cot&quot;: {&quot;total&quot;: 150, &quot;success&quot;: 85, &quot;failed&quot;: 65, &quot;success_rate&quot;: 0.5666666666666667, &quot;output_tokens&quot;: 3687448.0, &quot;tokens_per_success&quot;: 43381.74117647059, &quot;case&quot;: &quot;few_cot&quot;, &quot;label&quot;: &quot;Few-shot con CoT&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;source_runs_dir&quot;: &quot;Runs2ShotCoT&quot;, &quot;baseline_success_rate&quot;: 0.5666666666666667, &quot;success_rate_delta&quot;: 0.0}}, &quot;no_semantic&quot;: {&quot;zero_nocot&quot;: {&quot;total&quot;: 120, &quot;success&quot;: 39, &quot;failed&quot;: 81, &quot;success_rate&quot;: 0.325, &quot;output_tokens&quot;: 919865.9499999998, &quot;tokens_per_success&quot;: 23586.306410256406, &quot;case&quot;: &quot;zero_nocot&quot;, &quot;label&quot;: &quot;Zero-shot senza CoT&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;source_runs_dir&quot;: &quot;RunsNoCoT&quot;, &quot;baseline_success_rate&quot;: 0.4166666666666667, &quot;success_rate_delta&quot;: -0.09166666666666667}, &quot;zero_cot&quot;: {&quot;total&quot;: 150, &quot;success&quot;: 102, &quot;failed&quot;: 48, &quot;success_rate&quot;: 0.68, &quot;output_tokens&quot;: 2330073.083333333, &quot;tokens_per_success&quot;: 22843.85375816993, &quot;case&quot;: &quot;zero_cot&quot;, &quot;label&quot;: &quot;Zero-shot con CoT&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;source_runs_dir&quot;: &quot;RunsCoT&quot;, &quot;baseline_success_rate&quot;: 0.7866666666666666, &quot;success_rate_delta&quot;: -0.10666666666666658}, &quot;few_nocot&quot;: {&quot;total&quot;: 120, &quot;success&quot;: 53, &quot;failed&quot;: 67, &quot;success_rate&quot;: 0.44166666666666665, &quot;output_tokens&quot;: 639222.4333333332, &quot;tokens_per_success&quot;: 12060.800628930816, &quot;case&quot;: &quot;few_nocot&quot;, &quot;label&quot;: &quot;Few-shot senza CoT&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;source_runs_dir&quot;: &quot;Runs2shotNoCot&quot;, &quot;baseline_success_rate&quot;: 0.55, &quot;success_rate_delta&quot;: -0.10833333333333339}, &quot;few_cot&quot;: {&quot;total&quot;: 150, &quot;success&quot;: 73, &quot;failed&quot;: 77, &quot;success_rate&quot;: 0.4866666666666667, &quot;output_tokens&quot;: 1482278.2166666663, &quot;tokens_per_success&quot;: 20305.181050228304, &quot;case&quot;: &quot;few_cot&quot;, &quot;label&quot;: &quot;Few-shot con CoT&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;source_runs_dir&quot;: &quot;Runs2ShotCoT&quot;, &quot;baseline_success_rate&quot;: 0.5666666666666667, &quot;success_rate_delta&quot;: -0.07999999999999996}}, &quot;no_syntactic&quot;: {&quot;zero_nocot&quot;: {&quot;total&quot;: 120, &quot;success&quot;: 39, &quot;failed&quot;: 81, &quot;success_rate&quot;: 0.325, &quot;output_tokens&quot;: 1894157.0, &quot;tokens_per_success&quot;: 48568.1282051282, &quot;case&quot;: &quot;zero_nocot&quot;, &quot;label&quot;: &quot;Zero-shot senza CoT&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;source_runs_dir&quot;: &quot;RunsNoCoT&quot;, &quot;baseline_success_rate&quot;: 0.4166666666666667, &quot;success_rate_delta&quot;: -0.09166666666666667}, &quot;zero_cot&quot;: {&quot;total&quot;: 150, &quot;success&quot;: 102, &quot;failed&quot;: 48, &quot;success_rate&quot;: 0.68, &quot;output_tokens&quot;: 3043047.0, &quot;tokens_per_success&quot;: 29833.79411764706, &quot;case&quot;: &quot;zero_cot&quot;, &quot;label&quot;: &quot;Zero-shot con CoT&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;source_runs_dir&quot;: &quot;RunsCoT&quot;, &quot;baseline_success_rate&quot;: 0.7866666666666666, &quot;success_rate_delta&quot;: -0.10666666666666658}, &quot;few_nocot&quot;: {&quot;total&quot;: 120, &quot;success&quot;: 55, &quot;failed&quot;: 65, &quot;success_rate&quot;: 0.4583333333333333, &quot;output_tokens&quot;: 1133965.0, &quot;tokens_per_success&quot;: 20617.545454545456, &quot;case&quot;: &quot;few_nocot&quot;, &quot;label&quot;: &quot;Few-shot senza CoT&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;source_runs_dir&quot;: &quot;Runs2shotNoCot&quot;, &quot;baseline_success_rate&quot;: 0.55, &quot;success_rate_delta&quot;: -0.09166666666666673}, &quot;few_cot&quot;: {&quot;total&quot;: 150, &quot;success&quot;: 83, &quot;failed&quot;: 67, &quot;success_rate&quot;: 0.5533333333333333, &quot;output_tokens&quot;: 3018995.0, &quot;tokens_per_success&quot;: 36373.43373493976, &quot;case&quot;: &quot;few_cot&quot;, &quot;label&quot;: &quot;Few-shot con CoT&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;source_runs_dir&quot;: &quot;Runs2ShotCoT&quot;, &quot;baseline_success_rate&quot;: 0.5666666666666667, &quot;success_rate_delta&quot;: -0.013333333333333308}}, &quot;no_semantic_no_syntactic&quot;: {&quot;zero_nocot&quot;: {&quot;total&quot;: 120, &quot;success&quot;: 32, &quot;failed&quot;: 88, &quot;success_rate&quot;: 0.26666666666666666, &quot;output_tokens&quot;: 785183.5499999998, &quot;tokens_per_success&quot;: 24536.985937499994, &quot;case&quot;: &quot;zero_nocot&quot;, &quot;label&quot;: &quot;Zero-shot senza CoT&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;source_runs_dir&quot;: &quot;RunsNoCoT&quot;, &quot;baseline_success_rate&quot;: 0.4166666666666667, &quot;success_rate_delta&quot;: -0.15000000000000002}, &quot;zero_cot&quot;: {&quot;total&quot;: 150, &quot;success&quot;: 86, &quot;failed&quot;: 64, &quot;success_rate&quot;: 0.5733333333333334, &quot;output_tokens&quot;: 2041308.883333333, &quot;tokens_per_success&quot;: 23736.14980620155, &quot;case&quot;: &quot;zero_cot&quot;, &quot;label&quot;: &quot;Zero-shot con CoT&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;source_runs_dir&quot;: &quot;RunsCoT&quot;, &quot;baseline_success_rate&quot;: 0.7866666666666666, &quot;success_rate_delta&quot;: -0.21333333333333326}, &quot;few_nocot&quot;: {&quot;total&quot;: 120, &quot;success&quot;: 44, &quot;failed&quot;: 76, &quot;success_rate&quot;: 0.36666666666666664, &quot;output_tokens&quot;: 502126.21666666673, &quot;tokens_per_success&quot;: 11411.95946969697, &quot;case&quot;: &quot;few_nocot&quot;, &quot;label&quot;: &quot;Few-shot senza CoT&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;source_runs_dir&quot;: &quot;Runs2shotNoCot&quot;, &quot;baseline_success_rate&quot;: 0.55, &quot;success_rate_delta&quot;: -0.1833333333333334}, &quot;few_cot&quot;: {&quot;total&quot;: 150, &quot;success&quot;: 71, &quot;failed&quot;: 79, &quot;success_rate&quot;: 0.47333333333333333, &quot;output_tokens&quot;: 1388168.8333333333, &quot;tokens_per_success&quot;: 19551.673708920185, &quot;case&quot;: &quot;few_cot&quot;, &quot;label&quot;: &quot;Few-shot con CoT&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;source_runs_dir&quot;: &quot;Runs2ShotCoT&quot;, &quot;baseline_success_rate&quot;: 0.5666666666666667, &quot;success_rate_delta&quot;: -0.09333333333333332}}}, &quot;rows&quot;: [{&quot;mode&quot;: &quot;actual&quot;, &quot;mode_label&quot;: &quot;Feedback loop attivi&quot;, &quot;mode_description&quot;: &quot;Risultato reale delle run, con feedback loop semantico e sintattico attivi.&quot;, &quot;total&quot;: 120, &quot;success&quot;: 50, &quot;failed&quot;: 70, &quot;success_rate&quot;: 0.4166666666666667, &quot;output_tokens&quot;: 2449106.0, &quot;tokens_per_success&quot;: 48982.12, &quot;case&quot;: &quot;zero_nocot&quot;, &quot;label&quot;: &quot;Zero-shot senza CoT&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;source_runs_dir&quot;: &quot;RunsNoCoT&quot;, &quot;baseline_success_rate&quot;: 0.4166666666666667, &quot;success_rate_delta&quot;: 0.0}, {&quot;mode&quot;: &quot;actual&quot;, &quot;mode_label&quot;: &quot;Feedback loop attivi&quot;, &quot;mode_description&quot;: &quot;Risultato reale delle run, con feedback loop semantico e sintattico attivi.&quot;, &quot;total&quot;: 150, &quot;success&quot;: 118, &quot;failed&quot;: 32, &quot;success_rate&quot;: 0.7866666666666666, &quot;output_tokens&quot;: 3635495.0, &quot;tokens_per_success&quot;: 30809.27966101695, &quot;case&quot;: &quot;zero_cot&quot;, &quot;label&quot;: &quot;Zero-shot con CoT&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;source_runs_dir&quot;: &quot;RunsCoT&quot;, &quot;baseline_success_rate&quot;: 0.7866666666666666, &quot;success_rate_delta&quot;: 0.0}, {&quot;mode&quot;: &quot;actual&quot;, &quot;mode_label&quot;: &quot;Feedback loop attivi&quot;, &quot;mode_description&quot;: &quot;Risultato reale delle run, con feedback loop semantico e sintattico attivi.&quot;, &quot;total&quot;: 120, &quot;success&quot;: 66, &quot;failed&quot;: 54, &quot;success_rate&quot;: 0.55, &quot;output_tokens&quot;: 1643126.0, &quot;tokens_per_success&quot;: 24895.848484848484, &quot;case&quot;: &quot;few_nocot&quot;, &quot;label&quot;: &quot;Few-shot senza CoT&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;source_runs_dir&quot;: &quot;Runs2shotNoCot&quot;, &quot;baseline_success_rate&quot;: 0.55, &quot;success_rate_delta&quot;: 0.0}, {&quot;mode&quot;: &quot;actual&quot;, &quot;mode_label&quot;: &quot;Feedback loop attivi&quot;, &quot;mode_description&quot;: &quot;Risultato reale delle run, con feedback loop semantico e sintattico attivi.&quot;, &quot;total&quot;: 150, &quot;success&quot;: 85, &quot;failed&quot;: 65, &quot;success_rate&quot;: 0.5666666666666667, &quot;output_tokens&quot;: 3687448.0, &quot;tokens_per_success&quot;: 43381.74117647059, &quot;case&quot;: &quot;few_cot&quot;, &quot;label&quot;: &quot;Few-shot con CoT&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;source_runs_dir&quot;: &quot;Runs2ShotCoT&quot;, &quot;baseline_success_rate&quot;: 0.5666666666666667, &quot;success_rate_delta&quot;: 0.0}, {&quot;mode&quot;: &quot;no_semantic&quot;, &quot;mode_label&quot;: &quot;Senza feedback loop semantico&quot;, &quot;mode_description&quot;: &quot;Simula lo stop dopo il primo ciclo semantico.&quot;, &quot;total&quot;: 120, &quot;success&quot;: 39, &quot;failed&quot;: 81, &quot;success_rate&quot;: 0.325, &quot;output_tokens&quot;: 919865.9499999998, &quot;tokens_per_success&quot;: 23586.306410256406, &quot;case&quot;: &quot;zero_nocot&quot;, &quot;label&quot;: &quot;Zero-shot senza CoT&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;source_runs_dir&quot;: &quot;RunsNoCoT&quot;, &quot;baseline_success_rate&quot;: 0.4166666666666667, &quot;success_rate_delta&quot;: -0.09166666666666667}, {&quot;mode&quot;: &quot;no_semantic&quot;, &quot;mode_label&quot;: &quot;Senza feedback loop semantico&quot;, &quot;mode_description&quot;: &quot;Simula lo stop dopo il primo ciclo semantico.&quot;, &quot;total&quot;: 150, &quot;success&quot;: 102, &quot;failed&quot;: 48, &quot;success_rate&quot;: 0.68, &quot;output_tokens&quot;: 2330073.083333333, &quot;tokens_per_success&quot;: 22843.85375816993, &quot;case&quot;: &quot;zero_cot&quot;, &quot;label&quot;: &quot;Zero-shot con CoT&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;source_runs_dir&quot;: &quot;RunsCoT&quot;, &quot;baseline_success_rate&quot;: 0.7866666666666666, &quot;success_rate_delta&quot;: -0.10666666666666658}, {&quot;mode&quot;: &quot;no_semantic&quot;, &quot;mode_label&quot;: &quot;Senza feedback loop semantico&quot;, &quot;mode_description&quot;: &quot;Simula lo stop dopo il primo ciclo semantico.&quot;, &quot;total&quot;: 120, &quot;success&quot;: 53, &quot;failed&quot;: 67, &quot;success_rate&quot;: 0.44166666666666665, &quot;output_tokens&quot;: 639222.4333333332, &quot;tokens_per_success&quot;: 12060.800628930816, &quot;case&quot;: &quot;few_nocot&quot;, &quot;label&quot;: &quot;Few-shot senza CoT&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;source_runs_dir&quot;: &quot;Runs2shotNoCot&quot;, &quot;baseline_success_rate&quot;: 0.55, &quot;success_rate_delta&quot;: -0.10833333333333339}, {&quot;mode&quot;: &quot;no_semantic&quot;, &quot;mode_label&quot;: &quot;Senza feedback loop semantico&quot;, &quot;mode_description&quot;: &quot;Simula lo stop dopo il primo ciclo semantico.&quot;, &quot;total&quot;: 150, &quot;success&quot;: 73, &quot;failed&quot;: 77, &quot;success_rate&quot;: 0.4866666666666667, &quot;output_tokens&quot;: 1482278.2166666663, &quot;tokens_per_success&quot;: 20305.181050228304, &quot;case&quot;: &quot;few_cot&quot;, &quot;label&quot;: &quot;Few-shot con CoT&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;source_runs_dir&quot;: &quot;Runs2ShotCoT&quot;, &quot;baseline_success_rate&quot;: 0.5666666666666667, &quot;success_rate_delta&quot;: -0.07999999999999996}, {&quot;mode&quot;: &quot;no_syntactic&quot;, &quot;mode_label&quot;: &quot;Senza feedback loop sintattico&quot;, &quot;mode_description&quot;: &quot;Simula solo ITER0 per ogni ciclo DSL.&quot;, &quot;total&quot;: 120, &quot;success&quot;: 39, &quot;failed&quot;: 81, &quot;success_rate&quot;: 0.325, &quot;output_tokens&quot;: 1894157.0, &quot;tokens_per_success&quot;: 48568.1282051282, &quot;case&quot;: &quot;zero_nocot&quot;, &quot;label&quot;: &quot;Zero-shot senza CoT&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;source_runs_dir&quot;: &quot;RunsNoCoT&quot;, &quot;baseline_success_rate&quot;: 0.4166666666666667, &quot;success_rate_delta&quot;: -0.09166666666666667}, {&quot;mode&quot;: &quot;no_syntactic&quot;, &quot;mode_label&quot;: &quot;Senza feedback loop sintattico&quot;, &quot;mode_description&quot;: &quot;Simula solo ITER0 per ogni ciclo DSL.&quot;, &quot;total&quot;: 150, &quot;success&quot;: 102, &quot;failed&quot;: 48, &quot;success_rate&quot;: 0.68, &quot;output_tokens&quot;: 3043047.0, &quot;tokens_per_success&quot;: 29833.79411764706, &quot;case&quot;: &quot;zero_cot&quot;, &quot;label&quot;: &quot;Zero-shot con CoT&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;source_runs_dir&quot;: &quot;RunsCoT&quot;, &quot;baseline_success_rate&quot;: 0.7866666666666666, &quot;success_rate_delta&quot;: -0.10666666666666658}, {&quot;mode&quot;: &quot;no_syntactic&quot;, &quot;mode_label&quot;: &quot;Senza feedback loop sintattico&quot;, &quot;mode_description&quot;: &quot;Simula solo ITER0 per ogni ciclo DSL.&quot;, &quot;total&quot;: 120, &quot;success&quot;: 55, &quot;failed&quot;: 65, &quot;success_rate&quot;: 0.4583333333333333, &quot;output_tokens&quot;: 1133965.0, &quot;tokens_per_success&quot;: 20617.545454545456, &quot;case&quot;: &quot;few_nocot&quot;, &quot;label&quot;: &quot;Few-shot senza CoT&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;source_runs_dir&quot;: &quot;Runs2shotNoCot&quot;, &quot;baseline_success_rate&quot;: 0.55, &quot;success_rate_delta&quot;: -0.09166666666666673}, {&quot;mode&quot;: &quot;no_syntactic&quot;, &quot;mode_label&quot;: &quot;Senza feedback loop sintattico&quot;, &quot;mode_description&quot;: &quot;Simula solo ITER0 per ogni ciclo DSL.&quot;, &quot;total&quot;: 150, &quot;success&quot;: 83, &quot;failed&quot;: 67, &quot;success_rate&quot;: 0.5533333333333333, &quot;output_tokens&quot;: 3018995.0, &quot;tokens_per_success&quot;: 36373.43373493976, &quot;case&quot;: &quot;few_cot&quot;, &quot;label&quot;: &quot;Few-shot con CoT&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;source_runs_dir&quot;: &quot;Runs2ShotCoT&quot;, &quot;baseline_success_rate&quot;: 0.5666666666666667, &quot;success_rate_delta&quot;: -0.013333333333333308}, {&quot;mode&quot;: &quot;no_semantic_no_syntactic&quot;, &quot;mode_label&quot;: &quot;Senza feedback loop semantico e sintattico&quot;, &quot;mode_description&quot;: &quot;Combina entrambe le simulazioni: primo ciclo semantico e solo ITER0.&quot;, &quot;total&quot;: 120, &quot;success&quot;: 32, &quot;failed&quot;: 88, &quot;success_rate&quot;: 0.26666666666666666, &quot;output_tokens&quot;: 785183.5499999998, &quot;tokens_per_success&quot;: 24536.985937499994, &quot;case&quot;: &quot;zero_nocot&quot;, &quot;label&quot;: &quot;Zero-shot senza CoT&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;source_runs_dir&quot;: &quot;RunsNoCoT&quot;, &quot;baseline_success_rate&quot;: 0.4166666666666667, &quot;success_rate_delta&quot;: -0.15000000000000002}, {&quot;mode&quot;: &quot;no_semantic_no_syntactic&quot;, &quot;mode_label&quot;: &quot;Senza feedback loop semantico e sintattico&quot;, &quot;mode_description&quot;: &quot;Combina entrambe le simulazioni: primo ciclo semantico e solo ITER0.&quot;, &quot;total&quot;: 150, &quot;success&quot;: 86, &quot;failed&quot;: 64, &quot;success_rate&quot;: 0.5733333333333334, &quot;output_tokens&quot;: 2041308.883333333, &quot;tokens_per_success&quot;: 23736.14980620155, &quot;case&quot;: &quot;zero_cot&quot;, &quot;label&quot;: &quot;Zero-shot con CoT&quot;, &quot;shot&quot;: &quot;zero&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;source_runs_dir&quot;: &quot;RunsCoT&quot;, &quot;baseline_success_rate&quot;: 0.7866666666666666, &quot;success_rate_delta&quot;: -0.21333333333333326}, {&quot;mode&quot;: &quot;no_semantic_no_syntactic&quot;, &quot;mode_label&quot;: &quot;Senza feedback loop semantico e sintattico&quot;, &quot;mode_description&quot;: &quot;Combina entrambe le simulazioni: primo ciclo semantico e solo ITER0.&quot;, &quot;total&quot;: 120, &quot;success&quot;: 44, &quot;failed&quot;: 76, &quot;success_rate&quot;: 0.36666666666666664, &quot;output_tokens&quot;: 502126.21666666673, &quot;tokens_per_success&quot;: 11411.95946969697, &quot;case&quot;: &quot;few_nocot&quot;, &quot;label&quot;: &quot;Few-shot senza CoT&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;nocot&quot;, &quot;source_runs_dir&quot;: &quot;Runs2shotNoCot&quot;, &quot;baseline_success_rate&quot;: 0.55, &quot;success_rate_delta&quot;: -0.1833333333333334}, {&quot;mode&quot;: &quot;no_semantic_no_syntactic&quot;, &quot;mode_label&quot;: &quot;Senza feedback loop semantico e sintattico&quot;, &quot;mode_description&quot;: &quot;Combina entrambe le simulazioni: primo ciclo semantico e solo ITER0.&quot;, &quot;total&quot;: 150, &quot;success&quot;: 71, &quot;failed&quot;: 79, &quot;success_rate&quot;: 0.47333333333333333, &quot;output_tokens&quot;: 1388168.8333333333, &quot;tokens_per_success&quot;: 19551.673708920185, &quot;case&quot;: &quot;few_cot&quot;, &quot;label&quot;: &quot;Few-shot con CoT&quot;, &quot;shot&quot;: &quot;few&quot;, &quot;cot&quot;: &quot;cot&quot;, &quot;source_runs_dir&quot;: &quot;Runs2ShotCoT&quot;, &quot;baseline_success_rate&quot;: 0.5666666666666667, &quot;success_rate_delta&quot;: -0.09333333333333332}]}</script>
+</body>
+</html>
