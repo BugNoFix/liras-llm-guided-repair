@@ -1,8 +1,0 @@
-Coffee_Delivery
-robots: Robot1
-locations: warehouse, coffee_room, kitchen
-resources: coffee
-Robot1:
-	1: moveTo kitchen if position(Robot1, kitchen) else stop
-	2: pick coffee if position(Robot1, coffee_room) && position(Robot1, kitchen) else stop
-	3: follow Human1(kitchen)
