@@ -81,11 +81,13 @@ huggingface
 | `scenario` | Natural-language scenario under `Scenarios/`. Example: `NL_Specification_1.txt`. |
 | `generation_temperature` | Sampling temperature for generation. |
 | `generation_max_output_tokens` | Maximum output tokens for generation. |
-| `shots` | Number of few-shot examples for generation. Usually `0`, `1`, or `2`. |
+| `shots` | Few-shot examples for generation. Use `0` for none, an integer/list for legacy shots, or `leave_one_spec_out` for NL_Specification_1/2/3 without data leakage. |
 | `generation_only` | If `true`, only generate LIRAs code and stop. |
 | `use_generated_dsl_cache` | If `true`, load existing LIRAs code instead of generating it. |
 | `generated_dsl_root` | Root folder for generated DSL cache. Usually `GeneratedDSL`. |
 | `dsl_source_root` | Root folder for manual/baseline DSL files. Usually `DSL`. |
+
+For `shots: "leave_one_spec_out"`, examples are read from `Shots/Generative/NL_Specifications/Spec*/`.
 
 ### Repair And Compilation Settings
 
@@ -95,10 +97,12 @@ huggingface
 | `compiler_timeout` | Compiler timeout in seconds. |
 | `max_iterations` | Maximum generation/repair attempts inside one feedback cycle. |
 | `repair_prompt` | Repair prompt template under `SPs/`. Example: `Repair/NewSPR7.j2`. |
-| `repair_shots` | Number of few-shot examples for repair. |
+| `repair_shots` | Few-shot examples for repair. Use `0` for none, `2` for both leave-one-spec-out repair cases, or `major_errors` for the same two-case mode. Lists still point to explicit shot files. |
 | `repair_temperature` | Sampling temperature for repair. |
 | `repair_max_output_tokens` | Maximum output tokens for repair. |
 | `repair_stateless` | If `true`, each repair call is stateless. |
+
+For `repair_shots: 2`, examples are read from `Shots/Repair/LeaveOneSpecOut/TargetSpec*/`; each target folder contains only real broken-to-corrected cases from other specifications.
 
 ### XML, Query, And UPPAAL Settings
 

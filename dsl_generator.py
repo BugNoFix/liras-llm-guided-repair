@@ -14,7 +14,7 @@ except ImportError:
 from pathlib import Path
 from datetime import datetime
 import json
-from typing import Optional, Any
+from typing import Optional, Any, Callable
 import jinja2
 try:
     from groq import Groq
@@ -28,6 +28,13 @@ try:
     from openai import OpenAI
 except ImportError:
     OpenAI = None
+try:
+    from openai import APIConnectionError, APIStatusError, APITimeoutError, RateLimitError
+except ImportError:
+    APIConnectionError = None
+    APIStatusError = None
+    APITimeoutError = None
+    RateLimitError = None
 
 # 🔴 KEY PATH CONFIGURATION
 # For shared projects: place your personal key in keys/key.json
@@ -65,6 +72,8 @@ class DSLGenerator:
         repair_provider: Optional[str] = None,
         query_provider: Optional[str] = None,
         api_keys: Optional[dict[str, str]] = None,
+        reasoning_effort: Optional[str] = None,
+        block_hf_thinking: bool = False,
     ):
         """
         Initialize the DSL Generator with Vertex AI credentials
@@ -85,6 +94,8 @@ class DSLGenerator:
         self.generation_provider = self._normalize_provider(generation_provider or self.provider)
         self.repair_provider = self._normalize_provider(repair_provider or self.provider)
         self.query_provider = self._normalize_provider(query_provider or self.provider)
+        self.reasoning_effort = self._normalize_optional_string(reasoning_effort)
+        self.block_hf_thinking = bool(block_hf_thinking)
         self.api_keys = dict(api_keys or {})
         if api_key and self.provider not in self.api_keys:
             self.api_keys[self.provider] = api_key
@@ -152,12 +163,16 @@ class DSLGenerator:
         self.repair_chat_history = None
         self.current_config = {}
         self.last_dsl_code = None
+        self.last_chat_request_params: Optional[dict] = None
+        self.last_chat_request_provider: Optional[str] = None
 
         # Generation context (captured once during generate phase; reused during repair prompts)
         self.generation_system_prompt_text: Optional[str] = None
         self.generation_scenario_text: Optional[str] = None
         self.initial_dsl_from_generation: Optional[str] = None
         self.uppaal_feedback: Optional[str] = None
+        self.empty_generation_max_retries: int = 0
+        self.current_scenario_file: Optional[str] = None
 
         # Repair chat state
         self.repair_iteration_count = 0
@@ -223,6 +238,181 @@ class DSLGenerator:
             raise ValueError("Unsupported provider. Use 'gemini', 'groq', 'mistral', 'openrouter' or 'huggingface'")
         return provider_name
 
+    @staticmethod
+    def _normalize_optional_string(value: Optional[str]) -> Optional[str]:
+        if value is None:
+            return None
+        text = str(value).strip()
+        return text or None
+
+    def _request_params_with_optional_reasoning_effort(
+        self,
+        *,
+        provider: str,
+        model_name: str,
+        temperature: float,
+        max_output_tokens: Optional[int],
+        seed: Optional[int],
+        kind: Optional[str] = None,
+    ) -> dict:
+        params = {
+            "model": model_name,
+            "temperature": float(temperature),
+            "max_tokens": max_output_tokens,
+            "seed": seed,
+        }
+        disable_thinking_extra_body = self._disable_thinking_extra_body_for_request(
+            provider=provider,
+            model_name=model_name,
+            kind=kind,
+        )
+        if disable_thinking_extra_body:
+            params["extra_body"] = disable_thinking_extra_body
+        else:
+            reasoning_effort = self._reasoning_effort_for_request(provider=provider, model_name=model_name, kind=kind)
+            if reasoning_effort:
+                params["reasoning_effort"] = reasoning_effort
+        return params
+
+    @staticmethod
+    def _is_gpt_oss_model(model_name: str) -> bool:
+        normalized = (model_name or "").strip().lower()
+        return "gpt-oss" in normalized or "gptoss" in re.sub(r"[^a-z0-9]+", "", normalized)
+
+    @staticmethod
+    def _is_qwen_disable_thinking_model(model_name: str) -> bool:
+        normalized = (model_name or "").strip().lower()
+        return normalized in {
+            "qwen/qwen3.5-9b",
+        }
+
+    @staticmethod
+    def _is_glm_thinking_model(model_name: str) -> bool:
+        normalized = (model_name or "").strip().lower()
+        return "glm-5.2" in normalized or "glm-5" in normalized or "glm-4.7" in normalized
+
+    @staticmethod
+    def _qwen_disable_thinking_extra_body() -> dict:
+        return {"chat_template_kwargs": {"enable_thinking": False}}
+
+    @staticmethod
+    def _glm_disable_thinking_extra_body() -> dict:
+        return {"chat_template_kwargs": {"enable_thinking": False}}
+
+    def _should_disable_qwen_thinking(self, *, provider: str, model_name: str, kind: Optional[str] = None) -> bool:
+        return (
+            self._normalize_provider(provider) == "huggingface"
+            and kind in ("generate", "repair")
+            and (self._normalize_optional_string(self.reasoning_effort) or "").lower() == "none"
+            and self._is_qwen_disable_thinking_model(model_name)
+        )
+
+    def _should_disable_glm_thinking(self, *, provider: str, model_name: str, kind: Optional[str] = None) -> bool:
+        return (
+            self._normalize_provider(provider) == "huggingface"
+            and kind in ("generate", "repair")
+            and (self._normalize_optional_string(self.reasoning_effort) or "").lower() == "none"
+            and self._is_glm_thinking_model(model_name)
+        )
+
+    def _disable_thinking_extra_body_for_request(
+        self,
+        *,
+        provider: str,
+        model_name: str,
+        kind: Optional[str] = None,
+    ) -> Optional[dict]:
+        if self._should_disable_qwen_thinking(provider=provider, model_name=model_name, kind=kind):
+            return self._qwen_disable_thinking_extra_body()
+        if self._should_disable_glm_thinking(provider=provider, model_name=model_name, kind=kind):
+            return self._glm_disable_thinking_extra_body()
+        return None
+
+    def _should_skip_hf_thinking_block(self, *, provider: str, model_name: str) -> bool:
+        return self._normalize_provider(provider) == "huggingface" and self._is_gpt_oss_model(model_name)
+
+    def _reasoning_effort_for_request(self, *, provider: str, model_name: str, kind: Optional[str] = None) -> Optional[str]:
+        if self._normalize_provider(provider) != "huggingface":
+            return None
+        if kind == "query_adaptation":
+            return None
+        reasoning_effort = self._normalize_optional_string(self.reasoning_effort)
+        if self._should_disable_qwen_thinking(provider=provider, model_name=model_name, kind=kind):
+            return None
+        if self._should_disable_glm_thinking(provider=provider, model_name=model_name, kind=kind):
+            return None
+        if (reasoning_effort or "").lower() == "none" and self._is_gpt_oss_model(model_name):
+            return "low"
+        return reasoning_effort
+
+    def _response_log_request_params(
+        self,
+        *,
+        provider: str,
+        model_name: str,
+        temperature: float,
+        max_output_tokens: Optional[int],
+        seed: Optional[int],
+        kind: Optional[str] = None,
+    ) -> dict:
+        provider_name = self._normalize_provider(provider)
+        if (
+            provider_name != "gemini"
+            and self.last_chat_request_provider == provider_name
+            and isinstance(self.last_chat_request_params, dict)
+        ):
+            last_params = dict(self.last_chat_request_params)
+            if last_params.get("model") == model_name:
+                return last_params
+        return self._request_params_with_optional_reasoning_effort(
+            provider=provider_name,
+            model_name=model_name,
+            temperature=temperature,
+            max_output_tokens=max_output_tokens,
+            seed=seed,
+            kind=kind,
+        )
+
+    @staticmethod
+    def _is_provider_bad_request(exc: Exception) -> bool:
+        status_code = getattr(exc, "status_code", None)
+        if status_code == 400:
+            return True
+        text = str(exc).lower()
+        return "error code: 400" in text or "invalid_request_error" in text or "input validation error" in text
+
+    @staticmethod
+    def _is_retryable_provider_error(exc: Exception) -> bool:
+        status_code = getattr(exc, "status_code", None)
+        if status_code in (408, 409, 429, 500, 502, 503, 504):
+            return True
+        if status_code is not None:
+            return False
+
+        retryable_types = tuple(
+            t for t in (APIConnectionError, APITimeoutError, RateLimitError) if t is not None
+        )
+        if retryable_types and isinstance(exc, retryable_types):
+            return True
+        if APIStatusError is not None and isinstance(exc, APIStatusError):
+            return False
+
+        text = str(exc).lower()
+        return any(
+            marker in text
+            for marker in (
+                "gateway timeout",
+                "<h1>504</h1>",
+                "error code: 504",
+                "504 gateway",
+                "502 bad gateway",
+                "503 service unavailable",
+                "timeout",
+                "temporarily unavailable",
+                "rate limit",
+            )
+        )
+
     def _create_provider_client(self, provider: str):
         provider_name = self._normalize_provider(provider)
         api_key = self.api_keys.get(provider_name)
@@ -279,6 +469,7 @@ class DSLGenerator:
         temperature: float,
         max_output_tokens: Optional[int] = None,
         seed: Optional[int] = None,
+        kind: Optional[str] = None,
     ):
         """Call Groq chat completion API in OpenAI-compatible messages format."""
         messages = [{"role": "system", "content": system_instruction}]
@@ -294,9 +485,65 @@ class DSLGenerator:
             params["max_tokens"] = int(max_output_tokens)
         if seed is not None:
             params["seed"] = int(seed)
+        provider_name = self._normalize_provider(provider or self.provider)
+        disable_thinking_extra_body = self._disable_thinking_extra_body_for_request(
+            provider=provider_name,
+            model_name=model_name,
+            kind=kind,
+        )
+        if disable_thinking_extra_body:
+            params["extra_body"] = disable_thinking_extra_body
+        else:
+            reasoning_effort = self._reasoning_effort_for_request(provider=provider_name, model_name=model_name, kind=kind)
+            if reasoning_effort:
+                params["reasoning_effort"] = reasoning_effort
 
         client = self._client_for_provider(provider or self.provider)
-        return client.chat.completions.create(**params)
+        self.last_chat_request_provider = provider_name
+        self.last_chat_request_params = dict(params)
+        try:
+            return client.chat.completions.create(**params)
+        except Exception as exc:
+            if (
+                provider_name == "huggingface"
+                and "extra_body" in params
+                and self._is_provider_bad_request(exc)
+            ):
+                omitted_value = params.pop("extra_body")
+                print(
+                    "[WARNING] Hugging Face rejected disable-thinking extra_body; "
+                    "retrying without that parameter."
+                )
+                self.last_chat_request_params = dict(params)
+                self.last_chat_request_params["extra_body_omitted_after_400"] = omitted_value
+                try:
+                    return client.chat.completions.create(**params)
+                except Exception as retry_exc:
+                    if (
+                        provider_name == "huggingface"
+                        and "reasoning_effort" in params
+                        and self._is_provider_bad_request(retry_exc)
+                    ):
+                        reasoning_omitted_value = params.pop("reasoning_effort")
+                        print(
+                            "[WARNING] Hugging Face rejected reasoning_effort="
+                            f"{reasoning_omitted_value!r}; retrying without that parameter."
+                        )
+                        self.last_chat_request_params = dict(params)
+                        self.last_chat_request_params["extra_body_omitted_after_400"] = omitted_value
+                        self.last_chat_request_params["reasoning_effort_omitted_after_400"] = reasoning_omitted_value
+                        return client.chat.completions.create(**params)
+                    raise
+            if provider_name == "huggingface" and "reasoning_effort" in params and self._is_provider_bad_request(exc):
+                omitted_value = params.pop("reasoning_effort")
+                print(
+                    "[WARNING] Hugging Face rejected reasoning_effort="
+                    f"{omitted_value!r}; retrying without that parameter."
+                )
+                self.last_chat_request_params = dict(params)
+                self.last_chat_request_params["reasoning_effort_omitted_after_400"] = omitted_value
+                return client.chat.completions.create(**params)
+            raise
 
     def _call_mistral_chat(
         self,
@@ -309,6 +556,7 @@ class DSLGenerator:
         temperature: float,
         max_output_tokens: Optional[int] = None,
         seed: Optional[int] = None,
+        kind: Optional[str] = None,
     ):
         """Call Mistral chat completion API using messages format."""
         messages = [{"role": "system", "content": system_instruction}]
@@ -339,6 +587,7 @@ class DSLGenerator:
         temperature: float,
         max_output_tokens: Optional[int] = None,
         seed: Optional[int] = None,
+        kind: Optional[str] = None,
     ):
         provider_name = self._normalize_provider(provider or self.provider)
         if provider_name == "groq":
@@ -351,6 +600,7 @@ class DSLGenerator:
                 temperature=temperature,
                 max_output_tokens=max_output_tokens,
                 seed=seed,
+                kind=kind,
             )
         if provider_name == "mistral":
             return self._call_mistral_chat(
@@ -362,6 +612,7 @@ class DSLGenerator:
                 temperature=temperature,
                 max_output_tokens=max_output_tokens,
                 seed=seed,
+                kind=kind,
             )
         if provider_name == "openrouter":
             return self._call_groq_chat(
@@ -373,6 +624,7 @@ class DSLGenerator:
                 temperature=temperature,
                 max_output_tokens=max_output_tokens,
                 seed=seed,
+                kind=kind,
             )
         if provider_name == "huggingface":
             return self._call_groq_chat(
@@ -384,6 +636,7 @@ class DSLGenerator:
                 temperature=temperature,
                 max_output_tokens=max_output_tokens,
                 seed=seed,
+                kind=kind,
             )
         raise ValueError(f"Unsupported non-gemini provider: {provider_name}")
 
@@ -429,12 +682,30 @@ class DSLGenerator:
             return None
 
     def _call_with_backoff(self, func, *, label: str, max_retries: int = 5, provider: Optional[str] = None):
-        """Run a callable with exponential backoff on resource exhaustion (429)."""
+        """Run a callable with exponential backoff on transient provider failures."""
         import random
 
         provider_name = self._normalize_provider(provider or self.provider)
         if provider_name in ("groq", "mistral", "openrouter", "huggingface"):
-            return func()
+            for attempt in range(max_retries + 1):
+                try:
+                    return func()
+                except Exception as exc:
+                    if not self._is_retryable_provider_error(exc):
+                        raise
+                    if attempt == max_retries:
+                        print(f"[BACKOFF] {label} exhausted all {max_retries} retries. Raising.")
+                        raise
+                    base_delay = min(2 ** (attempt + 1), 120)
+                    jitter = random.uniform(0, base_delay * 0.5)
+                    wait = base_delay + jitter
+                    status = getattr(exc, "status_code", None)
+                    status_text = f"status {status}" if status is not None else type(exc).__name__
+                    print(
+                        f"[BACKOFF] {label} hit transient provider error ({status_text}) "
+                        f"(attempt {attempt + 1}/{max_retries}). Waiting {wait:.1f}s before retry..."
+                    )
+                    time.sleep(wait)
 
         # Build a tuple of exception types to catch.
         _retryable = (GenaiClientError,)
@@ -505,6 +776,129 @@ class DSLGenerator:
             return shots
 
         raise ValueError("shots must be an integer, a list of pairs, or empty")
+
+    @staticmethod
+    def _extract_nl_spec_id(scenario_file: str) -> Optional[int]:
+        """Return the NL_Specification id from a scenario filename, when present."""
+        name = Path(str(scenario_file or "")).name
+        match = re.fullmatch(r"NL_Specification_(\d+)\.txt", name)
+        if not match:
+            return None
+        return int(match.group(1))
+
+    @staticmethod
+    def _normalize_shot_mode(shots) -> Optional[str]:
+        if not isinstance(shots, str):
+            return None
+        mode = shots.strip().lower().replace("-", "_")
+        aliases = {
+            "leave_one_spec_out",
+            "leave_one_out",
+            "loo",
+            "nl_leave_one_out",
+            "nl_leave_one_spec_out",
+        }
+        if mode in aliases:
+            return "leave_one_spec_out"
+        raise ValueError(
+            "shots string mode must be 'leave_one_spec_out' "
+            "(aliases: leave_one_out, loo, nl_leave_one_out)"
+        )
+
+    @staticmethod
+    def _nl_spec_shot_pair(spec_id: int) -> dict:
+        return {
+            "user": f"NL_Specifications/Spec{spec_id}/UserScenario.txt",
+            "assistant": f"NL_Specifications/Spec{spec_id}/AssistantScenario.txt",
+            "source_spec": f"NL_Specification_{spec_id}",
+        }
+
+    def _normalize_generative_shots(self, shots, *, scenario_file: str) -> list[dict]:
+        """Normalize generation shots, avoiding NL_Specification data leakage.
+
+        For NL_Specification_1/2/3, the explicit ``leave_one_spec_out`` mode
+        loads the two other specification shots. Positive integer shots keep
+        backward compatibility, but for NL specs they are selected only from
+        other specifications, never from the current one.
+        """
+        mode = self._normalize_shot_mode(shots)
+        current_spec_id = self._extract_nl_spec_id(scenario_file)
+
+        if mode == "leave_one_spec_out":
+            if current_spec_id is None:
+                raise ValueError(
+                    "shots='leave_one_spec_out' can only be used with "
+                    "NL_Specification_<n>.txt scenarios"
+                )
+            return [
+                self._nl_spec_shot_pair(spec_id)
+                for spec_id in (1, 2, 3)
+                if spec_id != current_spec_id
+            ]
+
+        if isinstance(shots, int) and shots > 0 and current_spec_id is not None:
+            candidates = [
+                self._nl_spec_shot_pair(spec_id)
+                for spec_id in (1, 2, 3)
+                if spec_id != current_spec_id
+            ]
+            return candidates[: min(shots, len(candidates))]
+
+        return self._normalize_shots(shots)
+
+    @staticmethod
+    def _normalize_repair_shot_mode(repair_shots) -> Optional[str]:
+        if not isinstance(repair_shots, str):
+            return None
+        mode = repair_shots.strip().lower().replace("-", "_")
+        aliases = {
+            "major_errors",
+            "common_major_errors",
+            "repair_major_errors",
+        }
+        if mode in aliases:
+            return "major_errors"
+        raise ValueError(
+            "repair_shots string mode must be 'major_errors' "
+            "(aliases: common_major_errors, repair_major_errors)"
+        )
+
+    @staticmethod
+    def _major_error_repair_shot_pair(target_spec_id: int, case_id: int, source_spec_id: int) -> dict:
+        return {
+            "user": f"LeaveOneSpecOut/TargetSpec{target_spec_id}/Case{case_id}/UserScenario.txt",
+            "assistant": f"LeaveOneSpecOut/TargetSpec{target_spec_id}/Case{case_id}/AssistantScenario.txt",
+            "target_spec": f"NL_Specification_{target_spec_id}",
+            "source_spec": f"NL_Specification_{source_spec_id}",
+            "source": f"target_spec_{target_spec_id}_case_{case_id}_from_spec_{source_spec_id}",
+        }
+
+    def _normalize_repair_shots(self, repair_shots, *, scenario_file: str = "") -> list[dict]:
+        """Normalize repair shots.
+
+        The integer mode uses real broken-to-corrected repair examples for NL
+        specifications. They are physically stored under the target
+        specification, but sourced only from the other specifications.
+        """
+        mode = self._normalize_repair_shot_mode(repair_shots)
+        if mode == "major_errors" or (isinstance(repair_shots, int) and repair_shots > 0):
+            current_spec_id = self._extract_nl_spec_id(scenario_file)
+            if current_spec_id is None and mode == "major_errors":
+                raise ValueError(
+                    "repair_shots='major_errors' can only be used with "
+                    "NL_Specification_<n>.txt scenarios"
+                )
+            if current_spec_id is None:
+                return self._normalize_shots(repair_shots, start_index=3)
+            other_specs = [spec_id for spec_id in (1, 2, 3) if spec_id != current_spec_id]
+            candidates = [
+                self._major_error_repair_shot_pair(current_spec_id, 1, other_specs[0]),
+                self._major_error_repair_shot_pair(current_spec_id, 2, other_specs[1]),
+            ]
+            if mode == "major_errors":
+                return candidates
+            return candidates[: min(repair_shots, len(candidates))]
+        return self._normalize_shots(repair_shots, start_index=3)
 
     @staticmethod
     def _read_usage_value(usage_obj, *names):
@@ -745,6 +1139,67 @@ class DSLGenerator:
                 pass
         return repr(value)
 
+    @staticmethod
+    def _short_debug_value(value: Any, *, limit: int = 240) -> str:
+        text = str(value).replace("\n", "\\n")
+        if len(text) > limit:
+            return text[:limit] + "..."
+        return text
+
+    def _find_hf_thinking_signal(self, response_text: str, response_payload: Any) -> Optional[str]:
+        """Return a short reason if a Hugging Face response exposes hidden thinking."""
+        if re.search(r"</?\s*think(?:ing)?\b", response_text or "", flags=re.IGNORECASE):
+            return "response_text contains <think> markup"
+
+        thinking_keys = {
+            "reasoning",
+            "reasoning_content",
+            "reasoning_details",
+            "reasoning_trace",
+            "thinking",
+            "thinking_content",
+            "thoughts",
+        }
+        token_keys = {
+            "reasoning_tokens",
+            "thinking_tokens",
+        }
+
+        def is_present(value: Any) -> bool:
+            if value is None:
+                return False
+            if isinstance(value, str):
+                return bool(value.strip())
+            if isinstance(value, (int, float)):
+                return value > 0
+            if isinstance(value, bool):
+                return value
+            if isinstance(value, (list, tuple, set, dict)):
+                return bool(value)
+            return True
+
+        def walk(value: Any, path: str = "response_obj") -> Optional[str]:
+            if isinstance(value, dict):
+                for key, item in value.items():
+                    key_text = str(key)
+                    key_norm = key_text.lower()
+                    item_path = f"{path}.{key_text}"
+                    if key_norm in token_keys and is_present(item):
+                        return f"{item_path}={self._short_debug_value(item)}"
+                    if key_norm in thinking_keys and is_present(item):
+                        return f"{item_path}={self._short_debug_value(item)}"
+                    found = walk(item, item_path)
+                    if found:
+                        return found
+            elif isinstance(value, list):
+                for index, item in enumerate(value):
+                    found = walk(item, f"{path}[{index}]")
+                    if found:
+                        return found
+            return None
+
+        return walk(response_payload)
+
     def _log_huggingface_debug_response(
         self,
         *,
@@ -782,6 +1237,18 @@ class DSLGenerator:
         }
         with open(self.hf_debug_response_log_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+
+        if (
+            self.block_hf_thinking
+            and kind in ("generate", "repair")
+            and not self._should_skip_hf_thinking_block(provider=provider_name, model_name=model_name)
+        ):
+            signal = self._find_hf_thinking_signal(entry["response_text"], entry["response_obj"])
+            if signal:
+                raise RuntimeError(
+                    "Hugging Face thinking detected; aborting run. "
+                    f"kind={kind} model={model_name} seed={self.llm_seed} signal={signal}"
+                )
 
     def _init_run_metadata(self, config: dict, compiler_jar_path: Path, max_iterations: int) -> None:
         """Initialize per-run directory + metadata file.
@@ -856,10 +1323,81 @@ class DSLGenerator:
             "generation_model": config.get("generation_model"),
             "generation_temperature": float(getattr(self, "generation_temperature", 1.0)),
             "generation_max_output_tokens": self.generation_max_output_tokens,
+            "empty_generation_max_retries": int(getattr(self, "empty_generation_max_retries", 0) or 0),
             "llm_seed": self.llm_seed,
+            "block_hf_thinking": self.block_hf_thinking,
             "repair_model": config.get("repair_model"),
             "repair_temperature": float(getattr(self, "repair_temperature", 0.2)),
             "repair_max_output_tokens": int(getattr(self, "repair_max_output_tokens", 16384)),
+            "empty_query_adaptation_max_retries": int(
+                config.get("empty_query_adaptation_max_retries", 0) or 0
+            ),
+            "reasoning_effort": self.reasoning_effort,
+            "effective_reasoning_effort": {
+                "generation": self._reasoning_effort_for_request(
+                    provider=self.generation_provider,
+                    model_name=str(config.get("generation_model") or ""),
+                    kind="generate",
+                ),
+                "repair": self._reasoning_effort_for_request(
+                    provider=self.repair_provider,
+                    model_name=str(config.get("repair_model") or ""),
+                    kind="repair",
+                ),
+                "query": self._reasoning_effort_for_request(
+                    provider=self.query_provider,
+                    model_name=str(config.get("query_model") or ""),
+                    kind="query_adaptation",
+                ),
+            },
+            "hf_thinking_block_skipped": {
+                "generation": self._should_skip_hf_thinking_block(
+                    provider=self.generation_provider,
+                    model_name=str(config.get("generation_model") or ""),
+                ),
+                "repair": self._should_skip_hf_thinking_block(
+                    provider=self.repair_provider,
+                    model_name=str(config.get("repair_model") or ""),
+                ),
+                "query": self._should_skip_hf_thinking_block(
+                    provider=self.query_provider,
+                    model_name=str(config.get("query_model") or ""),
+                ),
+            },
+            "qwen_disable_thinking_extra_body": {
+                "generation": self._should_disable_qwen_thinking(
+                    provider=self.generation_provider,
+                    model_name=str(config.get("generation_model") or ""),
+                    kind="generate",
+                ),
+                "repair": self._should_disable_qwen_thinking(
+                    provider=self.repair_provider,
+                    model_name=str(config.get("repair_model") or ""),
+                    kind="repair",
+                ),
+                "query": self._should_disable_qwen_thinking(
+                    provider=self.query_provider,
+                    model_name=str(config.get("query_model") or ""),
+                    kind="query_adaptation",
+                ),
+            },
+            "glm_disable_thinking_extra_body": {
+                "generation": self._should_disable_glm_thinking(
+                    provider=self.generation_provider,
+                    model_name=str(config.get("generation_model") or ""),
+                    kind="generate",
+                ),
+                "repair": self._should_disable_glm_thinking(
+                    provider=self.repair_provider,
+                    model_name=str(config.get("repair_model") or ""),
+                    kind="repair",
+                ),
+                "query": self._should_disable_glm_thinking(
+                    provider=self.query_provider,
+                    model_name=str(config.get("query_model") or ""),
+                    kind="query_adaptation",
+                ),
+            },
             "repair_shots": config.get("repair_shots"),
             "use_generated_dsl_cache": use_cached_generation,
             "generated_dsl_source": generated_dsl_source,
@@ -1057,8 +1595,14 @@ class DSLGenerator:
         """Return available system prompts, shots, and scenarios (no printing)."""
         sp_files = [p.name for p in sorted(self.sp_path.glob("*.txt"))]
         sp_files.extend([f"Generative/{p.name}" for p in sorted(self.generative_sp_path.glob("*.txt"))])
-        generative_shots = [p.name for p in sorted(self.generative_shots_path.glob("*.txt"))]
-        repair_shots = [p.name for p in sorted(self.repair_shots_path.glob("*.txt"))]
+        generative_shots = [
+            str(p.relative_to(self.generative_shots_path))
+            for p in sorted(self.generative_shots_path.rglob("*.txt"))
+        ]
+        repair_shots = [
+            str(p.relative_to(self.repair_shots_path))
+            for p in sorted(self.repair_shots_path.rglob("*.txt"))
+        ]
         scenario_files = [p.name for p in sorted(self.scenarios_path.glob("*.txt"))]
         return {
             "system_prompts": sp_files,
@@ -1118,23 +1662,30 @@ class DSLGenerator:
                 return path
         return preferred[0]
     
-    def start_conversation(self, system_prompt_file: str, shots, scenario_file: str, model_name: str):
+    def start_conversation(
+        self,
+        system_prompt_file: str,
+        shots,
+        scenario_file: str,
+        model_name: str,
+        response_accepts: Optional[Callable[[str], bool]] = None,
+    ):
         """
         Start a new conversation with configured system prompt, shot pairs, and scenario
         
         Args:
             system_prompt_file: Name of the system prompt file (e.g., "SystemPrompt1.txt")
-            shots: Integer (number of shots, e.g., 2 loads UserScenario_1.txt + AssistantScenario_1.txt,
-                          UserScenario_2.txt + AssistantScenario_2.txt) OR
-                   List of dicts with 'user' and 'assistant' shot file names for backwards compatibility
+            shots: "leave_one_spec_out" for NL_Specification leave-one-out shots, an integer,
+                   or a list of dicts with 'user' and 'assistant' shot file names for backwards compatibility
             scenario_file: Name of the scenario file to process (e.g., "UserScenario_011.txt")
         """
-        shot_pairs = self._normalize_shots(shots)
+        shot_pairs = self._normalize_generative_shots(shots, scenario_file=scenario_file)
         
         # Store configuration
         self.current_config = {
             "system_prompt": system_prompt_file,
-            "shots": shot_pairs,
+            "shots": shots,
+            "resolved_generation_shots": shot_pairs,
             "scenario": scenario_file,
             "repair_prompt": str(self.repair_prompt_template_path),
             "timestamp": datetime.now().isoformat()
@@ -1195,112 +1746,183 @@ class DSLGenerator:
             # Backward compat alias
             self.chat = self.generation_chat
 
-        print(f"[GENERATE] Sending scenario to generation model ({model_name})...")
-        if provider_name == "gemini" and self.generation_chat is not None:
-            self._log_outgoing_prompt(
-                kind="generate",
-                provider=provider_name,
-                model_name=model_name,
-                prompt_text=scenario_prompt_content,
-                system_prompt=system_prompt,
-                temperature=self.generation_temperature,
-                seed=self.llm_seed,
-            )
-            response = self._call_with_backoff(
-                lambda: self.generation_chat.send_message(scenario_prompt_content),
-                label="generation_chat.send_message",
-                provider=provider_name,
-            )
-        elif provider_name == "gemini":
-            current_history = self.chat_history + [
-                types.Content(role="user", parts=[types.Part(text=scenario_prompt_content)])
-            ]
-            self._log_outgoing_prompt(
-                kind="generate",
-                provider=provider_name,
-                model_name=model_name,
-                prompt_text=scenario_prompt_content,
-                system_prompt=system_prompt,
-                temperature=self.generation_temperature,
-                seed=self.llm_seed,
-            )
-            config_kwargs = {
-                "system_instruction": system_prompt,
-                "temperature": self.generation_temperature,
-                "safety_settings": [
-                    types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="BLOCK_NONE"),
-                    types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="BLOCK_NONE"),
-                    types.SafetySetting(category="HARM_CATEGORY_DANGEROUS_CONTENT", threshold="BLOCK_NONE"),
-                ],
-            }
-            if self.generation_max_output_tokens is not None:
-                config_kwargs["max_output_tokens"] = int(self.generation_max_output_tokens)
-            if self.llm_seed is not None:
-                config_kwargs["seed"] = int(self.llm_seed)
-            response = self._call_with_backoff(
-                lambda: self._client_for_provider(provider_name).models.generate_content(
-                    model=model_name,
-                    contents=current_history,
-                    config=types.GenerateContentConfig(**config_kwargs),
-                ),
-                label="generation.generate_content",
-                provider=provider_name,
-            )
-        else:
-            self._log_outgoing_prompt(
-                kind="generate",
-                provider=provider_name,
-                model_name=model_name,
-                prompt_text=scenario_prompt_content,
-                system_prompt=system_prompt,
-                temperature=self.generation_temperature,
-                seed=self.llm_seed,
-            )
-            response = self._call_with_backoff(
-                lambda: self._call_non_gemini_chat(
+        max_empty_retries = max(0, int(getattr(self, "empty_generation_max_retries", 0) or 0))
+        response = None
+        response_text = ""
+        generation_attempts = []
+
+        for retry_index in range(max_empty_retries + 1):
+            attempt_number = retry_index + 1
+            attempt_for_log = attempt_number if max_empty_retries else None
+            if max_empty_retries:
+                print(
+                    f"[GENERATE] Sending scenario to generation model "
+                    f"({model_name}, attempt {attempt_number}/{max_empty_retries + 1})..."
+                )
+            else:
+                print(f"[GENERATE] Sending scenario to generation model ({model_name})...")
+
+            if provider_name == "gemini" and self.generation_chat is not None and retry_index > 0:
+                self.generation_chat = self._maybe_create_server_chat(
                     provider=provider_name,
                     model_name=model_name,
                     system_instruction=system_prompt,
                     history=self.chat_history,
-                    user_message=scenario_prompt_content,
                     temperature=self.generation_temperature,
                     max_output_tokens=self.generation_max_output_tokens,
                     seed=self.llm_seed,
-                ),
-                label=f"generation.{provider_name}.chat.completions",
+                )
+                self.chat = self.generation_chat
+
+            if provider_name == "gemini" and self.generation_chat is not None:
+                self._log_outgoing_prompt(
+                    kind="generate",
+                    provider=provider_name,
+                    model_name=model_name,
+                    prompt_text=scenario_prompt_content,
+                    system_prompt=system_prompt,
+                    attempt=attempt_for_log,
+                    temperature=self.generation_temperature,
+                    seed=self.llm_seed,
+                )
+                response = self._call_with_backoff(
+                    lambda: self.generation_chat.send_message(scenario_prompt_content),
+                    label="generation_chat.send_message",
+                    provider=provider_name,
+                )
+            elif provider_name == "gemini":
+                current_history = self.chat_history + [
+                    types.Content(role="user", parts=[types.Part(text=scenario_prompt_content)])
+                ]
+                self._log_outgoing_prompt(
+                    kind="generate",
+                    provider=provider_name,
+                    model_name=model_name,
+                    prompt_text=scenario_prompt_content,
+                    system_prompt=system_prompt,
+                    attempt=attempt_for_log,
+                    temperature=self.generation_temperature,
+                    seed=self.llm_seed,
+                )
+                config_kwargs = {
+                    "system_instruction": system_prompt,
+                    "temperature": self.generation_temperature,
+                    "safety_settings": [
+                        types.SafetySetting(category="HARM_CATEGORY_HATE_SPEECH", threshold="BLOCK_NONE"),
+                        types.SafetySetting(category="HARM_CATEGORY_HARASSMENT", threshold="BLOCK_NONE"),
+                        types.SafetySetting(category="HARM_CATEGORY_DANGEROUS_CONTENT", threshold="BLOCK_NONE"),
+                    ],
+                }
+                if self.generation_max_output_tokens is not None:
+                    config_kwargs["max_output_tokens"] = int(self.generation_max_output_tokens)
+                if self.llm_seed is not None:
+                    config_kwargs["seed"] = int(self.llm_seed)
+                response = self._call_with_backoff(
+                    lambda: self._client_for_provider(provider_name).models.generate_content(
+                        model=model_name,
+                        contents=current_history,
+                        config=types.GenerateContentConfig(**config_kwargs),
+                    ),
+                    label="generation.generate_content",
+                    provider=provider_name,
+                )
+            else:
+                self._log_outgoing_prompt(
+                    kind="generate",
+                    provider=provider_name,
+                    model_name=model_name,
+                    prompt_text=scenario_prompt_content,
+                    system_prompt=system_prompt,
+                    attempt=attempt_for_log,
+                    temperature=self.generation_temperature,
+                    seed=self.llm_seed,
+                )
+                response = self._call_with_backoff(
+                    lambda: self._call_non_gemini_chat(
+                        provider=provider_name,
+                        model_name=model_name,
+                        system_instruction=system_prompt,
+                        history=self.chat_history,
+                        user_message=scenario_prompt_content,
+                        temperature=self.generation_temperature,
+                        max_output_tokens=self.generation_max_output_tokens,
+                        seed=self.llm_seed,
+                        kind="generate",
+                    ),
+                    label=f"generation.{provider_name}.chat.completions",
+                    provider=provider_name,
+                )
+
+            response_text = self._extract_response_text(response, provider=provider_name)
+            finish_reason = "UNKNOWN"
+            if provider_name == "gemini":
+                candidate = response.candidates[0] if response.candidates else None
+                if candidate is not None:
+                    finish_reason = str(candidate.finish_reason)
+            else:
+                choices = getattr(response, "choices", None) or []
+                if choices:
+                    finish_reason = str(getattr(choices[0], "finish_reason", "UNKNOWN"))
+
+            # Persist full provider output before any DSL cleanup.
+            self._log_incoming_response(
+                kind="generate",
                 provider=provider_name,
+                model_name=model_name,
+                response_text_raw=response_text,
+                attempt=attempt_for_log,
+                finish_reason=finish_reason,
+                response_obj=response,
+                request_params=self._response_log_request_params(
+                    provider=provider_name,
+                    model_name=model_name,
+                    temperature=self.generation_temperature,
+                    max_output_tokens=self.generation_max_output_tokens,
+                    seed=self.llm_seed,
+                    kind="generate",
+                ),
             )
-        
-        response_text = self._extract_response_text(response, provider=provider_name)
-        finish_reason = "UNKNOWN"
-        if provider_name == "gemini":
-            candidate = response.candidates[0] if response.candidates else None
-            if candidate is not None:
-                finish_reason = str(candidate.finish_reason)
-        else:
-            choices = getattr(response, "choices", None) or []
-            if choices:
-                finish_reason = str(getattr(choices[0], "finish_reason", "UNKNOWN"))
 
-        # Persist full provider output before any DSL cleanup.
-        self._log_incoming_response(
-            kind="generate",
-            provider=provider_name,
-            model_name=model_name,
-            response_text_raw=response_text,
-            finish_reason=finish_reason,
-            response_obj=response,
-            request_params={
-                "model": model_name,
-                "temperature": self.generation_temperature,
-                "max_tokens": self.generation_max_output_tokens,
-                "seed": self.llm_seed,
-            },
-        )
+            accepted_response = (
+                bool(response_accepts(response_text))
+                if response_accepts is not None
+                else bool((response_text or "").strip())
+            )
+            self._record_llm_call("generate", scenario_prompt_content, response, provider=provider_name)
+            generation_attempts.append(
+                {
+                    "attempt": attempt_number,
+                    "response_text_chars": len(response_text or ""),
+                    "empty_response": not bool((response_text or "").strip()),
+                    "accepted": accepted_response,
+                    "finish_reason": finish_reason,
+                }
+            )
 
-        print(f"[GENERATE] Response received ({len(response_text)} chars)")
-        if not response_text.strip():
-            print("[WARNING] Generation model returned an empty response")
+            print(f"[GENERATE] Response received ({len(response_text)} chars)")
+            if accepted_response:
+                break
+            if retry_index < max_empty_retries:
+                if (response_text or "").strip():
+                    print(
+                        "[WARNING] Generation model returned no usable DSL; "
+                        f"retrying same request ({attempt_number + 1}/{max_empty_retries + 1})."
+                    )
+                else:
+                    print(
+                        "[WARNING] Generation model returned an empty response; "
+                        f"retrying same request ({attempt_number + 1}/{max_empty_retries + 1})."
+                    )
+            else:
+                if (response_text or "").strip():
+                    print("[WARNING] Generation model returned no usable DSL")
+                else:
+                    print("[WARNING] Generation model returned an empty response")
+
+        if self.run_metadata is not None:
+            self.run_metadata["empty_generation_max_retries"] = max_empty_retries
+            self.run_metadata["generation_attempts"] = generation_attempts
+            self._persist_run_metadata()
 
         # Update chat history with user message and response
         if provider_name == "gemini":
@@ -1309,9 +1931,6 @@ class DSLGenerator:
         else:
             self.chat_history.append({"role": "user", "content": scenario_prompt_content})
             self.chat_history.append({"role": "assistant", "content": response_text})
-
-        # Telemetry: record prompt/response sizes + model metadata
-        self._record_llm_call("generate", scenario_prompt_content, response, provider=provider_name)
 
         return response_text
 
@@ -1463,7 +2082,10 @@ class DSLGenerator:
         self.repair_system_prompt = repair_system_prompt
         provider_name = self.repair_provider
 
-        shot_pairs = self._normalize_shots(repair_shots, start_index=3)
+        shot_pairs = self._normalize_repair_shots(
+            repair_shots,
+            scenario_file=getattr(self, "current_scenario_file", "") or "",
+        )
         history = self._build_shot_history(
             shot_pairs,
             shots_base_path=self.repair_shots_path,
@@ -1473,6 +2095,11 @@ class DSLGenerator:
         self.repair_chat_history = history
         self._repair_shot_message_count = len(history)  # preserve count for sliding window pruning
         self.repair_iteration_count = 0
+        if self.run_metadata is not None:
+            repair_meta = self.run_metadata.setdefault("repair", {})
+            repair_meta["resolved_repair_shots"] = shot_pairs
+            repair_meta["repair_shot_count"] = len(shot_pairs)
+            self._persist_run_metadata()
 
         # Best-effort server-side repair chat session.
         # NOTE: When repair_stateless is enabled, we intentionally do NOT use a stateful chat
@@ -1553,6 +2180,7 @@ class DSLGenerator:
                         temperature=current_temp,
                         max_output_tokens=self.repair_max_output_tokens,
                         seed=self.llm_seed,
+                        kind="repair",
                     ),
                     label=f"repair.{provider_name}.chat.completions",
                     provider=provider_name,
@@ -1634,12 +2262,14 @@ class DSLGenerator:
                 attempt=attempt,
                 finish_reason=finish_reason,
                 response_obj=response,
-                request_params={
-                    "model": self.repair_model_name,
-                    "temperature": current_temp,
-                    "max_tokens": self.repair_max_output_tokens,
-                    "seed": self.llm_seed,
-                },
+                request_params=self._response_log_request_params(
+                    provider=provider_name,
+                    model_name=self.repair_model_name,
+                    temperature=current_temp,
+                    max_output_tokens=self.repair_max_output_tokens,
+                    seed=self.llm_seed,
+                    kind="repair",
+                ),
             )
 
             repair_text = repair_text_raw.strip()
@@ -1696,6 +2326,7 @@ class DSLGenerator:
         temperature: float,
         max_output_tokens: Optional[int] = None,
         provider: Optional[str] = None,
+        attempt: Optional[int] = None,
     ) -> str:
         """Run a single stateless LLM call with logging and telemetry."""
         provider_name = self._normalize_provider(provider or self._provider_for_kind(kind))
@@ -1705,6 +2336,7 @@ class DSLGenerator:
             model_name=model_name,
             prompt_text=user_message,
             system_prompt=system_instruction,
+            attempt=attempt,
             temperature=float(temperature),
             seed=self.llm_seed,
         )
@@ -1744,6 +2376,7 @@ class DSLGenerator:
                     temperature=float(temperature),
                     max_output_tokens=max_output_tokens,
                     seed=self.llm_seed,
+                    kind=kind,
                 ),
                 label=f"{kind}.{provider_name}.chat.completions",
                 provider=provider_name,
@@ -1765,14 +2398,17 @@ class DSLGenerator:
             provider=provider_name,
             model_name=model_name,
             response_text_raw=response_text,
+            attempt=attempt,
             finish_reason=finish_reason,
             response_obj=response,
-            request_params={
-                "model": model_name,
-                "temperature": float(temperature),
-                "max_tokens": max_output_tokens,
-                "seed": self.llm_seed,
-            },
+            request_params=self._response_log_request_params(
+                provider=provider_name,
+                model_name=model_name,
+                temperature=float(temperature),
+                max_output_tokens=max_output_tokens,
+                seed=self.llm_seed,
+                kind=kind,
+            ),
         )
         self._record_llm_call(kind, user_message, response, provider=provider_name)
         return response_text
@@ -2019,7 +2655,12 @@ class DSLGenerator:
     
     def run_automated_session(self, config: dict):
         """Run an automated session with hardcoded configuration"""
-        shot_pairs = self._normalize_shots(config.get('shots'))
+        self.current_scenario_file = str(config.get("scenario") or "")
+        shot_pairs = self._normalize_generative_shots(
+            config.get("shots"),
+            scenario_file=config.get("scenario", ""),
+        )
+        generation_shot_count = len(shot_pairs)
         generation_only = bool(config.get("generation_only"))
 
         # Optional: configure which repair prompt to use for refinement iterations
@@ -2040,6 +2681,13 @@ class DSLGenerator:
         if max_iterations < 1:
             max_iterations = 1
 
+        try:
+            self.empty_generation_max_retries = int(config.get("empty_generation_max_retries", 0) or 0)
+        except (TypeError, ValueError):
+            self.empty_generation_max_retries = 0
+        if self.empty_generation_max_retries < 0:
+            self.empty_generation_max_retries = 0
+
         compiler_timeout_raw = config.get("compiler_timeout", self.compiler_timeout)
         try:
             compiler_timeout = int(compiler_timeout_raw)
@@ -2058,11 +2706,18 @@ class DSLGenerator:
                 dsl_source_detail = f"<unresolved: {type(e).__name__}>"
 
         repair_shots_cfg = config.get("repair_shots")
-        repair_shot_pairs = self._normalize_shots(repair_shots_cfg, start_index=3)
+        repair_shot_pairs = self._normalize_repair_shots(
+            repair_shots_cfg,
+            scenario_file=config.get("scenario", ""),
+        )
         repair_shot_count = len(repair_shot_pairs)
 
         # Initialize per-run metadata and output directory
         self._init_run_metadata(config, compiler_jar_path, max_iterations)
+        if self.run_metadata is not None:
+            self.run_metadata["resolved_generation_shots"] = shot_pairs
+            self.run_metadata["generation_shot_count"] = generation_shot_count
+            self._persist_run_metadata()
 
         print(
             "[START] "
@@ -2073,8 +2728,10 @@ class DSLGenerator:
             f"sp={config.get('system_prompt')} "
             f"gen_model={config.get('generation_model')} "
             f"gen_shots={config.get('shots')} "
+            f"gen_shots_loaded={generation_shot_count} "
             f"source={dsl_source_mode} "
-            f"max_iter={max_iterations} timeout={compiler_timeout}s"
+            f"max_iter={max_iterations} timeout={compiler_timeout}s "
+            f"empty_gen_retries={self.empty_generation_max_retries}"
         )
         print(
             "[REPAIR_CFG] "
@@ -2107,14 +2764,20 @@ class DSLGenerator:
                 print(f"[GENERATE] Skipping generation; loading DSL from cache: {dsl_source_detail}")
                 dsl_code = self._load_generated_dsl_cache(config)
             else:
+                dsl_code = ""
+
+                def generation_response_has_dsl(candidate_text: str) -> bool:
+                    nonlocal dsl_code
+                    dsl_code = self._extract_dsl_code(candidate_text)
+                    return bool((candidate_text or "").strip() and (dsl_code or "").strip())
+
                 response_text = self.start_conversation(
                     config['system_prompt'],
                     config['shots'],
                     config['scenario'],
                     model_name=config['generation_model'],
+                    response_accepts=generation_response_has_dsl,
                 )
-                # Clean model output: strip any markdown fences or conversational preamble
-                dsl_code = self._extract_dsl_code(response_text)
 
                 if not (response_text or "").strip() or not (dsl_code or "").strip():
                     print("[FAIL] Generation returned an empty response; stopping pipeline.")
@@ -2415,6 +3078,7 @@ def build_generator_from_config(config: dict) -> DSLGenerator:
     if llm_seed is not None:
         llm_seed = int(llm_seed)
     repair_temperature = float(config.get("repair_temperature", 0.2))
+    reasoning_effort = DSLGenerator._normalize_optional_string(config.get("reasoning_effort"))
     location = str(config.get("location", "global")).strip()
 
     service_account_key = None
@@ -2522,6 +3186,8 @@ def build_generator_from_config(config: dict) -> DSLGenerator:
         repair_provider=repair_provider,
         query_provider=query_provider,
         api_keys=api_keys,
+        reasoning_effort=reasoning_effort,
+        block_hf_thinking=bool(config.get("block_hf_thinking", False)),
     )
 
 
@@ -2590,6 +3256,22 @@ def main():
             print(f"\n[ERROR] '{name}' must be >= 0.0")
             return
 
+    if (
+        "reasoning_effort" in config
+        and config.get("reasoning_effort") is not None
+        and not isinstance(config.get("reasoning_effort"), str)
+    ):
+        print("\n[ERROR] 'reasoning_effort' must be a string, null, or omitted in config.json")
+        return
+
+    empty_generation_max_retries = config.get("empty_generation_max_retries", 0)
+    if not isinstance(empty_generation_max_retries, int):
+        print("\n[ERROR] 'empty_generation_max_retries' must be an integer in config.json")
+        return
+    if empty_generation_max_retries < 0:
+        print("\n[ERROR] 'empty_generation_max_retries' must be >= 0 in config.json")
+        return
+
     compiler_timeout = config.get("compiler_timeout", 60)
     if not isinstance(compiler_timeout, (int, float)):
         print("\n[ERROR] 'compiler_timeout' must be a number in config.json")
@@ -2606,15 +3288,15 @@ def main():
     location = location.strip()
     
     # Validate shots type
-    if not isinstance(config["shots"], (int, list)):
-        print(f"\n[ERROR] 'shots' must be an integer or a list in config.json")
+    if not isinstance(config["shots"], (int, list, str)):
+        print(f"\n[ERROR] 'shots' must be an integer, a list, or 'leave_one_spec_out' in config.json")
         return
 
     # Validate optional repair_shots type
     if not generation_only:
         if "repair_shots" in config and config["repair_shots"] is not None:
-            if not isinstance(config["repair_shots"], (int, list)):
-                print(f"\n[ERROR] 'repair_shots' must be an integer or a list in config.json")
+            if not isinstance(config["repair_shots"], (int, list, str)):
+                print(f"\n[ERROR] 'repair_shots' must be an integer, a list, or 'major_errors' in config.json")
                 return
     
     try:

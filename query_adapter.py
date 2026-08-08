@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import re
+import json
+from datetime import datetime
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
@@ -12,6 +14,10 @@ if TYPE_CHECKING:
     from dsl_generator import DSLGenerator
 
 PROJECT_ROOT = Path(__file__).resolve().parent
+HF_QUERY_MAX_OUTPUT_TOKEN_LIMITS = {
+    "zai-org/glm-5.2": 16384,
+    "glm-5.2": 16384,
+}
 
 
 @dataclass
@@ -21,6 +27,7 @@ class QueryAdaptationResult:
     source_query_path: Optional[Path] = None
     source_queries_copy_path: Optional[Path] = None
     raw_response_path: Optional[Path] = None
+    attempts_path: Optional[Path] = None
     xml_context_path: Optional[Path] = None
     error: Optional[str] = None
     failure_type: Optional[str] = None
@@ -118,7 +125,42 @@ def validate_query_config(config: dict, project_root: Path = PROJECT_ROOT) -> No
     if provider not in ("gemini", "groq", "mistral", "openrouter", "huggingface"):
         raise ValueError("'query_provider' must be 'gemini', 'groq', 'mistral', 'openrouter' or 'huggingface'")
 
+    empty_query_adaptation_max_retries = config.get("empty_query_adaptation_max_retries", 0)
+    if not isinstance(empty_query_adaptation_max_retries, int):
+        raise ValueError("'empty_query_adaptation_max_retries' must be an integer")
+    if empty_query_adaptation_max_retries < 0:
+        raise ValueError("'empty_query_adaptation_max_retries' must be >= 0")
+
     resolve_source_query_path(config, project_root)
+
+
+def _bounded_query_max_output_tokens(
+    *,
+    provider_name: str,
+    model_name: str,
+    max_output_tokens: Optional[int],
+) -> Optional[int]:
+    if max_output_tokens is None:
+        return None
+
+    normalized_provider = (provider_name or "").strip().lower()
+    normalized_model = (model_name or "").strip().lower()
+    if normalized_provider != "huggingface":
+        return max_output_tokens
+
+    limit = HF_QUERY_MAX_OUTPUT_TOKEN_LIMITS.get(normalized_model)
+    if limit is None and normalized_model.endswith("/glm-5.2"):
+        limit = 16384
+    if limit is None:
+        return max_output_tokens
+
+    if max_output_tokens > limit:
+        print(
+            "[QUERY_ADAPTER] Capping query_max_output_tokens "
+            f"{max_output_tokens} -> {limit} for {model_name} on Hugging Face."
+        )
+        return limit
+    return max_output_tokens
 
 
 def _load_source_queries(path: Path, generator: "DSLGenerator") -> str:
@@ -260,7 +302,9 @@ def generate_adapted_queries(
     adapted_path = queries_dir / "adapted.q"
     source_copy_path = queries_dir / "source_queries.txt"
     raw_response_path = queries_dir / "query_adapter_response.txt"
+    attempts_path = queries_dir / "query_adapter_attempts.jsonl"
     xml_context_path = queries_dir / "xml_context.txt"
+    attempts_path.unlink(missing_ok=True)
 
     try:
         validate_query_config(config, project_root)
@@ -295,26 +339,77 @@ def generate_adapted_queries(
         max_output_tokens = config.get("query_max_output_tokens")
         if max_output_tokens is not None:
             max_output_tokens = int(max_output_tokens)
-
-        print(f"[QUERY_ADAPTER] Adapting queries with {model_name} for scenario={scenario_name}...")
-        raw_response = generator.call_stateless_llm(
-            kind="query_adaptation",
+        max_output_tokens = _bounded_query_max_output_tokens(
+            provider_name=provider_name,
             model_name=model_name,
-            system_instruction=system_prompt,
-            user_message=user_prompt,
-            temperature=temperature,
             max_output_tokens=max_output_tokens,
-            provider=provider_name,
         )
+        max_empty_retries = int(config.get("empty_query_adaptation_max_retries", 0) or 0)
+
+        raw_response = ""
+        adapted_queries = ""
+        query_attempts = []
+        for retry_index in range(max_empty_retries + 1):
+            attempt_number = retry_index + 1
+            attempt_for_log = attempt_number if max_empty_retries else None
+            if max_empty_retries:
+                print(
+                    f"[QUERY_ADAPTER] Adapting queries with {model_name} "
+                    f"for scenario={scenario_name} "
+                    f"(attempt {attempt_number}/{max_empty_retries + 1})..."
+                )
+            else:
+                print(f"[QUERY_ADAPTER] Adapting queries with {model_name} for scenario={scenario_name}...")
+
+            raw_response = generator.call_stateless_llm(
+                kind="query_adaptation",
+                model_name=model_name,
+                system_instruction=system_prompt,
+                user_message=user_prompt,
+                temperature=temperature,
+                max_output_tokens=max_output_tokens,
+                provider=provider_name,
+                attempt=attempt_for_log,
+            )
+            adapted_queries = _clean_query_response(raw_response)
+            accepted_response = bool(adapted_queries.strip())
+            attempt_record = {
+                "timestamp": datetime.now().isoformat(),
+                "attempt": attempt_number,
+                "raw_response_chars": len(raw_response or ""),
+                "adapted_query_chars": len(adapted_queries or ""),
+                "empty_response": not bool((raw_response or "").strip()),
+                "accepted": accepted_response,
+                "model": model_name,
+                "provider": provider_name,
+            }
+            query_attempts.append(attempt_record)
+            with open(attempts_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(attempt_record, ensure_ascii=False) + "\n")
+
+            if accepted_response:
+                break
+            if retry_index < max_empty_retries:
+                if (raw_response or "").strip():
+                    print(
+                        "[QUERY_ADAPTER] Query model returned no usable queries; "
+                        f"retrying same request ({attempt_number + 1}/{max_empty_retries + 1})."
+                    )
+                else:
+                    print(
+                        "[QUERY_ADAPTER] Query model returned an empty response; "
+                        f"retrying same request ({attempt_number + 1}/{max_empty_retries + 1})."
+                    )
+
         raw_response_path.write_text(raw_response or "", encoding="utf-8")
 
-        adapted_queries = _clean_query_response(raw_response)
         if not adapted_queries.strip():
             return QueryAdaptationResult(
                 status="failed",
                 source_query_path=source_path,
                 source_queries_copy_path=source_copy_path,
                 raw_response_path=raw_response_path,
+                attempts_path=attempts_path,
                 error="LLM returned empty adapted queries",
                 failure_type="empty_query_adaptation",
                 failure_reason="EmptyQueryAdaptation",
@@ -325,6 +420,9 @@ def generate_adapted_queries(
                     "model": model_name,
                     "provider": provider_name,
                     "raw_response_path": str(raw_response_path),
+                    "attempts_path": str(attempts_path),
+                    "attempts": query_attempts,
+                    "empty_query_adaptation_max_retries": max_empty_retries,
                     "raw_response_chars": len(raw_response or ""),
                     "adapted_query_chars": len(adapted_queries or ""),
                 },
@@ -342,6 +440,7 @@ def generate_adapted_queries(
             source_query_path=source_path,
             source_queries_copy_path=source_copy_path,
             raw_response_path=raw_response_path,
+            attempts_path=attempts_path,
             xml_context_path=xml_context_path,
         )
     except Exception as exc:
@@ -351,6 +450,7 @@ def generate_adapted_queries(
             adapted_query_path=adapted_path if adapted_path.exists() else None,
             source_queries_copy_path=source_copy_path if source_copy_path.exists() else None,
             raw_response_path=raw_response_path if raw_response_path.exists() else None,
+            attempts_path=attempts_path if attempts_path.exists() else None,
             error=message,
             failure_type="configuration" if isinstance(exc, (FileNotFoundError, ValueError)) else "execution",
             failure_reason=f"Query adaptation failed: {message}",

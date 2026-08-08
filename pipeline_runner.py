@@ -194,6 +194,13 @@ def _validate_pipeline_config(config: dict) -> None:
     if missing_liras:
         raise ValueError(f"config.json missing required LIRAS keys: {missing_liras}")
 
+    if not isinstance(config.get("shots"), (int, list, str)):
+        raise ValueError("'shots' must be an integer, a list, or 'leave_one_spec_out'")
+
+    if "repair_shots" in config and config.get("repair_shots") is not None:
+        if not isinstance(config.get("repair_shots"), (int, list, str)):
+            raise ValueError("'repair_shots' must be an integer, a list, or 'major_errors'")
+
     if not bool(config.get("generation_only", False)) and "repair_provider" not in config:
         raise ValueError("'repair_provider' is required when generation_only=false")
 
@@ -1626,6 +1633,7 @@ def _run_pipeline_cycle(
             adapted_query_path=query_result.adapted_query_path,
             source_queries_copy_path=query_result.source_queries_copy_path,
             query_adapter_response_path=query_result.raw_response_path,
+            query_adapter_attempts_path=query_result.attempts_path,
             query_xml_context_path=query_result.xml_context_path,
             queries_dir=getattr(generator, "run_queries_dir", None) or (run_dir / "queries"),
         ),
