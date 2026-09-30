@@ -1,0 +1,133 @@
+% First draft of the Introduction chapter.
+% Include in main.tex with:
+%   \chapter{Introduction}
+%   \label{ch:introduction}
+%   \input{Report/introduction.tex}
+
+\section{Context and Motivation}
+\label{sec:context_motivation}
+
+The verification of concurrent and real-time systems remains a central challenge in software engineering.
+This challenge is particularly evident in Human-Robot Interaction (HRI), assistive robotics, smart manufacturing, and other software-intensive domains where autonomous or semi-autonomous agents must coordinate with humans and with each other under timing, safety, and resource constraints.
+Formal methods address this problem by enabling rigorous analysis through mathematically defined models and automated tools, while model checking makes it possible to explore system behaviours and verify properties expressed in temporal logics.
+
+In practice, however, the adoption of formal verification is limited by the gap between informal requirements and the artefacts required by verification tools.
+Engineers typically describe system behaviour in natural language, while model checkers such as UPPAAL operate on timed automata and property queries that must be syntactically and semantically well formed.
+Domain-specific languages (DSLs) can bridge this gap by providing a more accessible notation that still preserves enough structure to support compilation, transformation, and downstream analysis.
+
+LIrAs, the Language for Interactive Agents, is a DSL designed to specify multi-agent interaction patterns at a high level of abstraction \cite{tagliaferro2026liras}.
+It supports reusable and parameterized coordination structures involving agents, locations, resources, and elementary skills, organized as synchronized agent-specific sequences with constructs such as conditions, loops, and continuation rules.
+High-level LIrAs patterns can then be translated into formal models, such as stochastic hybrid automata, and analysed with UPPAAL-based workflows for logical and quantitative properties \cite{tagliaferro2026liras}.
+In the implementation studied in this thesis, LIrAs models are compiled, exported to XML, combined with adapted queries, and validated through \texttt{verifyta}.
+However, writing LIrAs specifications by hand is still demanding: users must correctly encode agents, locations, resources, actions, and synchronization constraints, while also respecting the assumptions of the downstream verification toolchain.
+
+Recent advances in large language models (LLMs) have renewed interest in translating natural language into executable or formal artefacts.
+For LIrAs, this suggests a workflow in which a user describes a scenario in plain language, an LLM generates an initial model, and automated tools validate the result.
+Yet preliminary work shows that DSL-specific syntax and synchronization constraints remain difficult for LLMs to satisfy reliably \cite{tagliaferro2025preliminary}.
+More generally, generated formal artefacts may appear plausible while violating grammar rules, misusing domain constructs, or encoding behaviours that cannot be verified; even syntactic validity is not sufficient if the model later fails during export, query adaptation, or model checking \cite{tagliaferro2026agentic}.
+For this reason, this thesis does not treat LLM generation as a one-shot translation task.
+Instead, it studies an iterative generate--validate--repair workflow, where compiler and verification feedback are used to refine initially invalid LIrAs models.
+
+This thesis investigates whether LLMs, combined with compiler feedback and UPPAAL-based validation, can reliably support the end-to-end generation of LIrAs models from natural-language scenarios.
+The goal is not merely to produce text that resembles LIrAs code, but to obtain models that preserve the structure required by the language and survive compilation, export, query adaptation, and formal verification within a practical computational budget.
+
+\section{Problem Statement}
+\label{sec:problem_statement}
+
+The problem addressed in this work can be stated as follows.
+Given a natural-language description of a probabilistic multi-agent scenario, together with verification queries and toolchain constraints, automatically produce a LIrAs model that is:
+
+\begin{enumerate}
+    \item \textbf{syntactically valid}, i.e., accepted by the LIrAs compiler;
+    \item \textbf{toolchain-compatible}, i.e., exportable to XML and usable with adapted UPPAAL queries;
+    \item \textbf{verifiable}, i.e., analysable by \texttt{verifyta} without unresolved structural or model-checking failures relevant to the experimental setting.
+\end{enumerate}
+
+This end-to-end requirement distinguishes the present work from generic code generation or unconstrained text-to-code tasks.
+A generated model is considered successful only if it traverses the full pipeline, not if it merely looks syntactically close to valid LIrAs code.
+
+Several sources of difficulty make the problem non-trivial.
+First, natural-language specifications are typically under-specified with respect to the DSL: agents, locations, resources, actions, timing constraints, and synchronization patterns must be grounded into LIrAs declarations and constructs such as \texttt{follow}, while invalid tokens may appear plausible to an LLM but be rejected by the compiler.
+Second, compiler feedback is local and syntactic: it helps repair grammar violations and misuse of DSL constructs, but it does not guarantee semantic correctness with respect to the intended scenario \cite{copley2026repair}.
+Third, UPPAAL validation exposes a different class of failures, including time locks and mismatches between exported model structure and adapted queries.
+Finally, LLM behaviour depends on model choice, prompting strategy, few-shot configuration, and sampling parameters, all of which affect both success rate and cost.
+
+The core research challenge is therefore to design and evaluate a pipeline that combines generation, iterative repair, and formal validation, and to understand where this combination succeeds, where it fails, and at what cost.
+
+\section{Goals and Research Questions}
+\label{sec:research_questions}
+
+The overall objective of this thesis is to design, implement, and empirically evaluate an LLM-guided repair pipeline for LIrAs model generation.
+The evaluation is structured as a progressive analysis: we first measure whether the pipeline can produce usable models, then isolate the contribution of repair, then assess stability across scenarios, and finally quantify cost and recurring failure modes.
+
+This objective is operationalized through the following research questions:
+
+\begin{description}
+    \item[RQ1 (Effectiveness)] \textit{To what extent can LLMs generate valid and verifiable LIrAs models from natural-language specifications?}
+    
+    This question establishes the end-to-end success criterion of the thesis.
+    We distinguish syntactic validity, toolchain compatibility, and full pipeline success, because failures at different stages correspond to different repair strategies.
+
+    \item[RQ1.1 (Repair effectiveness)] \textit{How effective is an iterative compiler- and UPPAAL-guided repair loop in recovering failed generations?}
+    
+    This question evaluates whether initial failures are definitive or recoverable.
+    Compiler feedback targets syntactic and local structural errors, whereas UPPAAL feedback exposes semantic and model-checking issues that may persist after successful compilation.
+
+    \item[RQ2 (Robustness)] \textit{How does model performance vary across different specification scenarios?}
+    
+    Aggregate success rates may hide scenario-specific weaknesses.
+    This question analyses whether the pipeline behaves predictably when the complexity of agents, actions, timing constraints, and control flow changes.
+
+    \item[RQ3 (Efficiency)] \textit{How many iterations, feedback cycles, and tokens are required to obtain a valid solution?}
+    
+    Even when generation succeeds, practical usability depends on repair depth and token consumption, including failed attempts.
+    Efficiency is therefore measured in terms of iterations, feedback cycles, and normalized success per token budget.
+
+    \item[RQ4 (Failure modes)] \textit{What are the most common causes of failure in the end-to-end LLM-guided LIrAs generation pipeline?}
+    
+    This question complements the quantitative evaluation with a qualitative analysis of recurring errors, such as invalid action grounding, misuse of DSL constructs, semantic time-lock failures, and repair stagnation.
+\end{description}
+
+\section{Contributions}
+\label{sec:contributions}
+
+This thesis makes the following contributions:
+
+\begin{enumerate}
+    \item \textbf{An end-to-end LLM-guided LIrAs pipeline.}
+    We present a reproducible pipeline that takes natural-language scenarios as input, generates LIrAs models with configurable LLM providers and prompts, repairs invalid outputs using compiler feedback, exports valid models to XML, adapts UPPAAL queries, and validates the result with \texttt{verifyta}.
+    The implementation includes structured run metadata, logging of prompts and responses, and utilities for aggregating experimental results.
+
+    \item \textbf{A staged validation methodology.}
+    We treat LIrAs generation as a multi-level process rather than a single translation step.
+    Success is defined separately at the syntactic, toolchain, and verification levels, making it possible to analyse which kinds of errors are recoverable at each stage.
+
+    \item \textbf{An experimental evaluation across models, prompts, and scenarios.}
+    We execute a systematic set of runs over multiple open-weight and commercial LLMs, prompt templates, few-shot configurations, and natural-language scenarios.
+    The evaluation reports effectiveness, repair recovery, robustness, efficiency, and failure modes using metrics derived from run metadata and toolchain outputs.
+
+    \item \textbf{Practical insights for LLM-assisted formal modelling.}
+    By combining quantitative results with qualitative error analysis, the thesis identifies recurring fragilities---such as invalid action grounding and incorrect use of specific DSL constructs---and discusses implications for prompt design, repair strategies, and future integration of stronger formal feedback.
+\end{enumerate}
+
+\section{Thesis Structure}
+\label{sec:thesis_structure}
+
+The remainder of this thesis is organized as follows.
+
+\textbf{Chapter~\ref{ch:background}} introduces the background required to understand the proposed approach.
+It presents domain-specific languages and model-driven engineering, the LIrAs language, timed automata and UPPAAL, and the role of large language models in code and specification generation.
+
+\textbf{Chapter~\ref{ch:state_of_the_art}} reviews related work on natural-language-to-DSL generation, LLM-based formal specification, iterative repair guided by compilers and verifiers, and the intersection of LLMs with model checking.
+The chapter closes with a gap analysis motivating the generate--repair--verify pipeline developed in this work.
+
+\textbf{Chapter~\ref{ch:problem_methodology}} defines the problem formally, describes the experimental inputs and expected outputs, introduces the dataset of scenarios and queries, and specifies metrics, variables, and the evaluation protocol.
+
+\textbf{Chapter~\ref{ch:pipeline}} describes the architecture and implementation of the LIrAs LLM-guided repair pipeline, including DSL generation, compiler-guided repair, XML export, query adaptation, UPPAAL validation, and logging infrastructure.
+
+\textbf{Chapter~\ref{ch:evaluation}} presents the experimental evaluation.
+Following the research questions above, it analyses effectiveness, repair recovery, robustness across scenarios, efficiency in terms of iterations and tokens, and recurring failure modes.
+
+\textbf{Chapter~\ref{ch:conclusions}} summarizes the contributions, answers the research questions, discusses limitations, and outlines directions for future work.
+
+Appendices provide supplementary material, including prompt templates, scenario descriptions, run configurations, and detailed result tables.

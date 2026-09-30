@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import html
 import itertools
 import json
 import re
@@ -97,6 +98,40 @@ def _duration_seconds(start: Any, end: Any) -> float | None:
     if not started or not finished:
         return None
     return max((finished - started).total_seconds(), 0.0)
+
+
+def _to_int_or_none(value: Any) -> int | None:
+    if value is None:
+        return None
+    try:
+        return int(value)
+    except Exception:
+        return None
+
+
+def _usage_reasoning_tokens(usage: dict[str, Any]) -> int | None:
+    details = usage.get("completion_tokens_details")
+    if isinstance(details, dict):
+        value = _to_int_or_none(details.get("reasoning_tokens"))
+        if value is not None:
+            return value
+    return _to_int_or_none(usage.get("reasoning_tokens"))
+
+
+def _usage_output_tokens(usage: dict[str, Any]) -> int | None:
+    prompt = _to_int_or_none(usage.get("prompt_tokens"))
+    total = _to_int_or_none(usage.get("total_tokens"))
+    completion = _to_int_or_none(usage.get("completion_tokens"))
+    reasoning = _usage_reasoning_tokens(usage)
+
+    # OpenAI-compatible providers report reasoning_tokens as a subset of
+    # completion_tokens, not as an additional quantity. Prefer the provider's
+    # total-minus-prompt invariant and never add reasoning a second time.
+    if prompt is not None and total is not None and total >= prompt and total > 0:
+        return total - prompt
+    if completion is not None:
+        return completion
+    return reasoning
 
 
 def _is_cycle_metadata(path: Path, metadata: dict[str, Any]) -> bool:
@@ -284,17 +319,31 @@ def _dsl_token_totals(metadata: dict[str, Any]) -> dict[str, int | None]:
                     continue
                 details = stage.get("details") if isinstance(stage.get("details"), dict) else {}
                 found = True
-                totals["prompt_tokens"] += int(details.get("prompt_tokens_total") or 0)
-                totals["completion_tokens"] += int(details.get("completion_tokens_total") or 0)
-                totals["total_tokens"] += int(details.get("total_tokens_total") or 0)
+                prompt_total = int(details.get("prompt_tokens_total") or 0)
+                completion_total = int(details.get("completion_tokens_total") or 0)
+                total_total = int(details.get("total_tokens_total") or 0)
+                totals["prompt_tokens"] += prompt_total
+                totals["completion_tokens"] += (
+                    total_total - prompt_total
+                    if total_total >= prompt_total and total_total > 0
+                    else completion_total
+                )
+                totals["total_tokens"] += total_total
                 totals["available_calls"] += int(details.get("token_usage_available_calls") or 0)
 
     summary = metadata.get("summary") if isinstance(metadata.get("summary"), dict) else {}
     if not found and summary:
         found = True
-        totals["prompt_tokens"] = int(summary.get("prompt_tokens_total") or 0)
-        totals["completion_tokens"] = int(summary.get("completion_tokens_total") or 0)
-        totals["total_tokens"] = int(summary.get("total_tokens_total") or 0)
+        prompt_total = int(summary.get("prompt_tokens_total") or 0)
+        completion_total = int(summary.get("completion_tokens_total") or 0)
+        total_total = int(summary.get("total_tokens_total") or 0)
+        totals["prompt_tokens"] = prompt_total
+        totals["completion_tokens"] = (
+            total_total - prompt_total
+            if total_total >= prompt_total and total_total > 0
+            else completion_total
+        )
+        totals["total_tokens"] = total_total
         totals["available_calls"] = int(summary.get("token_usage_available_calls") or 0)
 
     if not found or int(totals["available_calls"] or 0) <= 0:
@@ -361,16 +410,21 @@ def _dsl_generation_llm_token_samples_for_cycle(cycle_dir: Path) -> dict[str, li
     samples = {
         "completion_tokens": [],
         "total_tokens": [],
+        "reasoning_tokens": [],
     }
     for row in _read_jsonl(cycle_dir / "hf_debug_responses.jsonl"):
         if _safe_str(row.get("kind")) not in {"generate", "repair"}:
             continue
         response_obj = row.get("response_obj") if isinstance(row.get("response_obj"), dict) else {}
         usage = response_obj.get("usage") if isinstance(response_obj.get("usage"), dict) else {}
-        if usage.get("completion_tokens") is not None:
-            samples["completion_tokens"].append(int(usage.get("completion_tokens") or 0))
+        output_tokens = _usage_output_tokens(usage)
+        if output_tokens is not None:
+            samples["completion_tokens"].append(output_tokens)
         if usage.get("total_tokens") is not None:
             samples["total_tokens"].append(int(usage.get("total_tokens") or 0))
+        reasoning_tokens = _usage_reasoning_tokens(usage)
+        if reasoning_tokens is not None:
+            samples["reasoning_tokens"].append(reasoning_tokens)
     return samples
 
 
@@ -378,6 +432,7 @@ def _dsl_generation_llm_token_samples(run_dir: Path) -> dict[str, list[int]]:
     samples = {
         "completion_tokens": [],
         "total_tokens": [],
+        "reasoning_tokens": [],
     }
     for cycle_dir in sorted(run_dir.glob("ciclo*")):
         if not cycle_dir.is_dir():
@@ -385,6 +440,7 @@ def _dsl_generation_llm_token_samples(run_dir: Path) -> dict[str, list[int]]:
         cycle_samples = _dsl_generation_llm_token_samples_for_cycle(cycle_dir)
         samples["completion_tokens"].extend(cycle_samples["completion_tokens"])
         samples["total_tokens"].extend(cycle_samples["total_tokens"])
+        samples["reasoning_tokens"].extend(cycle_samples["reasoning_tokens"])
     return samples
 
 
@@ -398,20 +454,25 @@ def _hf_debug_token_totals_for_dir(run_dir: Path) -> dict[str, int | None]:
 
     for debug_path in sorted(run_dir.glob("hf_debug_responses.jsonl")):
         for row in _read_jsonl(debug_path):
+            # Efficiency and token/success metrics measure DSL production only.
+            # Query-adaptation calls are intentionally excluded.
+            if _safe_str(row.get("kind")) not in {"generate", "repair"}:
+                continue
             response_obj = row.get("response_obj") if isinstance(row.get("response_obj"), dict) else {}
             usage = response_obj.get("usage") if isinstance(response_obj.get("usage"), dict) else {}
             if not usage:
                 continue
             if usage.get("prompt_tokens") is not None:
                 prompt_tokens += int(usage.get("prompt_tokens") or 0)
-            if usage.get("completion_tokens") is not None:
-                output_tokens += int(usage.get("completion_tokens") or 0)
+            usage_output = _usage_output_tokens(usage)
+            if usage_output is not None:
+                output_tokens += usage_output
                 found_output = True
             if usage.get("total_tokens") is not None:
                 total_tokens += int(usage.get("total_tokens") or 0)
-            details = usage.get("completion_tokens_details")
-            if isinstance(details, dict) and details.get("reasoning_tokens") is not None:
-                reasoning_tokens += int(details.get("reasoning_tokens") or 0)
+            usage_reasoning = _usage_reasoning_tokens(usage)
+            if usage_reasoning is not None:
+                reasoning_tokens += usage_reasoning
                 found_reasoning = True
 
     return {
@@ -446,17 +507,14 @@ def _all_llm_token_totals(metadata: dict[str, Any], run_dir: Path) -> dict[str, 
             totals["reasoning_tokens"] += int(debug_totals["reasoning_tokens"] or 0)
 
     if not found_output:
-        cycles = metadata.get("cycles")
-        if isinstance(cycles, list):
-            for cycle in cycles:
-                cycle_metadata = _read_json(Path(_safe_str(cycle.get("metadata_path")))) if isinstance(cycle, dict) else None
-                telemetry = cycle_metadata.get("telemetry") if isinstance(cycle_metadata, dict) and isinstance(cycle_metadata.get("telemetry"), dict) else {}
-                if telemetry.get("completion_tokens_total") is None:
-                    continue
-                found_output = True
-                totals["prompt_tokens"] += int(telemetry.get("prompt_tokens_total") or 0)
-                totals["output_tokens"] += int(telemetry.get("completion_tokens_total") or 0)
-                totals["total_tokens"] += int(telemetry.get("total_tokens_total") or 0)
+        # Stage-level DSL telemetry is captured before query adaptation and is
+        # therefore the correct fallback when raw Hugging Face logs are absent.
+        dsl_totals = _dsl_token_totals(metadata)
+        if dsl_totals["completion_tokens"] is not None:
+            found_output = True
+            totals["prompt_tokens"] = int(dsl_totals["prompt_tokens"] or 0)
+            totals["output_tokens"] = int(dsl_totals["completion_tokens"] or 0)
+            totals["total_tokens"] = int(dsl_totals["total_tokens"] or 0)
 
     return {
         "prompt_tokens": totals["prompt_tokens"] if found_output else None,
@@ -467,16 +525,18 @@ def _all_llm_token_totals(metadata: dict[str, Any], run_dir: Path) -> dict[str, 
 
 
 def _cycle_dir_from_metadata(cycle: dict[str, Any], fallback_run_dir: Path, cycle_index: int) -> Path:
+    cycle_number = cycle.get("cycle")
+    local_cycle_dir = fallback_run_dir / f"ciclo{cycle_number if cycle_number is not None else cycle_index + 1}"
+    if local_cycle_dir.is_dir():
+        return local_cycle_dir
+
     raw_dir = _safe_str(cycle.get("run_dir"))
-    if raw_dir:
+    if raw_dir and Path(raw_dir).is_dir():
         return Path(raw_dir)
     raw_metadata = _safe_str(cycle.get("metadata_path"))
-    if raw_metadata:
+    if raw_metadata and Path(raw_metadata).parent.is_dir():
         return Path(raw_metadata).parent
-    cycle_number = cycle.get("cycle")
-    if cycle_number is not None:
-        return fallback_run_dir / f"ciclo{cycle_number}"
-    return fallback_run_dir / f"ciclo{cycle_index + 1}"
+    return local_cycle_dir
 
 
 def _per_cycle_metrics(metadata: dict[str, Any], run_dir: Path) -> list[dict[str, Any]]:
@@ -505,8 +565,13 @@ def _per_cycle_metrics(metadata: dict[str, Any], run_dir: Path) -> list[dict[str
             token_usage_available_calls = int(details.get("token_usage_available_calls") or 0)
             if token_usage_available_calls > 0:
                 prompt_tokens = int(details.get("prompt_tokens_total") or 0)
-                completion_tokens = int(details.get("completion_tokens_total") or 0)
+                raw_completion_tokens = int(details.get("completion_tokens_total") or 0)
                 total_tokens = int(details.get("total_tokens_total") or 0)
+                completion_tokens = (
+                    total_tokens - prompt_tokens
+                    if total_tokens >= prompt_tokens and total_tokens > 0
+                    else raw_completion_tokens
+                )
 
         cycle_dir = _cycle_dir_from_metadata(cycle, run_dir, cycle_index)
         debug_token_totals = _hf_debug_token_totals_for_dir(cycle_dir)
@@ -528,6 +593,7 @@ def _per_cycle_metrics(metadata: dict[str, Any], run_dir: Path) -> list[dict[str
                 "dsl_total_token_samples": dsl_token_samples["total_tokens"],
                 "llm_output_tokens": debug_token_totals["output_tokens"],
                 "llm_reasoning_tokens": debug_token_totals["reasoning_tokens"],
+                "llm_reasoning_token_samples": dsl_token_samples["reasoning_tokens"],
             }
         )
     return rows
@@ -659,6 +725,34 @@ def _failure_info(metadata: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _first_cycle_result(metadata: dict[str, Any]) -> dict[str, Any]:
+    cycles = metadata.get("cycles")
+    if not isinstance(cycles, list) or not cycles or not isinstance(cycles[0], dict):
+        return {
+            "outcome": _outcome_label(metadata),
+            "failure_category": "none" if _is_success(metadata) else _safe_str(metadata.get("failure_type"), "unknown"),
+            "failure_detail": "No cycle metadata available",
+        }
+
+    cycle = cycles[0]
+    result = _safe_str(cycle.get("cycle_result"), "unknown").lower()
+    if result in {"ok", "success", "success_no_output"}:
+        return {
+            "outcome": "success",
+            "failure_category": "none",
+            "failure_detail": "First cycle completed",
+        }
+
+    top_details = cycle.get("failure_details") if isinstance(cycle.get("failure_details"), dict) else {}
+    category = _safe_str(cycle.get("failure_type") or cycle.get("failed_stage"), "unknown")
+    detail = _safe_str(cycle.get("failure_reason") or top_details.get("error_message"), "First cycle failed")
+    return {
+        "outcome": "failed",
+        "failure_category": category,
+        "failure_detail": detail,
+    }
+
+
 def _cycle_number_from_dir(path: Path) -> int:
     match = re.search(r"ciclo(\d+)", str(path))
     return int(match.group(1)) if match else -1
@@ -713,6 +807,7 @@ def _build_record(
     per_cycle_metrics = _per_cycle_metrics(metadata, meta_path.parent)
     llm_tokens = _all_llm_token_totals(metadata, meta_path.parent)
     dsl_token_samples = _dsl_generation_llm_token_samples(meta_path.parent)
+    first_cycle = _first_cycle_result(metadata)
     liras_artifact = _liras_artifact(metadata, meta_path.parent) if include_liras_code else {"path": "", "code": ""}
 
     return {
@@ -743,6 +838,9 @@ def _build_record(
         "llm_reasoning_tokens": llm_tokens["reasoning_tokens"],
         "per_cycle_metrics": per_cycle_metrics,
         "cycle_failures": cycle_failures,
+        "first_cycle_outcome": first_cycle["outcome"],
+        "first_cycle_failure_category": first_cycle["failure_category"],
+        "first_cycle_failure_detail": first_cycle["failure_detail"],
         "pipeline_state": _state_label(metadata),
         "failed_stage": _safe_str(metadata.get("failed_stage"), "none"),
         "successful_cycle": metadata.get("successful_cycle"),
@@ -804,9 +902,9 @@ def _build_summary(records: list[dict[str, Any]]) -> dict[str, Any]:
             for value in (r.get("dsl_generation_time_samples") or [])
         ]
         dsl_total_tokens = [
-            float(r["dsl_total_tokens"])
+            float(r["dsl_completion_tokens"])
             for r in model_records
-            if r.get("dsl_total_tokens") is not None
+            if r.get("dsl_completion_tokens") is not None
         ]
         dsl_completion_token_samples = [
             float(value)
@@ -943,6 +1041,24 @@ def _short_model_label(model: str) -> str:
     return text
 
 
+def _dashboard_name_for_runs_dir(runs_dir: Path) -> str:
+    name = runs_dir.name or "Runs"
+    labels = {
+        "RunsNoCoT": "Runs NoCoT",
+        "RunsCoT": "Runs CoT",
+        "Runs2shotNoCoT": "Runs 2-shot NoCoT",
+        "Runs2ShotCoT": "Runs 2-shot CoT",
+    }
+    return labels.get(name, name)
+
+
+def _dashboard_theme_for_runs_dir(runs_dir: Path) -> str:
+    name = runs_dir.name.lower()
+    if "cot" in name and "nocot" not in name:
+        return "red"
+    return "blue"
+
+
 def _filter_key(
     model: str = "",
     scenario: str = "",
@@ -984,7 +1100,374 @@ def _filter_records(
     return rows
 
 
-def _write_boxplot_figures(records: list[dict[str, Any]], output_html: Path) -> dict[str, Any]:
+def _first_cycle_metric(record: dict[str, Any]) -> dict[str, Any] | None:
+    per_cycle = record.get("per_cycle_metrics") if isinstance(record.get("per_cycle_metrics"), list) else []
+    for cycle in per_cycle:
+        if isinstance(cycle, dict) and cycle.get("cycle_index") == 0:
+            return cycle
+    for cycle in per_cycle:
+        if isinstance(cycle, dict):
+            return cycle
+    return None
+
+
+def _simulate_no_feedback_record(record: dict[str, Any]) -> dict[str, Any]:
+    first_cycle = _first_cycle_metric(record)
+    cycle_failures = record.get("cycle_failures") if isinstance(record.get("cycle_failures"), list) else []
+    first_failures = [
+        cycle
+        for cycle in cycle_failures
+        if isinstance(cycle, dict) and int(cycle.get("cycle") or 0) == 1
+    ]
+    first_failure = first_failures[0] if first_failures else {}
+    fallback_outcome = "success" if int(record.get("successful_cycle") or 0) == 1 else "failed"
+    outcome = _safe_str(record.get("first_cycle_outcome"), fallback_outcome)
+    failed = outcome != "success"
+
+    def first_cycle_scalar(field: str, fallback_field: str | None = None) -> Any:
+        if first_cycle and first_cycle.get(field) is not None:
+            return first_cycle.get(field)
+        total = _to_float_or_none(record.get(field))
+        cycles = _to_int_or_none(record.get("cycles")) or 1
+        if total is not None:
+            if cycles <= 1:
+                return record.get(field)
+            return _format_number_like_source(total / cycles, record.get(field))
+        if fallback_field:
+            if first_cycle and first_cycle.get(fallback_field) is not None:
+                return first_cycle.get(fallback_field)
+            return record.get(fallback_field)
+        return None
+
+    def first_cycle_samples(sample_field: str, scalar_field: str) -> list[Any]:
+        if first_cycle and isinstance(first_cycle.get(sample_field), list) and first_cycle.get(sample_field):
+            return first_cycle.get(sample_field) or []
+        cycles = _to_int_or_none(record.get("cycles")) or 1
+        if cycles <= 1 and isinstance(record.get(sample_field), list) and record.get(sample_field):
+            return record.get(sample_field) or []
+        scalar = first_cycle_scalar(scalar_field)
+        return _single_sample_list(scalar)
+
+    dsl_time_samples = first_cycle_samples("dsl_generation_time_samples", "dsl_generation_time_seconds")
+    dsl_completion_samples = first_cycle_samples("dsl_completion_token_samples", "dsl_completion_tokens")
+    dsl_total_samples = first_cycle_samples("dsl_total_token_samples", "dsl_total_tokens")
+    simulated = dict(record)
+    simulated.update(
+        {
+            "simulated_no_feedback_loop": True,
+            "original_outcome": record.get("outcome"),
+            "original_failure_category": record.get("failure_category"),
+            "original_failure_detail": record.get("failure_detail"),
+            "outcome": outcome,
+            "failure_category": (
+                _safe_str(record.get("first_cycle_failure_category"))
+                or _safe_str(first_failure.get("failure_type") or first_failure.get("failed_stage"))
+                or "first_cycle_failed"
+                if failed
+                else "none"
+            ),
+            "failure_detail": (
+                _safe_str(record.get("first_cycle_failure_detail"))
+                or _safe_str(first_failure.get("failure_reason"))
+                or "First cycle failed"
+                if failed
+                else "First cycle completed"
+            ),
+            "failed_queries": record.get("failed_queries") if failed else 0,
+            "cycles": 1 if first_cycle else min(int(record.get("cycles") or 0), 1),
+            "dsl_generation_iterations": (
+                [first_cycle.get("dsl_iterations")]
+                if first_cycle and first_cycle.get("dsl_iterations") is not None
+                else []
+            ),
+            "dsl_generation_time_seconds": first_cycle_scalar("dsl_generation_time_seconds"),
+            "dsl_generation_time_samples": dsl_time_samples,
+            "dsl_prompt_tokens": first_cycle.get("dsl_prompt_tokens") if first_cycle else record.get("dsl_prompt_tokens"),
+            "dsl_completion_tokens": first_cycle_scalar("dsl_completion_tokens"),
+            "dsl_total_tokens": first_cycle_scalar("dsl_total_tokens"),
+            "dsl_completion_token_samples": dsl_completion_samples,
+            "dsl_total_token_samples": dsl_total_samples,
+            "llm_output_tokens": first_cycle_scalar("llm_output_tokens", "dsl_completion_tokens"),
+            "llm_reasoning_tokens": first_cycle_scalar("llm_reasoning_tokens"),
+            "per_cycle_metrics": [first_cycle] if first_cycle else [],
+            "cycle_failures": first_failures if failed else [],
+        }
+    )
+    return simulated
+
+
+def _simulate_no_feedback_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [_simulate_no_feedback_record(record) for record in records]
+
+
+_CYCLE_SUCCESS_RESULTS = {"ok", "success", "success_no_output"}
+
+
+def _cycle_number(cycle: dict[str, Any], fallback: int = 1) -> int:
+    value = _to_int_or_none(cycle.get("cycle"))
+    if value is not None:
+        return value
+    index = _to_int_or_none(cycle.get("cycle_index"))
+    return (index + 1) if index is not None else fallback
+
+
+def _cycle_summary_for(record: dict[str, Any], cycle_number: int) -> dict[str, Any] | None:
+    cycle_failures = record.get("cycle_failures") if isinstance(record.get("cycle_failures"), list) else []
+    for item in cycle_failures:
+        if isinstance(item, dict) and _to_int_or_none(item.get("cycle")) == cycle_number:
+            return item
+    if _to_int_or_none(record.get("successful_cycle")) == cycle_number:
+        return {"cycle": cycle_number, "result": "ok"}
+    return None
+
+
+def _cycle_result(record: dict[str, Any], cycle: dict[str, Any]) -> str:
+    summary = _cycle_summary_for(record, _cycle_number(cycle))
+    return _safe_str(summary.get("result") if summary else "").lower()
+
+
+def _first_sample(values: Any) -> Any:
+    if isinstance(values, list) and values:
+        return values[0]
+    return None
+
+
+def _single_sample_list(value: Any) -> list[Any]:
+    return [] if value is None else [value]
+
+
+def _to_float_or_none(value: Any) -> float | None:
+    try:
+        if value is None:
+            return None
+        return float(value)
+    except Exception:
+        return None
+
+
+def _format_number_like_source(value: float | None, fallback: Any = None) -> Any:
+    if value is None:
+        return fallback
+    return int(value) if value.is_integer() else value
+
+
+def _syntactic_first_attempt_output_tokens(cycle: dict[str, Any], first_completion: Any) -> Any:
+    attempts = _to_int_or_none(cycle.get("dsl_iterations")) or 1
+    original_output = _to_float_or_none(cycle.get("llm_output_tokens"))
+    first_output = _to_float_or_none(first_completion)
+    if attempts <= 1:
+        return cycle.get("llm_output_tokens") if original_output is not None else first_completion
+    if first_output is not None:
+        return _format_number_like_source(first_output, first_completion)
+    # Without per-call samples, the DSL-stage total is the closest available
+    # fallback. It still excludes query-adaptation usage.
+    return cycle.get("dsl_completion_tokens")
+
+
+def _syntactic_first_attempt_cycle(cycle: dict[str, Any]) -> dict[str, Any]:
+    attempts = _to_int_or_none(cycle.get("dsl_iterations")) or 0
+    if attempts <= 1:
+        view = dict(cycle)
+        view["simulated_no_syntactic_feedback_loop"] = True
+        return view
+
+    first_time = _first_sample(cycle.get("dsl_generation_time_samples"))
+    first_completion = _first_sample(cycle.get("dsl_completion_token_samples"))
+    first_total = _first_sample(cycle.get("dsl_total_token_samples"))
+    first_reasoning = _first_sample(cycle.get("llm_reasoning_token_samples"))
+
+    view = dict(cycle)
+    view.update(
+        {
+            "simulated_no_syntactic_feedback_loop": True,
+            "dsl_iterations": 1,
+            "dsl_generation_time_seconds": (
+                first_time if first_time is not None else cycle.get("dsl_generation_time_seconds")
+            ),
+            "dsl_generation_time_samples": _single_sample_list(first_time),
+            "dsl_completion_tokens": (
+                first_completion if first_completion is not None else cycle.get("dsl_completion_tokens")
+            ),
+            "dsl_total_tokens": first_total if first_total is not None else cycle.get("dsl_total_tokens"),
+            "dsl_completion_token_samples": _single_sample_list(first_completion),
+            "dsl_total_token_samples": _single_sample_list(first_total),
+            "llm_output_tokens": _syntactic_first_attempt_output_tokens(cycle, first_completion),
+            "llm_reasoning_tokens": (
+                first_reasoning if first_reasoning is not None else cycle.get("llm_reasoning_tokens")
+            ),
+        }
+    )
+    return view
+
+
+def _syntactic_failure_row(cycle: dict[str, Any]) -> dict[str, Any]:
+    attempts = _to_int_or_none(cycle.get("dsl_iterations")) or 0
+    cycle_number = _cycle_number(cycle)
+    return {
+        "cycle": cycle_number,
+        "result": "failed",
+        "dsl_iterations": 1,
+        "failed_stage": "dsl_generation",
+        "failure_type": "syntactic_feedback_loop",
+        "failure_reason": (
+            "The initial DSL candidate did not compile; compiler-guided repair "
+            f"was required ({attempts} attempts recorded)."
+        ),
+        "failed_stages": [
+            {
+                "stage": "dsl_generation",
+                "failure_type": "syntactic_feedback_loop",
+                "failure_reason": (
+                    "Without syntactic feedback, execution stops after the initial "
+                    "rejected DSL candidate."
+                ),
+            }
+        ],
+    }
+
+
+def _aggregate_simulated_cycles(cycles: list[dict[str, Any]]) -> dict[str, Any]:
+    time_samples = [
+        value
+        for cycle in cycles
+        for value in (cycle.get("dsl_generation_time_samples") or [])
+    ]
+    completion_samples = [
+        value
+        for cycle in cycles
+        for value in (cycle.get("dsl_completion_token_samples") or [])
+    ]
+    total_samples = [
+        value
+        for cycle in cycles
+        for value in (cycle.get("dsl_total_token_samples") or [])
+    ]
+    iterations = [
+        cycle.get("dsl_iterations")
+        for cycle in cycles
+        if cycle.get("dsl_iterations") is not None
+    ]
+
+    def sum_numeric(values: list[Any]) -> int | float | None:
+        numbers: list[float] = []
+        for value in values:
+            try:
+                if value is not None:
+                    numbers.append(float(value))
+            except Exception:
+                continue
+        if not numbers:
+            return None
+        total = sum(numbers)
+        return int(total) if total.is_integer() else total
+
+    return {
+        "cycles": len(cycles),
+        "dsl_generation_iterations": iterations,
+        "dsl_generation_time_seconds": sum_numeric(time_samples),
+        "dsl_generation_time_samples": time_samples,
+        "dsl_completion_tokens": sum_numeric(completion_samples),
+        "dsl_total_tokens": sum_numeric(total_samples),
+        "dsl_completion_token_samples": completion_samples,
+        "dsl_total_token_samples": total_samples,
+        "llm_output_tokens": sum_numeric([
+            cycle.get("llm_output_tokens") if cycle.get("llm_output_tokens") is not None else cycle.get("dsl_completion_tokens")
+            for cycle in cycles
+        ]),
+        "llm_reasoning_tokens": sum_numeric([
+            cycle.get("llm_reasoning_tokens")
+            for cycle in cycles
+        ]),
+    }
+
+
+def _simulate_no_syntactic_feedback_record(record: dict[str, Any]) -> dict[str, Any]:
+    per_cycle = record.get("per_cycle_metrics") if isinstance(record.get("per_cycle_metrics"), list) else []
+    if not per_cycle:
+        return dict(record, simulated_no_syntactic_feedback_loop=True)
+
+    included_cycles: list[dict[str, Any]] = []
+    simulated_failures: list[dict[str, Any]] = []
+    success_cycle: dict[str, Any] | None = None
+    had_syntactic_repair = False
+
+    for index, cycle in enumerate(per_cycle):
+        if not isinstance(cycle, dict):
+            continue
+        view = _syntactic_first_attempt_cycle(cycle)
+        included_cycles.append(view)
+        attempts = _to_int_or_none(cycle.get("dsl_iterations")) or 1
+        if attempts > 1:
+            had_syntactic_repair = True
+            simulated_failures.append(_syntactic_failure_row(cycle))
+            # This cycle reached its later stages only because compiler-guided
+            # repair recovered ITER0.  Without syntactic feedback, the run stops
+            # here and cannot reuse semantic feedback or candidates recorded in
+            # any subsequent cycle.
+            break
+        result = _cycle_result(record, cycle)
+        if result in _CYCLE_SUCCESS_RESULTS:
+            success_cycle = view
+            break
+        summary = _cycle_summary_for(record, _cycle_number(cycle, index + 1))
+        if summary and _safe_str(summary.get("result")).lower() == "failed":
+            simulated_failures.append(summary)
+
+    aggregate = _aggregate_simulated_cycles(included_cycles)
+    if not had_syntactic_repair:
+        for field in (
+            "dsl_generation_iterations",
+            "dsl_generation_time_seconds",
+            "dsl_generation_time_samples",
+            "dsl_completion_tokens",
+            "dsl_total_tokens",
+            "dsl_completion_token_samples",
+            "dsl_total_token_samples",
+            "llm_output_tokens",
+            "llm_reasoning_tokens",
+        ):
+            aggregate[field] = record.get(field)
+    failed = success_cycle is None
+    last_failure = simulated_failures[-1] if simulated_failures else {}
+    simulated = dict(record)
+    simulated.update(
+        {
+            "simulated_no_syntactic_feedback_loop": True,
+            "original_outcome": record.get("original_outcome", record.get("outcome")),
+            "original_failure_category": record.get("original_failure_category", record.get("failure_category")),
+            "original_failure_detail": record.get("original_failure_detail", record.get("failure_detail")),
+            "outcome": "failed" if failed else "success",
+            "failure_category": (
+                _safe_str(last_failure.get("failure_type") or last_failure.get("failed_stage"))
+                or "syntactic_feedback_loop"
+                if failed
+                else "none"
+            ),
+            "failure_detail": (
+                _safe_str(last_failure.get("failure_reason"))
+                or "No cycle completed with the first DSL generation attempt"
+                if failed
+                else "Cycle completed with the first DSL generation attempt"
+            ),
+            "failed_queries": record.get("failed_queries") if failed else 0,
+            "successful_cycle": _cycle_number(success_cycle) if success_cycle else None,
+            "per_cycle_metrics": included_cycles,
+            "cycle_failures": simulated_failures if failed else [
+                failure
+                for failure in simulated_failures
+                if _safe_str(failure.get("result")).lower() == "failed"
+            ],
+        }
+    )
+    simulated.update(aggregate)
+    return simulated
+
+
+def _simulate_no_syntactic_feedback_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [_simulate_no_syntactic_feedback_record(record) for record in records]
+
+
+def _write_boxplot_figures(records: list[dict[str, Any]], output_html: Path, theme: str = "blue") -> dict[str, Any]:
     if not _HAS_MATPLOTLIB or plt is None:
         return {}
 
@@ -1077,8 +1560,28 @@ def _write_boxplot_figures(records: list[dict[str, Any]], output_html: Path) -> 
         ("cycles", "Cicli pipeline per run", "Cicli nella run"),
         ("dsl_iterations", "DSL generati per ciclo", "Numero di DSL generati"),
         ("dsl_generation_time", "Tempo per singola chiamata DSL", "Secondi per generate/repair"),
-        ("dsl_tokens_per_generated_dsl", "Output token per singolo DSL", "completion_tokens"),
+        ("dsl_tokens_per_generated_dsl", "Output token per singolo DSL", "output_tokens"),
     ]
+    palette = {
+        "blue": {
+            "box_face": "#bfdbfe",
+            "box_edge": "#1d4ed8",
+            "median": "#172554",
+            "mean_face": "#f59e0b",
+            "mean_edge": "#b45309",
+            "flier_face": "#fee2e2",
+            "flier_edge": "#ef4444",
+        },
+        "red": {
+            "box_face": "#fecaca",
+            "box_edge": "#b91c1c",
+            "median": "#7f1d1d",
+            "mean_face": "#f97316",
+            "mean_edge": "#c2410c",
+            "flier_face": "#fee2e2",
+            "flier_edge": "#dc2626",
+        },
+    }.get(theme, {})
 
     def draw_metric(ax: Any, rows: list[dict[str, Any]], metric: str, title: str, xlabel: str, cycle_index: str = "") -> None:
         grouped = _group_by(rows, "model")
@@ -1099,12 +1602,12 @@ def _write_boxplot_figures(records: list[dict[str, Any]], output_html: Path) -> 
             patch_artist=True,
             showmeans=True,
             meanline=False,
-            boxprops={"facecolor": "#bfdbfe", "edgecolor": "#1d4ed8", "linewidth": 1.2},
-            medianprops={"color": "#172554", "linewidth": 1.8},
+            boxprops={"facecolor": palette.get("box_face", "#bfdbfe"), "edgecolor": palette.get("box_edge", "#1d4ed8"), "linewidth": 1.2},
+            medianprops={"color": palette.get("median", "#172554"), "linewidth": 1.8},
             whiskerprops={"color": "#475569", "linewidth": 1.1},
             capprops={"color": "#475569", "linewidth": 1.1},
-            meanprops={"marker": "D", "markerfacecolor": "#f59e0b", "markeredgecolor": "#b45309", "markersize": 4},
-            flierprops={"marker": "o", "markerfacecolor": "#fee2e2", "markeredgecolor": "#ef4444", "markersize": 3, "alpha": 0.8},
+            meanprops={"marker": "D", "markerfacecolor": palette.get("mean_face", "#f59e0b"), "markeredgecolor": palette.get("mean_edge", "#b45309"), "markersize": 4},
+            flierprops={"marker": "o", "markerfacecolor": palette.get("flier_face", "#fee2e2"), "markeredgecolor": palette.get("flier_edge", "#ef4444"), "markersize": 3, "alpha": 0.8},
         )
         ax.set_title(title, pad=8, fontsize=12, fontweight="bold")
         ax.set_xlabel(xlabel)
@@ -1125,10 +1628,10 @@ def _write_boxplot_figures(records: list[dict[str, Any]], output_html: Path) -> 
             draw_metric(ax, rows, metric, title, xlabel, cycle_index)
         if Patch is not None and Line2D is not None:
             legend_handles = [
-                Patch(facecolor="#bfdbfe", edgecolor="#1d4ed8", label="Box Q1-Q3"),
-                Line2D([0], [0], color="#172554", linewidth=2, label="Mediana"),
-                Line2D([0], [0], marker="D", color="none", markerfacecolor="#f59e0b", markeredgecolor="#b45309", markersize=5, label="Media"),
-                Line2D([0], [0], marker="o", color="none", markerfacecolor="#fee2e2", markeredgecolor="#ef4444", markersize=4, label="Outlier"),
+                Patch(facecolor=palette.get("box_face", "#bfdbfe"), edgecolor=palette.get("box_edge", "#1d4ed8"), label="Box Q1-Q3"),
+                Line2D([0], [0], color=palette.get("median", "#172554"), linewidth=2, label="Mediana"),
+                Line2D([0], [0], marker="D", color="none", markerfacecolor=palette.get("mean_face", "#f59e0b"), markeredgecolor=palette.get("mean_edge", "#b45309"), markersize=5, label="Media"),
+                Line2D([0], [0], marker="o", color="none", markerfacecolor=palette.get("flier_face", "#fee2e2"), markeredgecolor=palette.get("flier_edge", "#ef4444"), markersize=4, label="Outlier"),
             ]
             fig.legend(handles=legend_handles, loc="lower center", ncol=4, frameon=True, fontsize=9)
         fig.tight_layout(rect=(0, 0.025, 1, 0.985))
@@ -1141,59 +1644,141 @@ def _write_boxplot_figures(records: list[dict[str, Any]], output_html: Path) -> 
         except Exception:
             return _safe_rel(path)
 
-    values = {
-        "model": [""] + sorted({_safe_str(r.get("model")) for r in records if _safe_str(r.get("model"))}),
-        "scenario": [""] + sorted({_safe_str(r.get("scenario")) for r in records if _safe_str(r.get("scenario"))}),
-        "outcome": [""] + sorted({_safe_str(r.get("outcome")) for r in records if _safe_str(r.get("outcome"))}),
-        "reason": [""] + sorted({_safe_str(r.get("failure_category")) for r in records if _safe_str(r.get("failure_category"))}),
-        "cycle_index": [""] + [
-            str(value)
-            for value in sorted({
-                int(cycle.get("cycle_index"))
-                for record in records
-                for cycle in (record.get("per_cycle_metrics") or [])
-                if isinstance(cycle, dict) and cycle.get("cycle_index") is not None
-            })
-        ],
-    }
-    filter_boxplots: dict[str, str] = {}
-    for model, scenario, outcome, reason, cycle_index in itertools.product(
-        values["model"],
-        values["scenario"],
-        values["outcome"],
-        values["reason"],
-        values["cycle_index"],
-    ):
-        if model:
-            continue
-        rows = _filter_records(records, model=model, scenario=scenario, outcome=outcome, reason=reason, cycle_index=cycle_index)
-        if not rows:
-            continue
-        key = _filter_key(model, scenario, outcome, reason, cycle_index)
-        suffix_parts = [
-            f"modello={model or 'tutti'}",
-            f"scenario={scenario or 'tutti'}",
-            f"esito={outcome or 'tutti'}",
-            f"motivo={reason or 'tutti'}",
-            f"ciclo={cycle_index if cycle_index else 'tutti'}",
-        ]
-        filter_boxplots[key] = save_filtered_boxplots(rows, key, ", ".join(suffix_parts), cycle_index)
+    def filter_values(source_records: list[dict[str, Any]]) -> dict[str, list[str]]:
+        return {
+            "model": [""] + sorted({_safe_str(r.get("model")) for r in source_records if _safe_str(r.get("model"))}),
+            "scenario": [""] + sorted({_safe_str(r.get("scenario")) for r in source_records if _safe_str(r.get("scenario"))}),
+            "outcome": [""] + sorted({_safe_str(r.get("outcome")) for r in source_records if _safe_str(r.get("outcome"))}),
+            "reason": [""] + sorted({_safe_str(r.get("failure_category")) for r in source_records if _safe_str(r.get("failure_category"))}),
+            "cycle_index": [""] + [
+                str(value)
+                for value in sorted({
+                    int(cycle.get("cycle_index"))
+                    for record in source_records
+                    for cycle in (record.get("per_cycle_metrics") or [])
+                    if isinstance(cycle, dict) and cycle.get("cycle_index") is not None
+                })
+            ],
+        }
+
+    def merged_filter_values(left: dict[str, list[str]], right: dict[str, list[str]]) -> dict[str, list[str]]:
+        merged: dict[str, list[str]] = {}
+        for key in ("model", "scenario", "outcome", "reason", "cycle_index"):
+            values = {value for value in left.get(key, []) + right.get(key, []) if value}
+            if key == "cycle_index":
+                merged[key] = [""] + sorted(values, key=lambda value: int(value))
+            else:
+                merged[key] = [""] + sorted(values)
+        return merged
+
+    def build_filter_boxplots(
+        source_records: list[dict[str, Any]],
+        source_values: dict[str, list[str]],
+        *,
+        key_prefix: str = "",
+        title_prefix: str = "",
+    ) -> dict[str, str]:
+        filter_boxplots: dict[str, str] = {}
+        for model, scenario, outcome, reason, cycle_index in itertools.product(
+            source_values["model"],
+            source_values["scenario"],
+            source_values["outcome"],
+            source_values["reason"],
+            source_values["cycle_index"],
+        ):
+            if model:
+                continue
+            rows = _filter_records(
+                source_records,
+                model=model,
+                scenario=scenario,
+                outcome=outcome,
+                reason=reason,
+                cycle_index=cycle_index,
+            )
+            if not rows:
+                continue
+            key = _filter_key(model, scenario, outcome, reason, cycle_index)
+            suffix_parts = [
+                f"{title_prefix}modello={model or 'tutti'}",
+                f"scenario={scenario or 'tutti'}",
+                f"esito={outcome or 'tutti'}",
+                f"motivo={reason or 'tutti'}",
+                f"ciclo={cycle_index if cycle_index else 'tutti'}",
+            ]
+            filter_boxplots[key] = save_filtered_boxplots(
+                rows,
+                f"{key_prefix}{key}",
+                ", ".join(suffix_parts),
+                cycle_index,
+            )
+        return filter_boxplots
+
+    no_feedback_records = _simulate_no_feedback_records(records)
+    no_syntactic_feedback_records = _simulate_no_syntactic_feedback_records(records)
+    no_feedback_no_syntactic_records = _simulate_no_syntactic_feedback_records(no_feedback_records)
+    values = filter_values(records)
+    no_feedback_values = filter_values(no_feedback_records)
+    no_syntactic_feedback_values = filter_values(no_syntactic_feedback_records)
+    no_feedback_no_syntactic_values = filter_values(no_feedback_no_syntactic_records)
 
     return {
-        "filter_boxplots": filter_boxplots,
+        "filter_boxplots": build_filter_boxplots(records, values),
+        "filter_boxplots_no_feedback": build_filter_boxplots(
+            no_feedback_records,
+            no_feedback_values,
+            key_prefix="no_feedback:",
+            title_prefix="no feedback loop, ",
+        ),
+        "filter_boxplots_no_syntactic_feedback": build_filter_boxplots(
+            no_syntactic_feedback_records,
+            no_syntactic_feedback_values,
+            key_prefix="no_syntactic_feedback:",
+            title_prefix="no syntactic feedback loop, ",
+        ),
+        "filter_boxplots_no_feedback_no_syntactic_feedback": build_filter_boxplots(
+            no_feedback_no_syntactic_records,
+            no_feedback_no_syntactic_values,
+            key_prefix="no_feedback_no_syntactic_feedback:",
+            title_prefix="no semantic/syntactic feedback loop, ",
+        ),
         "default_filter_key": _filter_key(),
-        "filter_dimensions": values,
+        "filter_dimensions": merged_filter_values(
+            merged_filter_values(values, no_feedback_values),
+            merged_filter_values(no_syntactic_feedback_values, no_feedback_no_syntactic_values),
+        ),
     }
 
 
 def _build_html(payload: dict[str, Any]) -> str:
     data_json = json.dumps(payload, ensure_ascii=False).replace("</script", "<\\/script")
+    dashboard_name = html.escape(_safe_str(payload.get("dashboard_name"), "Runs"))
+    runs_dir_label = html.escape(_safe_str(payload.get("runs_dir"), "Runs"))
+    theme = _safe_str(payload.get("dashboard_theme"), "blue")
+    if theme == "red":
+        accent = "#dc2626"
+        accent_soft = "#fee2e2"
+        bg_wash_a = "#fee2e2"
+        hero_gradient = "linear-gradient(100deg, #dc2626 0%, #7f1d1d 100%)"
+        hero_copy = "#fee2e2"
+        boxplot_edge = "#b91c1c"
+        boxplot_face = "#fecaca"
+        boxplot_median = "#7f1d1d"
+    else:
+        accent = "#2563eb"
+        accent_soft = "#dbeafe"
+        bg_wash_a = "#dbeafe"
+        hero_gradient = "linear-gradient(100deg, #1d4ed8 0%, #172554 100%)"
+        hero_copy = "#dbeafe"
+        boxplot_edge = "#1d4ed8"
+        boxplot_face = "#bfdbfe"
+        boxplot_median = "#172554"
     return f"""<!doctype html>
 <html lang="it">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Analisi Run per Modello</title>
+  <title>Analisi Run per Modello - {dashboard_name}</title>
   <style>
     :root {{
       --bg: #f5f7fb;
@@ -1201,8 +1786,8 @@ def _build_html(payload: dict[str, Any]) -> str:
       --ink: #172033;
       --muted: #64748b;
       --line: #dbe3ef;
-      --accent: #2563eb;
-      --accent-soft: #dbeafe;
+      --accent: {accent};
+      --accent-soft: {accent_soft};
       --good: #15803d;
       --bad: #b91c1c;
       --warn: #b45309;
@@ -1213,21 +1798,21 @@ def _build_html(payload: dict[str, Any]) -> str:
       font-family: Inter, "Avenir Next", "Segoe UI", sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(circle at 80% -10%, #dbeafe 0, #dbeafe 24%, transparent 44%),
+        radial-gradient(circle at 80% -10%, {bg_wash_a} 0, {bg_wash_a} 24%, transparent 44%),
         radial-gradient(circle at -10% 110%, #fef3c7 0, #fef3c7 22%, transparent 42%),
         var(--bg);
       min-height: 100vh;
     }}
     .wrap {{ max-width: 1500px; margin: 0 auto; padding: 22px; display: grid; gap: 16px; }}
     .hero {{
-      background: linear-gradient(100deg, #1d4ed8 0%, #172554 100%);
+      background: {hero_gradient};
       color: white;
       border-radius: 18px;
       padding: 22px;
       box-shadow: 0 12px 30px rgba(15, 23, 42, 0.20);
     }}
     .hero h1 {{ margin: 0 0 8px; font-size: 30px; }}
-    .hero p {{ margin: 0; color: #dbeafe; }}
+    .hero p {{ margin: 0; color: {hero_copy}; }}
     .cards, .model-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }}
     .card, .panel, .model-card {{
       background: var(--panel);
@@ -1321,8 +1906,8 @@ def _build_html(payload: dict[str, Any]) -> str:
       position: absolute;
       top: 9px;
       height: 16px;
-      border: 1px solid #1d4ed8;
-      background: #bfdbfe;
+      border: 1px solid {boxplot_edge};
+      background: {boxplot_face};
       border-radius: 4px;
     }}
     .boxplot-median {{
@@ -1330,11 +1915,24 @@ def _build_html(payload: dict[str, Any]) -> str:
       top: 6px;
       width: 2px;
       height: 22px;
-      background: #172554;
+      background: {boxplot_median};
     }}
     .boxplot-value {{ text-align: right; font-variant-numeric: tabular-nums; font-size: 12px; color: var(--muted); }}
     .controls {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; padding: 12px; }}
     .control label {{ display: block; color: var(--muted); font-size: 12px; text-transform: uppercase; margin-bottom: 4px; }}
+    .check-control {{ display: flex; flex-direction: column; justify-content: end; gap: 4px; }}
+    .check-control .check-label {{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: none;
+      margin: 0;
+    }}
+    .check-control input {{ width: auto; }}
+    .control-note {{ color: var(--muted); font-size: 11px; line-height: 1.25; }}
     input, select {{
       width: 100%;
       border: 1px solid var(--line);
@@ -1399,8 +1997,8 @@ def _build_html(payload: dict[str, Any]) -> str:
 <body>
   <div class="wrap">
     <section class="hero">
-      <h1>Analisi run per modello</h1>
-      <p>Riepilogo dinamico delle run in <span class="mono">Runs/</span>: successi, fallimenti e motivi principali.</p>
+      <h1>{dashboard_name}</h1>
+      <p>Analisi run per modello con grafici e boxplot. Cartella sorgente: <span class="mono">{runs_dir_label}</span>.</p>
     </section>
 
     <section class="cards" id="cards"></section>
@@ -1414,6 +2012,8 @@ def _build_html(payload: dict[str, Any]) -> str:
       <div class="control"><label>Esito</label><select id="outcome"></select></div>
       <div class="control"><label>Motivo fallimento</label><select id="reason"></select></div>
       <div class="control"><label>Ciclo</label><select id="cycle"></select></div>
+      <div class="control check-control"><label class="check-label"><input id="noFeedbackLoop" type="checkbox" /> No semantic feedback loop</label><div class="control-note">Simula lo stop dopo il primo ciclo semantico, senza rimuovere run.</div></div>
+      <div class="control check-control"><label class="check-label"><input id="noSyntacticFeedbackLoop" type="checkbox" /> No syntactic feedback loop</label><div class="control-note">Usa solo ITER0; se il candidato iniziale non compila, interrompe la run e non considera cicli semantici successivi.</div></div>
     </section>
 
     <section class="main-grid">
@@ -1462,6 +2062,8 @@ def _build_html(payload: dict[str, Any]) -> str:
       outcome: document.getElementById('outcome'),
       reason: document.getElementById('reason'),
       cycle: document.getElementById('cycle'),
+      noFeedbackLoop: document.getElementById('noFeedbackLoop'),
+      noSyntacticFeedbackLoop: document.getElementById('noSyntacticFeedbackLoop'),
       rows: document.getElementById('rows'),
       rowCount: document.getElementById('rowCount'),
       detail: document.getElementById('detail'),
@@ -1510,6 +2112,245 @@ def _build_html(payload: dict[str, Any]) -> str:
       if (ai !== bi) return ai - bi;
       return String(a.model || '').localeCompare(String(b.model || ''));
     }}
+    function noFeedbackLoopMode() {{
+      return Boolean(el.noFeedbackLoop && el.noFeedbackLoop.checked);
+    }}
+    function noSyntacticFeedbackLoopMode() {{
+      return Boolean(el.noSyntacticFeedbackLoop && el.noSyntacticFeedbackLoop.checked);
+    }}
+    function firstCycleMetric(record) {{
+      const perCycle = Array.isArray(record.per_cycle_metrics) ? record.per_cycle_metrics : [];
+      return perCycle.find(c => Number(c.cycle_index) === 0) || perCycle[0] || null;
+    }}
+    function firstCycleFailures(record) {{
+      const cycleFailures = Array.isArray(record.cycle_failures) ? record.cycle_failures : [];
+      return cycleFailures.filter(c => Number(c.cycle) === 1);
+    }}
+    function simulatedNoFeedbackRecord(record) {{
+      if (!noFeedbackLoopMode()) return record;
+      const firstCycle = firstCycleMetric(record);
+      const firstFailures = firstCycleFailures(record);
+      const firstFailure = firstFailures[0] || null;
+      const fallbackOutcome = Number(record.successful_cycle) === 1 ? 'success' : 'failed';
+      const outcome = record.first_cycle_outcome || fallbackOutcome;
+      const failed = outcome !== 'success';
+      const failureCategory = failed
+        ? (record.first_cycle_failure_category || (firstFailure && (firstFailure.failure_type || firstFailure.failed_stage)) || 'first_cycle_failed')
+        : 'none';
+      const failureDetail = failed
+        ? (record.first_cycle_failure_detail || (firstFailure && firstFailure.failure_reason) || 'First cycle failed')
+        : 'First cycle completed';
+      function firstCycleScalar(field, fallbackField = null) {{
+        if (firstCycle && firstCycle[field] !== null && firstCycle[field] !== undefined) return firstCycle[field];
+        const total = finiteNumberOrNull(record[field]);
+        const cycles = Math.max(Number(record.cycles || 1), 1);
+        if (total !== null) return cycles <= 1 ? record[field] : total / cycles;
+        if (fallbackField) {{
+          if (firstCycle && firstCycle[fallbackField] !== null && firstCycle[fallbackField] !== undefined) return firstCycle[fallbackField];
+          return record[fallbackField] ?? null;
+        }}
+        return null;
+      }}
+      function firstCycleSamples(sampleField, scalarField) {{
+        if (firstCycle && Array.isArray(firstCycle[sampleField]) && firstCycle[sampleField].length) return firstCycle[sampleField];
+        const cycles = Math.max(Number(record.cycles || 1), 1);
+        if (cycles <= 1 && Array.isArray(record[sampleField]) && record[sampleField].length) return record[sampleField];
+        const scalar = firstCycleScalar(scalarField);
+        return singleSampleList(scalar);
+      }}
+      const dslTimeSamples = firstCycleSamples('dsl_generation_time_samples', 'dsl_generation_time_seconds');
+      const dslCompletionSamples = firstCycleSamples('dsl_completion_token_samples', 'dsl_completion_tokens');
+      const dslTotalSamples = firstCycleSamples('dsl_total_token_samples', 'dsl_total_tokens');
+      const outputTokens = firstCycleScalar('llm_output_tokens', 'dsl_completion_tokens');
+      return {{
+        ...record,
+        simulated_no_feedback_loop: true,
+        original_outcome: record.outcome,
+        original_failure_category: record.failure_category,
+        original_failure_detail: record.failure_detail,
+        outcome,
+        failure_category: failureCategory,
+        failure_detail: failureDetail,
+        failed_queries: failed ? record.failed_queries : 0,
+        cycles: firstCycle ? 1 : Math.min(Number(record.cycles || 0), 1),
+        dsl_generation_iterations: firstCycle && firstCycle.dsl_iterations !== null && firstCycle.dsl_iterations !== undefined ? [firstCycle.dsl_iterations] : [],
+        dsl_generation_time_seconds: firstCycleScalar('dsl_generation_time_seconds'),
+        dsl_generation_time_samples: dslTimeSamples,
+        dsl_prompt_tokens: firstCycle ? firstCycle.dsl_prompt_tokens : record.dsl_prompt_tokens,
+        dsl_completion_tokens: firstCycleScalar('dsl_completion_tokens'),
+        dsl_total_tokens: firstCycleScalar('dsl_total_tokens'),
+        dsl_completion_token_samples: dslCompletionSamples,
+        dsl_total_token_samples: dslTotalSamples,
+        llm_output_tokens: outputTokens,
+        llm_reasoning_tokens: firstCycleScalar('llm_reasoning_tokens'),
+        per_cycle_metrics: firstCycle ? [firstCycle] : [],
+        cycle_failures: failed ? firstFailures : [],
+      }};
+    }}
+    const cycleSuccessResults = new Set(['ok', 'success', 'success_no_output']);
+    function cycleNumber(cycle, fallback = 1) {{
+      const direct = Number(cycle && cycle.cycle);
+      if (Number.isFinite(direct) && direct > 0) return direct;
+      const index = Number(cycle && cycle.cycle_index);
+      return Number.isFinite(index) ? index + 1 : fallback;
+    }}
+    function cycleSummaryFor(record, cycleNum) {{
+      const cycleFailures = Array.isArray(record.cycle_failures) ? record.cycle_failures : [];
+      const found = cycleFailures.find(c => Number(c.cycle) === Number(cycleNum));
+      if (found) return found;
+      if (Number(record.successful_cycle) === Number(cycleNum)) return {{cycle: cycleNum, result: 'ok'}};
+      return null;
+    }}
+    function cycleResult(record, cycle) {{
+      const summary = cycleSummaryFor(record, cycleNumber(cycle));
+      return String(summary && summary.result ? summary.result : '').toLowerCase();
+    }}
+    function firstSample(values) {{
+      return Array.isArray(values) && values.length ? values[0] : null;
+    }}
+    function singleSampleList(value) {{
+      return value === null || value === undefined ? [] : [value];
+    }}
+    function finiteNumberOrNull(value) {{
+      const number = Number(value);
+      return Number.isFinite(number) ? number : null;
+    }}
+    function syntacticFirstAttemptOutputTokens(cycle, firstCompletion) {{
+      const attempts = Number(cycle.dsl_iterations || 1);
+      const originalOutput = finiteNumberOrNull(cycle.llm_output_tokens);
+      const firstOutput = finiteNumberOrNull(firstCompletion);
+      if (attempts <= 1) return originalOutput !== null ? cycle.llm_output_tokens : firstCompletion;
+      return firstOutput !== null ? firstCompletion : cycle.dsl_completion_tokens;
+    }}
+    function syntacticFirstAttemptCycle(cycle) {{
+      const attempts = Number(cycle.dsl_iterations || 0);
+      if (attempts <= 1) {{
+        return {{...cycle, simulated_no_syntactic_feedback_loop: true}};
+      }}
+      const firstTime = firstSample(cycle.dsl_generation_time_samples);
+      const firstCompletion = firstSample(cycle.dsl_completion_token_samples);
+      const firstTotal = firstSample(cycle.dsl_total_token_samples);
+      const firstReasoning = firstSample(cycle.llm_reasoning_token_samples);
+      return {{
+        ...cycle,
+        simulated_no_syntactic_feedback_loop: true,
+        dsl_iterations: 1,
+        dsl_generation_time_seconds: firstTime ?? cycle.dsl_generation_time_seconds,
+        dsl_generation_time_samples: singleSampleList(firstTime),
+        dsl_completion_tokens: firstCompletion ?? cycle.dsl_completion_tokens,
+        dsl_total_tokens: firstTotal ?? cycle.dsl_total_tokens,
+        dsl_completion_token_samples: singleSampleList(firstCompletion),
+        dsl_total_token_samples: singleSampleList(firstTotal),
+        llm_output_tokens: syntacticFirstAttemptOutputTokens(cycle, firstCompletion),
+        llm_reasoning_tokens: firstReasoning ?? cycle.llm_reasoning_tokens,
+      }};
+    }}
+    function syntacticFailureRow(cycle) {{
+      const attempts = Number(cycle.dsl_iterations || 0);
+      return {{
+        cycle: cycleNumber(cycle),
+        result: 'failed',
+        dsl_iterations: 1,
+        failed_stage: 'dsl_generation',
+        failure_type: 'syntactic_feedback_loop',
+        failure_reason: 'The initial DSL candidate did not compile; compiler-guided repair was required (' + attempts + ' attempts recorded).',
+        failed_stages: [{{
+          stage: 'dsl_generation',
+          failure_type: 'syntactic_feedback_loop',
+          failure_reason: 'Without syntactic feedback, execution stops after the initial rejected DSL candidate.',
+        }}],
+      }};
+    }}
+    function sumNumeric(values) {{
+      const nums = values.map(v => Number(v)).filter(v => Number.isFinite(v));
+      if (!nums.length) return null;
+      return nums.reduce((a, b) => a + b, 0);
+    }}
+    function aggregateSimulatedCycles(cycles) {{
+      const timeSamples = cycles.flatMap(c => Array.isArray(c.dsl_generation_time_samples) ? c.dsl_generation_time_samples : []);
+      const completionSamples = cycles.flatMap(c => Array.isArray(c.dsl_completion_token_samples) ? c.dsl_completion_token_samples : []);
+      const totalSamples = cycles.flatMap(c => Array.isArray(c.dsl_total_token_samples) ? c.dsl_total_token_samples : []);
+      return {{
+        cycles: cycles.length,
+        dsl_generation_iterations: cycles.map(c => c.dsl_iterations).filter(v => v !== null && v !== undefined),
+        dsl_generation_time_seconds: sumNumeric(timeSamples),
+        dsl_generation_time_samples: timeSamples,
+        dsl_completion_tokens: sumNumeric(completionSamples),
+        dsl_total_tokens: sumNumeric(totalSamples),
+        dsl_completion_token_samples: completionSamples,
+        dsl_total_token_samples: totalSamples,
+        llm_output_tokens: sumNumeric(cycles.map(c => c.llm_output_tokens ?? c.dsl_completion_tokens)),
+        llm_reasoning_tokens: sumNumeric(cycles.map(c => c.llm_reasoning_tokens)),
+      }};
+    }}
+    function simulatedNoSyntacticFeedbackRecord(record) {{
+      if (!noSyntacticFeedbackLoopMode()) return record;
+      const perCycle = Array.isArray(record.per_cycle_metrics) ? record.per_cycle_metrics : [];
+      if (!perCycle.length) {{
+        return {{...record, simulated_no_syntactic_feedback_loop: true}};
+      }}
+      const includedCycles = [];
+      const simulatedFailures = [];
+      let successCycle = null;
+      let hadSyntacticRepair = false;
+      for (let index = 0; index < perCycle.length; index += 1) {{
+        const cycle = perCycle[index];
+        if (!cycle) continue;
+        const view = syntacticFirstAttemptCycle(cycle);
+        includedCycles.push(view);
+        const attempts = Number(cycle.dsl_iterations || 1);
+        if (attempts > 1) {{
+          hadSyntacticRepair = true;
+          simulatedFailures.push(syntacticFailureRow(cycle));
+          // Later cycles depend on the repaired candidate reaching semantic
+          // verification, so they are unavailable when syntactic repair is off.
+          break;
+        }}
+        const result = cycleResult(record, cycle);
+        if (cycleSuccessResults.has(result)) {{
+          successCycle = view;
+          break;
+        }}
+        const summary = cycleSummaryFor(record, cycleNumber(cycle, index + 1));
+        if (summary && String(summary.result || '').toLowerCase() === 'failed') simulatedFailures.push(summary);
+      }}
+      const aggregate = aggregateSimulatedCycles(includedCycles);
+      if (!hadSyntacticRepair) {{
+        for (const field of [
+          'dsl_generation_iterations',
+          'dsl_generation_time_seconds',
+          'dsl_generation_time_samples',
+          'dsl_completion_tokens',
+          'dsl_total_tokens',
+          'dsl_completion_token_samples',
+          'dsl_total_token_samples',
+          'llm_output_tokens',
+          'llm_reasoning_tokens',
+        ]) {{
+          aggregate[field] = record[field];
+        }}
+      }}
+      const failed = !successCycle;
+      const lastFailure = simulatedFailures.length ? simulatedFailures[simulatedFailures.length - 1] : null;
+      return {{
+        ...record,
+        ...aggregate,
+        simulated_no_syntactic_feedback_loop: true,
+        original_outcome: record.original_outcome || record.outcome,
+        original_failure_category: record.original_failure_category || record.failure_category,
+        original_failure_detail: record.original_failure_detail || record.failure_detail,
+        outcome: failed ? 'failed' : 'success',
+        failure_category: failed ? ((lastFailure && (lastFailure.failure_type || lastFailure.failed_stage)) || 'syntactic_feedback_loop') : 'none',
+        failure_detail: failed ? ((lastFailure && lastFailure.failure_reason) || 'No cycle completed with the first DSL generation attempt') : 'Cycle completed with the first DSL generation attempt',
+        failed_queries: failed ? record.failed_queries : 0,
+        successful_cycle: successCycle ? cycleNumber(successCycle) : null,
+        per_cycle_metrics: includedCycles,
+        cycle_failures: failed ? simulatedFailures : simulatedFailures.filter(c => String(c.result || '').toLowerCase() === 'failed'),
+      }};
+    }}
+    function activeRecords() {{
+      return records.map(r => simulatedNoSyntacticFeedbackRecord(simulatedNoFeedbackRecord(r)));
+    }}
     function summarizeRecords(rows) {{
       const byModel = new Map();
       const selectedCycle = el.cycle && el.cycle.value !== '' ? Number(el.cycle.value) : null;
@@ -1526,7 +2367,7 @@ def _build_html(payload: dict[str, Any]) -> str:
         else item.unknown += 1;
         const cycles = Number(r.cycles);
         if (Number.isFinite(cycles)) item.cycles.push(cycles);
-        const totalTokens = Number(r.llm_total_tokens ?? r.dsl_total_tokens);
+        const totalTokens = Number(r.llm_output_tokens ?? r.dsl_completion_tokens);
         if (Number.isFinite(totalTokens) && totalTokens > 0) item.totalTokens += totalTokens;
         const cycleFailures = Array.isArray(r.cycle_failures) ? r.cycle_failures : [];
         for (const cycle of cycleFailures) {{
@@ -1575,7 +2416,8 @@ def _build_html(payload: dict[str, Any]) -> str:
         total_cycles: item.cycles.reduce((a, b) => a + b, 0),
         total_tokens_spent: item.totalTokens,
         efficiency_metric: item.totalTokens > 0 ? item.success / item.totalTokens : null,
-        efficiency_per_100k_tokens: item.totalTokens > 0 ? item.success / (item.totalTokens / 100000) : null,
+        efficiency_per_million_tokens: item.totalTokens > 0 ? item.success / (item.totalTokens / 1000000) : null,
+        tokens_per_success: item.success > 0 && item.totalTokens > 0 ? item.totalTokens / item.success : null,
         feedback_cycle_errors: item.feedbackCycleErrors,
         avg_cycles: item.cycles.length ? item.cycles.reduce((a, b) => a + b, 0) / item.cycles.length : 0,
         avg_dsl_generation_time_seconds: item.dslTimes.length ? item.dslTimes.reduce((a, b) => a + b, 0) / item.dslTimes.length : null,
@@ -1593,13 +2435,20 @@ def _build_html(payload: dict[str, Any]) -> str:
           '<td>' + Number(row.avg_cycles || 0).toFixed(2) + '</td>' +
           '<td>' + fmtDuration(row.avg_dsl_generation_time_seconds) + '</td>' +
           '<td>' + (row.avg_dsl_completion_tokens_per_generated_dsl === null || row.avg_dsl_completion_tokens_per_generated_dsl === undefined ? '-' : fmtNum(Math.round(row.avg_dsl_completion_tokens_per_generated_dsl))) + '</td>' +
-          '<td>' + (row.efficiency_per_100k_tokens === null || row.efficiency_per_100k_tokens === undefined ? '-' : Number(row.efficiency_per_100k_tokens).toFixed(2)) + '</td>' +
+          '<td>' + (row.tokens_per_success === null || row.tokens_per_success === undefined ? '-' : fmtNum(Math.round(row.tokens_per_success))) + '</td>' +
+          '<td>' + (row.efficiency_per_million_tokens === null || row.efficiency_per_million_tokens === undefined ? '-' : Number(row.efficiency_per_million_tokens).toFixed(2)) + '</td>' +
         '</tr>';
       }}).join('');
+      const activeModes = [];
+      if (noFeedbackLoopMode()) activeModes.push('No semantic feedback loop: usa solo il primo ciclo semantico.');
+      if (noSyntacticFeedbackLoopMode()) activeModes.push('No syntactic feedback loop: usa solo ITER0 e interrompe la run quando il candidato iniziale non compila.');
+      const modeNote = activeModes.length
+        ? ' Modalita simulate attive: ' + activeModes.join(' ') + ' Le run non vengono rimosse.'
+        : '';
       return '<article class="panel chart model-summary"><h2>Riepilogo per modello</h2>' +
-        '<div class="chart-note">Sintesi numerica delle run: completion_tokens medio calcolato sui singoli DSL generati. Efficienza token = successi / token LLM totali consumati dalle run visibili; le run fallite contribuiscono al denominatore quando incluse dai filtri.</div>' +
+        '<div class="chart-note">Sintesi numerica delle run: output token medio calcolato sui singoli DSL generati. Token/successo = token di output generate/repair consumati dalle run visibili / successi; il reasoning e incluso una sola volta, mentre prompt token e query adaptation sono esclusi. Le run fallite contribuiscono al denominatore token quando incluse dai filtri.' + modeNote + '</div>' +
         '<div class="summary-table"><table><thead><tr>' +
-        '<th>Modello</th><th>Successi</th><th>Falliti</th><th>Cicli medi/run</th><th>Tempo medio/chiamata DSL</th><th>Output token medi/DSL</th><th>Eff. successi/100k token</th>' +
+        '<th>Modello</th><th>Successi</th><th>Falliti</th><th>Cicli medi/run</th><th>Tempo medio/chiamata DSL</th><th>Output token medi/DSL</th><th>Token/successo</th><th>Eff. successi/1M token</th>' +
         '</tr></thead><tbody>' + body + '</tbody></table></div></article>';
     }}
     function figureChart(title, note, path) {{
@@ -1610,10 +2459,17 @@ def _build_html(payload: dict[str, Any]) -> str:
         '</article>';
     }}
     function filterFigureKey() {{
-      return JSON.stringify([el.model.value || '', el.scenario.value || '', el.outcome.value || '', el.reason.value || '', el.cycle.value || '']);
+      return JSON.stringify([el.model.value || '', el.scenario.value || '', el.outcome.value || '', el.reason.value || '', noFeedbackLoopMode() ? '' : (el.cycle.value || '')]);
     }}
     function boxplotFigureForCurrentFilters() {{
-      const plots = figures.filter_boxplots || {{}};
+      let plots = figures.filter_boxplots || {{}};
+      if (noFeedbackLoopMode() && noSyntacticFeedbackLoopMode()) {{
+        plots = figures.filter_boxplots_no_feedback_no_syntactic_feedback || {{}};
+      }} else if (noFeedbackLoopMode()) {{
+        plots = figures.filter_boxplots_no_feedback || {{}};
+      }} else if (noSyntacticFeedbackLoopMode()) {{
+        plots = figures.filter_boxplots_no_syntactic_feedback || {{}};
+      }}
       return plots[filterFigureKey()] || plots[figures.default_filter_key] || '';
     }}
     function renderCharts() {{
@@ -1625,10 +2481,16 @@ def _build_html(payload: dict[str, Any]) -> str:
         modelSummaryTable(summarizeRecords(rows)),
       ];
       if (!el.model.value) {{
+        const simulatedNotes = [];
+        if (noFeedbackLoopMode()) simulatedNotes.push('usa solo il primo ciclo semantico; successi tardivi diventano fallimenti');
+        if (noSyntacticFeedbackLoopMode()) simulatedNotes.push('usa solo ITER0; un candidato iniziale non compilabile termina la run e rende indisponibili i cicli semantici successivi');
+        const boxplotNote = simulatedNotes.length
+          ? 'Boxplot simulati: ' + simulatedNotes.join('; ') + '. I token sono output token generate/repair, reasoning incluso una sola volta; prompt token e query adaptation esclusi.' + searchNote
+          : 'Ogni boxplot usa i datapoint reali: cicli per run, DSL generati per ciclo, tempo di ogni chiamata generate/repair, e output token di ogni DSL generato. Il reasoning e contato come output; i prompt token sono esclusi. Query adaptation escluse.' + searchNote;
         chartBlocks.push(
           figureChart(
             'Distribuzioni per modello',
-            'Ogni boxplot usa i datapoint reali: cicli per run, DSL generati per ciclo, tempo di ogni chiamata generate/repair, e completion_tokens di ogni DSL generato. Query adaptation escluse.' + searchNote,
+            boxplotNote,
             boxplotFigureForCurrentFilters()
           ) || '<article class="panel chart figure-card"><h2>Distribuzioni per modello</h2><div class="muted">Nessun grafico disponibile per i filtri correnti.</div></article>'
         );
@@ -1651,6 +2513,8 @@ def _build_html(payload: dict[str, Any]) -> str:
       card('Fallite', fmtNum(counts.failed));
       card('In corso', fmtNum(counts.running));
       card('Success rate', fmtPct(counts.success / Math.max(rows.length, 1)));
+      if (noFeedbackLoopMode()) card('Modalità', 'No semantic feedback loop');
+      if (noSyntacticFeedbackLoopMode()) card('Modalità sintattica', 'Solo ITER0');
       el.modelCards.innerHTML = models.map(m => {{
         const cycleErrors = Object.entries(m.feedback_cycle_errors || {{}})
           .sort((a, b) => b[1] - a[1])
@@ -1660,31 +2524,36 @@ def _build_html(payload: dict[str, Any]) -> str:
         const success = Number(m.success || 0);
         const total = Number(m.total || 0);
         const totalCycles = Number(m.total_cycles || 0);
-        const tokenEfficiency = m.efficiency_per_100k_tokens === null || m.efficiency_per_100k_tokens === undefined ? '-' : Number(m.efficiency_per_100k_tokens).toFixed(2);
+        const tokenEfficiency = m.efficiency_per_million_tokens === null || m.efficiency_per_million_tokens === undefined ? '-' : Number(m.efficiency_per_million_tokens).toFixed(2);
+        const tokensPerSuccess = m.tokens_per_success === null || m.tokens_per_success === undefined ? '-' : fmtNum(Math.round(m.tokens_per_success));
         return '<article class="model-card">' +
           '<div class="model-head"><div class="model-name">' + esc(m.model) + '</div><div class="rate">' + fmtNum(success) + '/' + fmtNum(total) + '</div></div>' +
           '<div>Cicli totali: <b>' + fmtNum(totalCycles) + '</b></div>' +
-          '<div>Efficienza token: <b>' + esc(tokenEfficiency) + '</b> successi/100k token</div>' +
+          '<div>Token/successo: <b>' + esc(tokensPerSuccess) + '</b></div>' +
+          '<div>Efficienza token: <b>' + esc(tokenEfficiency) + '</b> successi/1M token</div>' +
           '<div class="label">Errori cicli feedback</div>' +
           '<div class="reason-list">' + (cycleErrors || '<span class="chip">nessun ciclo fallito</span>') + '</div>' +
           '</article>';
       }}).join('');
     }}
     function setupFilters() {{
-      fillSelect(el.model, uniq(records.map(r => r.model)), 'Tutti');
-      fillSelect(el.scenario, uniq(records.map(r => r.scenario)), 'Tutti');
-      fillSelect(el.outcome, uniq(records.map(r => r.outcome)), 'Tutti');
-      fillSelect(el.reason, uniq(records.map(r => r.failure_category)), 'Tutti');
+      const dims = figures.filter_dimensions || {{}};
+      const outcomeValues = records.flatMap(r => [r.outcome, r.first_cycle_outcome]).concat(dims.outcome || []);
+      const reasonValues = records.flatMap(r => [r.failure_category, r.first_cycle_failure_category]).concat(dims.reason || []);
+      fillSelect(el.model, uniq(records.map(r => r.model).concat(dims.model || [])), 'Tutti');
+      fillSelect(el.scenario, uniq(records.map(r => r.scenario).concat(dims.scenario || [])), 'Tutti');
+      fillSelect(el.outcome, uniq(outcomeValues), 'Tutti');
+      fillSelect(el.reason, uniq(reasonValues), 'Tutti');
       fillCycleSelect();
     }}
     function filteredRows() {{
       const q = el.search.value.trim().toLowerCase();
-      return records.filter(r => {{
+      return activeRecords().filter(r => {{
         if (el.model.value && r.model !== el.model.value) return false;
         if (el.scenario.value && r.scenario !== el.scenario.value) return false;
         if (el.outcome.value && r.outcome !== el.outcome.value) return false;
         if (el.reason.value && r.failure_category !== el.reason.value) return false;
-        if (el.cycle.value) {{
+        if (!noFeedbackLoopMode() && el.cycle.value) {{
           const selectedCycle = Number(el.cycle.value);
           const perCycle = Array.isArray(r.per_cycle_metrics) ? r.per_cycle_metrics : [];
           if (!perCycle.some(c => Number(c.cycle_index) === selectedCycle)) return false;
@@ -1713,7 +2582,7 @@ def _build_html(payload: dict[str, Any]) -> str:
       }}).join('') || '<tr><td colspan="9" class="muted">Nessuna run trovata.</td></tr>';
       for (const tr of el.rows.querySelectorAll('tr[data-run]')) {{
         tr.addEventListener('click', () => {{
-          selected = records.find(r => r.run_id === tr.dataset.run);
+          selected = filteredRows().find(r => r.run_id === tr.dataset.run);
           renderRows();
           renderDetail(selected);
         }});
@@ -1778,7 +2647,7 @@ def _build_html(payload: dict[str, Any]) -> str:
         '<div class="kv"><b>Cicli</b><span>' + fmtNum(r.cycles) + '</span></div>' +
         '<div class="kv"><b>Durata</b><span>' + fmtDuration(r.duration_seconds) + '</span></div>' +
         '<div class="kv"><b>Tempo gen.</b><span>' + fmtDuration(r.dsl_generation_time_seconds) + '</span></div>' +
-        '<div class="kv"><b>Token DSL</b><span>' + (r.dsl_total_tokens === null || r.dsl_total_tokens === undefined ? '-' : fmtNum(r.dsl_total_tokens)) + '</span></div>' +
+        '<div class="kv"><b>Output token DSL</b><span>' + (r.dsl_completion_tokens === null || r.dsl_completion_tokens === undefined ? '-' : fmtNum(r.dsl_completion_tokens)) + '</span></div>' +
         lirasPathRow +
         '<div class="kv"><b>Metadata</b><span class="mono">' + esc(r.metadata_path) + '</span></div>' +
         '</div>' +
@@ -1787,15 +2656,19 @@ def _build_html(payload: dict[str, Any]) -> str:
         lirasSection;
     }}
     function update() {{
-      if (selected && !filteredRows().some(r => r.run_id === selected.run_id)) selected = null;
+      if (el.cycle) el.cycle.disabled = noFeedbackLoopMode();
+      const visibleRows = filteredRows();
+      if (selected) selected = visibleRows.find(r => r.run_id === selected.run_id) || null;
       renderTop();
       renderCharts();
       renderRows();
+      if (selected) renderDetail(selected);
     }}
     setupFilters();
+    if (el.cycle) el.cycle.disabled = noFeedbackLoopMode();
     renderTop();
     renderCharts();
-    [el.search, el.model, el.scenario, el.outcome, el.reason, el.cycle].forEach(node => {{
+    [el.search, el.model, el.scenario, el.outcome, el.reason, el.cycle, el.noFeedbackLoop, el.noSyntacticFeedbackLoop].forEach(node => {{
       node.addEventListener('input', update);
       node.addEventListener('change', update);
     }});
@@ -1811,13 +2684,19 @@ def build_site(
     output_html: Path,
     print_summary: bool = False,
     include_liras_code: bool = False,
+    dashboard_name_override: str = "",
+    dashboard_theme_override: str = "",
 ) -> None:
     records = _collect_records(runs_dir, include_liras_code=include_liras_code)
     output_html.parent.mkdir(parents=True, exist_ok=True)
-    figures = _write_boxplot_figures(records, output_html)
+    dashboard_name = dashboard_name_override or _dashboard_name_for_runs_dir(runs_dir)
+    dashboard_theme = dashboard_theme_override or _dashboard_theme_for_runs_dir(runs_dir)
+    figures = _write_boxplot_figures(records, output_html, theme=dashboard_theme)
     payload = {
         "generated_at": datetime.now().isoformat(timespec="seconds"),
         "runs_dir": _safe_rel(runs_dir),
+        "dashboard_name": dashboard_name,
+        "dashboard_theme": dashboard_theme,
         "summary": _build_summary(records),
         "figures": figures,
         "include_liras_code": include_liras_code,
@@ -1841,6 +2720,13 @@ def _parse_args() -> argparse.Namespace:
         action="store_true",
         help="Embed the selected .LIRAs artifact for each run in the HTML detail panel",
     )
+    parser.add_argument("--dashboard-name", default="", help="Override the dashboard title shown in the HTML")
+    parser.add_argument(
+        "--dashboard-theme",
+        choices=("blue", "red"),
+        default="",
+        help="Override dashboard color theme",
+    )
     return parser.parse_args()
 
 
@@ -1854,7 +2740,14 @@ def main() -> int:
         output = ROOT / output
     if not runs_dir.exists():
         raise FileNotFoundError(f"Runs directory not found: {runs_dir}")
-    build_site(runs_dir, output, print_summary=args.summary, include_liras_code=args.include_liras_code)
+    build_site(
+        runs_dir,
+        output,
+        print_summary=args.summary,
+        include_liras_code=args.include_liras_code,
+        dashboard_name_override=args.dashboard_name,
+        dashboard_theme_override=args.dashboard_theme,
+    )
     return 0
 
 
