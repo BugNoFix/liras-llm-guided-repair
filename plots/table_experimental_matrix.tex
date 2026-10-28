@@ -1,0 +1,25 @@
+\begin{table}
+\caption{Accepted runs out of ten repetitions in each tested configuration; -- denotes unavailable.}
+\label{tab:matrix}
+\begin{tabular}{llllll}
+\toprule
+Scenario & Model & ZS & ZS+CoT & FS & FS+CoT \\
+\midrule
+Coffee Delivery & Qwen3.5-9B & 1/10 & 9/10 & 1/10 & 3/10 \\
+Coffee Delivery & Qwen3.6-35B-A3B & 1/10 & 9/10 & 1/10 & 0/10 \\
+Coffee Delivery & Gemma 4 31B IT & 0/10 & 10/10 & 0/10 & 0/10 \\
+Coffee Delivery & GLM-5.2 & 0/10 & 10/10 & 0/10 & 0/10 \\
+Coffee Delivery & gpt-oss-20b & -- & 10/10 & -- & 0/10 \\
+User-Guided Transport & Qwen3.5-9B & 1/10 & 4/10 & 2/10 & 3/10 \\
+User-Guided Transport & Qwen3.6-35B-A3B & 5/10 & 3/10 & 9/10 & 4/10 \\
+User-Guided Transport & Gemma 4 31B IT & 3/10 & 0/10 & 10/10 & 10/10 \\
+User-Guided Transport & GLM-5.2 & 6/10 & 8/10 & 5/10 & 6/10 \\
+User-Guided Transport & gpt-oss-20b & -- & 9/10 & -- & 9/10 \\
+Factory Pipeline & Qwen3.5-9B & 9/10 & 10/10 & 9/10 & 10/10 \\
+Factory Pipeline & Qwen3.6-35B-A3B & 4/10 & 8/10 & 9/10 & 10/10 \\
+Factory Pipeline & Gemma 4 31B IT & 10/10 & 10/10 & 10/10 & 10/10 \\
+Factory Pipeline & GLM-5.2 & 10/10 & 8/10 & 10/10 & 10/10 \\
+Factory Pipeline & gpt-oss-20b & -- & 10/10 & -- & 10/10 \\
+\bottomrule
+\end{tabular}
+\end{table}

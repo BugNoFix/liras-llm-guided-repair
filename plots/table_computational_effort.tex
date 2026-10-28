@@ -1,0 +1,14 @@
+\begin{table*}
+\caption{Recorded LLM effort by prompting configuration; output is tokens and excludes missing repair usage.}
+\label{tab:effort}
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Prompt & Runs & Accepted & Gen. calls & Repair calls & Query calls & Gen.+repair output & Query output & Unmetered repairs \\
+\midrule
+ZS & 120 & 50 & 291 & 503 & 252 & 164819 & 1513151 & 204 \\
+ZS+CoT & 150 & 118 & 229 & 34 & 210 & 647963 & 1506275 & 0 \\
+FS & 120 & 66 & 269 & 290 & 246 & 63012 & 1087005 & 113 \\
+FS+CoT & 150 & 85 & 371 & 49 & 355 & 1013974 & 1830419 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table*}
